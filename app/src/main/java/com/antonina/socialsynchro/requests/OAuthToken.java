@@ -1,4 +1,4 @@
-package com.antonina.socialsynchro.accounts.controllers;
+package com.antonina.socialsynchro.requests;
 
 import com.google.gson.annotations.SerializedName;
 

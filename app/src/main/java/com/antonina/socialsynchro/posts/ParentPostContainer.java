@@ -2,6 +2,7 @@ package com.antonina.socialsynchro.posts;
 
 import com.antonina.socialsynchro.posts.attachments.IAttachment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ParentPostContainer implements IPostContainer, IPost {
@@ -10,6 +11,7 @@ public class ParentPostContainer implements IPostContainer, IPost {
 
     public ParentPostContainer() {
         post = new Post();
+        children = new ArrayList<ChildPostContainer>();
     }
 
     @Override
@@ -25,10 +27,6 @@ public class ParentPostContainer implements IPostContainer, IPost {
     @Override
     public void setTitle(String title) {
         post.setTitle(title);
-        for (ChildPostContainer child : children) {
-            if (child.isLocked())
-                child.setTitle(title);
-        }
     }
 
     @Override
@@ -39,10 +37,6 @@ public class ParentPostContainer implements IPostContainer, IPost {
     @Override
     public void setContent(String content) {
         post.setContent(content);
-        for (ChildPostContainer child : children) {
-            if (child.isLocked())
-                child.setContent(content);
-        }
     }
 
     @Override
@@ -53,18 +47,29 @@ public class ParentPostContainer implements IPostContainer, IPost {
     @Override
     public void addAttachment(IAttachment attachment) {
         post.addAttachment(attachment);
-        for (ChildPostContainer child : children) {
-            if (child.isLocked())
-                child.addAttachment(attachment);
-        }
     }
 
     @Override
     public void removeAttachment(IAttachment attachment) {
         post.removeAttachment(attachment);
+    }
+
+    @Override
+    public void publish() {
         for (ChildPostContainer child : children) {
-            if (child.isLocked())
-                child.removeAttachment(attachment);
+            child.publish();
         }
+    }
+
+    @Override
+    public void remove() {
+        for (ChildPostContainer child : children) {
+            child.remove();
+        }
+        // TODO: Usuniecie z aplikacji
+    }
+
+    public void addChild(ChildPostContainer child) {
+        children.add(child);
     }
 }

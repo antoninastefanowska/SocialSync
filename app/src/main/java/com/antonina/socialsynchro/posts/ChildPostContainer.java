@@ -6,15 +6,23 @@ import com.antonina.socialsynchro.posts.attachments.IAttachment;
 import java.util.List;
 
 public abstract class ChildPostContainer implements IPostContainer, IPost {
+    private String serviceID;
     private IPost post;
     private boolean locked;
-    private ParentPostContainer parent;
     private IAccount account;
+
+    protected ParentPostContainer parent;
 
     // TODO: dla każdej funkcji modyfikującej sprawdzić ograniczenia
 
     public ChildPostContainer(IAccount account) {
         this.account = account;
+    }
+
+    public ChildPostContainer(ParentPostContainer parent) {
+        this.parent = parent;
+        parent.addChild(this);
+        lock();
     }
 
     @Override
@@ -34,9 +42,9 @@ public abstract class ChildPostContainer implements IPostContainer, IPost {
     @Override
     public String getContent() {
         if (locked)
-            return parent.getPost().getTitle();
+            return parent.getContent();
         else
-            return post.getTitle();
+            return post.getContent();
     }
 
     @Override
@@ -73,6 +81,12 @@ public abstract class ChildPostContainer implements IPostContainer, IPost {
             return post;
     }
 
+    @Override
+    public abstract void publish();
+
+    @Override
+    public abstract void remove();
+
     public boolean isLocked() {
         return locked;
     }
@@ -98,4 +112,8 @@ public abstract class ChildPostContainer implements IPostContainer, IPost {
     public IAccount getAccount() {
         return account;
     }
+
+    public String getServiceID() { return serviceID; }
+
+    public void setServiceID(String serviceID) { this.serviceID = serviceID; }
 }

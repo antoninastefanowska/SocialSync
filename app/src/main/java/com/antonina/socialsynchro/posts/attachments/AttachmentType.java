@@ -2,5 +2,6 @@ package com.antonina.socialsynchro.posts.attachments;
 
 public enum AttachmentType {
     Image,
-    Video
+    Video,
+    Audio
 }

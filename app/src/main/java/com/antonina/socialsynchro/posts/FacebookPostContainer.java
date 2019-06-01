@@ -3,7 +3,7 @@ package com.antonina.socialsynchro.posts;
 import com.antonina.socialsynchro.accounts.IAccount;
 
 public class FacebookPostContainer extends ChildPostContainer {
-    private static final int MAX_CONTENT_SIZE = 63206;
+    private static final int MAX_CONTENT_LENGTH = 63206;
 
     public FacebookPostContainer(IAccount account) {
         super(account);
@@ -21,10 +21,20 @@ public class FacebookPostContainer extends ChildPostContainer {
 
     @Override
     public void setContent(String content) {
-        if (content.length() > MAX_CONTENT_SIZE) {
+        if (content.length() > MAX_CONTENT_LENGTH) {
             unlock();
             content = content.substring(0, content.length() - 3) + "...";
         }
         super.setContent(content);
+    }
+
+    @Override
+    public void publish() {
+
+    }
+
+    @Override
+    public void remove() {
+
     }
 }
