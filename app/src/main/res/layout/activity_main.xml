@@ -26,23 +26,35 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:orientation="horizontal">
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/btSend"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Wyślij"
+                    android:onClick="btSend_onClick" />
 
                 <Button
                     android:id="@+id/btRemove"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="left"
                     android:text="Usuń"
                     android:onClick="btRemove_onClick" />
 
                 <Button
-                    android:id="@+id/btSend"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/btLogin"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:text="Wyślij"
-                    android:onClick="btSend_onClick" />
+                    android:text="Zaloguj"
+                    android:onClick="btLogin_onClick" />
+
+                <Button
+                    android:id="@+id/btConfirmLogin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Potwierdź zalogowanie"
+                    android:onClick="btConfirmLogin_onClick" />
 
             </LinearLayout>
 
