@@ -97,7 +97,7 @@ public class TwitterController implements IController {
                 twitterLoginTokenResponse = new TwitterLoginTokenResponse(responseString);
 
                 if (twitterLoginTokenResponse.getCallbackConfirmed()) {
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://api.twitter.com/oauth/authenticate?oauth_token=" + twitterLoginTokenResponse.getLoginToken()));
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://api.twitter.com/oauth/authorize?force_login=true&oauth_token=" + twitterLoginTokenResponse.getLoginToken()));
                     context.startActivity(browserIntent);
                 }
             }
