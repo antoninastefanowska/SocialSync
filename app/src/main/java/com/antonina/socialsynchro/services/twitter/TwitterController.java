@@ -180,7 +180,7 @@ public class TwitterController implements IController {
         @Override
         public void onResponse(Call<TwitterTweetResponse> call, Response<TwitterTweetResponse> response) {
             if (response.isSuccessful()) {
-                post.setServiceID(response.body().getID());
+                post.setServiceExternalIdentifier(response.body().getID());
                 Toast toast = Toast.makeText(context, "Wysłanie tweeta powiodło się.", Toast.LENGTH_SHORT);
                 toast.show();
             }

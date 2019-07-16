@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 public abstract class ChildPostContainer implements IPostContainer, IPost {
-    private String serviceID;
+    private String serviceExternalIdentifier;
     private IPost post;
     private boolean locked;
     private Account account;
@@ -117,9 +117,9 @@ public abstract class ChildPostContainer implements IPostContainer, IPost {
 
     public void setAccount(Account account) { this.account = account; }
 
-    public String getServiceID() { return serviceID; }
+    public String getServiceExternalIdentifier() { return serviceExternalIdentifier; }
 
-    public void setServiceID(String serviceID) { this.serviceID = serviceID; }
+    public void setServiceExternalIdentifier(String serviceExternalIdentifier) { this.serviceExternalIdentifier = serviceExternalIdentifier; }
 
     public Date getSynchronizationDate() { return synchronizationDate; }
 

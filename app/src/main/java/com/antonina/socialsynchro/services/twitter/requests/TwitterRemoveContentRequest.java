@@ -8,7 +8,7 @@ public class TwitterRemoveContentRequest extends TwitterRequest {
 
     public TwitterRemoveContentRequest(ChildPostContainer post, Account account) {
         super();
-        id = post.getServiceID();
+        id = post.getServiceExternalIdentifier();
         accessToken = account.getAccessToken();
         secretToken = account.getSecretToken();
         buildUserAuthorizationHeader();
