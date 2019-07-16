@@ -6,7 +6,7 @@ import android.net.Uri;
 import android.widget.Toast;
 
 import com.antonina.socialsynchro.SocialSynchro;
-import com.antonina.socialsynchro.base.IAccount;
+import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.base.IController;
 import com.antonina.socialsynchro.content.ChildPostContainer;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterAccessTokenRequest;
@@ -49,13 +49,13 @@ public class TwitterController implements IController {
     }
 
     @Override
-    public void requestPost(ChildPostContainer post, IAccount account) {
+    public void requestPost(ChildPostContainer post, Account account) {
         PostController postController = new PostController();
         postController.start(post, account);
     }
 
     @Override
-    public void requestRemove(ChildPostContainer post, IAccount account) {
+    public void requestRemove(ChildPostContainer post, Account account) {
         RemoveController removeController = new RemoveController();
         removeController.start(post, account);
     }
@@ -167,7 +167,7 @@ public class TwitterController implements IController {
     private class PostController implements Callback<TwitterTweetResponse> {
         ChildPostContainer post;
 
-        public void start(ChildPostContainer post, IAccount account) {
+        public void start(ChildPostContainer post, Account account) {
             this.post = post;
             TwitterPostContentRequest postRequest = new TwitterPostContentRequest(post, account);
             Gson gson = new GsonBuilder().setLenient().create();
@@ -207,7 +207,7 @@ public class TwitterController implements IController {
 
     private class RemoveController implements Callback<TwitterTweetResponse> {
 
-        public void start(ChildPostContainer post, IAccount account) {
+        public void start(ChildPostContainer post, Account account) {
             TwitterRemoveContentRequest removeRequest = new TwitterRemoveContentRequest(post, account);
             Gson gson = new GsonBuilder().setLenient().create();
             Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create(gson)).build();

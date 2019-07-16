@@ -1,25 +1,11 @@
 package com.antonina.socialsynchro.services.facebook;
 
-import com.antonina.socialsynchro.base.IAccount;
+import com.antonina.socialsynchro.base.Account;
+import com.antonina.socialsynchro.database.tables.AccountTable;
 
-public class FacebookAccount implements IAccount {
-    @Override
-    public String getAccessToken() {
-        return null;
-    }
+public class FacebookAccount extends Account {
 
-    @Override
-    public void setAccessToken(String accessToken) {
-
-    }
-
-    @Override
-    public String getSecretToken() {
-        return null;
-    }
-
-    @Override
-    public void setSecretToken(String secretToken) {
-
+    public FacebookAccount(AccountTable table) {
+        super(table);
     }
 }

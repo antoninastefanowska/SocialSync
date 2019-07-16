@@ -6,7 +6,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import com.antonina.socialsynchro.R;
-import com.antonina.socialsynchro.base.IAccount;
+import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.services.twitter.TwitterAccount;
 import com.antonina.socialsynchro.services.callback.CallbackController;
 import com.antonina.socialsynchro.services.twitter.TwitterController;
@@ -18,7 +18,7 @@ import com.antonina.socialsynchro.services.twitter.responses.TwitterLoginTokenRe
 public class MainActivity extends AppCompatActivity {
     private TwitterController twitterController;
     private ParentPostContainer parent;
-    private IAccount account;
+    private Account account;
     private TwitterAccessTokenResponse twitterAccessTokenResponse;
 
     @Override

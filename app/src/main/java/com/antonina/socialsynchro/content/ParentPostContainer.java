@@ -3,11 +3,13 @@ package com.antonina.socialsynchro.content;
 import com.antonina.socialsynchro.content.attachments.IAttachment;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ParentPostContainer implements IPostContainer, IPost {
     private List<ChildPostContainer> children;
     private IPost post;
+    private Date creationDate;
 
     public ParentPostContainer() {
         post = new Post();
@@ -72,4 +74,6 @@ public class ParentPostContainer implements IPostContainer, IPost {
     public void addChild(ChildPostContainer child) {
         children.add(child);
     }
+
+    public Date getCreationDate() { return creationDate; }
 }

@@ -2,6 +2,7 @@ package com.antonina.socialsynchro.content;
 
 import com.antonina.socialsynchro.content.attachments.IAttachment;
 
+import java.util.Date;
 import java.util.List;
 
 public interface IPost {

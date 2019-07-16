@@ -1,11 +1,11 @@
 package com.antonina.socialsynchro.content;
 
-import com.antonina.socialsynchro.base.IAccount;
+import com.antonina.socialsynchro.base.Account;
 
 public class FacebookPostContainer extends ChildPostContainer {
     private static final int MAX_CONTENT_LENGTH = 63206;
 
-    public FacebookPostContainer(IAccount account) {
+    public FacebookPostContainer(Account account) {
         super(account);
     }
 

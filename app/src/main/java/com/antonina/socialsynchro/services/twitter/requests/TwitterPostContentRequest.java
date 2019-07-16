@@ -1,12 +1,12 @@
 package com.antonina.socialsynchro.services.twitter.requests;
 
-import com.antonina.socialsynchro.base.IAccount;
+import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.content.ChildPostContainer;
 
 public class TwitterPostContentRequest extends TwitterRequest {
     private final String status;
 
-    public TwitterPostContentRequest(ChildPostContainer post, IAccount account) {
+    public TwitterPostContentRequest(ChildPostContainer post, Account account) {
         super();
         status = post.getContent();
         accessToken = account.getAccessToken();

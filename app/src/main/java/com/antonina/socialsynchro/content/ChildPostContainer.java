@@ -1,21 +1,23 @@
 package com.antonina.socialsynchro.content;
 
-import com.antonina.socialsynchro.base.IAccount;
+import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.content.attachments.IAttachment;
 
+import java.util.Date;
 import java.util.List;
 
 public abstract class ChildPostContainer implements IPostContainer, IPost {
     private String serviceID;
     private IPost post;
     private boolean locked;
-    private IAccount account;
+    private Account account;
+    private Date synchronizationDate;
 
     protected ParentPostContainer parent;
 
     // TODO: dla każdej funkcji modyfikującej sprawdzić ograniczenia
 
-    public ChildPostContainer(IAccount account) {
+    public ChildPostContainer(Account account) {
         this.account = account;
     }
 
@@ -109,13 +111,17 @@ public abstract class ChildPostContainer implements IPostContainer, IPost {
         // kopia głęboka postu z parenta
     }
 
-    public IAccount getAccount() {
+    public Account getAccount() {
         return account;
     }
 
-    public void setAccount(IAccount account) { this.account = account; }
+    public void setAccount(Account account) { this.account = account; }
 
     public String getServiceID() { return serviceID; }
 
     public void setServiceID(String serviceID) { this.serviceID = serviceID; }
+
+    public Date getSynchronizationDate() { return synchronizationDate; }
+
+    public void setSynchronizationDate(Date date) { this.synchronizationDate = synchronizationDate; }
 }
