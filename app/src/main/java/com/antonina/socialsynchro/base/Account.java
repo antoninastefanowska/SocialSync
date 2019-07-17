@@ -1,8 +1,12 @@
 package com.antonina.socialsynchro.base;
 
+import com.antonina.socialsynchro.SocialSynchro;
+import com.antonina.socialsynchro.database.IDatabaseEntity;
+import com.antonina.socialsynchro.database.tables.ITable;
 import com.antonina.socialsynchro.database.tables.AccountTable;
+import com.antonina.socialsynchro.database.viewmodels.AccountViewModel;
 
-public abstract class Account implements IConvertedData {
+public abstract class Account implements IDatabaseEntity {
     private Long id;
     private String name;
     private String serviceExternalIdentifier;
@@ -11,8 +15,8 @@ public abstract class Account implements IConvertedData {
     private String secretToken;
     private Service service;
 
-    public Account(AccountTable table) {
-        convertFromTable((ITable)table);
+    public Account(ITable table) {
+        convertFromTable(table);
     }
 
     @Override
@@ -24,7 +28,8 @@ public abstract class Account implements IConvertedData {
         this.profilePictureUrl = accountTable.profilePictureUrl;
         this.accessToken = accountTable.accessToken;
         this.secretToken = accountTable.secretToken;
-        // TODO: uzyskac service z bazy
+
+
     }
 
     public String getName() {
@@ -54,4 +59,6 @@ public abstract class Account implements IConvertedData {
     public String getProfilePictureUrl() { return profilePictureUrl; }
 
     public void setProfilePictureUrl(String profilePictureUrl) { this.profilePictureUrl = profilePictureUrl; }
+
+    public Service getService() { return service; }
 }

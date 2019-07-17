@@ -25,9 +25,9 @@ public interface AccountDao {
     @Insert
     long insert(AccountTable accountTable);
 
-    @Delete
-    void delete(AccountTable accountTable);
-
     @Update
     void update(AccountTable accountTable);
+
+    @Delete
+    void delete(AccountTable accountTable);
 }

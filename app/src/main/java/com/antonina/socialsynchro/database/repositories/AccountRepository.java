@@ -2,7 +2,6 @@ package com.antonina.socialsynchro.database.repositories;
 
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
-import android.arch.persistence.room.Delete;
 import android.os.AsyncTask;
 
 import com.antonina.socialsynchro.database.ApplicationDatabase;
@@ -103,20 +102,6 @@ public class AccountRepository {
         }
     }
 
-    private static class DeleteAsyncTask extends AsyncTask<AccountTable, Void, Void> {
-        private AccountDao accountDao;
-
-        public DeleteAsyncTask(AccountDao dao) {
-            accountDao = dao;
-        }
-
-        @Override
-        protected Void doInBackground(final AccountTable... params) {
-            accountDao.delete(params[0]);
-            return null;
-        }
-    }
-
     private static class UpdateAsyncTask extends AsyncTask<AccountTable, Void, Void> {
         private AccountDao accountDao;
 
@@ -127,6 +112,20 @@ public class AccountRepository {
         @Override
         protected Void doInBackground(final AccountTable... params) {
             accountDao.update(params[0]);
+            return null;
+        }
+    }
+
+    private static class DeleteAsyncTask extends AsyncTask<AccountTable, Void, Void> {
+        private AccountDao accountDao;
+
+        public DeleteAsyncTask(AccountDao dao) {
+            accountDao = dao;
+        }
+
+        @Override
+        protected Void doInBackground(final AccountTable... params) {
+            accountDao.delete(params[0]);
             return null;
         }
     }

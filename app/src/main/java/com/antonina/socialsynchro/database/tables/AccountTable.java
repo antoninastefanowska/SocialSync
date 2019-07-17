@@ -6,13 +6,13 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
 
 import com.antonina.socialsynchro.base.Account;
-import com.antonina.socialsynchro.base.IConvertedData;
-import com.antonina.socialsynchro.base.ITable;
+import com.antonina.socialsynchro.database.IDatabaseEntity;
 import com.antonina.socialsynchro.base.Service;
 
 @Entity(tableName = "account", foreignKeys = @ForeignKey(entity = Service.class, parentColumns = "id", childColumns = "service_id"))
 public class AccountTable implements ITable {
     @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id")
     public long id;
 
     @ColumnInfo(name = "name")
@@ -33,14 +33,18 @@ public class AccountTable implements ITable {
     @ColumnInfo(name = "service_id")
     public long serviceId;
 
+    public AccountTable(Account account) {
+        convertFromEntity(account);
+    }
+
     @Override
-    public void convertFromData(IConvertedData convertedData) {
-        Account account = (Account)convertedData;
+    public void convertFromEntity(IDatabaseEntity entity) {
+        Account account = (Account)entity;
         this.name = account.getName();
         this.serviceExternalIdentifier = account.getServiceExternalIdentifier();
         this.profilePictureUrl = account.getServiceExternalIdentifier();
         this.accessToken = account.getAccessToken();
         this.secretToken = account.getSecretToken();
-        // TODO: Trzeba wydobyć service ID
+        this.serviceId = account.getService().getId();
     }
 }

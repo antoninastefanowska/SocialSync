@@ -16,7 +16,7 @@ public class ImageAttachment implements IAttachment {
     }
 
     @Override
-    public AttachmentType getType() {
-        return AttachmentType.Image;
+    public AttachmentID getType() {
+        return AttachmentID.Image;
     }
 }

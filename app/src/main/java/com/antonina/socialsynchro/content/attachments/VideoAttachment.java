@@ -13,7 +13,7 @@ public class VideoAttachment implements IAttachment {
     }
 
     @Override
-    public AttachmentType getType() {
+    public AttachmentID getType() {
         return null;
     }
 }
