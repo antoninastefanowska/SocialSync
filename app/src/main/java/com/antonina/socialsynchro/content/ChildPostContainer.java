@@ -1,21 +1,31 @@
 package com.antonina.socialsynchro.content;
 
-import com.antonina.socialsynchro.base.IAccount;
-import com.antonina.socialsynchro.content.attachments.IAttachment;
+import com.antonina.socialsynchro.base.Account;
+import com.antonina.socialsynchro.content.attachments.Attachment;
+import com.antonina.socialsynchro.database.IDatabaseEntity;
+import com.antonina.socialsynchro.database.tables.ChildPostContainerTable;
+import com.antonina.socialsynchro.database.tables.ITable;
 
+import java.util.Date;
 import java.util.List;
 
-public abstract class ChildPostContainer implements IPostContainer, IPost {
-    private String serviceID;
-    private IPost post;
+public abstract class ChildPostContainer implements IPostContainer, IPost, IDatabaseEntity {
+    private long id;
+    private String serviceExternalIdentifier;
+    private Post post;
     private boolean locked;
-    private IAccount account;
+    private Account account;
+    private Date synchronizationDate;
 
     protected ParentPostContainer parent;
 
     // TODO: dla każdej funkcji modyfikującej sprawdzić ograniczenia
 
-    public ChildPostContainer(IAccount account) {
+    public ChildPostContainer(ITable data) {
+        createFromData(data);
+    }
+
+    public ChildPostContainer(Account account) {
         this.account = account;
     }
 
@@ -24,6 +34,9 @@ public abstract class ChildPostContainer implements IPostContainer, IPost {
         parent.addChild(this);
         lock();
     }
+
+    @Override
+    public long getID() { return id; }
 
     @Override
     public String getTitle() {
@@ -54,7 +67,7 @@ public abstract class ChildPostContainer implements IPostContainer, IPost {
     }
 
     @Override
-    public List<IAttachment> getAttachments() {
+    public List<Attachment> getAttachments() {
         if (locked)
             return parent.getPost().getAttachments();
         else
@@ -62,19 +75,19 @@ public abstract class ChildPostContainer implements IPostContainer, IPost {
     }
 
     @Override
-    public void addAttachment(IAttachment attachment) {
+    public void addAttachment(Attachment attachment) {
         if (!locked)
             post.addAttachment(attachment);
     }
 
     @Override
-    public void removeAttachment(IAttachment attachment) {
+    public void removeAttachment(Attachment attachment) {
         if (!locked)
             post.removeAttachment(attachment);
     }
 
     @Override
-    public IPost getPost() {
+    public Post getPost() {
         if (locked)
             return parent.getPost();
         else
@@ -103,19 +116,38 @@ public abstract class ChildPostContainer implements IPostContainer, IPost {
         post = new Post();
         setTitle(parentPost.getTitle());
         setContent(parentPost.getContent());
-        for (IAttachment attachment : parentPost.getAttachments()) {
+        for (Attachment attachment : parentPost.getAttachments()) {
             addAttachment(attachment);
         }
         // kopia głęboka postu z parenta
     }
 
-    public IAccount getAccount() {
+    public Account getAccount() {
         return account;
     }
 
-    public void setAccount(IAccount account) { this.account = account; }
+    public void setAccount(Account account) { this.account = account; }
 
-    public String getServiceID() { return serviceID; }
+    public String getServiceExternalIdentifier() { return serviceExternalIdentifier; }
 
-    public void setServiceID(String serviceID) { this.serviceID = serviceID; }
+    public void setServiceExternalIdentifier(String serviceExternalIdentifier) { this.serviceExternalIdentifier = serviceExternalIdentifier; }
+
+    public Date getSynchronizationDate() { return synchronizationDate; }
+
+    public void setSynchronizationDate(Date date) { this.synchronizationDate = synchronizationDate; }
+
+    public ParentPostContainer getParent() { return parent; }
+
+    public void setParent(ParentPostContainer parent) { this.parent = parent; }
+
+    @Override
+    public void createFromData(ITable data) {
+        ChildPostContainerTable childPostContainerData = (ChildPostContainerTable)data;
+        this.id = childPostContainerData.id;
+        this.serviceExternalIdentifier = childPostContainerData.serviceExternalIdentifier;
+        this.locked = childPostContainerData.locked;
+        this.synchronizationDate = childPostContainerData.synchronizationDate;
+
+        //TODO: Wydobyć z bazy post i account.
+    }
 }

@@ -1,7 +1,7 @@
 package com.antonina.socialsynchro.content;
 
 public interface IPostContainer {
-    IPost getPost();
+    Post getPost();
     void publish();
     void remove();
 }
