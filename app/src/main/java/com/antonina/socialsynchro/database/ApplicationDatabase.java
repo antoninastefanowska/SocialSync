@@ -48,9 +48,7 @@ public abstract class ApplicationDatabase extends RoomDatabase {
 
     private static List<ServiceTable> createServicesData() {
         List<ServiceTable> servicesData = new ArrayList<ServiceTable>();
-        ServiceTable serviceData = new ServiceTable();
-        serviceData.id = Long.valueOf(ServiceID.Twitter.ordinal());
-        serviceData.name = "Twitter";
+        ServiceTable serviceData = new ServiceTable((long)ServiceID.Twitter.ordinal(), "Twitter", "", "");
         servicesData.add(serviceData);
         return servicesData;
     }

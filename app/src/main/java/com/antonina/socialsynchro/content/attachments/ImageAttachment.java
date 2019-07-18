@@ -1,22 +1,19 @@
 package com.antonina.socialsynchro.content.attachments;
 
-public class ImageAttachment implements IAttachment {
-    private Object image;
+import com.antonina.socialsynchro.database.tables.ITable;
 
-    public int getSizeKb() {
-        return 0;
+public class ImageAttachment extends Attachment {
+    private int height, width;
+
+    public ImageAttachment(ITable data) {
+        super(data);
     }
 
     public int getHeight() {
-        return 0;
+        return height;
     }
 
     public int getWidth() {
-        return 0;
-    }
-
-    @Override
-    public AttachmentID getType() {
-        return AttachmentID.Image;
+        return width;
     }
 }

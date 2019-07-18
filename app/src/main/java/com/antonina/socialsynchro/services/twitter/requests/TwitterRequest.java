@@ -148,7 +148,7 @@ public abstract class TwitterRequest implements IRequest {
 
         sb.append(percentEncode(APIKey.getKey(SocialSynchro.getAppContext(), "twitter_secretkey")));
         sb.append("&");
-        sb.append(percentEncode(secretToken)); // TODO: Token trzeba będzie pobrać od użytkownika.
+        sb.append(percentEncode(secretToken));
 
         Log.d("wysylanie", sb.toString());
         return sb.toString();

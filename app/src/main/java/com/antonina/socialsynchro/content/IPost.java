@@ -1,8 +1,7 @@
 package com.antonina.socialsynchro.content;
 
-import com.antonina.socialsynchro.content.attachments.IAttachment;
+import com.antonina.socialsynchro.content.attachments.Attachment;
 
-import java.util.Date;
 import java.util.List;
 
 public interface IPost {
@@ -10,7 +9,7 @@ public interface IPost {
     void setTitle(String title);
     String getContent();
     void setContent(String content);
-    List<IAttachment> getAttachments();
-    void addAttachment(IAttachment attachment);
-    void removeAttachment(IAttachment attachment);
+    List<Attachment> getAttachments();
+    void addAttachment(Attachment attachment);
+    void removeAttachment(Attachment attachment);
 }

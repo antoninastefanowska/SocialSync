@@ -14,20 +14,20 @@ import java.util.List;
 @Dao
 public interface AccountDao {
     @Query("SELECT * FROM account")
-    LiveData<List<AccountTable>> getAccounts();
+    LiveData<List<AccountTable>> getAccountsData();
 
     @Query("SELECT COUNT(*) FROM account")
     int count();
 
     @Query("SELECT * FROM account WHERE service_id = :serviceId")
-    LiveData<List<AccountTable>> getAccountsByService(long serviceId);
+    LiveData<List<AccountTable>> getAccountsDataByService(long serviceId);
 
     @Insert
-    long insert(AccountTable accountTable);
+    long insert(AccountTable accountData);
 
     @Update
-    void update(AccountTable accountTable);
+    void update(AccountTable accountData);
 
     @Delete
-    void delete(AccountTable accountTable);
+    void delete(AccountTable accountData);
 }

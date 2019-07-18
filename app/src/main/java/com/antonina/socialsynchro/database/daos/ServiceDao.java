@@ -14,23 +14,23 @@ import java.util.List;
 @Dao
 public interface ServiceDao {
     @Query("SELECT * FROM service")
-    LiveData<List<ServiceTable>> getServices();
+    LiveData<List<ServiceTable>> getServicesData();
 
-    @Query("SELECT * FROM service WHERE id = :serviceId")
-    LiveData<ServiceTable> getServiceById(long serviceId);
+    @Query("SELECT * FROM service WHERE id = :id")
+    LiveData<ServiceTable> getServiceDataByID(long id);
 
     @Query("SELECT COUNT(*) FROM service")
     int count();
 
     @Insert
-    long insert(ServiceTable serviceTable);
+    long insert(ServiceTable serviceData);
 
     @Insert
-    void insertMany(List<ServiceTable> serviceTables);
+    void insertMany(List<ServiceTable> servicesData);
 
     @Update
-    void update(ServiceTable serviceTable);
+    void update(ServiceTable serviceData);
 
     @Delete
-    void delete(ServiceTable serviceTable);
+    void delete(ServiceTable serviceData);
 }

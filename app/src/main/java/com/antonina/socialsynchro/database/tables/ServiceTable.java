@@ -9,8 +9,9 @@ import com.antonina.socialsynchro.database.IDatabaseEntity;
 
 @Entity(tableName = "service")
 public class ServiceTable implements ITable {
+    @PrimaryKey
     @ColumnInfo(name = "id")
-    public Long id;
+    public long id;
 
     @ColumnInfo(name = "name")
     public String name;
@@ -21,10 +22,22 @@ public class ServiceTable implements ITable {
     @ColumnInfo(name = "color_name")
     public String colorName;
 
+    public ServiceTable(long id, String name, String logoUrl, String colorName) {
+        this.id = id;
+        this.name = name;
+        this.logoUrl = logoUrl;
+        this.colorName = colorName;
+    }
+
     @Override
-    public void convertFromEntity(IDatabaseEntity entity) {
+    public void createFromEntity(IDatabaseEntity entity) {
+        this.id = entity.getID();
+        createFromNewEntity(entity);
+    }
+
+    @Override
+    public void createFromNewEntity(IDatabaseEntity entity) {
         Service service = (Service)entity;
-        this.id = service.getId();
         this.name = service.getName();
         this.logoUrl = service.getLogoUrl();
         this.colorName = service.getLogoUrl();

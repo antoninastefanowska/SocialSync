@@ -1,6 +1,6 @@
 package com.antonina.socialsynchro.content.attachments;
 
-public enum AttachmentID {
+public enum AttachmentTypeID {
     Image,
     Video,
     Audio

@@ -38,7 +38,8 @@ public class TwitterController implements IController {
 
     private final Context context = SocialSynchro.getAppContext();
 
-    // TODO: uwzględnić limit 300 postów na 3 godziny
+    // TODO: Uwzględnić limit 300 postów na 3 godziny
+    // TODO: Trzeba uwzględnić asynchroniczne pobieranie danych - wykorzystać LiveData
 
     private TwitterController() { }
 

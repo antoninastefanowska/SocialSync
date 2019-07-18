@@ -5,18 +5,17 @@ import com.antonina.socialsynchro.database.tables.ITable;
 import com.antonina.socialsynchro.database.tables.ServiceTable;
 
 public class Service implements IDatabaseEntity {
-    private Long id;
+    private long id;
     private String name;
     private String logoUrl;
     private String colorName;
 
     public Service(ITable table) {
-        convertFromTable(table);
+        createFromData(table);
     }
 
-    public Long getId() { return id; }
-
-    public void setId(Long id) { this.id = id; }
+    @Override
+    public long getID() { return id; }
 
     public String getName() { return name; }
 
@@ -31,11 +30,11 @@ public class Service implements IDatabaseEntity {
     public void setColorName(String colorName) { this.colorName = colorName; }
 
     @Override
-    public void convertFromTable(ITable table) {
-        ServiceTable serviceTable = (ServiceTable)table;
-        this.id = serviceTable.id;
-        this.name = serviceTable.name;
-        this.logoUrl = serviceTable.logoUrl;
-        this.colorName = serviceTable.colorName;
+    public void createFromData(ITable data) {
+        ServiceTable serviceData = (ServiceTable)data;
+        this.id = serviceData.id;
+        this.name = serviceData.name;
+        this.logoUrl = serviceData.logoUrl;
+        this.colorName = serviceData.colorName;
     }
 }

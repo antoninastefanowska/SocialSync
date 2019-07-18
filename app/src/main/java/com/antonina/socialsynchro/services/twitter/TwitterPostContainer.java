@@ -3,9 +3,14 @@ package com.antonina.socialsynchro.services.twitter;
 import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.content.ChildPostContainer;
 import com.antonina.socialsynchro.content.ParentPostContainer;
+import com.antonina.socialsynchro.database.tables.ITable;
 
 public class TwitterPostContainer extends ChildPostContainer {
     private static final int MAX_CONTENT_LENGTH = 140;
+
+    public TwitterPostContainer(ITable data) {
+        super(data);
+    }
 
     public TwitterPostContainer(Account account) {
         super(account);

@@ -29,7 +29,7 @@ public class ServiceViewModel extends AndroidViewModel {
         super(application);
 
         serviceRepository = new ServiceRepository(application);
-        LiveData<List<ServiceTable>> servicesData = serviceRepository.getServices();
+        LiveData<List<ServiceTable>> servicesData = serviceRepository.getServicesData();
 
         services = Transformations.map(servicesData, new Function<List<ServiceTable>, List<Service>>() {
             @Override
@@ -46,8 +46,8 @@ public class ServiceViewModel extends AndroidViewModel {
 
     public LiveData<List<Service>> getServices() { return services; }
 
-    public LiveData<Service> getServiceById(long serviceId) {
-        LiveData<ServiceTable> serviceData = serviceRepository.getServiceById(serviceId);
+    public LiveData<Service> getServiceByID(long serviceID) {
+        LiveData<ServiceTable> serviceData = serviceRepository.getServiceDataByID(serviceID);
         LiveData<Service> service = Transformations.map(serviceData, new Function<ServiceTable, Service>() {
             @Override
             public Service apply (ServiceTable input) {

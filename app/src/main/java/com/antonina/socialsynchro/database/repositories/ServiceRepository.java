@@ -13,20 +13,20 @@ import java.util.concurrent.ExecutionException;
 
 public class ServiceRepository {
     private ServiceDao serviceDao;
-    private LiveData<List<ServiceTable>> services;
+    private LiveData<List<ServiceTable>> servicesData;
 
     public ServiceRepository(Application application) {
         ApplicationDatabase db = ApplicationDatabase.getDatabase(application);
         serviceDao = db.serviceDao();
-        services = serviceDao.getServices();
+        servicesData = serviceDao.getServicesData();
     }
 
-    public LiveData<List<ServiceTable>> getServices() { return services; }
+    public LiveData<List<ServiceTable>> getServicesData() { return servicesData; }
 
-    public LiveData<ServiceTable> getServiceById(long serviceId) {
+    public LiveData<ServiceTable> getServiceDataByID(long serviceID) {
         LiveData<ServiceTable> result = null;
         try {
-            result = new GetServiceByIdAsyncTask(serviceDao).execute(serviceId).get();
+            result = new GetServiceByIdAsyncTask(serviceDao).execute(serviceID).get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -43,22 +43,22 @@ public class ServiceRepository {
         return result;
     }
 
-    public Long insert(ServiceTable service) {
+    public Long insert(ServiceTable serviceData) {
         Long id = null;
         try {
-            id = new InsertAsyncTask(serviceDao).execute(service).get();
+            id = new InsertAsyncTask(serviceDao).execute(serviceData).get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
         return id;
     }
 
-    public void update(ServiceTable service) {
-        new UpdateAsyncTask(serviceDao).execute(service);
+    public void update(ServiceTable serviceData) {
+        new UpdateAsyncTask(serviceDao).execute(serviceData);
     }
 
-    public void delete(ServiceTable service) {
-        new DeleteAsyncTask(serviceDao).execute(service);
+    public void delete(ServiceTable serviceData) {
+        new DeleteAsyncTask(serviceDao).execute(serviceData);
     }
 
     private static class GetServiceByIdAsyncTask extends AsyncTask<Long, Void, LiveData<ServiceTable>> {
@@ -68,7 +68,7 @@ public class ServiceRepository {
 
         @Override
         protected LiveData<ServiceTable> doInBackground(final Long... params) {
-            return serviceDao.getServiceById(params[0]);
+            return serviceDao.getServiceDataByID(params[0]);
         }
     }
 

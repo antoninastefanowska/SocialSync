@@ -13,16 +13,16 @@ import java.util.concurrent.ExecutionException;
 
 public class AccountRepository {
     private AccountDao accountDao;
-    private LiveData<List<AccountTable>> accounts;
+    private LiveData<List<AccountTable>> accountsData;
 
     public AccountRepository(Application application) {
         ApplicationDatabase db = ApplicationDatabase.getDatabase(application);
         accountDao = db.accountDao();
-        accounts = accountDao.getAccounts();
+        accountsData = accountDao.getAccountsData();
     }
 
-    public LiveData<List<AccountTable>> getAccounts() {
-        return accounts;
+    public LiveData<List<AccountTable>> getAccountsData() {
+        return accountsData;
     }
 
     public int count() {
@@ -35,32 +35,32 @@ public class AccountRepository {
         return result;
     }
 
-    public LiveData<List<AccountTable>> getAccountsByService(long serviceId) {
+    public LiveData<List<AccountTable>> getAccountsDataByService(long serviceID) {
         LiveData<List<AccountTable>> result = null;
         try {
-            result = new GetAccountsByServiceAsyncTask(accountDao).execute(serviceId).get();
+            result = new GetAccountsByServiceAsyncTask(accountDao).execute(serviceID).get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
         return result;
     }
 
-    public Long insert(AccountTable account) {
+    public Long insert(AccountTable accountData) {
         Long id = null;
         try {
-            id = new InsertAsyncTask(accountDao).execute(account).get();
+            id = new InsertAsyncTask(accountDao).execute(accountData).get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
         return id;
     }
 
-    public void delete(AccountTable account) {
-        new DeleteAsyncTask(accountDao).execute(account);
+    public void delete(AccountTable accountData) {
+        new DeleteAsyncTask(accountDao).execute(accountData);
     }
 
-    public void update(AccountTable account) {
-        new UpdateAsyncTask(accountDao).execute(account);
+    public void update(AccountTable accountData) {
+        new UpdateAsyncTask(accountDao).execute(accountData);
     }
 
     private static class CountAsyncTask extends AsyncTask<Void, Void, Integer> {
@@ -85,7 +85,7 @@ public class AccountRepository {
 
         @Override
         protected LiveData<List<AccountTable>> doInBackground(Long... params) {
-            return accountDao.getAccountsByService(params[0]);
+            return accountDao.getAccountsDataByService(params[0]);
         }
     }
 

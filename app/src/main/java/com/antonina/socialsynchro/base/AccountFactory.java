@@ -1,10 +1,11 @@
 package com.antonina.socialsynchro.base;
 
+import com.antonina.socialsynchro.database.IDatabaseEntity;
 import com.antonina.socialsynchro.database.tables.AccountTable;
 import com.antonina.socialsynchro.database.tables.ITable;
 import com.antonina.socialsynchro.services.twitter.TwitterAccount;
 
-public class AccountFactory {
+public class AccountFactory implements IFactory {
     private static AccountFactory instance;
 
     public static AccountFactory getInstance() {
@@ -15,13 +16,14 @@ public class AccountFactory {
 
     private AccountFactory() { }
 
-    public Account makeAccount(ITable table) {
-        AccountTable accountTable = (AccountTable)table;
-        ServiceID serviceId = ServiceID.values()[(int)accountTable.serviceId];
+    @Override
+    public IDatabaseEntity createFromData(ITable data) {
+        AccountTable accountData = (AccountTable)data;
+        ServiceID serviceID = ServiceID.values()[(int)accountData.serviceID];
 
-        switch (serviceId) {
+        switch(serviceID) {
             case Twitter:
-                return new TwitterAccount(table);
+                return new TwitterAccount(data);
             default:
                 return null;
         }
