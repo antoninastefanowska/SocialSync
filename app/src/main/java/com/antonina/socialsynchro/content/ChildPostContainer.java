@@ -20,6 +20,7 @@ public abstract class ChildPostContainer implements IPostContainer, IPost, IData
     protected ParentPostContainer parent;
 
     // TODO: dla każdej funkcji modyfikującej sprawdzić ograniczenia
+    // TODO: Zapamiętać: z bazy wczytane muszą być wpierw rodzice
 
     public ChildPostContainer(ITable data) {
         createFromData(data);

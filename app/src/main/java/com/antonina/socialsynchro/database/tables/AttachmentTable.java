@@ -8,7 +8,9 @@ import android.arch.persistence.room.PrimaryKey;
 import com.antonina.socialsynchro.content.attachments.Attachment;
 import com.antonina.socialsynchro.database.IDatabaseEntity;
 
-@Entity(tableName = "attachment", foreignKeys = @ForeignKey(entity = AttachmentTypeTable.class, parentColumns = "id", childColumns = "attachment_type_id"))
+@Entity(tableName = "attachment", foreignKeys = {
+        @ForeignKey(entity = AttachmentTypeTable.class, parentColumns = "id", childColumns = "attachment_type_id"),
+        @ForeignKey(entity = PostTable.class, parentColumns = "id", childColumns = "post_id")})
 public class AttachmentTable implements ITable {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
@@ -23,6 +25,9 @@ public class AttachmentTable implements ITable {
     @ColumnInfo(name = "attachment_type_id")
     public long attachmentTypeID;
 
+    @ColumnInfo(name = "post_id")
+    public long postID;
+
     @Override
     public void createFromEntity(IDatabaseEntity entity) {
         this.id = entity.getID();
@@ -35,5 +40,6 @@ public class AttachmentTable implements ITable {
         this.filename = attachment.getFilename();
         this.sizeKb = attachment.getSizeKb();
         this.attachmentTypeID = attachment.getAttachmentType().getID();
+        this.postID = attachment.getParentPost().getID();
     }
 }

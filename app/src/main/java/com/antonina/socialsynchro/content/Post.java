@@ -49,6 +49,7 @@ public class Post implements IPost, IDatabaseEntity {
         if (attachments == null)
             attachments = new ArrayList<Attachment>();
         attachments.add(attachment);
+        attachment.setParentPost(this);
     }
 
     @Override
@@ -56,6 +57,7 @@ public class Post implements IPost, IDatabaseEntity {
         if (attachments == null || attachments.isEmpty())
             return;
         attachments.remove(attachment);
+        attachment.setParentPost(null);
     }
 
     @Override

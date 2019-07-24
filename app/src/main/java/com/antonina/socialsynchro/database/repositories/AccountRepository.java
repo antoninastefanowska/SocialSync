@@ -13,23 +13,27 @@ import java.util.concurrent.ExecutionException;
 
 public class AccountRepository {
     private AccountDao accountDao;
-    private LiveData<List<AccountTable>> accountsData;
 
     public AccountRepository(Application application) {
         ApplicationDatabase db = ApplicationDatabase.getDatabase(application);
         accountDao = db.accountDao();
-        accountsData = accountDao.getAccountsData();
     }
 
     public LiveData<List<AccountTable>> getAccountsData() {
-        return accountsData;
+        LiveData<List<AccountTable>> result = null;
+        try {
+            result = new GetAccountsDataAsyncTask(accountDao).execute().get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public int count() {
         int result = 0;
         try {
             result = new CountAsyncTask(accountDao).execute().get();
-        } catch(ExecutionException | InterruptedException e) {
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
         return result;
@@ -38,7 +42,7 @@ public class AccountRepository {
     public LiveData<List<AccountTable>> getAccountsDataByService(long serviceID) {
         LiveData<List<AccountTable>> result = null;
         try {
-            result = new GetAccountsByServiceAsyncTask(accountDao).execute(serviceID).get();
+            result = new GetAccountsDataByServiceAsyncTask(accountDao).execute(serviceID).get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -63,6 +67,17 @@ public class AccountRepository {
         new UpdateAsyncTask(accountDao).execute(accountData);
     }
 
+    private static class GetAccountsDataAsyncTask extends AsyncTask<Void, Void, LiveData<List<AccountTable>>> {
+        private AccountDao accountDao;
+
+        public GetAccountsDataAsyncTask(AccountDao dao) { accountDao = dao; }
+
+        @Override
+        protected LiveData<List<AccountTable>> doInBackground(final Void... params) {
+            return accountDao.getAccountsData();
+        }
+    }
+
     private static class CountAsyncTask extends AsyncTask<Void, Void, Integer> {
         private AccountDao accountDao;
 
@@ -76,10 +91,10 @@ public class AccountRepository {
         }
     }
 
-    private static class GetAccountsByServiceAsyncTask extends AsyncTask<Long, Void, LiveData<List<AccountTable>>> {
+    private static class GetAccountsDataByServiceAsyncTask extends AsyncTask<Long, Void, LiveData<List<AccountTable>>> {
         private AccountDao accountDao;
 
-        public GetAccountsByServiceAsyncTask(AccountDao dao) {
+        public GetAccountsDataByServiceAsyncTask(AccountDao dao) {
             accountDao = dao;
         }
 

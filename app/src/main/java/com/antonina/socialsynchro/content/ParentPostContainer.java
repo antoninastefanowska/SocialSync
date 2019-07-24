@@ -76,6 +76,12 @@ public class ParentPostContainer implements IPostContainer, IPost, IDatabaseEnti
 
     public void addChild(ChildPostContainer child) {
         children.add(child);
+        child.setParent(this);
+    }
+
+    public void removeChild(ChildPostContainer child) {
+        children.remove(child);
+        child.setParent(null);
     }
 
     public Date getCreationDate() { return creationDate; }

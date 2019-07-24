@@ -19,7 +19,6 @@ import java.util.List;
 public class AccountViewModel extends AndroidViewModel {
     private static AccountViewModel instance;
     private AccountRepository accountRepository;
-    private LiveData<List<Account>> accounts;
 
     public static AccountViewModel getInstance(@NonNull Application application) {
         if (instance == null)
@@ -29,11 +28,12 @@ public class AccountViewModel extends AndroidViewModel {
 
     private AccountViewModel(@NonNull Application application) {
         super(application);
-
         accountRepository = new AccountRepository(application);
-        LiveData<List<AccountTable>> accountsData = accountRepository.getAccountsData();
+    }
 
-        accounts = Transformations.map(accountsData, new Function<List<AccountTable>, List<Account>>() {
+    public LiveData<List<Account>> getAccounts() {
+        LiveData<List<AccountTable>> accountsData = accountRepository.getAccountsData();
+        LiveData<List<Account>> accounts = Transformations.map(accountsData, new Function<List<AccountTable>, List<Account>>() {
             @Override
             public List<Account> apply(List<AccountTable> input) {
                 List<Account> output = new ArrayList<Account>();
@@ -44,9 +44,8 @@ public class AccountViewModel extends AndroidViewModel {
                 return output;
             }
         });
+        return accounts;
     }
-
-    public LiveData<List<Account>> getAccounts() { return accounts; }
 
     public int count() {
         return accountRepository.count();

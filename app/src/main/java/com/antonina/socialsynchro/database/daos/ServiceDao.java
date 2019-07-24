@@ -19,18 +19,6 @@ public interface ServiceDao {
     @Query("SELECT * FROM service WHERE id = :id")
     LiveData<ServiceTable> getServiceDataByID(long id);
 
-    @Query("SELECT COUNT(*) FROM service")
-    int count();
-
-    @Insert
-    long insert(ServiceTable serviceData);
-
     @Insert
     void insertMany(List<ServiceTable> servicesData);
-
-    @Update
-    void update(ServiceTable serviceData);
-
-    @Delete
-    void delete(ServiceTable serviceData);
 }
