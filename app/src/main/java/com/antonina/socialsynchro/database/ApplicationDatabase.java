@@ -9,20 +9,33 @@ import android.support.annotation.NonNull;
 
 import com.antonina.socialsynchro.base.ServiceID;
 import com.antonina.socialsynchro.database.daos.AccountDao;
+import com.antonina.socialsynchro.database.daos.AttachmentDao;
+import com.antonina.socialsynchro.database.daos.ChildPostContainerDao;
+import com.antonina.socialsynchro.database.daos.ParentPostContainerDao;
+import com.antonina.socialsynchro.database.daos.PostDao;
 import com.antonina.socialsynchro.database.daos.ServiceDao;
 import com.antonina.socialsynchro.database.tables.AccountTable;
+import com.antonina.socialsynchro.database.tables.AttachmentTable;
+import com.antonina.socialsynchro.database.tables.AttachmentTypeTable;
+import com.antonina.socialsynchro.database.tables.ChildPostContainerTable;
+import com.antonina.socialsynchro.database.tables.ParentPostContainerTable;
+import com.antonina.socialsynchro.database.tables.PostTable;
 import com.antonina.socialsynchro.database.tables.ServiceTable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 
-@Database(entities = {AccountTable.class, ServiceTable.class}, version = 1, exportSchema = false)
+@Database(entities = {AccountTable.class, ServiceTable.class, PostTable.class, AttachmentTable.class, AttachmentTypeTable.class, ChildPostContainerTable.class, ParentPostContainerTable.class}, version = 1, exportSchema = false)
 public abstract class ApplicationDatabase extends RoomDatabase {
     private static volatile ApplicationDatabase instance;
 
     public abstract AccountDao accountDao();
     public abstract ServiceDao serviceDao();
+    public abstract PostDao postDao();
+    public abstract AttachmentDao attachmentDao();
+    public abstract ChildPostContainerDao childPostContainerDao();
+    public abstract ParentPostContainerDao parentPostContainerDao();
 
     public static ApplicationDatabase getDatabase(final Context context) {
         if (instance == null) {

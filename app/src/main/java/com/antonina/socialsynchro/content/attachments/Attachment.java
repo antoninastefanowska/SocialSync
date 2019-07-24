@@ -1,5 +1,6 @@
 package com.antonina.socialsynchro.content.attachments;
 
+import com.antonina.socialsynchro.content.Post;
 import com.antonina.socialsynchro.database.IDatabaseEntity;
 import com.antonina.socialsynchro.database.tables.AttachmentTable;
 import com.antonina.socialsynchro.database.tables.ITable;
@@ -9,6 +10,7 @@ public abstract class Attachment implements IDatabaseEntity {
     private String filename;
     private int sizeKb;
     private AttachmentType attachmentType;
+    private Post parentPost;
 
     @Override
     public long getID() { return id; }
@@ -24,6 +26,10 @@ public abstract class Attachment implements IDatabaseEntity {
     public AttachmentType getAttachmentType() { return attachmentType; }
 
     public void setAttachmentType(AttachmentType attachmentType) { this.attachmentType = attachmentType; }
+
+    public Post getParentPost() { return parentPost; }
+
+    public void setParentPost(Post parentPost) { this.parentPost = parentPost; }
 
     public Attachment(ITable data) {
         createFromData(data);
