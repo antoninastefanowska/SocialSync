@@ -29,10 +29,10 @@ public class PostRepository {
         return result;
     }
 
-    public LiveData<PostTable> getPostDataByID(long id) {
+    public LiveData<PostTable> getPostDataByID(long postID) {
         LiveData<PostTable> result = null;
         try {
-            result = new GetPostDataByIDAsyncTask(postDao).execute(id).get();
+            result = new GetPostDataByIDAsyncTask(postDao).execute(postID).get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }

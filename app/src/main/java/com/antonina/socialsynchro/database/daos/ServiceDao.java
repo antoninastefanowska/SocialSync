@@ -16,8 +16,8 @@ public interface ServiceDao {
     @Query("SELECT * FROM service")
     LiveData<List<ServiceTable>> getServicesData();
 
-    @Query("SELECT * FROM service WHERE id = :id")
-    LiveData<ServiceTable> getServiceDataByID(long id);
+    @Query("SELECT * FROM service WHERE id = :serviceID")
+    LiveData<ServiceTable> getServiceDataByID(long serviceID);
 
     @Insert
     void insertMany(List<ServiceTable> servicesData);

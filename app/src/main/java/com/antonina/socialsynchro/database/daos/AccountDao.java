@@ -19,8 +19,11 @@ public interface AccountDao {
     @Query("SELECT COUNT(*) FROM account")
     int count();
 
-    @Query("SELECT * FROM account WHERE service_id = :serviceId")
-    LiveData<List<AccountTable>> getAccountsDataByService(long serviceId);
+    @Query("SELECT * FROM account WHERE id = :accountID")
+    LiveData<AccountTable> getAccountByID(long accountID);
+
+    @Query("SELECT * FROM account WHERE service_id = :serviceID")
+    LiveData<List<AccountTable>> getAccountsDataByService(long serviceID);
 
     @Insert
     long insert(AccountTable accountData);

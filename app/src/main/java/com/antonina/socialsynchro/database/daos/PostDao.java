@@ -16,8 +16,8 @@ public interface PostDao {
     @Query("SELECT * FROM post")
     LiveData<List<PostTable>> getPostsData();
 
-    @Query("SELECT * FROM post WHERE id = :id")
-    LiveData<PostTable> getPostDataByID(long id);
+    @Query("SELECT * FROM post WHERE id = :postID")
+    LiveData<PostTable> getPostDataByID(long postID);
 
     @Query("SELECT COUNT(*) FROM post")
     int count();

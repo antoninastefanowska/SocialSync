@@ -39,6 +39,16 @@ public class AccountRepository {
         return result;
     }
 
+    public LiveData<AccountTable> getAccountByID(long accountID) {
+        LiveData<AccountTable> result = null;
+        try {
+            result = new GetAccountByIDAsyncTask(accountDao).execute(accountID).get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
     public LiveData<List<AccountTable>> getAccountsDataByService(long serviceID) {
         LiveData<List<AccountTable>> result = null;
         try {
@@ -88,6 +98,17 @@ public class AccountRepository {
         @Override
         protected Integer doInBackground(final Void... params) {
             return accountDao.count();
+        }
+    }
+
+    private static class GetAccountByIDAsyncTask extends AsyncTask<Long, Void, LiveData<AccountTable>> {
+        private AccountDao accountDao;
+
+        public GetAccountByIDAsyncTask(AccountDao dao) { accountDao = dao; }
+
+        @Override
+        protected LiveData<AccountTable> doInBackground(Long... params) {
+            return accountDao.getAccountByID(params[0]);
         }
     }
 

@@ -14,11 +14,14 @@ import com.antonina.socialsynchro.database.repositories.AccountRepository;
 import com.antonina.socialsynchro.database.tables.AccountTable;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AccountViewModel extends AndroidViewModel {
     private static AccountViewModel instance;
     private AccountRepository accountRepository;
+    private LiveData<Map<Long, Account>> accounts;
 
     public static AccountViewModel getInstance(@NonNull Application application) {
         if (instance == null)
@@ -31,15 +34,15 @@ public class AccountViewModel extends AndroidViewModel {
         accountRepository = new AccountRepository(application);
     }
 
-    public LiveData<List<Account>> getAccounts() {
+    public LiveData<Map<Long, Account>> getAccounts() {
         LiveData<List<AccountTable>> accountsData = accountRepository.getAccountsData();
-        LiveData<List<Account>> accounts = Transformations.map(accountsData, new Function<List<AccountTable>, List<Account>>() {
+        accounts = Transformations.map(accountsData, new Function<List<AccountTable>, Map<Long, Account>>() {
             @Override
-            public List<Account> apply(List<AccountTable> input) {
-                List<Account> output = new ArrayList<Account>();
+            public Map<Long, Account> apply(List<AccountTable> input) {
+                Map<Long, Account> output = new HashMap<Long, Account>();
                 for (AccountTable accountData : input) {
                     Account account = (Account)AccountFactory.getInstance().createFromData(accountData);
-                    output.add(account);
+                    output.put(account.getID(), account);
                 }
                 return output;
             }
@@ -49,6 +52,30 @@ public class AccountViewModel extends AndroidViewModel {
 
     public int count() {
         return accountRepository.count();
+    }
+
+    public LiveData<Account> getAccountByID(final long accountID) {
+        LiveData<Account> account;
+        if (accounts != null && accounts.getValue() != null && accounts.getValue().containsKey(accountID)) {
+            account = Transformations.map(accounts, new Function<Map<Long, Account>, Account>() {
+                @Override
+                public Account apply(Map<Long, Account> input) {
+                    return input.get(accountID);
+                }
+            });
+        }
+        else {
+            LiveData<AccountTable> accountData = accountRepository.getAccountByID(accountID);
+            account = Transformations.map(accountData, new Function<AccountTable, Account>() {
+                @Override
+                public Account apply(AccountTable input) {
+                    Account output = (Account)AccountFactory.getInstance().createFromData(input);
+                    accounts.getValue().put(output.getID(), output);
+                    return output;
+                }
+            });
+        }
+        return account;
     }
 
     public LiveData<List<Account>> getAccountsByService(Service service) {

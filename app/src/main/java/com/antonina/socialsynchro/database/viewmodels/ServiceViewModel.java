@@ -57,6 +57,4 @@ public class ServiceViewModel extends AndroidViewModel {
         });
         return service;
     }
-
-    public int count() { return serviceRepository.count(); }
 }
