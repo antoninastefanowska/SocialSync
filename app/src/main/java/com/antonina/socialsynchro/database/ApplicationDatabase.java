@@ -8,8 +8,10 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.antonina.socialsynchro.base.ServiceID;
+import com.antonina.socialsynchro.content.attachments.AttachmentTypeID;
 import com.antonina.socialsynchro.database.daos.AccountDao;
 import com.antonina.socialsynchro.database.daos.AttachmentDao;
+import com.antonina.socialsynchro.database.daos.AttachmentTypeDao;
 import com.antonina.socialsynchro.database.daos.ChildPostContainerDao;
 import com.antonina.socialsynchro.database.daos.ParentPostContainerDao;
 import com.antonina.socialsynchro.database.daos.PostDao;
@@ -34,6 +36,7 @@ public abstract class ApplicationDatabase extends RoomDatabase {
     public abstract ServiceDao serviceDao();
     public abstract PostDao postDao();
     public abstract AttachmentDao attachmentDao();
+    public abstract AttachmentTypeDao attachmentTypeDao();
     public abstract ChildPostContainerDao childPostContainerDao();
     public abstract ParentPostContainerDao parentPostContainerDao();
 
@@ -49,6 +52,7 @@ public abstract class ApplicationDatabase extends RoomDatabase {
                                 @Override
                                 public void run() {
                                     getDatabase(context).serviceDao().insertMany(createServicesData());
+                                    getDatabase(context).attachmentTypeDao().insertMany(createAttachmentTypesData());
                                 }
                             });
                         }
@@ -61,8 +65,19 @@ public abstract class ApplicationDatabase extends RoomDatabase {
 
     private static List<ServiceTable> createServicesData() {
         List<ServiceTable> servicesData = new ArrayList<ServiceTable>();
-        ServiceTable serviceData = new ServiceTable((long)ServiceID.Twitter.ordinal(), "Twitter", "", "");
-        servicesData.add(serviceData);
+        for (ServiceID serviceID : ServiceID.values()) {
+            ServiceTable serviceData = new ServiceTable((long)serviceID.ordinal(), serviceID.name(), "", "");
+            servicesData.add(serviceData);
+        }
         return servicesData;
+    }
+
+    private static List<AttachmentTypeTable> createAttachmentTypesData() {
+        List<AttachmentTypeTable> attachmentTypeTablesData = new ArrayList<AttachmentTypeTable>();
+        for (AttachmentTypeID attachmentTypeID : AttachmentTypeID.values()) {
+            AttachmentTypeTable attachmentTypeData = new AttachmentTypeTable((long)attachmentTypeID.ordinal(), attachmentTypeID.name(), "");
+            attachmentTypeTablesData.add(attachmentTypeData);
+        }
+        return attachmentTypeTablesData;
     }
 }

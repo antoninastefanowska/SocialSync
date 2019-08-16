@@ -1,9 +1,16 @@
 package com.antonina.socialsynchro.content.attachments;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.support.annotation.Nullable;
+
+import com.antonina.socialsynchro.SocialSynchro;
 import com.antonina.socialsynchro.content.Post;
 import com.antonina.socialsynchro.database.IDatabaseEntity;
 import com.antonina.socialsynchro.database.tables.AttachmentTable;
 import com.antonina.socialsynchro.database.tables.ITable;
+import com.antonina.socialsynchro.database.viewmodels.AttachmentTypeViewModel;
+import com.antonina.socialsynchro.database.viewmodels.PostViewModel;
 
 public abstract class Attachment implements IDatabaseEntity {
     private long id;
@@ -29,7 +36,10 @@ public abstract class Attachment implements IDatabaseEntity {
 
     public Post getParentPost() { return parentPost; }
 
-    public void setParentPost(Post parentPost) { this.parentPost = parentPost; }
+    public void setParentPost(Post parentPost) {
+        this.parentPost = parentPost;
+        parentPost.addAttachment(this);
+    }
 
     public Attachment(ITable data) {
         createFromData(data);
@@ -42,6 +52,23 @@ public abstract class Attachment implements IDatabaseEntity {
         this.filename = attachmentData.filename;
         this.sizeKb = attachmentData.sizeKb;
 
-        // TODO: Wydobyć attachmentType z bazy.
+        final Attachment instance = this;
+
+        final LiveData<Post> postLiveData = PostViewModel.getInstance(SocialSynchro.getInstance()).getEntityByID(attachmentData.postID);
+        postLiveData.observeForever(new Observer<Post>() {
+            @Override
+            public void onChanged(@Nullable Post post) {
+                instance.setParentPost(post);
+                postLiveData.removeObserver(this);
+            }
+        });
+        final LiveData<AttachmentType> attachmentTypeLiveData = AttachmentTypeViewModel.getInstance(SocialSynchro.getInstance()).getEntityByID(attachmentData.attachmentTypeID);
+        attachmentTypeLiveData.observeForever(new Observer<AttachmentType>() {
+            @Override
+            public void onChanged(@Nullable AttachmentType attachmentType) {
+                instance.attachmentType = attachmentType;
+                attachmentTypeLiveData.removeObserver(this);
+            }
+        });
     }
 }

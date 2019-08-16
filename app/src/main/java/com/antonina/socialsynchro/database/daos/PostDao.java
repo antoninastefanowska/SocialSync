@@ -12,12 +12,12 @@ import com.antonina.socialsynchro.database.tables.PostTable;
 import java.util.List;
 
 @Dao
-public interface PostDao {
+public interface PostDao extends EditableDao<PostTable> {
     @Query("SELECT * FROM post")
-    LiveData<List<PostTable>> getPostsData();
+    LiveData<List<PostTable>> getAllData();
 
     @Query("SELECT * FROM post WHERE id = :postID")
-    LiveData<PostTable> getPostDataByID(long postID);
+    LiveData<PostTable> getDataByID(long postID);
 
     @Query("SELECT COUNT(*) FROM post")
     int count();

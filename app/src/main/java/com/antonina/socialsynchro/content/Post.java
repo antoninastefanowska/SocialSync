@@ -19,6 +19,8 @@ public class Post implements IPost, IDatabaseEntity {
         content = "";
     }
 
+    public Post(ITable data) { createFromData(data); }
+
     @Override
     public String getContent() {
         return content;
@@ -49,7 +51,6 @@ public class Post implements IPost, IDatabaseEntity {
         if (attachments == null)
             attachments = new ArrayList<Attachment>();
         attachments.add(attachment);
-        attachment.setParentPost(this);
     }
 
     @Override
@@ -57,7 +58,6 @@ public class Post implements IPost, IDatabaseEntity {
         if (attachments == null || attachments.isEmpty())
             return;
         attachments.remove(attachment);
-        attachment.setParentPost(null);
     }
 
     @Override
@@ -66,7 +66,6 @@ public class Post implements IPost, IDatabaseEntity {
         this.id = postData.id;
         this.title = postData.title;
         this.content = postData.content;
-        // TODO: Wydobyć attachments z bazy
     }
 
     @Override

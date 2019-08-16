@@ -32,8 +32,7 @@ public abstract class Account implements IDatabaseEntity {
         this.secretToken = accountData.secretToken;
 
         final Account instance = this;
-
-        final LiveData<Service> serviceLiveData = ServiceViewModel.getInstance(SocialSynchro.getInstance()).getServiceByID(accountData.serviceID);
+        final LiveData<Service> serviceLiveData = ServiceViewModel.getInstance(SocialSynchro.getInstance()).getEntityByID(accountData.serviceID);
         serviceLiveData.observeForever(new Observer<Service>() {
             @Override
             public void onChanged(@Nullable Service service) {

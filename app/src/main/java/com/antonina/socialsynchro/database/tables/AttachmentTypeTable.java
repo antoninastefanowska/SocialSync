@@ -13,11 +13,20 @@ public class AttachmentTypeTable implements ITable {
     @ColumnInfo(name = "id")
     public long id;
 
+    @ColumnInfo(name = "name")
+    public String name;
+
     @ColumnInfo(name = "icon_url")
     public String iconUrl;
 
+    public AttachmentTypeTable(long id, String name, String iconUrl) {
+        this.id = id;
+        this.name = name;
+        this.iconUrl = iconUrl;
+    }
+
     @Override
-    public void createFromEntity(IDatabaseEntity entity) {
+    public void createFromExistingEntity(IDatabaseEntity entity) {
         this.id = entity.getID();
         createFromNewEntity(entity);
     }
@@ -25,6 +34,7 @@ public class AttachmentTypeTable implements ITable {
     @Override
     public void createFromNewEntity(IDatabaseEntity entity) {
         AttachmentType attachmentType = (AttachmentType)entity;
+        this.name = attachmentType.getName();
         this.iconUrl = attachmentType.getIconUrl();
     }
 }

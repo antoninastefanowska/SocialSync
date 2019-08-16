@@ -22,10 +22,10 @@ public class ParentPostContainerTable implements ITable {
     public long postID;
 
     @ColumnInfo(name = "creation_date")
-    private Date creationDate;
+    public Date creationDate;
 
     @Override
-    public void createFromEntity(IDatabaseEntity entity) {
+    public void createFromExistingEntity(IDatabaseEntity entity) {
         this.id = entity.getID();
         createFromNewEntity(entity);
     }

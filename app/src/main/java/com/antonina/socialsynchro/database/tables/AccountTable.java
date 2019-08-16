@@ -36,7 +36,7 @@ public class AccountTable implements ITable {
     public long serviceID;
 
     @Override
-    public void createFromEntity(IDatabaseEntity entity) {
+    public void createFromExistingEntity(IDatabaseEntity entity) {
         this.id = entity.getID();
         createFromNewEntity(entity);
     }

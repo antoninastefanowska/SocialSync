@@ -29,7 +29,7 @@ public class AttachmentTable implements ITable {
     public long postID;
 
     @Override
-    public void createFromEntity(IDatabaseEntity entity) {
+    public void createFromExistingEntity(IDatabaseEntity entity) {
         this.id = entity.getID();
         createFromNewEntity(entity);
     }

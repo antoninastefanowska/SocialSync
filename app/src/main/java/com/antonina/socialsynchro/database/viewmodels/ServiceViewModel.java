@@ -11,13 +11,14 @@ import com.antonina.socialsynchro.base.Service;
 import com.antonina.socialsynchro.database.repositories.ServiceRepository;
 import com.antonina.socialsynchro.database.tables.ServiceTable;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class ServiceViewModel extends AndroidViewModel {
+public class ServiceViewModel extends AndroidViewModel implements IReadOnlyViewModel<Service> {
     private static ServiceViewModel instance;
     private ServiceRepository serviceRepository;
-    private LiveData<List<Service>> services;
+    private LiveData<Map<Long, Service>> services;
 
     public static ServiceViewModel getInstance(@NonNull Application application) {
         if (instance == null)
@@ -29,32 +30,38 @@ public class ServiceViewModel extends AndroidViewModel {
         super(application);
 
         serviceRepository = new ServiceRepository(application);
-        LiveData<List<ServiceTable>> servicesData = serviceRepository.getServicesData();
+        LiveData<List<ServiceTable>> servicesData = serviceRepository.getAllData();
 
-        services = Transformations.map(servicesData, new Function<List<ServiceTable>, List<Service>>() {
+        services = Transformations.map(servicesData, new Function<List<ServiceTable>, Map<Long, Service>>() {
             @Override
-            public List<Service> apply(List<ServiceTable> input) {
-                List<Service> output = new ArrayList<Service>();
+            public Map<Long, Service> apply(List<ServiceTable> input) {
+                Map<Long, Service> output = new HashMap<Long, Service>();
                 for (ServiceTable serviceData : input) {
                     Service service = new Service(serviceData);
-                    output.add(service);
+                    output.put(service.getID(), service);
                 }
                 return output;
             }
         });
     }
 
-    public LiveData<List<Service>> getServices() { return services; }
+    @Override
+    public LiveData<Map<Long, Service>> getAllEntities() { return services; }
 
-    public LiveData<Service> getServiceByID(long serviceID) {
-        LiveData<ServiceTable> serviceData = serviceRepository.getServiceDataByID(serviceID);
-        LiveData<Service> service = Transformations.map(serviceData, new Function<ServiceTable, Service>() {
+    @Override
+    public LiveData<Service> getEntityByID(long serviceID) {
+        final long id = serviceID;
+        LiveData<Service> service = Transformations.map(services, new Function<Map<Long, Service>, Service>() {
             @Override
-            public Service apply (ServiceTable input) {
-                Service output = new Service(input);
-                return output;
+            public Service apply(Map<Long, Service> input) {
+                return input.get(id);
             }
         });
         return service;
+    }
+
+    @Override
+    public int count() {
+        return serviceRepository.count();
     }
 }

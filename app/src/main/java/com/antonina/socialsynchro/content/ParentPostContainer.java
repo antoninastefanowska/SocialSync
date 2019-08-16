@@ -1,8 +1,15 @@
 package com.antonina.socialsynchro.content;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.support.annotation.Nullable;
+
+import com.antonina.socialsynchro.SocialSynchro;
 import com.antonina.socialsynchro.content.attachments.Attachment;
 import com.antonina.socialsynchro.database.IDatabaseEntity;
 import com.antonina.socialsynchro.database.tables.ITable;
+import com.antonina.socialsynchro.database.tables.ParentPostContainerTable;
+import com.antonina.socialsynchro.database.viewmodels.PostViewModel;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -17,6 +24,10 @@ public class ParentPostContainer implements IPostContainer, IPost, IDatabaseEnti
     public ParentPostContainer() {
         post = new Post();
         children = new ArrayList<ChildPostContainer>();
+    }
+
+    public ParentPostContainer(ITable data) {
+        createFromData(data);
     }
 
     @Override
@@ -76,19 +87,29 @@ public class ParentPostContainer implements IPostContainer, IPost, IDatabaseEnti
 
     public void addChild(ChildPostContainer child) {
         children.add(child);
-        child.setParent(this);
     }
 
     public void removeChild(ChildPostContainer child) {
         children.remove(child);
-        child.setParent(null);
     }
 
     public Date getCreationDate() { return creationDate; }
 
     @Override
     public void createFromData(ITable data) {
+        ParentPostContainerTable parentPostContainerData = (ParentPostContainerTable)data;
+        this.id = parentPostContainerData.id;
+        this.creationDate = parentPostContainerData.creationDate;
 
+        final ParentPostContainer instance = this;
+        final LiveData<Post> postLiveData = PostViewModel.getInstance(SocialSynchro.getInstance()).getEntityByID(parentPostContainerData.postID);
+        postLiveData.observeForever(new Observer<Post>() {
+            @Override
+            public void onChanged(@Nullable Post post) {
+                instance.post = post;
+                postLiveData.removeObserver(this);
+            }
+        });
     }
 
     @Override

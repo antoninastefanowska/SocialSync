@@ -18,9 +18,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class AccountViewModel extends AndroidViewModel {
+public class AccountViewModel extends AndroidViewModel implements IEditableViewModel<Account> {
     private static AccountViewModel instance;
-    private AccountRepository accountRepository;
+    private AccountRepository repository;
     private LiveData<Map<Long, Account>> accounts;
 
     public static AccountViewModel getInstance(@NonNull Application application) {
@@ -31,11 +31,9 @@ public class AccountViewModel extends AndroidViewModel {
 
     private AccountViewModel(@NonNull Application application) {
         super(application);
-        accountRepository = new AccountRepository(application);
-    }
+        repository = new AccountRepository(application);
 
-    public LiveData<Map<Long, Account>> getAccounts() {
-        LiveData<List<AccountTable>> accountsData = accountRepository.getAccountsData();
+        LiveData<List<AccountTable>> accountsData = repository.getAllData();
         accounts = Transformations.map(accountsData, new Function<List<AccountTable>, Map<Long, Account>>() {
             @Override
             public Map<Long, Account> apply(List<AccountTable> input) {
@@ -47,42 +45,33 @@ public class AccountViewModel extends AndroidViewModel {
                 return output;
             }
         });
-        return accounts;
     }
 
+    @Override
+    public LiveData<Map<Long, Account>> getAllEntities() { return accounts; }
+
+    @Override
     public int count() {
-        return accountRepository.count();
+        return repository.count();
     }
 
-    public LiveData<Account> getAccountByID(final long accountID) {
-        LiveData<Account> account;
-        if (accounts != null && accounts.getValue() != null && accounts.getValue().containsKey(accountID)) {
-            account = Transformations.map(accounts, new Function<Map<Long, Account>, Account>() {
-                @Override
-                public Account apply(Map<Long, Account> input) {
-                    return input.get(accountID);
-                }
-            });
-        }
-        else {
-            LiveData<AccountTable> accountData = accountRepository.getAccountByID(accountID);
-            account = Transformations.map(accountData, new Function<AccountTable, Account>() {
-                @Override
-                public Account apply(AccountTable input) {
-                    Account output = (Account)AccountFactory.getInstance().createFromData(input);
-                    accounts.getValue().put(output.getID(), output);
-                    return output;
-                }
-            });
-        }
+    @Override
+    public LiveData<Account> getEntityByID(long accountID) {
+        final long id = accountID;
+        LiveData<Account> account = Transformations.map(accounts, new Function<Map<Long, Account>, Account>() {
+            @Override
+            public Account apply(Map<Long, Account> input) {
+                return input.get(id);
+            }
+        });
         return account;
     }
 
-    public LiveData<List<Account>> getAccountsByService(Service service) {
+    public LiveData<List<Account>> getEntityByService(Service service) {
         long serviceID = service.getID();
-        LiveData<List<AccountTable>> accountsData = accountRepository.getAccountsDataByService(serviceID);
+        LiveData<List<AccountTable>> accountsData = repository.getDataByService(serviceID);
 
-        LiveData<List<Account>> transformedAccounts = Transformations.map(accountsData, new Function<List<AccountTable>, List<Account>>() {
+        LiveData<List<Account>> filteredAccounts = Transformations.map(accountsData, new Function<List<AccountTable>, List<Account>>() {
             @Override
             public List<Account> apply(List<AccountTable> input) {
                 List<Account> output = new ArrayList<Account>();
@@ -93,27 +82,27 @@ public class AccountViewModel extends AndroidViewModel {
                 return output;
             }
         });
-
-        return transformedAccounts;
+        return filteredAccounts;
     }
 
-    // TODO: Upewnić się, że zachowana jest spójność między listą Account i listą AccountTable w repo - dotyczy wszystkich encji
-
+    @Override
     public long insert(Account account) {
         AccountTable data = new AccountTable();
         data.createFromNewEntity(account);
-        return accountRepository.insert(data);
+        return repository.insert(data);
     }
 
+    @Override
     public void delete(Account account) {
         AccountTable data = new AccountTable();
-        data.createFromEntity(account);
-        accountRepository.delete(data);
+        data.createFromExistingEntity(account);
+        repository.delete(data);
     }
 
+    @Override
     public void update(Account account) {
         AccountTable data = new AccountTable();
-        data.createFromEntity(account);
-        accountRepository.update(data);
+        data.createFromExistingEntity(account);
+        repository.update(data);
     }
 }

@@ -19,12 +19,14 @@ public class PostTable implements ITable {
     @ColumnInfo(name = "content")
     public String content;
 
+    public PostTable() { }
+
     public PostTable(IDatabaseEntity entity) {
-        createFromEntity(entity);
+        createFromExistingEntity(entity);
     }
 
     @Override
-    public void createFromEntity(IDatabaseEntity entity) {
+    public void createFromExistingEntity(IDatabaseEntity entity) {
         this.id = entity.getID();
         createFromNewEntity(entity);
     }

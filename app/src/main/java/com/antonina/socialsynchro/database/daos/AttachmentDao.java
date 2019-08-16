@@ -12,12 +12,15 @@ import com.antonina.socialsynchro.database.tables.AttachmentTable;
 import java.util.List;
 
 @Dao
-public interface AttachmentDao {
+public interface AttachmentDao extends EditableDao<AttachmentTable> {
     @Query("SELECT * FROM attachment")
-    LiveData<List<AttachmentTable>> getAttachmentsData();
+    LiveData<List<AttachmentTable>> getAllData();
+
+    @Query("SELECT * FROM attachment WHERE id = :attachmentID")
+    LiveData<AttachmentTable> getDataByID(long attachmentID);
 
     @Query("SELECT * FROM attachment WHERE post_id = :postID")
-    LiveData<List<AttachmentTable>> getAttachmentsDataByPost(long postID);
+    LiveData<List<AttachmentTable>> getDataByPost(long postID);
 
     @Query("SELECT COUNT(*) FROM attachment")
     int count();

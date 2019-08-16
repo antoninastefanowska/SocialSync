@@ -43,7 +43,7 @@ public class ChildPostContainerTable implements ITable {
     public Long postID;
 
     @Override
-    public void createFromEntity(IDatabaseEntity entity) {
+    public void createFromExistingEntity(IDatabaseEntity entity) {
         this.id = entity.getID();
         createFromNewEntity(entity);
     }

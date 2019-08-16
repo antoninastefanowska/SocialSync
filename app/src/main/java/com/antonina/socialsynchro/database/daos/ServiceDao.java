@@ -12,12 +12,15 @@ import com.antonina.socialsynchro.database.tables.ServiceTable;
 import java.util.List;
 
 @Dao
-public interface ServiceDao {
+public interface ServiceDao extends ReadOnlyDao<ServiceTable> {
     @Query("SELECT * FROM service")
-    LiveData<List<ServiceTable>> getServicesData();
+    LiveData<List<ServiceTable>> getAllData();
 
     @Query("SELECT * FROM service WHERE id = :serviceID")
-    LiveData<ServiceTable> getServiceDataByID(long serviceID);
+    LiveData<ServiceTable> getDataByID(long serviceID);
+
+    @Query("SELECT COUNT(*) FROM service")
+    int count();
 
     @Insert
     void insertMany(List<ServiceTable> servicesData);

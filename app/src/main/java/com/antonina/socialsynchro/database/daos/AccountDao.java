@@ -12,18 +12,18 @@ import com.antonina.socialsynchro.database.tables.AccountTable;
 import java.util.List;
 
 @Dao
-public interface AccountDao {
+public interface AccountDao extends EditableDao<AccountTable> {
     @Query("SELECT * FROM account")
-    LiveData<List<AccountTable>> getAccountsData();
+    LiveData<List<AccountTable>> getAllData();
 
     @Query("SELECT COUNT(*) FROM account")
     int count();
 
     @Query("SELECT * FROM account WHERE id = :accountID")
-    LiveData<AccountTable> getAccountByID(long accountID);
+    LiveData<AccountTable> getDataByID(long accountID);
 
     @Query("SELECT * FROM account WHERE service_id = :serviceID")
-    LiveData<List<AccountTable>> getAccountsDataByService(long serviceID);
+    LiveData<List<AccountTable>> getDataByService(long serviceID);
 
     @Insert
     long insert(AccountTable accountData);

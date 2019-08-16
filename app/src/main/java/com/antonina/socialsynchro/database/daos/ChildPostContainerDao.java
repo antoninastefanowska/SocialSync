@@ -12,12 +12,12 @@ import com.antonina.socialsynchro.database.tables.ChildPostContainerTable;
 import java.util.List;
 
 @Dao
-public interface ChildPostContainerDao {
+public interface ChildPostContainerDao extends EditableDao<ChildPostContainerTable> {
     @Query("SELECT * FROM child_post_container")
-    LiveData<List<ChildPostContainerTable>> getChildPostContainersData();
+    LiveData<List<ChildPostContainerTable>> getAllData();
 
     @Query("SELECT * FROM child_post_container WHERE parent_id = :parentID")
-    LiveData<List<ChildPostContainerTable>> getChildPostContainersDataByParent(long parentID);
+    LiveData<List<ChildPostContainerTable>> getDataByParent(long parentID);
 
     @Query("SELECT COUNT(*) FROM child_post_container")
     int count();

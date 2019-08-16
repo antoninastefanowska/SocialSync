@@ -1,10 +1,18 @@
 package com.antonina.socialsynchro.content;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.support.annotation.Nullable;
+
+import com.antonina.socialsynchro.SocialSynchro;
 import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.content.attachments.Attachment;
 import com.antonina.socialsynchro.database.IDatabaseEntity;
 import com.antonina.socialsynchro.database.tables.ChildPostContainerTable;
 import com.antonina.socialsynchro.database.tables.ITable;
+import com.antonina.socialsynchro.database.viewmodels.AccountViewModel;
+import com.antonina.socialsynchro.database.viewmodels.ParentPostContainerViewModel;
+import com.antonina.socialsynchro.database.viewmodels.PostViewModel;
 
 import java.util.Date;
 import java.util.List;
@@ -139,7 +147,15 @@ public abstract class ChildPostContainer implements IPostContainer, IPost, IData
 
     public ParentPostContainer getParent() { return parent; }
 
-    public void setParent(ParentPostContainer parent) { this.parent = parent; }
+    public void setParent(ParentPostContainer parent) {
+        this.parent = parent;
+        parent.addChild(this);
+    }
+
+    public void removeParent() {
+        parent.removeChild(this);
+        this.parent = null;
+    }
 
     @Override
     public void createFromData(ITable data) {
@@ -149,6 +165,31 @@ public abstract class ChildPostContainer implements IPostContainer, IPost, IData
         this.locked = childPostContainerData.locked;
         this.synchronizationDate = childPostContainerData.synchronizationDate;
 
-        //TODO: Wydobyć z bazy post i account.
+        final ChildPostContainer instance = this;
+
+        final LiveData<ParentPostContainer> parentPostContainerLiveData = ParentPostContainerViewModel.getInstance(SocialSynchro.getInstance()).getEntityByID(childPostContainerData.parentID);
+        parentPostContainerLiveData.observeForever(new Observer<ParentPostContainer>() {
+            @Override
+            public void onChanged(@Nullable ParentPostContainer parentPostContainer) {
+                instance.setParent(parentPostContainer);
+                parentPostContainerLiveData.removeObserver(this);
+            }
+        });
+        final LiveData<Post> postLiveData = PostViewModel.getInstance(SocialSynchro.getInstance()).getEntityByID(childPostContainerData.postID);
+        postLiveData.observeForever(new Observer<Post>() {
+            @Override
+            public void onChanged(@Nullable Post post) {
+                instance.post = post;
+                postLiveData.removeObserver(this);
+            }
+        });
+        final LiveData<Account> accountLiveData = AccountViewModel.getInstance(SocialSynchro.getInstance()).getEntityByID(childPostContainerData.accountID);
+        accountLiveData.observeForever(new Observer<Account>() {
+            @Override
+            public void onChanged(@Nullable Account account) {
+                instance.account = account;
+                accountLiveData.removeObserver(this);
+            }
+        });
     }
 }
