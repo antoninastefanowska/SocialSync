@@ -2,17 +2,52 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".gui.AccountsActivity"
+    tools:context=".gui.activities.AccountsActivity"
     tools:showIn="@layout/activity_accounts">
 
+    <data>
+        <variable
+            name="accountAdapter"
+            type="com.antonina.socialsynchro.gui.adapters.AccountAdapter" />
+    </data>
+
     <android.support.constraint.ConstraintLayout
+        android:id="@+id/clMain"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/colorBackground">
 
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/margin_standard"
+            android:orientation="vertical">
 
+            <HorizontalScrollView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/btAddAccount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:onClick="btAddAccount_onClick"
+                    android:text="Add account"
+                    style="@style/ButtonStyle" />
+
+            </HorizontalScrollView>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvAccounts"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical"
+                android:adapter="@{accountAdapter}"
+                android:padding="@dimen/padding_standard" />
+
+        </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>
 

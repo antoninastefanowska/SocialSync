@@ -13,17 +13,18 @@ import com.antonina.socialsynchro.database.tables.ITable;
 import com.antonina.socialsynchro.database.viewmodels.AccountViewModel;
 import com.antonina.socialsynchro.database.viewmodels.ParentPostContainerViewModel;
 import com.antonina.socialsynchro.database.viewmodels.PostViewModel;
+import com.antonina.socialsynchro.gui.SelectableItem;
 
 import java.util.Date;
 import java.util.List;
 
-public abstract class ChildPostContainer implements IPostContainer, IPost, IDatabaseEntity {
+public abstract class ChildPostContainer extends SelectableItem implements IPostContainer, IPost, IDatabaseEntity {
     private long id;
     private String serviceExternalIdentifier;
     private Post post;
     private boolean locked;
-    private Account account;
     private Date synchronizationDate;
+    private Account account;
 
     protected ParentPostContainer parent;
 

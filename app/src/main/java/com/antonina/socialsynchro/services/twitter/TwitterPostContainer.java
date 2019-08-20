@@ -1,9 +1,16 @@
 package com.antonina.socialsynchro.services.twitter;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.support.annotation.Nullable;
+
 import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.content.ChildPostContainer;
 import com.antonina.socialsynchro.content.ParentPostContainer;
 import com.antonina.socialsynchro.database.tables.ITable;
+import com.antonina.socialsynchro.services.twitter.requests.TwitterCreateContentRequest;
+import com.antonina.socialsynchro.services.twitter.requests.TwitterRemoveContentRequest;
+import com.antonina.socialsynchro.services.twitter.responses.TwitterContentResponse;
 
 public class TwitterPostContainer extends ChildPostContainer {
     private static final int MAX_CONTENT_LENGTH = 140;
@@ -53,13 +60,40 @@ public class TwitterPostContainer extends ChildPostContainer {
 
     @Override
     public void publish() {
-        TwitterController twitterController = TwitterController.getInstance();
-        twitterController.requestPost(this, getAccount());
+        TwitterClient client = TwitterClient.getInstance();
+        TwitterCreateContentRequest request = TwitterCreateContentRequest.builder()
+                .status(getContent())
+                .accessToken(getAccount().getAccessToken())
+                .secretToken(getAccount().getSecretToken())
+                .build();
+        final TwitterPostContainer instance = this;
+        final LiveData<TwitterContentResponse> asyncResponse = client.createContent(request);
+        asyncResponse.observeForever(new Observer<TwitterContentResponse>() {
+            @Override
+            public void onChanged(@Nullable TwitterContentResponse response) {
+                instance.setServiceExternalIdentifier(response.getID());
+                asyncResponse.removeObserver(this);
+            }
+        });
     }
 
     @Override
     public void remove() {
-        TwitterController twitterController = TwitterController.getInstance();
-        twitterController.requestRemove(this, getAccount());
+        TwitterClient client = TwitterClient.getInstance();
+        TwitterRemoveContentRequest request = TwitterRemoveContentRequest.builder()
+                .id(getServiceExternalIdentifier())
+                .accessToken(getAccount().getAccessToken())
+                .secretToken(getAccount().getSecretToken())
+                .build();
+        final TwitterPostContainer instance = this;
+        final LiveData<TwitterContentResponse> asyncResponse = client.removeContent(request);
+        asyncResponse.observeForever(new Observer<TwitterContentResponse>() {
+            @Override
+            public void onChanged(@Nullable TwitterContentResponse response) {
+                if (response.getID().equals(getServiceExternalIdentifier()))
+                    instance.setServiceExternalIdentifier(null);
+                asyncResponse.removeObserver(this);
+            }
+        });
     }
 }

@@ -19,6 +19,9 @@ public interface AttachmentTypeDao extends ReadOnlyDao<AttachmentTypeTable> {
     @Query("SELECT * FROM attachment_type WHERE id = :id")
     LiveData<AttachmentTypeTable> getDataByID(long id);
 
+    @Query("SELECT COUNT(*) FROM attachment_type")
+    int count();
+
     @Insert
     void insertMany(List<AttachmentTypeTable> attachmentTypesData);
 }

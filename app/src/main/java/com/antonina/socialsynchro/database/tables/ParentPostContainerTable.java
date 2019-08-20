@@ -18,7 +18,7 @@ public class ParentPostContainerTable implements ITable {
     @ColumnInfo(name = "id")
     public long id;
 
-    @ColumnInfo(name = "post_id")
+    @ColumnInfo(name = "post_id", index = true)
     public long postID;
 
     @ColumnInfo(name = "creation_date")

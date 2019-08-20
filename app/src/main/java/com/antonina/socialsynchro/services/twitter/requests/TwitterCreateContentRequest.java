@@ -1,31 +1,33 @@
 package com.antonina.socialsynchro.services.twitter.requests;
 
-public class TwitterRemoveContentRequest extends TwitterRequest {
-    private String id;
+public class TwitterCreateContentRequest extends TwitterRequest {
+    private String status;
 
-    private TwitterRemoveContentRequest(String authorizationHeader, String id) {
+    private TwitterCreateContentRequest(String authorizationHeader, String status) {
         super(authorizationHeader);
-        this.id = id;
+        this.status = status;
     }
 
-    public String getID() { return id; }
+    public String getStatus() {
+        return percentEncode(status);
+    }
 
     public static Builder builder() {
         return new Builder();
     }
 
     public static class Builder extends TwitterRequest.Builder {
-        private String id;
+        private String status;
         private String accessToken;
         private String secretToken;
 
         @Override
-        public TwitterRemoveContentRequest build() {
-            return new TwitterRemoveContentRequest(buildUserAuthorizationHeader(), id);
+        public TwitterCreateContentRequest build() {
+            return new TwitterCreateContentRequest(buildUserAuthorizationHeader(), status);
         }
 
-        public Builder id(String id) {
-            this.id = id;
+        public Builder status(String status) {
+            this.status = status;
             return this;
         }
 
@@ -41,7 +43,7 @@ public class TwitterRemoveContentRequest extends TwitterRequest {
 
         @Override
         protected String getURL() {
-            return "https://api.twitter.com/1.1/statuses/destroy/" + id + ".json";
+            return "https://api.twitter.com/1.1/statuses/update.json";
         }
 
         @Override
@@ -61,8 +63,10 @@ public class TwitterRemoveContentRequest extends TwitterRequest {
 
         @Override
         protected void collectParameters() {
+            authorizationParameters.put("status", status);
             authorizationParameters.put("oauth_token", getAccessToken());
             super.collectParameters();
+            authorizationParameters.remove("status");
         }
     }
 }

@@ -12,23 +12,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".gui.StatisticsActivity"></activity>
+        <activity android:name=".gui.activities.StatisticsActivity" />
         <activity
-            android:name=".gui.EditActivity"
+            android:name=".gui.activities.EditActivity"
             android:label="@string/title_activity_edit"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".gui.AccountsActivity"
+            android:name=".gui.activities.AccountsActivity"
             android:label="@string/title_activity_accounts"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".gui.ConnectActivity"
+            android:name=".gui.activities.ConnectActivity"
             android:label="@string/title_activity_connect"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".gui.MainActivity">
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity android:name=".gui.activities.MainActivity">
             <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

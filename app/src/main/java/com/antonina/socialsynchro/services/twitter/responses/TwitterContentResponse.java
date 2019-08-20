@@ -1,11 +1,12 @@
 package com.antonina.socialsynchro.services.twitter.responses;
 
-import com.antonina.socialsynchro.base.IResponse;
+import com.antonina.socialsynchro.base.ErrorResponse;
+import com.antonina.socialsynchro.base.IErrorResponse;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class TwitterTweetResponse implements IResponse {
+public class TwitterContentResponse implements IErrorResponse {
     @SerializedName("id")
     private String id;
 
@@ -13,7 +14,7 @@ public class TwitterTweetResponse implements IResponse {
     private ExtendedTweet extendedTweet; // TODO: Nie działa, być może do wyrzucenia.
 
     @SerializedName("errors")
-    private ArrayList<Error> errors;
+    private ArrayList<ErrorResponse> errors;
 
     public ExtendedTweet getExtendedTweet() { return extendedTweet; }
 
@@ -23,16 +24,15 @@ public class TwitterTweetResponse implements IResponse {
 
     public String getID() { return id; }
 
-    public String getErrors() {
+    @Override
+    public String getErrorString() {
+        if (errors == null)
+            return null;
         StringBuilder sb = new StringBuilder();
-
-        for (Error error : errors) {
-            sb.append(" code: ");
-            sb.append(Integer.toString(error.getCode()));
-            sb.append(" message: ");
-            sb.append(error.getMessage());
+        for (ErrorResponse error : errors) {
+            sb.append(error.getErrorString());
+            sb.append('\n');
         }
-
         return sb.toString();
     }
 
@@ -43,17 +43,5 @@ public class TwitterTweetResponse implements IResponse {
         public String getFullText() { return fullText; }
 
         public void setFullText(String fullText) { this.fullText = fullText; }
-    }
-
-    private class Error {
-        @SerializedName("message")
-        private String message;
-
-        @SerializedName("code")
-        private Integer code;
-
-        public String getMessage() { return message; }
-
-        public Integer getCode() { return code; }
     }
 }

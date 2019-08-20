@@ -1,4 +1,4 @@
-package com.antonina.socialsynchro.gui;
+package com.antonina.socialsynchro.gui.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -9,11 +9,11 @@ import android.view.View;
 
 import com.antonina.socialsynchro.R;
 
-public class AccountsActivity extends AppCompatActivity {
+public class EditActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_accounts);
+        setContentView(R.layout.activity_edit);
     }
 }

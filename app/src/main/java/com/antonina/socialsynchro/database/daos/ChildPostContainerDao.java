@@ -16,6 +16,9 @@ public interface ChildPostContainerDao extends EditableDao<ChildPostContainerTab
     @Query("SELECT * FROM child_post_container")
     LiveData<List<ChildPostContainerTable>> getAllData();
 
+    @Query("SELECT * FROM child_post_container WHERE id = :id")
+    LiveData<ChildPostContainerTable> getDataByID(long id);
+
     @Query("SELECT * FROM child_post_container WHERE parent_id = :parentID")
     LiveData<List<ChildPostContainerTable>> getDataByParent(long parentID);
 

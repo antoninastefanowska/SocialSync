@@ -1,9 +1,9 @@
-package com.antonina.socialsynchro.services.callback;
+package com.antonina.socialsynchro.services.callback.responses;
 
-import com.antonina.socialsynchro.base.IResponse;
+import com.antonina.socialsynchro.base.IErrorResponse;
 import com.google.gson.annotations.SerializedName;
 
-public class CallbackTokenResponse implements IResponse {
+public class CallbackGetVerifierResponse implements IErrorResponse {
     @SerializedName("oauth_token")
     private String loginToken;
 
@@ -18,4 +18,9 @@ public class CallbackTokenResponse implements IResponse {
     public String getVerifier() { return verifier; }
 
     public String getMessage() { return message; }
+
+    @Override
+    public String getErrorString() {
+        return message;
+    }
 }

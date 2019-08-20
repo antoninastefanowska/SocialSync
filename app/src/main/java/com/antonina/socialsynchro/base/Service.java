@@ -4,7 +4,9 @@ import com.antonina.socialsynchro.database.IDatabaseEntity;
 import com.antonina.socialsynchro.database.tables.ITable;
 import com.antonina.socialsynchro.database.tables.ServiceTable;
 
-public class Service implements IDatabaseEntity {
+import java.io.Serializable;
+
+public class Service implements IDatabaseEntity, Serializable {
     private long id;
     private String name;
     private String logoUrl;

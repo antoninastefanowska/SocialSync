@@ -29,7 +29,7 @@ public class AccountViewModel extends AndroidViewModel implements IEditableViewM
         return instance;
     }
 
-    private AccountViewModel(@NonNull Application application) {
+    public AccountViewModel(@NonNull Application application) {
         super(application);
         repository = new AccountRepository(application);
 

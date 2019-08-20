@@ -30,16 +30,16 @@ public class ChildPostContainerTable implements ITable {
     @ColumnInfo(name = "synchronization_date")
     public Date synchronizationDate;
 
-    @ColumnInfo(name = "account_id")
+    @ColumnInfo(name = "account_id", index = true)
     public long accountID;
 
-    @ColumnInfo(name = "parent_id")
+    @ColumnInfo(name = "parent_id", index = true)
     public long parentID;
 
-    @ColumnInfo(name = "service_id")
+    @ColumnInfo(name = "service_id", index = true)
     public long serviceID;
 
-    @ColumnInfo(name = "post_id")
+    @ColumnInfo(name = "post_id", index = true)
     public Long postID;
 
     @Override

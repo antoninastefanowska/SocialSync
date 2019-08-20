@@ -22,10 +22,10 @@ public class AttachmentTable implements ITable {
     @ColumnInfo(name = "size_kb")
     public int sizeKb;
 
-    @ColumnInfo(name = "attachment_type_id")
+    @ColumnInfo(name = "attachment_type_id", index = true)
     public long attachmentTypeID;
 
-    @ColumnInfo(name = "post_id")
+    @ColumnInfo(name = "post_id", index = true)
     public long postID;
 
     @Override

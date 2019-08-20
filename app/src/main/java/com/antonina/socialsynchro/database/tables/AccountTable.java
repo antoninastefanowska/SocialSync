@@ -11,7 +11,7 @@ import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.database.IDatabaseEntity;
 import com.antonina.socialsynchro.base.Service;
 
-@Entity(tableName = "account", foreignKeys = @ForeignKey(entity = Service.class, parentColumns = "id", childColumns = "service_id"), indices = @Index(value = "id", unique = true))
+@Entity(tableName = "account", foreignKeys = @ForeignKey(entity = ServiceTable.class, parentColumns = "id", childColumns = "service_id"), indices = @Index(value = "id", unique = true))
 public class AccountTable implements ITable {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
@@ -32,7 +32,7 @@ public class AccountTable implements ITable {
     @ColumnInfo(name = "secret_token")
     public String secretToken;
 
-    @ColumnInfo(name = "service_id")
+    @ColumnInfo(name = "service_id", index = true)
     public long serviceID;
 
     @Override

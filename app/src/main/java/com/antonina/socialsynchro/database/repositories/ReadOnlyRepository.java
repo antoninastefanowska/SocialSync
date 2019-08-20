@@ -3,19 +3,18 @@ package com.antonina.socialsynchro.database.repositories;
 import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 
-import com.antonina.socialsynchro.database.daos.EditableDao;
 import com.antonina.socialsynchro.database.daos.ReadOnlyDao;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public abstract class ReadOnlyRepository<DataTable> {
-    protected ReadOnlyDao<DataTable> dao;
+public abstract class ReadOnlyRepository<DataTableClass> {
+    protected ReadOnlyDao<DataTableClass> dao;
 
-    public LiveData<List<DataTable>> getAllData() {
-        LiveData<List<DataTable>> result = null;
+    public LiveData<List<DataTableClass>> getAllData() {
+        LiveData<List<DataTableClass>> result = null;
         try {
-            result = new GetAllDataAsyncTask<DataTable>(dao).execute().get();
+            result = new GetAllDataAsyncTask<DataTableClass>(dao).execute().get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -25,38 +24,38 @@ public abstract class ReadOnlyRepository<DataTable> {
     public int count() {
         int result = 0;
         try {
-            result = new CountAsyncTask<DataTable>(dao).execute().get();
+            result = new CountAsyncTask<DataTableClass>(dao).execute().get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
         return result;
     }
 
-    public LiveData<DataTable> getDataByID(long accountID) {
-        LiveData<DataTable> result = null;
+    public LiveData<DataTableClass> getDataByID(long accountID) {
+        LiveData<DataTableClass> result = null;
         try {
-            result = new GetDataByIDAsyncTask<DataTable>(dao).execute(accountID).get();
+            result = new GetDataByIDAsyncTask<DataTableClass>(dao).execute(accountID).get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
         return result;
     }
 
-    private static class GetAllDataAsyncTask<DataTable> extends AsyncTask<Void, Void, LiveData<List<DataTable>>> {
-        private ReadOnlyDao<DataTable> dao;
+    private static class GetAllDataAsyncTask<DataTableClass> extends AsyncTask<Void, Void, LiveData<List<DataTableClass>>> {
+        private ReadOnlyDao<DataTableClass> dao;
 
-        public GetAllDataAsyncTask(ReadOnlyDao<DataTable> dao) { this.dao = dao; }
+        public GetAllDataAsyncTask(ReadOnlyDao<DataTableClass> dao) { this.dao = dao; }
 
         @Override
-        protected LiveData<List<DataTable>> doInBackground(final Void... params) {
+        protected LiveData<List<DataTableClass>> doInBackground(final Void... params) {
             return dao.getAllData();
         }
     }
 
-    private static class CountAsyncTask<DataTable> extends AsyncTask<Void, Void, Integer> {
-        private ReadOnlyDao<DataTable> dao;
+    private static class CountAsyncTask<DataTableClass> extends AsyncTask<Void, Void, Integer> {
+        private ReadOnlyDao<DataTableClass> dao;
 
-        public CountAsyncTask(ReadOnlyDao<DataTable> dao) {
+        public CountAsyncTask(ReadOnlyDao<DataTableClass> dao) {
             this.dao = dao;
         }
 
@@ -66,13 +65,13 @@ public abstract class ReadOnlyRepository<DataTable> {
         }
     }
 
-    private static class GetDataByIDAsyncTask<DataTable> extends AsyncTask<Long, Void, LiveData<DataTable>> {
-        private ReadOnlyDao<DataTable> dao;
+    private static class GetDataByIDAsyncTask<DataTableClass> extends AsyncTask<Long, Void, LiveData<DataTableClass>> {
+        private ReadOnlyDao<DataTableClass> dao;
 
-        public GetDataByIDAsyncTask(ReadOnlyDao<DataTable> dao) { this.dao = dao; }
+        public GetDataByIDAsyncTask(ReadOnlyDao<DataTableClass> dao) { this.dao = dao; }
 
         @Override
-        protected LiveData<DataTable> doInBackground(final Long... params) {
+        protected LiveData<DataTableClass> doInBackground(final Long... params) {
             return dao.getDataByID(params[0]);
         }
     }

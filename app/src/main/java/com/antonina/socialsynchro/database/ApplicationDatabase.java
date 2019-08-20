@@ -4,6 +4,7 @@ import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 import android.support.annotation.NonNull;
 
@@ -29,6 +30,7 @@ import java.util.List;
 import java.util.concurrent.Executors;
 
 @Database(entities = {AccountTable.class, ServiceTable.class, PostTable.class, AttachmentTable.class, AttachmentTypeTable.class, ChildPostContainerTable.class, ParentPostContainerTable.class}, version = 1, exportSchema = false)
+@TypeConverters(DateConverter.class)
 public abstract class ApplicationDatabase extends RoomDatabase {
     private static volatile ApplicationDatabase instance;
 

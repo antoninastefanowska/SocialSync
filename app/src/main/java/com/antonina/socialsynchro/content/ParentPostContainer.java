@@ -10,12 +10,13 @@ import com.antonina.socialsynchro.database.IDatabaseEntity;
 import com.antonina.socialsynchro.database.tables.ITable;
 import com.antonina.socialsynchro.database.tables.ParentPostContainerTable;
 import com.antonina.socialsynchro.database.viewmodels.PostViewModel;
+import com.antonina.socialsynchro.gui.SelectableItem;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ParentPostContainer implements IPostContainer, IPost, IDatabaseEntity {
+public class ParentPostContainer extends SelectableItem implements IPostContainer, IPost, IDatabaseEntity {
     private long id;
     private List<ChildPostContainer> children;
     private Post post;

@@ -1,33 +1,29 @@
-package com.antonina.socialsynchro.gui;
+package com.antonina.socialsynchro.gui.activities;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.EditText;
 
 import com.antonina.socialsynchro.R;
-import com.antonina.socialsynchro.base.Account;
-import com.antonina.socialsynchro.services.twitter.TwitterAccount;
-import com.antonina.socialsynchro.services.callback.CallbackController;
-import com.antonina.socialsynchro.services.twitter.TwitterController;
-import com.antonina.socialsynchro.content.ParentPostContainer;
-import com.antonina.socialsynchro.services.twitter.TwitterPostContainer;
-import com.antonina.socialsynchro.services.twitter.responses.TwitterAccessTokenResponse;
-import com.antonina.socialsynchro.services.twitter.responses.TwitterLoginTokenResponse;
 
 public class MainActivity extends AppCompatActivity {
-    private TwitterController twitterController;
-    private ParentPostContainer parent;
-    private Account account;
-    private TwitterAccessTokenResponse twitterAccessTokenResponse;
+    //private TwitterController twitterController;
+    //private ParentPostContainer parent;
+    //private Account account;
+    //private TwitterAccessTokenResponse twitterAccessTokenResponse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //TwitterExampleRequest request = TwitterExampleRequest.builder().build();
+        //Log.d("konto", request.getAuthorizationHeader());
     }
 
     protected void btSend_onClick(View view) {
+        /*
         EditText etContent = (EditText)findViewById(R.id.etContent);
 
         account.setAccessToken(twitterController.getTwitterAccessTokenResponse().getAccessToken());
@@ -39,26 +35,34 @@ public class MainActivity extends AppCompatActivity {
         child.setAccount(account);
         parent.publish();
 
-        etContent.getText().clear();
+        etContent.getText().clear(); */
     }
 
     protected void btRemove_onClick(View view) {
+        /*
         if (parent != null) {
             parent.remove();
-        }
+        } */
     }
 
     protected void btLogin_onClick(View view) {
+        /*
         account = new TwitterAccount();
 
         twitterController = TwitterController.getInstance();
-        twitterController.requestGetLoginToken();
+        twitterController.requestGetLoginToken(); */
     }
 
     protected void btConfirmLogin_onClick(View view) {
+        /*
         TwitterLoginTokenResponse twitterLoginTokenResponse = twitterController.getTwitterLoginTokenResponse();
         CallbackController callbackController = new CallbackController();
         callbackController.requestGetVerifier(twitterLoginTokenResponse.getLoginToken(), twitterLoginTokenResponse.getLoginSecretToken());
-        twitterAccessTokenResponse = twitterController.getTwitterAccessTokenResponse();
+        twitterAccessTokenResponse = twitterController.getTwitterAccessTokenResponse(); */
+    }
+
+    public void btAccounts_onClick(View view) {
+        Intent accountsActivity = new Intent(MainActivity.this, AccountsActivity.class);
+        startActivity(accountsActivity);
     }
 }
