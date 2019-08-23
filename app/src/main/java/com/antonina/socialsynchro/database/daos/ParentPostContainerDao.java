@@ -12,7 +12,7 @@ import com.antonina.socialsynchro.database.tables.ParentPostContainerTable;
 import java.util.List;
 
 @Dao
-public interface ParentPostContainerDao extends EditableDao<ParentPostContainerTable> {
+public interface ParentPostContainerDao extends BaseDao<ParentPostContainerTable> {
     @Query("SELECT * FROM parent_post_container")
     LiveData<List<ParentPostContainerTable>> getAllData();
 

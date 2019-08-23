@@ -1,12 +1,13 @@
-package com.antonina.socialsynchro.content;
+package com.antonina.socialsynchro.services.facebook;
 
-import com.antonina.socialsynchro.base.Account;
+import com.antonina.socialsynchro.content.ChildPostContainer;
+import com.antonina.socialsynchro.content.ParentPostContainer;
 
 public class FacebookPostContainer extends ChildPostContainer {
     private static final int MAX_CONTENT_LENGTH = 63206;
 
-    public FacebookPostContainer(Account account) {
-        super(account);
+    public FacebookPostContainer(ParentPostContainer parent, FacebookAccount account) {
+        super(parent, account);
     }
 
     @Override

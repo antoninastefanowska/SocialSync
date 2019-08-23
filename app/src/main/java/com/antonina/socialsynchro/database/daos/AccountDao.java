@@ -12,7 +12,7 @@ import com.antonina.socialsynchro.database.tables.AccountTable;
 import java.util.List;
 
 @Dao
-public interface AccountDao extends EditableDao<AccountTable> {
+public interface AccountDao extends BaseDao<AccountTable> {
     @Query("SELECT * FROM account")
     LiveData<List<AccountTable>> getAllData();
 

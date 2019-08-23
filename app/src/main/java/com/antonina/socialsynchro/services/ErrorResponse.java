@@ -1,8 +1,8 @@
-package com.antonina.socialsynchro.base;
+package com.antonina.socialsynchro.services;
 
 import com.google.gson.annotations.SerializedName;
 
-public class ErrorResponse implements IErrorResponse {
+public class ErrorResponse {
     @SerializedName("message")
     private String message;
 
@@ -14,7 +14,7 @@ public class ErrorResponse implements IErrorResponse {
     public Integer getCode() { return code; }
 
     @Override
-    public String getErrorString() {
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(" code: ");
         sb.append(Integer.toString(code));

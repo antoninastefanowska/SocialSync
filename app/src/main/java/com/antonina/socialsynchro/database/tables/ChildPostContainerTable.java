@@ -13,20 +13,18 @@ import java.util.Date;
 @Entity(tableName = "child_post_container", foreignKeys = {
         @ForeignKey(entity = PostTable.class, parentColumns = "id", childColumns = "post_id"),
         @ForeignKey(entity = ParentPostContainerTable.class, parentColumns = "id", childColumns = "parent_id"),
-        @ForeignKey(entity = ServiceTable.class, parentColumns = "id", childColumns = "service_id"),
         @ForeignKey(entity = AccountTable.class, parentColumns = "id", childColumns = "account_id")})
-public class ChildPostContainerTable implements ITable {
+public class ChildPostContainerTable implements IDatabaseTable {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     public long id;
 
-    @ColumnInfo(name = "service_external_identifier")
-    public String serviceExternalIdentifier;
+    @ColumnInfo(name = "external_id")
+    public String externalID;
 
     @ColumnInfo(name = "locked")
     public boolean locked;
 
-    // TODO: Będzie potrzebny konwerter
     @ColumnInfo(name = "synchronization_date")
     public Date synchronizationDate;
 
@@ -36,27 +34,32 @@ public class ChildPostContainerTable implements ITable {
     @ColumnInfo(name = "parent_id", index = true)
     public long parentID;
 
-    @ColumnInfo(name = "service_id", index = true)
-    public long serviceID;
+    @ColumnInfo(name = "service_id")
+    public int serviceID;
 
     @ColumnInfo(name = "post_id", index = true)
     public Long postID;
 
     @Override
     public void createFromExistingEntity(IDatabaseEntity entity) {
-        this.id = entity.getID();
+        this.id = entity.getInternalID();
         createFromNewEntity(entity);
     }
 
     @Override
     public void createFromNewEntity(IDatabaseEntity entity) {
         ChildPostContainer childPostContainer = (ChildPostContainer)entity;
-        this.serviceExternalIdentifier = childPostContainer.getServiceExternalIdentifier();
+        this.externalID = childPostContainer.getExternalID();
         this.locked = childPostContainer.isLocked();
         this.synchronizationDate = childPostContainer.getSynchronizationDate();
-        this.accountID = childPostContainer.getAccount().getID();
-        this.parentID = childPostContainer.getParent().getID();
-        this.serviceID = childPostContainer.getAccount().getService().getID();
-        this.postID = childPostContainer.getPost().getID();
+        this.accountID = childPostContainer.getAccount().getInternalID();
+        this.parentID = childPostContainer.getParent().getInternalID();
+        this.serviceID = childPostContainer.getAccount().getService().getID().ordinal();
+        this.postID = childPostContainer.getPost().getInternalID();
+    }
+
+    @Override
+    public long getID() {
+        return id;
     }
 }

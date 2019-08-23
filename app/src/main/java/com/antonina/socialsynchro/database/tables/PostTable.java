@@ -8,7 +8,7 @@ import com.antonina.socialsynchro.content.Post;
 import com.antonina.socialsynchro.database.IDatabaseEntity;
 
 @Entity(tableName = "post")
-public class PostTable implements ITable {
+public class PostTable implements IDatabaseTable {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     public long id;
@@ -27,7 +27,7 @@ public class PostTable implements ITable {
 
     @Override
     public void createFromExistingEntity(IDatabaseEntity entity) {
-        this.id = entity.getID();
+        this.id = entity.getInternalID();
         createFromNewEntity(entity);
     }
 
@@ -36,5 +36,10 @@ public class PostTable implements ITable {
         Post post = (Post)entity;
         this.title = post.getTitle();
         this.content = post.getContent();
+    }
+
+    @Override
+    public long getID() {
+        return id;
     }
 }

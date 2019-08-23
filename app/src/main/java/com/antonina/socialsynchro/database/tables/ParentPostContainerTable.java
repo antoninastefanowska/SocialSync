@@ -6,14 +6,13 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
 
 import com.antonina.socialsynchro.content.ParentPostContainer;
-import com.antonina.socialsynchro.content.Post;
 import com.antonina.socialsynchro.database.IDatabaseEntity;
 
 import java.util.Date;
 
 @Entity(tableName = "parent_post_container", foreignKeys = {
         @ForeignKey(entity = PostTable.class, parentColumns = "id", childColumns = "post_id")})
-public class ParentPostContainerTable implements ITable {
+public class ParentPostContainerTable implements IDatabaseTable {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     public long id;
@@ -26,7 +25,7 @@ public class ParentPostContainerTable implements ITable {
 
     @Override
     public void createFromExistingEntity(IDatabaseEntity entity) {
-        this.id = entity.getID();
+        this.id = entity.getInternalID();
         createFromNewEntity(entity);
     }
 
@@ -34,6 +33,11 @@ public class ParentPostContainerTable implements ITable {
     public void createFromNewEntity(IDatabaseEntity entity) {
         ParentPostContainer parentPostContainer = (ParentPostContainer)entity;
         this.creationDate = parentPostContainer.getCreationDate();
-        this.postID = parentPostContainer.getPost().getID();
+        this.postID = parentPostContainer.getPost().getInternalID();
+    }
+
+    @Override
+    public long getID() {
+        return id;
     }
 }

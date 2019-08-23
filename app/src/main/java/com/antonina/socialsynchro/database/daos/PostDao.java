@@ -12,7 +12,7 @@ import com.antonina.socialsynchro.database.tables.PostTable;
 import java.util.List;
 
 @Dao
-public interface PostDao extends EditableDao<PostTable> {
+public interface PostDao extends BaseDao<PostTable> {
     @Query("SELECT * FROM post")
     LiveData<List<PostTable>> getAllData();
 

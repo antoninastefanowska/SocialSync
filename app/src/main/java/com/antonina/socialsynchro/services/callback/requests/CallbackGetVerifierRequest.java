@@ -1,6 +1,6 @@
 package com.antonina.socialsynchro.services.callback.requests;
 
-import com.antonina.socialsynchro.base.IRequest;
+import com.antonina.socialsynchro.services.IRequest;
 
 public class CallbackGetVerifierRequest implements IRequest {
     private String loginToken;

@@ -12,7 +12,7 @@ import com.antonina.socialsynchro.database.tables.AttachmentTable;
 import java.util.List;
 
 @Dao
-public interface AttachmentDao extends EditableDao<AttachmentTable> {
+public interface AttachmentDao extends BaseDao<AttachmentTable> {
     @Query("SELECT * FROM attachment")
     LiveData<List<AttachmentTable>> getAllData();
 

@@ -1,9 +1,8 @@
 package com.antonina.socialsynchro.services.twitter.responses;
 
-import com.antonina.socialsynchro.base.IErrorResponse;
-import com.antonina.socialsynchro.base.IRawResponse;
+import com.antonina.socialsynchro.services.IRawResponse;
 
-public class TwitterGetAccessTokenResponse implements IRawResponse, IErrorResponse {
+public class TwitterGetAccessTokenResponse extends TwitterResponse implements IRawResponse {
     private String accessToken;
     private String secretToken;
     private String error;

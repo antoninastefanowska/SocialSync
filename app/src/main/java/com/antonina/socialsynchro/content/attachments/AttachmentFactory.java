@@ -1,11 +1,11 @@
 package com.antonina.socialsynchro.content.attachments;
 
-import com.antonina.socialsynchro.base.IFactory;
+import com.antonina.socialsynchro.database.IDatabaseEntityFactory;
 import com.antonina.socialsynchro.database.IDatabaseEntity;
 import com.antonina.socialsynchro.database.tables.AttachmentTable;
-import com.antonina.socialsynchro.database.tables.ITable;
+import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 
-public class AttachmentFactory implements IFactory {
+public class AttachmentFactory implements IDatabaseEntityFactory {
     private static AttachmentFactory instance;
 
     public static AttachmentFactory getInstance() {
@@ -17,7 +17,7 @@ public class AttachmentFactory implements IFactory {
     private AttachmentFactory() { }
 
     @Override
-    public IDatabaseEntity createFromData(ITable data) {
+    public IDatabaseEntity createFromData(IDatabaseTable data) {
         AttachmentTable attachmentData = (AttachmentTable)data;
         AttachmentTypeID attachmentTypeID = AttachmentTypeID.values()[(int)attachmentData.attachmentTypeID];
 

@@ -1,13 +1,12 @@
 package com.antonina.socialsynchro.content;
 
-import com.antonina.socialsynchro.base.IFactory;
-import com.antonina.socialsynchro.base.ServiceID;
-import com.antonina.socialsynchro.database.IDatabaseEntity;
+import com.antonina.socialsynchro.database.IDatabaseEntityFactory;
+import com.antonina.socialsynchro.database.tables.IDatabaseTable;
+import com.antonina.socialsynchro.services.ServiceID;
 import com.antonina.socialsynchro.database.tables.ChildPostContainerTable;
-import com.antonina.socialsynchro.database.tables.ITable;
 import com.antonina.socialsynchro.services.twitter.TwitterPostContainer;
 
-public class ChildPostContainerFactory implements IFactory {
+public class ChildPostContainerFactory implements IDatabaseEntityFactory {
     private static ChildPostContainerFactory instance;
 
     public static ChildPostContainerFactory getInstance() {
@@ -17,7 +16,7 @@ public class ChildPostContainerFactory implements IFactory {
     }
 
     @Override
-    public IDatabaseEntity createFromData(ITable data) {
+    public ChildPostContainer createFromData(IDatabaseTable data) {
         ChildPostContainerTable childPostContainerData = (ChildPostContainerTable)data;
         ServiceID serviceID = ServiceID.values()[(int)childPostContainerData.serviceID];
 

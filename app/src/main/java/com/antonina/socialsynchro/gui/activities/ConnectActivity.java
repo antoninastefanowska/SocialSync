@@ -7,11 +7,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 
 import com.antonina.socialsynchro.R;
-import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.services.callback.CallbackClient;
 import com.antonina.socialsynchro.services.callback.requests.CallbackGetVerifierRequest;
 import com.antonina.socialsynchro.services.callback.responses.CallbackGetVerifierResponse;
@@ -28,7 +26,7 @@ public class ConnectActivity extends AppCompatActivity {
     private String loginToken;
     private String secretLoginToken;
     private String verifier;
-    private Account account;
+    private TwitterAccount account;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -98,7 +96,6 @@ public class ConnectActivity extends AppCompatActivity {
                 account = new TwitterAccount();
                 account.setAccessToken(response.getAccessToken());
                 account.setSecretToken(response.getSecretToken());
-                Log.d("konto", "Response 1: " + response.getAccessToken() + " " + response.getSecretToken());
 
                 asyncResponse.removeObserver(this);
 
@@ -110,11 +107,10 @@ public class ConnectActivity extends AppCompatActivity {
                 asyncVerifyCredentialsResponse.observeForever(new Observer<TwitterVerifyCredentialsResponse>() {
                     @Override
                     public void onChanged(@Nullable TwitterVerifyCredentialsResponse response) {
-                        account.setName(response.getName());
-                        account.setServiceExternalIdentifier(response.getID());
-                        Log.d("konto", response.getName() + " " + response.getScreenName() + " " + response.getID());
+                        account.createFromResponse(response);
                         asyncVerifyCredentialsResponse.removeObserver(this);
-                        exitActivity();
+                        if (response.getErrorString() == null)
+                            exitActivity();
                     }
                 });
             }

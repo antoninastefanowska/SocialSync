@@ -6,27 +6,80 @@ import android.support.annotation.Nullable;
 
 import com.antonina.socialsynchro.SocialSynchro;
 import com.antonina.socialsynchro.base.Account;
-import com.antonina.socialsynchro.base.Service;
-import com.antonina.socialsynchro.base.ServiceID;
-import com.antonina.socialsynchro.database.tables.ITable;
-import com.antonina.socialsynchro.database.viewmodels.ServiceViewModel;
+import com.antonina.socialsynchro.database.repositories.TwitterAccountInfoRepository;
+import com.antonina.socialsynchro.database.tables.IDatabaseTable;
+import com.antonina.socialsynchro.database.tables.TwitterAccountInfoTable;
+import com.antonina.socialsynchro.services.IResponse;
+import com.antonina.socialsynchro.services.ServiceID;
+import com.antonina.socialsynchro.services.Services;
+import com.antonina.socialsynchro.services.twitter.responses.TwitterVerifyCredentialsResponse;
 
 public class TwitterAccount extends Account {
-    public TwitterAccount(ITable table) {
-        super(table);
+    private String accessToken;
+    private String secretToken;
+
+    public TwitterAccount(IDatabaseTable table) {
+        createFromData(table);
+        setService(Services.getService(ServiceID.Twitter));
     }
 
     public TwitterAccount() {
-        ServiceViewModel serviceViewModel = ServiceViewModel.getInstance(SocialSynchro.getInstance());
+        setService(Services.getService(ServiceID.Twitter));
+    }
+
+    @Override
+    public void createFromData(IDatabaseTable data) {
+        super.createFromData(data);
+
+        TwitterAccountInfoRepository repository = TwitterAccountInfoRepository.getInstance(SocialSynchro.getInstance());
+        final LiveData<TwitterAccountInfoTable> dataTable = repository.getDataTableByID(data.getID());
         final TwitterAccount instance = this;
-        final LiveData<Service> serviceLiveData = serviceViewModel.getEntityByID(ServiceID.Twitter.ordinal());
-        serviceLiveData.observeForever(new Observer<Service>() {
+        dataTable.observeForever(new Observer<TwitterAccountInfoTable>() {
             @Override
-            public void onChanged(@Nullable Service service) {
-                instance.setService(service);
+            public void onChanged(@Nullable TwitterAccountInfoTable data) {
+                instance.setAccessToken(data.accessToken);
+                instance.setSecretToken(data.secretToken);
+
+                dataTable.removeObserver(this);
             }
         });
     }
 
     // TODO: uwzględnić limity żądań
+
+    public String getAccessToken() { return accessToken; }
+
+    public void setAccessToken(String accessToken) { this.accessToken = accessToken; }
+
+    public String getSecretToken() { return secretToken; }
+
+    public void setSecretToken(String secretToken) { this.secretToken = secretToken; }
+
+    @Override
+    public void saveInDatabase() {
+        super.saveInDatabase();
+        TwitterAccountInfoRepository repository = TwitterAccountInfoRepository.getInstance(SocialSynchro.getInstance());
+        repository.insert(this);
+    }
+
+    @Override
+    public void updateInDatabase() {
+        super.updateInDatabase();
+        TwitterAccountInfoRepository repository = TwitterAccountInfoRepository.getInstance(SocialSynchro.getInstance());
+        repository.update(this);
+    }
+
+    @Override
+    public void deleteFromDatabase() {
+        super.deleteFromDatabase();
+        TwitterAccountInfoRepository repository = TwitterAccountInfoRepository.getInstance(SocialSynchro.getInstance());
+        repository.delete(this);
+    }
+
+    @Override
+    public void createFromResponse(IResponse response) {
+        TwitterVerifyCredentialsResponse twitterResponse = (TwitterVerifyCredentialsResponse)response;
+        this.setExternalID(twitterResponse.getID());
+        this.setName(twitterResponse.getName());
+    }
 }

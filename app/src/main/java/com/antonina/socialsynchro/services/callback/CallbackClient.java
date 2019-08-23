@@ -3,7 +3,7 @@ package com.antonina.socialsynchro.services.callback;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 
-import com.antonina.socialsynchro.base.IClient;
+import com.antonina.socialsynchro.services.IClient;
 import com.antonina.socialsynchro.services.callback.requests.CallbackGetVerifierRequest;
 import com.antonina.socialsynchro.services.callback.responses.CallbackGetVerifierResponse;
 import com.google.gson.Gson;

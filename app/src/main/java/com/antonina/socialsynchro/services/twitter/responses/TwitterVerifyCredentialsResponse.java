@@ -1,12 +1,11 @@
 package com.antonina.socialsynchro.services.twitter.responses;
 
-import com.antonina.socialsynchro.base.ErrorResponse;
-import com.antonina.socialsynchro.base.IErrorResponse;
+import com.antonina.socialsynchro.services.ErrorResponse;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
-public class TwitterVerifyCredentialsResponse implements IErrorResponse {
+public class TwitterVerifyCredentialsResponse extends TwitterResponse {
     @SerializedName("id_str")
     private String id;
 
@@ -41,7 +40,7 @@ public class TwitterVerifyCredentialsResponse implements IErrorResponse {
             return null;
         StringBuilder sb = new StringBuilder();
         for (ErrorResponse error : errors) {
-            sb.append(error.getErrorString());
+            sb.append(error.toString());
             sb.append('\n');
         }
         return sb.toString();

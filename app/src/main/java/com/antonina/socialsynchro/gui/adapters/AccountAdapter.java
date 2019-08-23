@@ -11,8 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.antonina.socialsynchro.R;
+import com.antonina.socialsynchro.SocialSynchro;
 import com.antonina.socialsynchro.base.Account;
-import com.antonina.socialsynchro.database.viewmodels.AccountViewModel;
+import com.antonina.socialsynchro.database.repositories.AccountRepository;
 import com.antonina.socialsynchro.databinding.AccountViewBinding;
 
 import java.util.ArrayList;
@@ -21,7 +22,6 @@ import java.util.Map;
 
 public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.AccountViewHolder> {
     private List<Account> accounts;
-    private AccountViewModel viewModel;
 
     public static class AccountViewHolder extends RecyclerView.ViewHolder {
         public AccountViewBinding binding;
@@ -32,10 +32,10 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.AccountV
         }
     }
 
-    public AccountAdapter(AccountViewModel viewModel) {
-        this.viewModel = viewModel;
+    public AccountAdapter() {
         this.accounts = new ArrayList<Account>();
-        final LiveData<Map<Long, Account>> accountLiveData = viewModel.getAllEntities();
+        AccountRepository repository = AccountRepository.getInstance(SocialSynchro.getInstance());
+        final LiveData<Map<Long, Account>> accountLiveData = repository.getAllData();
         accountLiveData.observeForever(new Observer<Map<Long, Account>>() {
             @Override
             public void onChanged(@Nullable Map<Long, Account> accountMap) {
@@ -80,7 +80,7 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.AccountV
 
     public void addItem(Account item) {
         accounts.add(item);
-        viewModel.insert(item);
+        item.saveInDatabase();
         notifyItemInserted(accounts.size() - 1);
     }
 }

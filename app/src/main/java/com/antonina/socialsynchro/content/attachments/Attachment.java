@@ -7,20 +7,34 @@ import android.support.annotation.Nullable;
 import com.antonina.socialsynchro.SocialSynchro;
 import com.antonina.socialsynchro.content.Post;
 import com.antonina.socialsynchro.database.IDatabaseEntity;
+import com.antonina.socialsynchro.database.repositories.AttachmentRepository;
+import com.antonina.socialsynchro.database.repositories.PostRepository;
 import com.antonina.socialsynchro.database.tables.AttachmentTable;
-import com.antonina.socialsynchro.database.tables.ITable;
-import com.antonina.socialsynchro.database.viewmodels.AttachmentTypeViewModel;
-import com.antonina.socialsynchro.database.viewmodels.PostViewModel;
+import com.antonina.socialsynchro.database.tables.IDatabaseTable;
+import com.antonina.socialsynchro.services.IResponse;
+import com.antonina.socialsynchro.services.IServiceEntity;
 
-public abstract class Attachment implements IDatabaseEntity {
-    private long id;
+public abstract class Attachment implements IDatabaseEntity, IServiceEntity {
+    private long internalID;
+    private String externalID;
     private String filename;
     private int sizeKb;
-    private AttachmentType attachmentType;
+    private IAttachmentType attachmentType;
     private Post parentPost;
 
+    public Attachment() { }
+
     @Override
-    public long getID() { return id; }
+    public long getInternalID() { return internalID; }
+
+    @Override
+    public String getExternalID() {
+        return externalID;
+    }
+
+    public void setExternalID(String externalID) {
+        this.externalID = externalID;
+    }
 
     public String getFilename() { return filename; }
 
@@ -30,9 +44,9 @@ public abstract class Attachment implements IDatabaseEntity {
 
     public void setSizeKb(int sizeKb) { this.sizeKb = sizeKb; }
 
-    public AttachmentType getAttachmentType() { return attachmentType; }
+    public IAttachmentType getAttachmentType() { return attachmentType; }
 
-    public void setAttachmentType(AttachmentType attachmentType) { this.attachmentType = attachmentType; }
+    public void setAttachmentType(IAttachmentType attachmentType) { this.attachmentType = attachmentType; }
 
     public Post getParentPost() { return parentPost; }
 
@@ -41,20 +55,22 @@ public abstract class Attachment implements IDatabaseEntity {
         parentPost.addAttachment(this);
     }
 
-    public Attachment(ITable data) {
+    public Attachment(IDatabaseTable data) {
         createFromData(data);
     }
 
     @Override
-    public void createFromData(ITable data) {
+    public void createFromData(IDatabaseTable data) {
         AttachmentTable attachmentData = (AttachmentTable)data;
-        this.id = attachmentData.id;
+        this.internalID = attachmentData.id;
+        this.externalID = attachmentData.externalID;
         this.filename = attachmentData.filename;
         this.sizeKb = attachmentData.sizeKb;
+        attachmentType = AttachmentTypes.getAttachmentType(attachmentData.attachmentTypeID);
 
         final Attachment instance = this;
 
-        final LiveData<Post> postLiveData = PostViewModel.getInstance(SocialSynchro.getInstance()).getEntityByID(attachmentData.postID);
+        final LiveData<Post> postLiveData = PostRepository.getInstance(SocialSynchro.getInstance()).getDataByID(attachmentData.postID);
         postLiveData.observeForever(new Observer<Post>() {
             @Override
             public void onChanged(@Nullable Post post) {
@@ -62,13 +78,28 @@ public abstract class Attachment implements IDatabaseEntity {
                 postLiveData.removeObserver(this);
             }
         });
-        final LiveData<AttachmentType> attachmentTypeLiveData = AttachmentTypeViewModel.getInstance(SocialSynchro.getInstance()).getEntityByID(attachmentData.attachmentTypeID);
-        attachmentTypeLiveData.observeForever(new Observer<AttachmentType>() {
-            @Override
-            public void onChanged(@Nullable AttachmentType attachmentType) {
-                instance.attachmentType = attachmentType;
-                attachmentTypeLiveData.removeObserver(this);
-            }
-        });
+    }
+
+    @Override
+    public void createFromResponse(IResponse response) {
+        // TODO
+    }
+
+    @Override
+    public void saveInDatabase() {
+        AttachmentRepository repository = AttachmentRepository.getInstance(SocialSynchro.getInstance());
+        internalID = repository.insert(this);
+    }
+
+    @Override
+    public void updateInDatabase() {
+        AttachmentRepository repository = AttachmentRepository.getInstance(SocialSynchro.getInstance());
+        repository.update(this);
+    }
+
+    @Override
+    public void deleteFromDatabase() {
+        AttachmentRepository repository = AttachmentRepository.getInstance(SocialSynchro.getInstance());
+        repository.delete(this);
     }
 }

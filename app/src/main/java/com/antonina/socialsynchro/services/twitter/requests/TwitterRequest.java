@@ -4,7 +4,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.antonina.socialsynchro.SocialSynchro;
-import com.antonina.socialsynchro.base.IRequest;
+import com.antonina.socialsynchro.services.IRequest;
 import com.antonina.socialsynchro.utils.APIKey;
 
 import java.io.UnsupportedEncodingException;
@@ -93,7 +93,6 @@ public abstract class TwitterRequest implements IRequest {
                 sb.append("\"");
             }
 
-            Log.d("konto", "Authorization header: " + sb.toString());
             return sb.toString();
         }
 

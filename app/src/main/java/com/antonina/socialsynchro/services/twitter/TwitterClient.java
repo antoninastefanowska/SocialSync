@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.util.Log;
 
+import com.antonina.socialsynchro.services.IClient;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterCreateContentRequest;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterGetAccessTokenRequest;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterGetLoginTokenRequest;
@@ -26,7 +27,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-public class TwitterClient {
+public class TwitterClient implements IClient {
     private static final String BASE_URL = "https://api.twitter.com/";
     private static TwitterClient instance;
 
@@ -254,7 +255,6 @@ public class TwitterClient {
             TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
             Call<TwitterVerifyCredentialsResponse> call = twitterAPI.verifyCredentials(request.getAuthorizationHeader());
             call.enqueue(this);
-            Log.d("konto", "Request content: " + call.request().toString());
             return asyncResponse;
         }
 

@@ -7,9 +7,10 @@ import android.support.annotation.Nullable;
 import com.antonina.socialsynchro.SocialSynchro;
 import com.antonina.socialsynchro.content.attachments.Attachment;
 import com.antonina.socialsynchro.database.IDatabaseEntity;
-import com.antonina.socialsynchro.database.tables.ITable;
+import com.antonina.socialsynchro.database.repositories.ParentPostContainerRepository;
+import com.antonina.socialsynchro.database.repositories.PostRepository;
+import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 import com.antonina.socialsynchro.database.tables.ParentPostContainerTable;
-import com.antonina.socialsynchro.database.viewmodels.PostViewModel;
 import com.antonina.socialsynchro.gui.SelectableItem;
 
 import java.util.ArrayList;
@@ -17,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 
 public class ParentPostContainer extends SelectableItem implements IPostContainer, IPost, IDatabaseEntity {
-    private long id;
+    private long internalID;
     private List<ChildPostContainer> children;
     private Post post;
     private Date creationDate;
@@ -27,7 +28,7 @@ public class ParentPostContainer extends SelectableItem implements IPostContaine
         children = new ArrayList<ChildPostContainer>();
     }
 
-    public ParentPostContainer(ITable data) {
+    public ParentPostContainer(IDatabaseTable data) {
         createFromData(data);
     }
 
@@ -97,13 +98,13 @@ public class ParentPostContainer extends SelectableItem implements IPostContaine
     public Date getCreationDate() { return creationDate; }
 
     @Override
-    public void createFromData(ITable data) {
+    public void createFromData(IDatabaseTable data) {
         ParentPostContainerTable parentPostContainerData = (ParentPostContainerTable)data;
-        this.id = parentPostContainerData.id;
+        this.internalID = parentPostContainerData.id;
         this.creationDate = parentPostContainerData.creationDate;
 
         final ParentPostContainer instance = this;
-        final LiveData<Post> postLiveData = PostViewModel.getInstance(SocialSynchro.getInstance()).getEntityByID(parentPostContainerData.postID);
+        final LiveData<Post> postLiveData = PostRepository.getInstance(SocialSynchro.getInstance()).getDataByID(parentPostContainerData.postID);
         postLiveData.observeForever(new Observer<Post>() {
             @Override
             public void onChanged(@Nullable Post post) {
@@ -114,7 +115,25 @@ public class ParentPostContainer extends SelectableItem implements IPostContaine
     }
 
     @Override
-    public long getID() {
-        return id;
+    public long getInternalID() {
+        return internalID;
+    }
+
+    @Override
+    public void saveInDatabase() {
+        ParentPostContainerRepository repository = ParentPostContainerRepository.getInstance(SocialSynchro.getInstance());
+        internalID = repository.insert(this);
+    }
+
+    @Override
+    public void updateInDatabase() {
+        ParentPostContainerRepository repository = ParentPostContainerRepository.getInstance(SocialSynchro.getInstance());
+        repository.update(this);
+    }
+
+    @Override
+    public void deleteFromDatabase() {
+        ParentPostContainerRepository repository = ParentPostContainerRepository.getInstance(SocialSynchro.getInstance());
+        repository.delete(this);
     }
 }
