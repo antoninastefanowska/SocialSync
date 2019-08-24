@@ -19,4 +19,9 @@ public class MainActivity extends AppCompatActivity {
         Intent accountsActivity = new Intent(MainActivity.this, AccountsActivity.class);
         startActivity(accountsActivity);
     }
+
+    public void btCreateContent_onClick(View view) {
+        Intent editActivity = new Intent(MainActivity.this, EditActivity.class);
+        startActivity(editActivity);
+    }
 }

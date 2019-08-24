@@ -21,6 +21,7 @@ public abstract class Attachment implements IDatabaseEntity, IServiceEntity {
     private int sizeKb;
     private IAttachmentType attachmentType;
     private Post parentPost;
+    private boolean loading;
 
     public Attachment() { }
 
@@ -101,5 +102,15 @@ public abstract class Attachment implements IDatabaseEntity, IServiceEntity {
     public void deleteFromDatabase() {
         AttachmentRepository repository = AttachmentRepository.getInstance(SocialSynchro.getInstance());
         repository.delete(this);
+    }
+
+    @Override
+    public boolean isLoading() {
+        return loading;
+    }
+
+    @Override
+    public void setLoading(boolean loading) {
+        this.loading = loading;
     }
 }

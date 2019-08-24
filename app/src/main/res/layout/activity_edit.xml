@@ -4,9 +4,79 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".gui.activities.EditActivity">
 
+    <data>
+        <variable
+            name="parent"
+            type="com.antonina.socialsynchro.content.ParentPostContainer" />
+        <variable
+            name="childAdapter"
+            type="com.antonina.socialsynchro.gui.adapters.ChildEditAdapter" />
+    </data>
+
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <HorizontalScrollView
+                android:id="@+id/horizontalScrollView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/padding_small"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <Button
+                        android:id="@+id/btAddChild"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="btAddChild_onClick"
+                        android:text="Add child"
+                        style="@style/ButtonStyle" />
+
+                    <Button
+                        android:id="@+id/btSave"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="btSave_onClick"
+                        android:text="Save"
+                        style="@style/ButtonStyle" />
+
+                    <Button
+                        android:id="@+id/btPublish"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="btPublish_onClick"
+                        android:text="Publish"
+                        style="@style/ButtonStyle" />
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+            <EditText
+                android:id="@+id/etParentContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:text="@={parent.content}" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvChildren"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical"
+                android:adapter="@{childAdapter}"
+                android:padding="@dimen/padding_standard" />
+
+        </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>
 

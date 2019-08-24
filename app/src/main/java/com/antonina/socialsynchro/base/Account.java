@@ -9,7 +9,6 @@ import com.antonina.socialsynchro.database.repositories.AccountRepository;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 import com.antonina.socialsynchro.database.tables.AccountTable;
 import com.antonina.socialsynchro.gui.SelectableItem;
-import com.antonina.socialsynchro.services.IResponse;
 import com.antonina.socialsynchro.services.IService;
 import com.antonina.socialsynchro.services.IServiceEntity;
 
@@ -19,6 +18,7 @@ public abstract class Account extends SelectableItem implements IDatabaseEntity,
     private String name;
     private String profilePictureUrl; // TODO: Zrobić placeholder. Zdecydować: Przechowywać zdjęcia profilowe? Czy pobierać je bezpośrednio z serwera i usuwać po wyjściu z aplikacji (nie będą dostępne offline)?
     private IService service;
+    private boolean loading;
 
     public Account(IDatabaseTable table) { createFromData(table); }
 
@@ -31,6 +31,7 @@ public abstract class Account extends SelectableItem implements IDatabaseEntity,
         setName(accountData.name);
         setExternalID(accountData.externalID);
         setProfilePictureUrl(accountData.profilePictureUrl);
+        setLoading(false);
     }
 
     @Bindable
@@ -86,5 +87,15 @@ public abstract class Account extends SelectableItem implements IDatabaseEntity,
     public void deleteFromDatabase() {
         AccountRepository repository = AccountRepository.getInstance(SocialSynchro.getInstance());
         repository.delete(this);
+    }
+
+    @Override
+    public boolean isLoading() {
+        return loading;
+    }
+
+    @Override
+    public void setLoading(boolean loading) {
+        this.loading = loading;
     }
 }

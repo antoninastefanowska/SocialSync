@@ -5,6 +5,7 @@ import android.arch.lifecycle.Observer;
 import android.support.annotation.Nullable;
 
 import com.antonina.socialsynchro.content.ChildPostContainer;
+import com.antonina.socialsynchro.content.OnPublishedListener;
 import com.antonina.socialsynchro.content.ParentPostContainer;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterCreateContentRequest;
@@ -59,19 +60,23 @@ public class TwitterPostContainer extends ChildPostContainer {
     }
 
     @Override
-    public void publish() {
+    public void publish(OnPublishedListener listener) {
+        setLoading(true);
         TwitterClient client = TwitterClient.getInstance();
         TwitterCreateContentRequest request = TwitterCreateContentRequest.builder()
                 .status(getContent())
                 .accessToken(getAccount().getAccessToken())
                 .secretToken(getAccount().getSecretToken())
                 .build();
+        final OnPublishedListener onPublishedListener = listener;
         final TwitterPostContainer instance = this;
         final LiveData<TwitterContentResponse> asyncResponse = client.createContent(request);
         asyncResponse.observeForever(new Observer<TwitterContentResponse>() {
             @Override
             public void onChanged(@Nullable TwitterContentResponse response) {
                 instance.setExternalID(response.getID());
+                setLoading(false);
+                onPublishedListener.onPublished(instance, response.getErrorString());
                 asyncResponse.removeObserver(this);
             }
         });

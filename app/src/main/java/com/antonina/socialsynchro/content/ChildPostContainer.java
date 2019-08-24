@@ -2,8 +2,10 @@ package com.antonina.socialsynchro.content;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.databinding.Bindable;
 import android.support.annotation.Nullable;
 
+import com.antonina.socialsynchro.BR;
 import com.antonina.socialsynchro.SocialSynchro;
 import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.content.attachments.Attachment;
@@ -28,6 +30,7 @@ public abstract class ChildPostContainer extends SelectableItem implements IPost
     private boolean locked;
     private Date synchronizationDate;
     private Account account;
+    private boolean loading;
 
     protected ParentPostContainer parent;
 
@@ -39,15 +42,15 @@ public abstract class ChildPostContainer extends SelectableItem implements IPost
     }
 
     public ChildPostContainer(ParentPostContainer parent, Account account) {
-        this.account = account;
-        this.parent = parent;
-        parent.addChild(this);
+        setParent(parent);
+        setAccount(account);
         lock();
     }
 
     @Override
     public long getInternalID() { return internalID; }
 
+    @Bindable
     @Override
     public String getTitle() {
         if (locked)
@@ -56,12 +59,15 @@ public abstract class ChildPostContainer extends SelectableItem implements IPost
             return post.getTitle();
     }
 
+    @Bindable
     @Override
     public void setTitle(String title) {
         if (!locked)
             post.setTitle(title);
+        notifyPropertyChanged(BR.child);
     }
 
+    @Bindable
     @Override
     public String getContent() {
         if (locked)
@@ -70,10 +76,12 @@ public abstract class ChildPostContainer extends SelectableItem implements IPost
             return post.getContent();
     }
 
+    @Bindable
     @Override
-    public void setContent(String description) {
+    public void setContent(String content) {
         if (!locked)
-            post.setContent(description);
+            post.setContent(content);
+        notifyPropertyChanged(BR.child);
     }
 
     @Override
@@ -105,11 +113,12 @@ public abstract class ChildPostContainer extends SelectableItem implements IPost
     }
 
     @Override
-    public abstract void publish();
+    public abstract void publish(OnPublishedListener listener);
 
     @Override
     public abstract void remove();
 
+    @Bindable
     public boolean isLocked() {
         return locked;
     }
@@ -217,5 +226,20 @@ public abstract class ChildPostContainer extends SelectableItem implements IPost
     public void deleteFromDatabase() {
         ChildPostContainerRepository repository = ChildPostContainerRepository.getInstance(SocialSynchro.getInstance());
         repository.delete(this);
+    }
+
+    @Override
+    public boolean isLoading() {
+        return loading;
+    }
+
+    @Override
+    public void setLoading(boolean loading) {
+        this.loading = loading;
+    }
+
+    @Override
+    public boolean isPublished() {
+        return (externalID != null);
     }
 }

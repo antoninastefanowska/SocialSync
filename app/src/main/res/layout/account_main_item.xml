@@ -1,15 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
-        <import
-            type="android.view.View" />
         <variable
             name="account"
             type="com.antonina.socialsynchro.base.Account" />
     </data>
 
     <LinearLayout
-        android:id="@+id/llAccountViewContainer"
+        android:id="@+id/llAccountMainItemContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"

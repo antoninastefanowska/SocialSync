@@ -1,9 +1,11 @@
 package com.antonina.socialsynchro.content;
 
+import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.database.IDatabaseEntityFactory;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 import com.antonina.socialsynchro.services.ServiceID;
 import com.antonina.socialsynchro.database.tables.ChildPostContainerTable;
+import com.antonina.socialsynchro.services.twitter.TwitterAccount;
 import com.antonina.socialsynchro.services.twitter.TwitterPostContainer;
 
 public class ChildPostContainerFactory implements IDatabaseEntityFactory {
@@ -23,6 +25,18 @@ public class ChildPostContainerFactory implements IDatabaseEntityFactory {
         switch(serviceID) {
             case Twitter:
                 return new TwitterPostContainer(data);
+            default:
+                return null;
+        }
+    }
+
+    public ChildPostContainer createNew(ParentPostContainer parent, Account account) {
+        ServiceID serviceID = account.getService().getID();
+
+        switch(serviceID) {
+            case Twitter:
+                TwitterAccount twitterAccount = (TwitterAccount)account;
+                return new TwitterPostContainer(parent, twitterAccount);
             default:
                 return null;
         }

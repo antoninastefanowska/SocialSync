@@ -1,6 +1,7 @@
 package com.antonina.socialsynchro.services.facebook;
 
 import com.antonina.socialsynchro.content.ChildPostContainer;
+import com.antonina.socialsynchro.content.OnPublishedListener;
 import com.antonina.socialsynchro.content.ParentPostContainer;
 
 public class FacebookPostContainer extends ChildPostContainer {
@@ -30,7 +31,7 @@ public class FacebookPostContainer extends ChildPostContainer {
     }
 
     @Override
-    public void publish() {
+    public void publish(OnPublishedListener listener) {
 
     }
 

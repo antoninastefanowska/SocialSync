@@ -14,26 +14,26 @@ import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.SocialSynchro;
 import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.database.repositories.AccountRepository;
-import com.antonina.socialsynchro.databinding.AccountViewBinding;
+import com.antonina.socialsynchro.databinding.AccountMainItemBinding;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.AccountViewHolder> {
+public class AccountMainAdapter extends RecyclerView.Adapter<AccountMainAdapter.AccountViewHolder> {
     private List<Account> accounts;
 
     public static class AccountViewHolder extends RecyclerView.ViewHolder {
-        public AccountViewBinding binding;
+        private AccountMainItemBinding binding;
 
         public AccountViewHolder(View view) {
             super(view);
-            binding = AccountViewBinding.bind(view);
+            binding = AccountMainItemBinding.bind(view);
         }
     }
 
-    public AccountAdapter() {
-        this.accounts = new ArrayList<Account>();
+    public AccountMainAdapter() {
+        accounts = new ArrayList<Account>();
         AccountRepository repository = AccountRepository.getInstance(SocialSynchro.getInstance());
         final LiveData<Map<Long, Account>> accountLiveData = repository.getAllData();
         accountLiveData.observeForever(new Observer<Map<Long, Account>>() {
@@ -48,11 +48,11 @@ public class AccountAdapter extends RecyclerView.Adapter<AccountAdapter.AccountV
 
     @NonNull
     @Override
-    public AccountViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
+    public AccountViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int position) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
-        View accountView = inflater.inflate(R.layout.account_view, parent, false);
+        View accountView = inflater.inflate(R.layout.account_main_item, parent, false);
         AccountViewHolder viewHolder = new AccountViewHolder(accountView);
 
         return viewHolder;

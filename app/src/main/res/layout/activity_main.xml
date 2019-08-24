@@ -24,13 +24,27 @@
                 android:padding="@dimen/padding_small"
                 android:scrollbars="none">
 
-                <Button
-                    android:id="@+id/btAccounts"
+                <LinearLayout
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:onClick="btAccounts_onClick"
-                    android:text="Accounts"
-                    style="@style/ButtonStyle" />
+                    android:layout_height="wrap_content">
+
+                    <Button
+                        android:id="@+id/btAccounts"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="btAccounts_onClick"
+                        android:text="Accounts"
+                        style="@style/ButtonStyle" />
+
+                    <Button
+                        android:id="@+id/btCreateContent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="btCreateContent_onClick"
+                        android:text="Create content"
+                        style="@style/ButtonStyle" />
+
+                </LinearLayout>
 
             </HorizontalScrollView>
 

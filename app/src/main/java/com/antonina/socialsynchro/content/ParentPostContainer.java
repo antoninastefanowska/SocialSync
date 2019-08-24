@@ -2,8 +2,10 @@ package com.antonina.socialsynchro.content;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.databinding.Bindable;
 import android.support.annotation.Nullable;
 
+import com.antonina.socialsynchro.BR;
 import com.antonina.socialsynchro.SocialSynchro;
 import com.antonina.socialsynchro.content.attachments.Attachment;
 import com.antonina.socialsynchro.database.IDatabaseEntity;
@@ -37,24 +39,33 @@ public class ParentPostContainer extends SelectableItem implements IPostContaine
         return post;
     }
 
+    @Bindable
     @Override
     public String getTitle() {
         return post.getTitle();
     }
 
+    @Bindable
     @Override
     public void setTitle(String title) {
         post.setTitle(title);
     }
 
+    @Bindable
     @Override
     public String getContent() {
         return post.getContent();
     }
 
+    @Bindable
     @Override
     public void setContent(String content) {
         post.setContent(content);
+        notifyPropertyChanged(BR.child);
+    }
+
+    public List<ChildPostContainer> getChildren() {
+        return children;
     }
 
     @Override
@@ -73,10 +84,15 @@ public class ParentPostContainer extends SelectableItem implements IPostContaine
     }
 
     @Override
-    public void publish() {
+    public void publish(OnPublishedListener listener) {
         for (ChildPostContainer child : children) {
-            child.publish();
+            child.publish(listener);
         }
+    }
+
+    @Override
+    public boolean isPublished() {
+        return false;
     }
 
     @Override
@@ -85,6 +101,7 @@ public class ParentPostContainer extends SelectableItem implements IPostContaine
             child.remove();
         }
         // TODO: Usuniecie z aplikacji
+        // TODO: Chyba nie będzie już potrzebne
     }
 
     public void addChild(ChildPostContainer child) {
@@ -123,17 +140,23 @@ public class ParentPostContainer extends SelectableItem implements IPostContaine
     public void saveInDatabase() {
         ParentPostContainerRepository repository = ParentPostContainerRepository.getInstance(SocialSynchro.getInstance());
         internalID = repository.insert(this);
+        for (ChildPostContainer child : children)
+            child.saveInDatabase();
     }
 
     @Override
     public void updateInDatabase() {
         ParentPostContainerRepository repository = ParentPostContainerRepository.getInstance(SocialSynchro.getInstance());
         repository.update(this);
+        for (ChildPostContainer child : children)
+            child.saveInDatabase();
     }
 
     @Override
     public void deleteFromDatabase() {
         ParentPostContainerRepository repository = ParentPostContainerRepository.getInstance(SocialSynchro.getInstance());
         repository.delete(this);
+        for (ChildPostContainer child : children)
+            child.deleteFromDatabase();
     }
 }

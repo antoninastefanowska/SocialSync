@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="account"
+            type="com.antonina.socialsynchro.base.Account" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/llAccountDialogItemContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/padding_small" >
+
+        <TextView
+            android:id="@+id/tvAccountName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorBackground"
+            android:text="@{account.name}" />
+
+    </LinearLayout>
+</layout>
