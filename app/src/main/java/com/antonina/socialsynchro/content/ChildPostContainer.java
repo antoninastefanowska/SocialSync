@@ -4,9 +4,9 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.databinding.Bindable;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.antonina.socialsynchro.BR;
-import com.antonina.socialsynchro.SocialSynchro;
 import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.content.attachments.Attachment;
 import com.antonina.socialsynchro.database.IDatabaseEntity;
@@ -42,9 +42,10 @@ public abstract class ChildPostContainer extends SelectableItem implements IPost
     }
 
     public ChildPostContainer(ParentPostContainer parent, Account account) {
+        locked = true;
+        post = null;
         setParent(parent);
         setAccount(account);
-        lock();
     }
 
     @Override
@@ -176,26 +177,35 @@ public abstract class ChildPostContainer extends SelectableItem implements IPost
         this.externalID = childPostContainerData.externalID;
         this.locked = childPostContainerData.locked;
         this.synchronizationDate = childPostContainerData.synchronizationDate;
+        Log.d("rodzic", "załadowano dziecko nr. " + String.valueOf(this.internalID));
 
         final ChildPostContainer instance = this;
 
-        final LiveData<ParentPostContainer> parentPostContainerLiveData = ParentPostContainerRepository.getInstance(SocialSynchro.getInstance()).getDataByID(childPostContainerData.parentID);
+        final LiveData<ParentPostContainer> parentPostContainerLiveData = ParentPostContainerRepository.getInstance().getDataByID(childPostContainerData.parentID);
         parentPostContainerLiveData.observeForever(new Observer<ParentPostContainer>() {
             @Override
             public void onChanged(@Nullable ParentPostContainer parentPostContainer) {
                 instance.setParent(parentPostContainer);
+                //Log.d("rodzic", "tu jestem");
+                //instance.notifyPropertyChanged(BR.parent);
+                //instance.notifyPropertyChanged(BR.child);
                 parentPostContainerLiveData.removeObserver(this);
             }
         });
-        final LiveData<Post> postLiveData = PostRepository.getInstance(SocialSynchro.getInstance()).getDataByID(childPostContainerData.postID);
-        postLiveData.observeForever(new Observer<Post>() {
-            @Override
-            public void onChanged(@Nullable Post post) {
-                instance.post = post;
-                postLiveData.removeObserver(this);
-            }
-        });
-        final LiveData<Account> accountLiveData = AccountRepository.getInstance(SocialSynchro.getInstance()).getDataByID(childPostContainerData.accountID);
+        if (!locked) {
+            final LiveData<Post> postLiveData = PostRepository.getInstance().getDataByID(childPostContainerData.postID);
+            postLiveData.observeForever(new Observer<Post>() {
+                @Override
+                public void onChanged(@Nullable Post post) {
+                    instance.post = post;
+                    //instance.notifyPropertyChanged(BR.parent);
+                    //instance.notifyPropertyChanged(BR.child);
+                    //instance.notifyPropertyChanged(BR.content);
+                    postLiveData.removeObserver(this);
+                }
+            });
+        }
+        final LiveData<Account> accountLiveData = AccountRepository.getInstance().getDataByID(childPostContainerData.accountID);
         accountLiveData.observeForever(new Observer<Account>() {
             @Override
             public void onChanged(@Nullable Account account) {
@@ -212,20 +222,26 @@ public abstract class ChildPostContainer extends SelectableItem implements IPost
 
     @Override
     public void saveInDatabase() {
-        ChildPostContainerRepository repository = ChildPostContainerRepository.getInstance(SocialSynchro.getInstance());
+        if (!locked)
+            post.saveInDatabase();
+        ChildPostContainerRepository repository = ChildPostContainerRepository.getInstance();
         internalID = repository.insert(this);
     }
 
     @Override
     public void updateInDatabase() {
-        ChildPostContainerRepository repository = ChildPostContainerRepository.getInstance(SocialSynchro.getInstance());
+        if (!locked)
+            post.updateInDatabase();
+        ChildPostContainerRepository repository = ChildPostContainerRepository.getInstance();
         repository.update(this);
     }
 
     @Override
     public void deleteFromDatabase() {
-        ChildPostContainerRepository repository = ChildPostContainerRepository.getInstance(SocialSynchro.getInstance());
+        ChildPostContainerRepository repository = ChildPostContainerRepository.getInstance();
         repository.delete(this);
+        if (!locked)
+            post.deleteFromDatabase();
     }
 
     @Override

@@ -19,10 +19,12 @@ public class PostRepository extends BaseRepository<PostTable, Post> {
         loadAllData();
     }
 
-    public static PostRepository getInstance(Application application) {
-        if (instance == null)
-            instance = new PostRepository(application);
+    public static PostRepository getInstance() {
         return instance;
+    }
+
+    public static void createInstance(Application application) {
+        instance = new PostRepository(application);
     }
 
     @Override

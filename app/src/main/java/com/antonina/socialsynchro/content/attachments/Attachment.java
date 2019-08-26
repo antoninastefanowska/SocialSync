@@ -4,7 +4,6 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.support.annotation.Nullable;
 
-import com.antonina.socialsynchro.SocialSynchro;
 import com.antonina.socialsynchro.content.Post;
 import com.antonina.socialsynchro.database.IDatabaseEntity;
 import com.antonina.socialsynchro.database.repositories.AttachmentRepository;
@@ -71,7 +70,7 @@ public abstract class Attachment implements IDatabaseEntity, IServiceEntity {
 
         final Attachment instance = this;
 
-        final LiveData<Post> postLiveData = PostRepository.getInstance(SocialSynchro.getInstance()).getDataByID(attachmentData.postID);
+        final LiveData<Post> postLiveData = PostRepository.getInstance().getDataByID(attachmentData.postID);
         postLiveData.observeForever(new Observer<Post>() {
             @Override
             public void onChanged(@Nullable Post post) {
@@ -88,19 +87,19 @@ public abstract class Attachment implements IDatabaseEntity, IServiceEntity {
 
     @Override
     public void saveInDatabase() {
-        AttachmentRepository repository = AttachmentRepository.getInstance(SocialSynchro.getInstance());
+        AttachmentRepository repository = AttachmentRepository.getInstance();
         internalID = repository.insert(this);
     }
 
     @Override
     public void updateInDatabase() {
-        AttachmentRepository repository = AttachmentRepository.getInstance(SocialSynchro.getInstance());
+        AttachmentRepository repository = AttachmentRepository.getInstance();
         repository.update(this);
     }
 
     @Override
     public void deleteFromDatabase() {
-        AttachmentRepository repository = AttachmentRepository.getInstance(SocialSynchro.getInstance());
+        AttachmentRepository repository = AttachmentRepository.getInstance();
         repository.delete(this);
     }
 

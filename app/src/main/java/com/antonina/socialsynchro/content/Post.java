@@ -1,16 +1,16 @@
 package com.antonina.socialsynchro.content;
 
-import com.antonina.socialsynchro.SocialSynchro;
 import com.antonina.socialsynchro.content.attachments.Attachment;
 import com.antonina.socialsynchro.database.IDatabaseEntity;
 import com.antonina.socialsynchro.database.repositories.PostRepository;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 import com.antonina.socialsynchro.database.tables.PostTable;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Post implements IPost, IDatabaseEntity {
+public class Post implements IPost, IDatabaseEntity, Serializable {
     private long internalID;
     private String title;
     private String content;
@@ -75,19 +75,19 @@ public class Post implements IPost, IDatabaseEntity {
 
     @Override
     public void saveInDatabase() {
-        PostRepository repository = PostRepository.getInstance(SocialSynchro.getInstance());
+        PostRepository repository = PostRepository.getInstance();
         internalID = repository.insert(this);
     }
 
     @Override
     public void updateInDatabase() {
-        PostRepository repository = PostRepository.getInstance(SocialSynchro.getInstance());
+        PostRepository repository = PostRepository.getInstance();
         repository.update(this);
     }
 
     @Override
     public void deleteFromDatabase() {
-        PostRepository repository = PostRepository.getInstance(SocialSynchro.getInstance());
+        PostRepository repository = PostRepository.getInstance();
         repository.delete(this);
     }
 }

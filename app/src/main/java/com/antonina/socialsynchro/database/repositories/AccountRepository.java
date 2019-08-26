@@ -5,6 +5,7 @@ import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 import android.os.AsyncTask;
+import android.util.Pair;
 
 import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.base.AccountFactory;
@@ -28,10 +29,12 @@ public class AccountRepository extends BaseRepository<AccountTable, Account> {
         loadAllData();
     }
 
-    public static AccountRepository getInstance(Application application) {
-        if (instance == null)
-            instance = new AccountRepository(application);
+    public static AccountRepository getInstance() {
         return instance;
+    }
+
+    public static void createInstance(Application application) {
+        instance = new AccountRepository(application);
     }
 
     @Override
@@ -57,17 +60,18 @@ public class AccountRepository extends BaseRepository<AccountTable, Account> {
     public LiveData<List<Account>> getDataByService(IService service) {
         long serviceID = service.getID().ordinal();
         LiveData<List<Account>> result = null;
+
         try {
             AccountDao accountDao = (AccountDao)dao;
-            LiveData<List<AccountTable>> databaseData = new GetDataByServiceAsyncTask(accountDao).execute(serviceID).get();
-            result = Transformations.map(databaseData, new Function<List<AccountTable>, List<Account>>() {
+            LiveData<List<Long>> IDs = new GetIDByServiceAsyncTask(accountDao).execute(serviceID).get();
+            FilterSource<Account> filterSource = new FilterSource<Account>(IDs, getAllData());
+
+            result = Transformations.map(filterSource, new Function<Pair<List<Long>, Map<Long, Account>>, List<Account>>() {
                 @Override
-                public List<Account> apply(List<AccountTable> input) {
+                public List<Account> apply(Pair<List<Long>, Map<Long, Account>> input) {
                     List<Account> output = new ArrayList<Account>();
-                    for (AccountTable accountData : input) {
-                        Account account = (Account)AccountFactory.getInstance().createFromData(accountData);
-                        output.add(account);
-                    }
+                    for (Long id : input.first)
+                        output.add(input.second.get(id));
                     return output;
                 }
             });
@@ -77,16 +81,16 @@ public class AccountRepository extends BaseRepository<AccountTable, Account> {
         return result;
     }
 
-    private static class GetDataByServiceAsyncTask extends AsyncTask<Long, Void, LiveData<List<AccountTable>>> {
+    private static class GetIDByServiceAsyncTask extends AsyncTask<Long, Void, LiveData<List<Long>>> {
         private AccountDao accountDao;
 
-        public GetDataByServiceAsyncTask(AccountDao dao) {
+        public GetIDByServiceAsyncTask(AccountDao dao) {
             accountDao = dao;
         }
 
         @Override
-        protected LiveData<List<AccountTable>> doInBackground(Long... params) {
-            return accountDao.getDataByService(params[0]);
+        protected LiveData<List<Long>> doInBackground(Long... params) {
+            return accountDao.getIDByService(params[0]);
         }
     }
 }

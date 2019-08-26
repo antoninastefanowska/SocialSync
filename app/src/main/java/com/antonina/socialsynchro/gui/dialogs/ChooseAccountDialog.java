@@ -12,13 +12,17 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.antonina.socialsynchro.R;
+import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.gui.adapters.AccountDialogAdapter;
+
+import java.util.List;
 
 public class ChooseAccountDialog extends Dialog {
     private Activity context;
     private AccountDialogAdapter adapter;
     private RecyclerView recyclerView;
     private ChooseAccountDialogListener listener;
+    private List<Account> ignoredData;
 
     public ChooseAccountDialog(@NonNull Activity context) {
         super(context, R.style.DialogStyle);
@@ -37,6 +41,7 @@ public class ChooseAccountDialog extends Dialog {
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
         adapter = new AccountDialogAdapter();
+        adapter.setIgnoredData(ignoredData);
         recyclerView.setAdapter(adapter);
 
         Button btOk = (Button)findViewById(R.id.btOk);
@@ -56,8 +61,19 @@ public class ChooseAccountDialog extends Dialog {
         });
     }
 
+    @Override
+    public void show() {
+        if (adapter != null)
+            adapter.refreshData();
+        super.show();
+    }
+
     public void setListener(ChooseAccountDialogListener listener) {
         this.listener = listener;
+    }
+
+    public void setIgnoredData(List<Account> ignoredData) {
+        this.ignoredData = ignoredData;
     }
 
     public void btCancel_onClick(View view) {

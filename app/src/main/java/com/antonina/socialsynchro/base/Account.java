@@ -3,7 +3,6 @@ package com.antonina.socialsynchro.base;
 import android.databinding.Bindable;
 
 import com.antonina.socialsynchro.BR;
-import com.antonina.socialsynchro.SocialSynchro;
 import com.antonina.socialsynchro.database.IDatabaseEntity;
 import com.antonina.socialsynchro.database.repositories.AccountRepository;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
@@ -73,19 +72,19 @@ public abstract class Account extends SelectableItem implements IDatabaseEntity,
 
     @Override
     public void saveInDatabase() {
-        AccountRepository repository = AccountRepository.getInstance(SocialSynchro.getInstance());
+        AccountRepository repository = AccountRepository.getInstance();
         internalID = repository.insert(this);
     }
 
     @Override
     public void updateInDatabase() {
-        AccountRepository repository = AccountRepository.getInstance(SocialSynchro.getInstance());
+        AccountRepository repository = AccountRepository.getInstance();
         repository.update(this);
     }
 
     @Override
     public void deleteFromDatabase() {
-        AccountRepository repository = AccountRepository.getInstance(SocialSynchro.getInstance());
+        AccountRepository repository = AccountRepository.getInstance();
         repository.delete(this);
     }
 

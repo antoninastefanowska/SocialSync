@@ -12,18 +12,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.antonina.socialsynchro.R;
-import com.antonina.socialsynchro.SocialSynchro;
 import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.database.repositories.AccountRepository;
 import com.antonina.socialsynchro.databinding.AccountDialogItemBinding;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class AccountDialogAdapter extends RecyclerView.Adapter<AccountDialogAdapter.AccountViewHolder> {
     private List<Account> accounts;
     private List<Account> checkedAccounts;
+    private List<Account> ignoredData;
 
     public static class AccountViewHolder extends RecyclerView.ViewHolder {
         public AccountDialogItemBinding binding;
@@ -37,17 +36,7 @@ public class AccountDialogAdapter extends RecyclerView.Adapter<AccountDialogAdap
     public AccountDialogAdapter() {
         accounts = new ArrayList<Account>();
         checkedAccounts = new ArrayList<Account>();
-        AccountRepository repository = AccountRepository.getInstance(SocialSynchro.getInstance());
-        final LiveData<Map<Long, Account>> accountLiveData = repository.getAllData();
-        accountLiveData.observeForever(new Observer<Map<Long, Account>>() {
-            @Override
-            public void onChanged(@Nullable Map<Long, Account> accountMap) {
-                accounts = new ArrayList<Account>(accountMap.values());
-                Log.d("okno dialogowe", "Loaded accounts size: " + accounts.size());
-                notifyDataSetChanged();
-                accountLiveData.removeObserver(this);
-            }
-        });
+        ignoredData = new ArrayList<Account>();
     }
 
     @NonNull
@@ -117,5 +106,27 @@ public class AccountDialogAdapter extends RecyclerView.Adapter<AccountDialogAdap
 
     public List<Account> getCheckedItems() {
         return checkedAccounts;
+    }
+
+    public void refreshData() {
+        AccountRepository repository = AccountRepository.getInstance();
+        final LiveData<List<Account>> accountLiveData = repository.getAllDataList();
+        accountLiveData.observeForever(new Observer<List<Account>>() {
+            @Override
+            public void onChanged(@Nullable List<Account> data) {
+                accounts.clear();
+                for (Account account : data) {
+                    if (!ignoredData.contains(account))
+                        accounts.add(account);
+                }
+                notifyDataSetChanged();
+                accountLiveData.removeObserver(this);
+            }
+        });
+    }
+
+    public void setIgnoredData(List<Account> ignoredData) {
+        this.ignoredData = ignoredData;
+        refreshData();
     }
 }

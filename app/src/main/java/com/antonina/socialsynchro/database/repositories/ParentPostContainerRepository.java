@@ -19,10 +19,12 @@ public class ParentPostContainerRepository extends BaseRepository<ParentPostCont
         loadAllData();
     }
 
-    public static ParentPostContainerRepository getInstance(Application application) {
-        if (instance == null)
-            instance = new ParentPostContainerRepository(application);
+    public static ParentPostContainerRepository getInstance() {
         return instance;
+    }
+
+    public static void createInstance(Application application) {
+        instance = new ParentPostContainerRepository(application);
     }
 
     @Override

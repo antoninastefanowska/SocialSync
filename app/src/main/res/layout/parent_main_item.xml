@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="parent"
+            type="com.antonina.socialsynchro.content.ParentPostContainer" />
+        <variable
+            name="childMainAdapter"
+            type="com.antonina.socialsynchro.gui.adapters.ChildMainAdapter" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/colorSecondary"
+        android:padding="@dimen/padding_small"
+        android:layout_margin="@dimen/margin_small">
+
+        <TextView
+            android:id="@+id/tvParentTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{parent.title}"
+            android:textColor="@color/colorBackground" />
+
+        <TextView
+            android:id="@+id/tvParentContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{parent.content}"
+            android:textColor="@color/colorBackground" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvMainChildren"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical"
+            android:adapter="@{childMainAdapter}"
+            android:padding="@dimen/padding_standard" />
+
+    </LinearLayout>
+
+</layout>

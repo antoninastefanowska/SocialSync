@@ -4,6 +4,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".gui.activities.MainActivity">
 
+    <data>
+        <variable
+            name="parentMainAdapter"
+            type="com.antonina.socialsynchro.gui.adapters.ParentMainAdapter" />
+    </data>
+
     <android.support.constraint.ConstraintLayout
         android:id="@+id/clMain"
         android:layout_width="match_parent"
@@ -44,9 +50,25 @@
                         android:text="Create content"
                         style="@style/ButtonStyle" />
 
+                    <Button
+                        android:id="@+id/btRefresh"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="btRefresh_onClick"
+                        android:text="Refresh"
+                        style="@style/ButtonStyle" />
+
                 </LinearLayout>
 
             </HorizontalScrollView>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvMainParents"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical"
+                android:adapter="@{parentMainAdapter}"
+                android:padding="@dimen/padding_standard" />
 
         </LinearLayout>
 

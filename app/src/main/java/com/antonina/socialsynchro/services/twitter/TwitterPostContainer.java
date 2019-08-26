@@ -3,6 +3,7 @@ package com.antonina.socialsynchro.services.twitter;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.antonina.socialsynchro.content.ChildPostContainer;
 import com.antonina.socialsynchro.content.OnPublishedListener;

@@ -5,6 +5,7 @@ import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 import android.os.AsyncTask;
+import android.util.Pair;
 
 import com.antonina.socialsynchro.content.Post;
 import com.antonina.socialsynchro.content.attachments.Attachment;
@@ -28,10 +29,12 @@ public class AttachmentRepository extends BaseRepository<AttachmentTable, Attach
         loadAllData();
     }
 
-    public static AttachmentRepository getInstance(Application application) {
-        if (instance == null)
-            instance = new AttachmentRepository(application);
+    public static AttachmentRepository getInstance() {
         return instance;
+    }
+
+    public static void createInstance(Application application) {
+        instance = new AttachmentRepository(application);
     }
 
     @Override
@@ -57,17 +60,18 @@ public class AttachmentRepository extends BaseRepository<AttachmentTable, Attach
     public LiveData<List<Attachment>> getDataByPost(Post post) {
         long postID = post.getInternalID();
         LiveData<List<Attachment>> result = null;
+
         try {
             AttachmentDao attachmentDao = (AttachmentDao)dao;
-            LiveData<List<AttachmentTable>> databaseData = new GetDataByPostAsyncTask(attachmentDao).execute(postID).get();
-            result = Transformations.map(databaseData, new Function<List<AttachmentTable>, List<Attachment>>() {
+            LiveData<List<Long>> IDs = new GetIDByPostAsyncTask(attachmentDao).execute(postID).get();
+            FilterSource<Attachment> filterSource = new FilterSource<Attachment>(IDs, getAllData());
+
+            result = Transformations.map(filterSource, new Function<Pair<List<Long>, Map<Long, Attachment>>, List<Attachment>>() {
                 @Override
-                public List<Attachment> apply(List<AttachmentTable> input) {
+                public List<Attachment> apply(Pair<List<Long>, Map<Long, Attachment>> input) {
                     List<Attachment> output = new ArrayList<Attachment>();
-                    for (AttachmentTable attachmentData : input) {
-                        Attachment attachment = (Attachment)AttachmentFactory.getInstance().createFromData(attachmentData);
-                        output.add(attachment);
-                    }
+                    for (Long id : input.first)
+                        output.add(input.second.get(id));
                     return output;
                 }
             });
@@ -77,14 +81,14 @@ public class AttachmentRepository extends BaseRepository<AttachmentTable, Attach
         return result;
     }
 
-    private static class GetDataByPostAsyncTask extends AsyncTask<Long, Void, LiveData<List<AttachmentTable>>> {
+    private static class GetIDByPostAsyncTask extends AsyncTask<Long, Void, LiveData<List<Long>>> {
         private AttachmentDao dao;
 
-        public GetDataByPostAsyncTask(AttachmentDao dao) { this.dao = dao; }
+        public GetIDByPostAsyncTask(AttachmentDao dao) { this.dao = dao; }
 
         @Override
-        protected LiveData<List<AttachmentTable>> doInBackground(final Long... params) {
-            return dao.getDataByPost(params[0]);
+        protected LiveData<List<Long>> doInBackground(final Long... params) {
+            return dao.getIDByPost(params[0]);
         }
     }
 }

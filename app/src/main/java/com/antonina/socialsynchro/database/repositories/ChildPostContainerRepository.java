@@ -5,6 +5,7 @@ import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 import android.os.AsyncTask;
+import android.util.Pair;
 
 import com.antonina.socialsynchro.content.ChildPostContainer;
 import com.antonina.socialsynchro.content.ChildPostContainerFactory;
@@ -28,10 +29,12 @@ public class ChildPostContainerRepository extends BaseRepository<ChildPostContai
         loadAllData();
     }
 
-    public static ChildPostContainerRepository getInstance(Application application) {
-        if (instance == null)
-            instance = new ChildPostContainerRepository(application);
+    public static ChildPostContainerRepository getInstance() {
         return instance;
+    }
+
+    public static void createInstance(Application application) {
+        instance = new ChildPostContainerRepository(application);
     }
 
     @Override
@@ -59,15 +62,15 @@ public class ChildPostContainerRepository extends BaseRepository<ChildPostContai
         LiveData<List<ChildPostContainer>> result = null;
         try {
             ChildPostContainerDao childPostContainerDao = (ChildPostContainerDao)dao;
-            LiveData<List<ChildPostContainerTable>> databaseData = new GetDataByParentAsyncTask(childPostContainerDao).execute(parentID).get();
-            result = Transformations.map(databaseData, new Function<List<ChildPostContainerTable>, List<ChildPostContainer>>() {
+            LiveData<List<Long>> IDs = new GetIDByParentAsyncTask(childPostContainerDao).execute(parentID).get();
+            FilterSource<ChildPostContainer> filterSource = new FilterSource<ChildPostContainer>(IDs, getAllData());
+
+            result = Transformations.map(filterSource, new Function<Pair<List<Long>, Map<Long, ChildPostContainer>>, List<ChildPostContainer>>() {
                 @Override
-                public List<ChildPostContainer> apply(List<ChildPostContainerTable> input) {
+                public List<ChildPostContainer> apply(Pair<List<Long>, Map<Long, ChildPostContainer>> input) {
                     List<ChildPostContainer> output = new ArrayList<ChildPostContainer>();
-                    for (ChildPostContainerTable childPostContainerData : input) {
-                        ChildPostContainer childPostContainer = (ChildPostContainer)ChildPostContainerFactory.getInstance().createFromData(childPostContainerData);
-                        output.add(childPostContainer);
-                    }
+                    for (Long id : input.first)
+                        output.add(input.second.get(id));
                     return output;
                 }
             });
@@ -77,14 +80,14 @@ public class ChildPostContainerRepository extends BaseRepository<ChildPostContai
         return result;
     }
 
-    private static class GetDataByParentAsyncTask extends AsyncTask<Long, Void, LiveData<List<ChildPostContainerTable>>> {
+    private static class GetIDByParentAsyncTask extends AsyncTask<Long, Void, LiveData<List<Long>>> {
         private ChildPostContainerDao dao;
 
-        public GetDataByParentAsyncTask(ChildPostContainerDao dao) { this.dao = dao; }
+        public GetIDByParentAsyncTask(ChildPostContainerDao dao) { this.dao = dao; }
 
         @Override
-        protected LiveData<List<ChildPostContainerTable>> doInBackground(final Long... params) {
-            return dao.getDataByParent(params[0]);
+        protected LiveData<List<Long>> doInBackground(final Long... params) {
+            return dao.getIDByParent(params[0]);
         }
     }
 }

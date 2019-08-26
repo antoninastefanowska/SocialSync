@@ -2,11 +2,16 @@ package com.antonina.socialsynchro.database.repositories;
 
 import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MediatorLiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.Transformations;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
+import android.util.Pair;
 
 import com.antonina.socialsynchro.database.daos.BaseDao;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -28,6 +33,12 @@ public abstract class BaseRepository<DataTableClass, EntityClass> {
                     return convertToEntities(input);
                 }
             });
+            data.observeForever(new Observer<Map<Long, EntityClass>>() {
+                @Override
+                public void onChanged(@Nullable Map<Long, EntityClass> longEntityClassMap) {
+                    data.removeObserver(this);
+                }
+            });
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -35,6 +46,16 @@ public abstract class BaseRepository<DataTableClass, EntityClass> {
 
     public LiveData<Map<Long, EntityClass>> getAllData() {
         return data;
+    }
+
+    public LiveData<List<EntityClass>> getAllDataList() {
+        LiveData<List<EntityClass>> result = Transformations.map(data, new Function<Map<Long, EntityClass>, List<EntityClass>>() {
+            @Override
+            public List<EntityClass> apply(Map<Long, EntityClass> input) {
+                return new ArrayList<EntityClass>(input.values());
+            }
+        });
+        return result;
     }
 
     public int count() {
@@ -155,6 +176,23 @@ public abstract class BaseRepository<DataTableClass, EntityClass> {
         protected Void doInBackground(final DataTableClass... params) {
             dao.delete(params[0]);
             return null;
+        }
+    }
+
+    protected static class FilterSource<EntityClass> extends MediatorLiveData<Pair<List<Long>, Map<Long, EntityClass>>> {
+        public FilterSource(final LiveData<List<Long>> IDsource, final LiveData<Map<Long, EntityClass>> dataSource) {
+            addSource(IDsource, new Observer<List<Long>>() {
+                @Override
+                public void onChanged(@Nullable List<Long> first) {
+                    setValue(Pair.create(first, dataSource.getValue()));
+                }
+            });
+            addSource(dataSource, new Observer<Map<Long, EntityClass>>() {
+                @Override
+                public void onChanged(@Nullable Map<Long, EntityClass> second) {
+                    setValue(Pair.create(IDsource.getValue(), second));
+                }
+            });
         }
     }
 }

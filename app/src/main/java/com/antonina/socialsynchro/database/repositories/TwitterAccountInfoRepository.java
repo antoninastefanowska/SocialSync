@@ -19,10 +19,12 @@ public class TwitterAccountInfoRepository extends BaseRepository<TwitterAccountI
         dao = db.twitterAccountDao();
     }
 
-    public static TwitterAccountInfoRepository getInstance(Application application) {
-        if (instance == null)
-            instance = new TwitterAccountInfoRepository(application);
+    public static TwitterAccountInfoRepository getInstance() {
         return instance;
+    }
+
+    public static void createInstance(Application application) {
+        instance = new TwitterAccountInfoRepository(application);
     }
 
     @Override

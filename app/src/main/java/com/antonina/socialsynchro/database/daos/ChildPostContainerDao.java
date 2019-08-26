@@ -19,8 +19,8 @@ public interface ChildPostContainerDao extends BaseDao<ChildPostContainerTable> 
     @Query("SELECT * FROM child_post_container WHERE id = :id")
     LiveData<ChildPostContainerTable> getDataByID(long id);
 
-    @Query("SELECT * FROM child_post_container WHERE parent_id = :parentID")
-    LiveData<List<ChildPostContainerTable>> getDataByParent(long parentID);
+    @Query("SELECT id FROM child_post_container WHERE parent_id = :parentID")
+    LiveData<List<Long>> getIDByParent(long parentID);
 
     @Query("SELECT COUNT(*) FROM child_post_container")
     int count();

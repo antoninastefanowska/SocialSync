@@ -1,6 +1,7 @@
 package com.antonina.socialsynchro.gui.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +24,7 @@ import com.antonina.socialsynchro.gui.adapters.ChildEditAdapter;
 import com.antonina.socialsynchro.gui.dialogs.ChooseAccountDialog;
 import com.antonina.socialsynchro.gui.dialogs.ChooseAccountDialogListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EditActivity extends AppCompatActivity {
@@ -31,7 +33,6 @@ public class EditActivity extends AppCompatActivity {
     private ActivityEditBinding binding;
     private RecyclerView childRecyclerView;
     private ChildEditAdapter childAdapter;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,19 +85,20 @@ public class EditActivity extends AppCompatActivity {
                 selectedAccounts = null;
             }
         });
+
+        List<Account> usedAccounts = new ArrayList<Account>();
+        for (ChildPostContainer child : parent.getChildren())
+            usedAccounts.add(child.getAccount());
+
+        dialog.setIgnoredData(usedAccounts);
         dialog.show();
     }
 
-    private void save() {
-        parent.saveInDatabase();
-    }
-
     public void btSave_onClick(View view) {
-        save();
+        exitActivity();
     }
 
     public void btPublish_onClick(View view) {
-        //save();
         final Activity context = this;
         parent.publish(new OnPublishedListener() {
             @Override
@@ -105,9 +107,17 @@ public class EditActivity extends AppCompatActivity {
                 childAdapter.notifyItemChanged(position);
                 Toast toast = Toast.makeText(context, "Successfily published: " + publishedPost.getExternalID(), Toast.LENGTH_SHORT);
                 toast.show();
+                exitActivity();
             }
         });
         childAdapter.notifyDataSetChanged();
+    }
+
+    private void exitActivity() {
+        Intent mainActivity = new Intent();
+        mainActivity.putExtra("parent", parent);
+        setResult(RESULT_OK, mainActivity);
+        finish();
     }
 
     public void etParentContent_onTextChanged(View view) {

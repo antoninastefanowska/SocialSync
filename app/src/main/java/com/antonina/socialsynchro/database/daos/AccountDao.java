@@ -22,8 +22,8 @@ public interface AccountDao extends BaseDao<AccountTable> {
     @Query("SELECT * FROM account WHERE id = :accountID")
     LiveData<AccountTable> getDataByID(long accountID);
 
-    @Query("SELECT * FROM account WHERE service_id = :serviceID")
-    LiveData<List<AccountTable>> getDataByService(long serviceID);
+    @Query("SELECT id FROM account WHERE service_id = :serviceID")
+    LiveData<List<Long>> getIDByService(long serviceID);
 
     @Insert
     long insert(AccountTable accountData);

@@ -4,7 +4,6 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.support.annotation.Nullable;
 
-import com.antonina.socialsynchro.SocialSynchro;
 import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.database.repositories.TwitterAccountInfoRepository;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
@@ -31,7 +30,7 @@ public class TwitterAccount extends Account {
     public void createFromData(IDatabaseTable data) {
         super.createFromData(data);
 
-        TwitterAccountInfoRepository repository = TwitterAccountInfoRepository.getInstance(SocialSynchro.getInstance());
+        TwitterAccountInfoRepository repository = TwitterAccountInfoRepository.getInstance();
         final LiveData<TwitterAccountInfoTable> dataTable = repository.getDataTableByID(data.getID());
         final TwitterAccount instance = this;
         dataTable.observeForever(new Observer<TwitterAccountInfoTable>() {
@@ -58,21 +57,21 @@ public class TwitterAccount extends Account {
     @Override
     public void saveInDatabase() {
         super.saveInDatabase();
-        TwitterAccountInfoRepository repository = TwitterAccountInfoRepository.getInstance(SocialSynchro.getInstance());
+        TwitterAccountInfoRepository repository = TwitterAccountInfoRepository.getInstance();
         repository.insert(this);
     }
 
     @Override
     public void updateInDatabase() {
         super.updateInDatabase();
-        TwitterAccountInfoRepository repository = TwitterAccountInfoRepository.getInstance(SocialSynchro.getInstance());
+        TwitterAccountInfoRepository repository = TwitterAccountInfoRepository.getInstance();
         repository.update(this);
     }
 
     @Override
     public void deleteFromDatabase() {
         super.deleteFromDatabase();
-        TwitterAccountInfoRepository repository = TwitterAccountInfoRepository.getInstance(SocialSynchro.getInstance());
+        TwitterAccountInfoRepository repository = TwitterAccountInfoRepository.getInstance();
         repository.delete(this);
     }
 

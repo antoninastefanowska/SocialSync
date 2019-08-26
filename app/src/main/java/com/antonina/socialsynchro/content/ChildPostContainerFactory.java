@@ -1,5 +1,7 @@
 package com.antonina.socialsynchro.content;
 
+import android.util.Log;
+
 import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.database.IDatabaseEntityFactory;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
