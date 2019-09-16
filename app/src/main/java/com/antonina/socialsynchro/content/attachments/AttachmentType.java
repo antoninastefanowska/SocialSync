@@ -1,11 +1,12 @@
 package com.antonina.socialsynchro.content.attachments;
 
-import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+
+import com.antonina.socialsynchro.gui.SelectableItem;
 
 import java.io.Serializable;
 
-public abstract class AttachmentType extends BaseObservable implements Serializable {
+public abstract class AttachmentType extends SelectableItem implements Serializable {
     public abstract AttachmentTypeID getID();
 
     @Bindable
