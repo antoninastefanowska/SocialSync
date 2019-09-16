@@ -1,4 +1,4 @@
-package com.antonina.socialsynchro.gui.adapters2;
+package com.antonina.socialsynchro.gui.adapters;
 
 import android.content.Context;
 import android.databinding.ViewDataBinding;
@@ -9,12 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.antonina.socialsynchro.gui.SelectableItem;
+import com.antonina.socialsynchro.gui.GUIItem;
+import com.antonina.socialsynchro.gui.listeners.OnUpdatedListener;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BaseAdapter<ItemClass extends SelectableItem, ViewHolderClass extends BaseAdapter.BaseViewHolder> extends RecyclerView.Adapter<ViewHolderClass> {
+public abstract class BaseAdapter<ItemClass extends GUIItem, ViewHolderClass extends BaseAdapter.BaseViewHolder> extends RecyclerView.Adapter<ViewHolderClass> {
     protected List<ItemClass> items;
     protected List<ItemClass> selectedItems;
     protected AppCompatActivity context;
@@ -52,6 +53,15 @@ public abstract class BaseAdapter<ItemClass extends SelectableItem, ViewHolderCl
 
         View view = inflater.inflate(getItemLayout(), parent, false);
         ViewHolderClass viewHolder = createViewHolder(view);
+
+        final int index = position;
+        ItemClass item = getItem(position);
+        item.setListener(new OnUpdatedListener() {
+            @Override
+            public void onUpdated() {
+                notifyItemChanged(index);
+            }
+        });
 
         return viewHolder;
     }

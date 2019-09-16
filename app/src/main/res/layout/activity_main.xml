@@ -6,8 +6,8 @@
 
     <data>
         <variable
-            name="parentMainAdapter"
-            type="com.antonina.socialsynchro.gui.adapters.ParentMainAdapter" />
+            name="parentAdapter"
+            type="com.antonina.socialsynchro.gui.adapters.ParentDisplayAdapter" />
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -50,14 +50,6 @@
                         android:text="Create content"
                         style="@style/ButtonStyle" />
 
-                    <Button
-                        android:id="@+id/button_refresh"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:onClick="buttonRefresh_onClick"
-                        android:text="Refresh"
-                        style="@style/ButtonStyle" />
-
                 </LinearLayout>
 
             </HorizontalScrollView>
@@ -67,7 +59,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scrollbars="vertical"
-                android:adapter="@{parentMainAdapter}"
+                android:adapter="@{parentAdapter}"
                 android:padding="@dimen/padding_standard" />
 
         </LinearLayout>

@@ -13,7 +13,7 @@
             type="com.antonina.socialsynchro.gui.adapters.ChildEditAdapter" />
         <variable
             name="attachmentAdapter"
-            type="com.antonina.socialsynchro.gui.adapters.AttachmentAdapter" />
+            type="com.antonina.socialsynchro.gui.adapters.AttachmentEditAdapter" />
     </data>
 
     <android.support.constraint.ConstraintLayout

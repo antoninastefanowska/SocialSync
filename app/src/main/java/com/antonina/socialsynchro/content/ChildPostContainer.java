@@ -15,17 +15,17 @@ import com.antonina.socialsynchro.database.repositories.ParentPostContainerRepos
 import com.antonina.socialsynchro.database.repositories.PostRepository;
 import com.antonina.socialsynchro.database.tables.ChildPostContainerTable;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
-import com.antonina.socialsynchro.gui.SelectableItem;
+import com.antonina.socialsynchro.gui.GUIItem;
+import com.antonina.socialsynchro.gui.listeners.OnPublishedListener;
+import com.antonina.socialsynchro.gui.listeners.OnUnpublishedListener;
 import com.antonina.socialsynchro.services.IResponse;
 import com.antonina.socialsynchro.services.IServiceEntity;
 
 import java.util.Date;
 import java.util.List;
 
-public abstract class ChildPostContainer extends SelectableItem implements IPostContainer, IPost, IDatabaseEntity, IServiceEntity {
-    private long internalID;
+public abstract class ChildPostContainer extends PostContainer implements IServiceEntity {
     private String externalID;
-    private Post post;
     private boolean locked;
     private Date synchronizationDate;
     private Account account;
@@ -45,9 +45,6 @@ public abstract class ChildPostContainer extends SelectableItem implements IPost
         post = null;
         setAccount(account);
     }
-
-    @Override
-    public long getInternalID() { return internalID; }
 
     @Bindable
     @Override
@@ -93,14 +90,20 @@ public abstract class ChildPostContainer extends SelectableItem implements IPost
 
     @Override
     public void addAttachment(Attachment attachment) {
-        if (!locked)
+        if (!locked) {
             post.addAttachment(attachment);
+            if (listener != null)
+                listener.onUpdated();
+        }
     }
 
     @Override
     public void removeAttachment(Attachment attachment) {
-        if (!locked)
+        if (!locked) {
             post.removeAttachment(attachment);
+            if (listener != null)
+                listener.onUpdated();
+        }
     }
 
     @Override
@@ -162,7 +165,9 @@ public abstract class ChildPostContainer extends SelectableItem implements IPost
 
     public void setSynchronizationDate(Date date) { this.synchronizationDate = synchronizationDate; }
 
-    public ParentPostContainer getParent() { return parent; }
+    public ParentPostContainer getParent() {
+        return parent;
+    }
 
     public void setParent(ParentPostContainer parent) {
         this.parent = parent;
@@ -182,9 +187,13 @@ public abstract class ChildPostContainer extends SelectableItem implements IPost
         parentPostContainerLiveData.observeForever(new Observer<ParentPostContainer>() {
             @Override
             public void onChanged(@Nullable ParentPostContainer parentPostContainer) {
-                if (parentPostContainer != null)
+                if (parentPostContainer != null) {
                     parentPostContainer.addChild(instance);
-                parentPostContainerLiveData.removeObserver(this);
+                    if (listener != null)
+                        listener.onUpdated();
+                    if (parent.getListener() != null)
+                        parent.getListener().onUpdated();
+                }
             }
         });
         if (!locked) {
@@ -192,17 +201,23 @@ public abstract class ChildPostContainer extends SelectableItem implements IPost
             postLiveData.observeForever(new Observer<Post>() {
                 @Override
                 public void onChanged(@Nullable Post post) {
-                    instance.post = post;
-                    postLiveData.removeObserver(this);
+                    if (post != null) {
+                        instance.post = post;
+                        if (listener != null)
+                            listener.onUpdated();
+                    }
                 }
             });
         }
-        final LiveData<Account> accountLiveData = AccountRepository.getInstance().getDataByID(childPostContainerData.accountID);
+        LiveData<Account> accountLiveData = AccountRepository.getInstance().getDataByID(childPostContainerData.accountID);
         accountLiveData.observeForever(new Observer<Account>() {
             @Override
             public void onChanged(@Nullable Account account) {
-                instance.account = account;
-                accountLiveData.removeObserver(this);
+                if (account != null) {
+                    instance.account = account;
+                    if (listener != null)
+                        listener.onUpdated();
+                }
             }
         });
     }

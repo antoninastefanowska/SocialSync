@@ -1,6 +1,5 @@
 package com.antonina.socialsynchro.gui.dialogs;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -14,16 +13,17 @@ import android.widget.Button;
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.gui.adapters.AccountDialogAdapter;
+import com.antonina.socialsynchro.gui.listeners.OnAccountsSelectedListener;
 
 import java.util.List;
 
 public class ChooseAccountDialog extends Dialog {
     private AppCompatActivity context;
     private AccountDialogAdapter adapter;
-    private ChooseAccountDialogListener listener;
+    private OnAccountsSelectedListener listener;
     private List<Account> ignoredData;
 
-    public ChooseAccountDialog(@NonNull AppCompatActivity context, ChooseAccountDialogListener listener) {
+    public ChooseAccountDialog(@NonNull AppCompatActivity context, OnAccountsSelectedListener listener) {
         super(context, R.style.DialogStyle);
         this.context = context;
         this.listener = listener;
@@ -64,7 +64,7 @@ public class ChooseAccountDialog extends Dialog {
     @Override
     public void show() {
         if (adapter != null)
-            adapter.refreshData();
+            adapter.loadData();
         super.show();
     }
 

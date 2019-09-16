@@ -10,7 +10,7 @@ import android.view.View;
 
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.databinding.ActivityAccountsBinding;
-import com.antonina.socialsynchro.gui.adapters.AccountMainAdapter;
+import com.antonina.socialsynchro.gui.adapters.AccountDisplayAdapter;
 import com.antonina.socialsynchro.base.Account;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public class AccountsActivity extends AppCompatActivity {
 
     private ActivityAccountsBinding binding;
     private RecyclerView recyclerView;
-    private AccountMainAdapter adapter;
+    private AccountDisplayAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,9 +31,9 @@ public class AccountsActivity extends AppCompatActivity {
         recyclerView = (RecyclerView)findViewById(R.id.recyclerview_accounts);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new AccountMainAdapter();
+        adapter = new AccountDisplayAdapter(this);
 
-        binding.setAccountMainAdapter(adapter);
+        binding.setAccountAdapter(adapter);
     }
 
     public void buttonAddAccount_onClick(View view) {

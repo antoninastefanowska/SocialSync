@@ -1,4 +1,4 @@
-package com.antonina.socialsynchro.gui.adapters2;
+package com.antonina.socialsynchro.gui.adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -7,21 +7,20 @@ import android.view.View;
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.content.IPost;
 import com.antonina.socialsynchro.content.attachments.Attachment;
-import com.antonina.socialsynchro.databinding.AttachmentItemBinding;
+import com.antonina.socialsynchro.databinding.AttachmentEditItemBinding;
 
 public class AttachmentEditAdapter extends BaseAdapter<Attachment, AttachmentEditAdapter.AttachmentViewHolder> {
     private IPost postContainer;
 
-    // TODO: AttachmentItemBinding -> AttachmentEditItemBinding
-    public static class AttachmentViewHolder extends BaseAdapter.BaseViewHolder<AttachmentItemBinding> {
+    public static class AttachmentViewHolder extends BaseAdapter.BaseViewHolder<AttachmentEditItemBinding> {
 
         public AttachmentViewHolder(@NonNull View view) {
             super(view);
         }
 
         @Override
-        protected AttachmentItemBinding getBinding(View view) {
-            return AttachmentItemBinding.bind(view);
+        protected AttachmentEditItemBinding getBinding(View view) {
+            return AttachmentEditItemBinding.bind(view);
         }
     }
 
@@ -37,7 +36,7 @@ public class AttachmentEditAdapter extends BaseAdapter<Attachment, AttachmentEdi
 
     @Override
     protected int getItemLayout() {
-        return R.layout.attachment_item;
+        return R.layout.attachment_edit_item;
     }
 
     @Override

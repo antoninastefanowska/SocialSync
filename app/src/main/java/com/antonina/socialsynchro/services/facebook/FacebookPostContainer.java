@@ -1,9 +1,8 @@
 package com.antonina.socialsynchro.services.facebook;
 
 import com.antonina.socialsynchro.content.ChildPostContainer;
-import com.antonina.socialsynchro.content.OnPublishedListener;
-import com.antonina.socialsynchro.content.OnUnpublishedListener;
-import com.antonina.socialsynchro.content.ParentPostContainer;
+import com.antonina.socialsynchro.gui.listeners.OnPublishedListener;
+import com.antonina.socialsynchro.gui.listeners.OnUnpublishedListener;
 
 public class FacebookPostContainer extends ChildPostContainer {
     private static final int MAX_CONTENT_LENGTH = 63206;

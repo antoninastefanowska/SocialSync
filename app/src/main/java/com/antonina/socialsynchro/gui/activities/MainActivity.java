@@ -11,14 +11,14 @@ import android.view.View;
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.content.ParentPostContainer;
 import com.antonina.socialsynchro.databinding.ActivityMainBinding;
-import com.antonina.socialsynchro.gui.adapters.ParentMainAdapter;
+import com.antonina.socialsynchro.gui.adapters.ParentDisplayAdapter;
 
 public class MainActivity extends AppCompatActivity {
     private final static int CREATE = 0;
 
     private ActivityMainBinding binding;
     private RecyclerView parentRecyclerView;
-    private ParentMainAdapter parentAdapter;
+    private ParentDisplayAdapter parentAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,12 +29,10 @@ public class MainActivity extends AppCompatActivity {
         parentRecyclerView = (RecyclerView)findViewById(R.id.recyclerview_parents);
         parentRecyclerView.setHasFixedSize(true);
         parentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        parentAdapter = new ParentMainAdapter();
+        parentAdapter = new ParentDisplayAdapter(this);
 
-        binding.setParentMainAdapter(parentAdapter);
+        binding.setParentAdapter(parentAdapter);
     }
-
-    //TODO: Dane zależą od działalności w innych aktywnościach (np. AccountsActivity) - odświeżyć dane przy powrocie do aktywności MainActivity
 
     public void buttonAccounts_onClick(View view) {
         Intent accountsActivity = new Intent(MainActivity.this, AccountsActivity.class);
@@ -44,10 +42,6 @@ public class MainActivity extends AppCompatActivity {
     public void buttonCreateContent_onClick(View view) {
         Intent editActivity = new Intent(MainActivity.this, EditActivity.class);
         startActivityForResult(editActivity, CREATE);
-    }
-
-    public void buttonRefresh_onClick(View view) {
-        parentAdapter.refreshData();
     }
 
     @Override

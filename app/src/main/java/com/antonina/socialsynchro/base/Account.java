@@ -7,13 +7,13 @@ import com.antonina.socialsynchro.database.IDatabaseEntity;
 import com.antonina.socialsynchro.database.repositories.AccountRepository;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 import com.antonina.socialsynchro.database.tables.AccountTable;
-import com.antonina.socialsynchro.gui.SelectableItem;
+import com.antonina.socialsynchro.gui.GUIItem;
 import com.antonina.socialsynchro.services.IService;
 import com.antonina.socialsynchro.services.IServiceEntity;
 
 import java.io.Serializable;
 
-public abstract class Account extends SelectableItem implements IDatabaseEntity, IServiceEntity, Serializable {
+public abstract class Account extends GUIItem implements IDatabaseEntity, IServiceEntity, Serializable {
     private long internalID;
     private String externalID;
     private String name;

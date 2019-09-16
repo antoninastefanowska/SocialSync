@@ -1,4 +1,4 @@
-package com.antonina.socialsynchro.gui.adapters2;
+package com.antonina.socialsynchro.gui.adapters;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
@@ -11,21 +11,21 @@ import android.view.ViewGroup;
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.database.repositories.AccountRepository;
-import com.antonina.socialsynchro.databinding.AccountMainItemBinding;
+import com.antonina.socialsynchro.databinding.AccountDisplayItemBinding;
 
 import java.util.List;
 
 public class AccountDisplayAdapter extends BaseAdapter<Account, AccountDisplayAdapter.AccountViewHolder> {
 
-    public static class AccountViewHolder extends BaseAdapter.BaseViewHolder<AccountMainItemBinding> {
+    public static class AccountViewHolder extends BaseAdapter.BaseViewHolder<AccountDisplayItemBinding> {
 
         public AccountViewHolder(@NonNull View view) {
             super(view);
         }
 
         @Override
-        protected AccountMainItemBinding getBinding(View view) {
-            return AccountMainItemBinding.bind(view);
+        protected AccountDisplayItemBinding getBinding(View view) {
+            return AccountDisplayItemBinding.bind(view);
         }
     }
 
@@ -36,7 +36,7 @@ public class AccountDisplayAdapter extends BaseAdapter<Account, AccountDisplayAd
 
     @Override
     protected int getItemLayout() {
-        return R.layout.account_main_item;
+        return R.layout.account_display_item;
     }
 
     @Override

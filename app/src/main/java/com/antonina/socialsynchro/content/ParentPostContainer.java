@@ -12,16 +12,16 @@ import com.antonina.socialsynchro.database.repositories.ParentPostContainerRepos
 import com.antonina.socialsynchro.database.repositories.PostRepository;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 import com.antonina.socialsynchro.database.tables.ParentPostContainerTable;
-import com.antonina.socialsynchro.gui.SelectableItem;
+import com.antonina.socialsynchro.gui.GUIItem;
+import com.antonina.socialsynchro.gui.listeners.OnPublishedListener;
+import com.antonina.socialsynchro.gui.listeners.OnUnpublishedListener;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class ParentPostContainer extends SelectableItem implements IPostContainer, IPost, IDatabaseEntity {
-    private long internalID;
+public class ParentPostContainer extends PostContainer {
     private List<ChildPostContainer> children;
-    private Post post;
     private Date creationDate;
 
     public ParentPostContainer() {
@@ -60,7 +60,6 @@ public class ParentPostContainer extends SelectableItem implements IPostContaine
     @Override
     public void setContent(String content) {
         post.setContent(content);
-        notifyPropertyChanged(BR.child);
     }
 
     public List<ChildPostContainer> getChildren() {
@@ -80,11 +79,15 @@ public class ParentPostContainer extends SelectableItem implements IPostContaine
     @Override
     public void addAttachment(Attachment attachment) {
         post.addAttachment(attachment);
+        if (listener != null)
+            listener.onUpdated();
     }
 
     @Override
     public void removeAttachment(Attachment attachment) {
         post.removeAttachment(attachment);
+        if (listener != null)
+            listener.onUpdated();
     }
 
     @Override
@@ -110,12 +113,15 @@ public class ParentPostContainer extends SelectableItem implements IPostContaine
         children.add(child);
         child.setParent(this);
         child.lock();
-        notifyPropertyChanged(BR.parent);
+        if (listener != null)
+            listener.onUpdated();
     }
 
     public void removeChild(ChildPostContainer child) {
         children.remove(child);
         child.setParent(null);
+        if (listener != null)
+            listener.onUpdated();
     }
 
     public Date getCreationDate() { return creationDate; }
@@ -129,19 +135,17 @@ public class ParentPostContainer extends SelectableItem implements IPostContaine
         this.post = new Post(); //TODO: Tworzymy pusty obiekt zanim pobierzemy obiekt z bazy - zrobić to samo dla innych encji.
 
         final ParentPostContainer instance = this;
-        final LiveData<Post> postLiveData = PostRepository.getInstance().getDataByID(parentPostContainerData.postID);
+        LiveData<Post> postLiveData = PostRepository.getInstance().getDataByID(parentPostContainerData.postID);
         postLiveData.observeForever(new Observer<Post>() {
             @Override
             public void onChanged(@Nullable Post post) {
-                instance.post = post;
-                postLiveData.removeObserver(this);
+                if (post != null) {
+                    instance.post = post;
+                    if (listener != null)
+                        listener.onUpdated();
+                }
             }
         });
-    }
-
-    @Override
-    public long getInternalID() {
-        return internalID;
     }
 
     @Override
@@ -159,7 +163,8 @@ public class ParentPostContainer extends SelectableItem implements IPostContaine
         ParentPostContainerRepository repository = ParentPostContainerRepository.getInstance();
         repository.update(this);
         for (ChildPostContainer child : children)
-            child.saveInDatabase();
+            child.updateInDatabase();
+        //TODO: Sprawdzić czy dziecko istnieje w bazie i dodać/usunąć
     }
 
     @Override

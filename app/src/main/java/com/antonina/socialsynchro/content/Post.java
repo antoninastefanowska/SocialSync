@@ -6,7 +6,6 @@ import com.antonina.socialsynchro.database.repositories.PostRepository;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 import com.antonina.socialsynchro.database.tables.PostTable;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 

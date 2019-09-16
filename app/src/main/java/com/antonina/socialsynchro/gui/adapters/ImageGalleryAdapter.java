@@ -1,13 +1,10 @@
 package com.antonina.socialsynchro.gui.adapters;
 
-import android.app.Activity;
-import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -22,33 +19,72 @@ import com.bumptech.glide.request.RequestOptions;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-public class ImageGalleryAdapter extends RecyclerView.Adapter<ImageGalleryAdapter.ImageViewHolder> {
-    private ImageAttachment[] images;
-    private List<ImageAttachment> selectedImages;
-    private Activity context;
+public class ImageGalleryAdapter extends BaseAdapter<ImageAttachment, ImageGalleryAdapter.ImageViewHolder> {
 
-    public static class ImageViewHolder extends RecyclerView.ViewHolder {
-        public ImageGalleryItemBinding binding;
+    public static class ImageViewHolder extends BaseAdapter.BaseViewHolder<ImageGalleryItemBinding> {
         public ImageView imageView;
 
         public ImageViewHolder(@NonNull View view) {
             super(view);
-            binding = ImageGalleryItemBinding.bind(view);
-            imageView = view.findViewById(R.id.imageview_image);
+            imageView = (ImageView)view.findViewById(R.id.imageview_image);
+        }
+
+        @Override
+        protected ImageGalleryItemBinding getBinding(View view) {
+            return ImageGalleryItemBinding.bind(view);
         }
     }
 
-    public ImageGalleryAdapter(Activity context) {
-        images = new ImageAttachment[0];
-        selectedImages = new ArrayList<ImageAttachment>();
-        this.context = context;
+    public ImageGalleryAdapter(AppCompatActivity context) {
+        super(context);
+        loadData();
     }
 
+    @Override
+    protected int getItemLayout() {
+        return R.layout.image_gallery_item;
+    }
+
+    @Override
+    protected void setItemBinding(ImageViewHolder viewHolder, ImageAttachment item) {
+        viewHolder.binding.setImage(item);
+        RequestOptions options = new RequestOptions().override(50, 50).fitCenter();
+        Glide.with(context)
+                .load(item.getFile())
+                .apply(options)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(viewHolder.imageView);
+    }
+
+    @Override
+    protected ImageViewHolder createViewHolder(View view) {
+        return new ImageViewHolder(view);
+    }
+
+    @NonNull
+    @Override
+    public ImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int position) {
+        ImageViewHolder viewHolder = super.onCreateViewHolder(parent, position);
+        setSelectable(viewHolder);
+        return viewHolder;
+    }
+
+    @Override
     public void loadData() {
+        Runnable loadImages = new Runnable() {
+            @Override
+            public void run() {
+                loadImages();
+            }
+        };
+        Thread thread = new Thread(loadImages);
+        thread.run();
+    }
+
+    private void loadImages() {
         Uri uri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String[] projection = {MediaStore.Images.ImageColumns.DATA};
         String sortOrder = MediaStore.Images.ImageColumns.DATE_MODIFIED + " DESC";
@@ -93,8 +129,7 @@ public class ImageGalleryAdapter extends RecyclerView.Adapter<ImageGalleryAdapte
                 }
             }
         }
-        images = new ImageAttachment[sortedImages.size()];
-        sortedImages.toArray(images);
+        items = new ArrayList<ImageAttachment>(sortedImages);
         notifyDataSetChanged();
     }
 
@@ -106,73 +141,5 @@ public class ImageGalleryAdapter extends RecyclerView.Adapter<ImageGalleryAdapte
                 return true;
         }
         return false;
-    }
-
-    @NonNull
-    @Override
-    public ImageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int position) {
-        Context context = parent.getContext();
-        LayoutInflater inflater = LayoutInflater.from(context);
-
-        View imageItemView = inflater.inflate(R.layout.image_gallery_item, parent, false);
-        final ImageViewHolder viewHolder = new ImageViewHolder(imageItemView);
-
-        imageItemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = viewHolder.getAdapterPosition();
-                ImageAttachment item = getItem(position);
-                if (item.isSelected())
-                    unselectItem(position);
-                else
-                    selectItem(position);
-            }
-        });
-        return viewHolder;
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull ImageViewHolder viewHolder, int position) {
-        ImageAttachment item = getItem(position);
-        viewHolder.binding.setImage(item);
-        viewHolder.binding.executePendingBindings();
-
-        RequestOptions options = new RequestOptions().override(50, 50).fitCenter();
-        Glide.with(context)
-                .load(item.getFile())
-                .apply(options)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(viewHolder.imageView);
-    }
-
-    @Override
-    public int getItemCount() {
-        return images.length;
-    }
-
-    private ImageAttachment getItem(int position) {
-        return images[position];
-    }
-
-    public void selectItem(int position) {
-        ImageAttachment item = getItem(position);
-        if (item.isSelected())
-            return;
-        item.select();
-        selectedImages.add(item);
-        notifyItemChanged(position);
-    }
-
-    public void unselectItem(int position) {
-        ImageAttachment item = getItem(position);
-        if (!item.isSelected())
-            return;
-        item.unselect();
-        selectedImages.remove(item);
-        notifyItemChanged(position);
-    }
-
-    public List<ImageAttachment> getSelectedItems() {
-        return selectedImages;
     }
 }

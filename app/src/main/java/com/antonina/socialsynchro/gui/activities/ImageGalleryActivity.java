@@ -32,15 +32,6 @@ public class ImageGalleryActivity extends AppCompatActivity {
 
         binding.setImageAdapter(imageAdapter);
         binding.executePendingBindings();
-
-        Runnable loadImages = new Runnable() {
-            @Override
-            public void run() {
-                imageAdapter.loadData();
-            }
-        };
-        Thread thread = new Thread(loadImages);
-        thread.run();
     }
 
     public void buttonConfirm_onClick(View view) {

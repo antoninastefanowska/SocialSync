@@ -22,17 +22,17 @@ import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.content.ChildPostContainer;
 import com.antonina.socialsynchro.content.ChildPostContainerFactory;
 import com.antonina.socialsynchro.content.IPost;
-import com.antonina.socialsynchro.content.OnPublishedListener;
+import com.antonina.socialsynchro.gui.listeners.OnPublishedListener;
 import com.antonina.socialsynchro.content.ParentPostContainer;
 import com.antonina.socialsynchro.content.attachments.AttachmentType;
 import com.antonina.socialsynchro.content.attachments.ImageAttachment;
 import com.antonina.socialsynchro.databinding.ActivityEditBinding;
-import com.antonina.socialsynchro.gui.adapters.AttachmentAdapter;
+import com.antonina.socialsynchro.gui.adapters.AttachmentEditAdapter;
 import com.antonina.socialsynchro.gui.adapters.ChildEditAdapter;
 import com.antonina.socialsynchro.gui.dialogs.ChooseAccountDialog;
-import com.antonina.socialsynchro.gui.dialogs.ChooseAccountDialogListener;
+import com.antonina.socialsynchro.gui.listeners.OnAccountsSelectedListener;
 import com.antonina.socialsynchro.gui.dialogs.ChooseAttachmentTypeDialog;
-import com.antonina.socialsynchro.gui.dialogs.ChooseAttachmentTypeDialogListener;
+import com.antonina.socialsynchro.gui.listeners.OnAttachmentTypeSelectedListener;
 import com.antonina.socialsynchro.gui.helpers.SerializableList;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class EditActivity extends AppCompatActivity {
     private ParentPostContainer parent;
     private List<Account> selectedAccounts;
     private ChildEditAdapter childAdapter;
-    private AttachmentAdapter parentAttachmentAdapter;
+    private AttachmentEditAdapter parentAttachmentAdapter;
     private IPost activePostContainer;
 
     @Override
@@ -68,11 +68,11 @@ public class EditActivity extends AppCompatActivity {
 
         RecyclerView childRecyclerView = (RecyclerView)findViewById(R.id.recyclerview_children);
         childRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        childAdapter = new ChildEditAdapter(parent, this);
+        childAdapter = new ChildEditAdapter(this, parent);
 
         RecyclerView parentAttachmentRecyclerView = (RecyclerView)findViewById(R.id.recyclerview_parent_attachments);
         parentAttachmentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        parentAttachmentAdapter = new AttachmentAdapter(parent);
+        parentAttachmentAdapter = new AttachmentEditAdapter(this, parent);
 
         binding.setChildAdapter(childAdapter);
         binding.setAttachmentAdapter(parentAttachmentAdapter);
@@ -100,7 +100,7 @@ public class EditActivity extends AppCompatActivity {
     }
 
     public void buttonAddChild_onClick(View view) {
-        ChooseAccountDialog dialog = new ChooseAccountDialog(this, new ChooseAccountDialogListener() {
+        ChooseAccountDialog dialog = new ChooseAccountDialog(this, new OnAccountsSelectedListener() {
             @Override
             public void onAccountsSelected(List<Account> accounts) {
                 selectedAccounts = accounts;
@@ -130,8 +130,7 @@ public class EditActivity extends AppCompatActivity {
         parent.publish(new OnPublishedListener() {
             @Override
             public void onPublished(ChildPostContainer publishedPost, String error) {
-                int position = childAdapter.getItemPosition(publishedPost);
-                childAdapter.notifyItemChanged(position);
+                childAdapter.updateItemView(publishedPost);
                 Toast toast = Toast.makeText(context, "Successfily published: " + publishedPost.getExternalID(), Toast.LENGTH_SHORT);
                 toast.show();
                 exitActivity();
@@ -162,7 +161,7 @@ public class EditActivity extends AppCompatActivity {
     }
 
     private void chooseAttachmentType() {
-        ChooseAttachmentTypeDialog dialog = new ChooseAttachmentTypeDialog(this, new ChooseAttachmentTypeDialogListener() {
+        ChooseAttachmentTypeDialog dialog = new ChooseAttachmentTypeDialog(this, new OnAttachmentTypeSelectedListener() {
             @Override
             public void onAttachmentTypeSelected(AttachmentType attachmentType) {
                 switch (attachmentType.getID()) {

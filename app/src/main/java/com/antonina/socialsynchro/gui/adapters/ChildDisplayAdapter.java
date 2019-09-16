@@ -1,4 +1,4 @@
-package com.antonina.socialsynchro.gui.adapters2;
+package com.antonina.socialsynchro.gui.adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -7,20 +7,20 @@ import android.view.View;
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.content.ChildPostContainer;
 import com.antonina.socialsynchro.content.ParentPostContainer;
-import com.antonina.socialsynchro.databinding.ChildMainItemBinding;
+import com.antonina.socialsynchro.databinding.ChildDisplayItemBinding;
 
 public class ChildDisplayAdapter extends BaseAdapter<ChildPostContainer, ChildDisplayAdapter.ChildViewHolder> {
     private ParentPostContainer parent;
 
-    public static class ChildViewHolder extends BaseAdapter.BaseViewHolder<ChildMainItemBinding> {
+    public static class ChildViewHolder extends BaseAdapter.BaseViewHolder<ChildDisplayItemBinding> {
 
         public ChildViewHolder(@NonNull View view) {
             super(view);
         }
 
         @Override
-        protected ChildMainItemBinding getBinding(View view) {
-            return ChildMainItemBinding.bind(view);
+        protected ChildDisplayItemBinding getBinding(View view) {
+            return ChildDisplayItemBinding.bind(view);
         }
     }
 
@@ -36,7 +36,7 @@ public class ChildDisplayAdapter extends BaseAdapter<ChildPostContainer, ChildDi
 
     @Override
     protected int getItemLayout() {
-        return R.layout.child_main_item;
+        return R.layout.child_display_item;
     }
 
     @Override

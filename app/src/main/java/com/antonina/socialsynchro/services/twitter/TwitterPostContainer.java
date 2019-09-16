@@ -5,9 +5,8 @@ import android.arch.lifecycle.Observer;
 import android.support.annotation.Nullable;
 
 import com.antonina.socialsynchro.content.ChildPostContainer;
-import com.antonina.socialsynchro.content.OnPublishedListener;
-import com.antonina.socialsynchro.content.OnUnpublishedListener;
-import com.antonina.socialsynchro.content.ParentPostContainer;
+import com.antonina.socialsynchro.gui.listeners.OnPublishedListener;
+import com.antonina.socialsynchro.gui.listeners.OnUnpublishedListener;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterCreateContentRequest;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterRemoveContentRequest;

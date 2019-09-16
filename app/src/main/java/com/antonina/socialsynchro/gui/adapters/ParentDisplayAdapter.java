@@ -1,4 +1,4 @@
-package com.antonina.socialsynchro.gui.adapters2;
+package com.antonina.socialsynchro.gui.adapters;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
@@ -13,13 +13,13 @@ import android.view.ViewGroup;
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.content.ParentPostContainer;
 import com.antonina.socialsynchro.database.repositories.ParentPostContainerRepository;
-import com.antonina.socialsynchro.databinding.ParentMainItemBinding;
+import com.antonina.socialsynchro.databinding.ParentDisplayItemBinding;
 
 import java.util.List;
 
 public class ParentDisplayAdapter extends BaseAdapter<ParentPostContainer, ParentDisplayAdapter.ParentViewHolder> {
 
-    public static class ParentViewHolder extends BaseAdapter.BaseViewHolder<ParentMainItemBinding> {
+    public static class ParentViewHolder extends BaseAdapter.BaseViewHolder<ParentDisplayItemBinding> {
         public ChildDisplayAdapter childAdapter;
 
         public ParentViewHolder(@NonNull View view, AppCompatActivity context) {
@@ -29,13 +29,13 @@ public class ParentDisplayAdapter extends BaseAdapter<ParentPostContainer, Paren
             childRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
             childAdapter = new ChildDisplayAdapter(context);
-            //TODO: binding.setChildMainAdapter(childAdapter);
+            binding.setChildAdapter(childAdapter);
             binding.executePendingBindings();
         }
 
         @Override
-        protected ParentMainItemBinding getBinding(View view) {
-            return ParentMainItemBinding.bind(view);
+        protected ParentDisplayItemBinding getBinding(View view) {
+            return ParentDisplayItemBinding.bind(view);
         }
     }
 
@@ -46,7 +46,7 @@ public class ParentDisplayAdapter extends BaseAdapter<ParentPostContainer, Paren
 
     @Override
     protected int getItemLayout() {
-        return R.layout.parent_main_item;
+        return R.layout.parent_display_item;
     }
 
     @Override

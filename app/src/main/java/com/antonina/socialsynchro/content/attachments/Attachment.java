@@ -11,14 +11,14 @@ import com.antonina.socialsynchro.database.repositories.AttachmentRepository;
 import com.antonina.socialsynchro.database.repositories.PostRepository;
 import com.antonina.socialsynchro.database.tables.AttachmentTable;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
-import com.antonina.socialsynchro.gui.SelectableItem;
+import com.antonina.socialsynchro.gui.GUIItem;
 import com.antonina.socialsynchro.services.IResponse;
 import com.antonina.socialsynchro.services.IServiceEntity;
 
 import java.io.File;
 import java.io.Serializable;
 
-public abstract class Attachment extends SelectableItem implements IDatabaseEntity, IServiceEntity, Serializable {
+public abstract class Attachment extends GUIItem implements IDatabaseEntity, IServiceEntity, Serializable {
     private long internalID;
     private String externalID;
     private File file;
@@ -80,13 +80,15 @@ public abstract class Attachment extends SelectableItem implements IDatabaseEnti
 
         final Attachment instance = this;
 
-        final LiveData<Post> postLiveData = PostRepository.getInstance().getDataByID(attachmentData.postID);
+        LiveData<Post> postLiveData = PostRepository.getInstance().getDataByID(attachmentData.postID);
         postLiveData.observeForever(new Observer<Post>() {
             @Override
             public void onChanged(@Nullable Post post) {
-                if (post != null)
+                if (post != null) {
                     post.addAttachment(instance);
-                postLiveData.removeObserver(this);
+                    if (listener != null)
+                        listener.onUpdated();
+                }
             }
         });
     }
