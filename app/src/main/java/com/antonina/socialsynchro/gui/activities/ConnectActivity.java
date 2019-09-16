@@ -48,7 +48,7 @@ public class ConnectActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
     }
 
-    public void btConnect_onClick(View view) {
+    public void buttonConnect_onClick(View view) {
         TwitterClient client = TwitterClient.getInstance();
         TwitterGetLoginTokenRequest request = TwitterGetLoginTokenRequest.builder().build();
         final LiveData<TwitterGetLoginTokenResponse> asyncResponse = client.getLoginToken(request);
@@ -65,7 +65,7 @@ public class ConnectActivity extends AppCompatActivity {
         });
     }
 
-    public void btConfirm_onClick(View view) {
+    public void buttonConfirm_onClick(View view) {
         final CallbackClient client = CallbackClient.getInstance();
         CallbackGetVerifierRequest request = CallbackGetVerifierRequest.builder()
                 .loginToken(loginToken)

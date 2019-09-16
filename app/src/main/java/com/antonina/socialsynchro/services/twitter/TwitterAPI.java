@@ -20,13 +20,13 @@ public interface TwitterAPI {
     @POST("/oauth/access_token")
     Call<ResponseBody> getAccessToken(@Field(value = "oauth_verifier", encoded = true) String verifier, @Header("Authorization") String authorization);
 
+    @GET("1.1/account/verify_credentials.json")
+    Call<TwitterVerifyCredentialsResponse> verifyCredentials(@Header("Authorization") String authorization);
+
     @FormUrlEncoded
     @POST("/1.1/statuses/update.json")
     Call<TwitterContentResponse> createContent(@Field(value = "status", encoded = true) String status, @Header("Authorization") String authorization);
 
     @POST("1.1/statuses/destroy/{id}.json")
     Call<TwitterContentResponse> removeContent(@Path("id") String id, @Header("Authorization") String authorization);
-
-    @GET("1.1/account/verify_credentials.json")
-    Call<TwitterVerifyCredentialsResponse> verifyCredentials(@Header("Authorization") String authorization);
 }

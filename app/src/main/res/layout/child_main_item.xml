@@ -16,14 +16,14 @@
         android:layout_margin="@dimen/margin_small">
 
         <TextView
-            android:id="@+id/tvChildTitle"
+            android:id="@+id/textview_child_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@{child.title}"
             android:textColor="@color/colorBackground" />
 
         <TextView
-            android:id="@+id/tvChildContent"
+            android:id="@+id/textview_child_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@{child.content}"

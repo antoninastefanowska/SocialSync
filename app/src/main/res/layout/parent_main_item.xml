@@ -26,14 +26,14 @@
             android:textColor="@color/colorBackground" />
 
         <TextView
-            android:id="@+id/tvParentContent"
+            android:id="@+id/textview_parent_content"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@{parent.content}"
             android:textColor="@color/colorBackground" />
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/rvMainChildren"
+            android:id="@+id/recyclerview_main_children"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scrollbars="vertical"

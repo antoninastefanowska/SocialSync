@@ -9,13 +9,15 @@ import android.view.ViewGroup;
 
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.content.ChildPostContainer;
+import com.antonina.socialsynchro.content.ParentPostContainer;
 import com.antonina.socialsynchro.databinding.ChildMainItemBinding;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ChildMainAdapter extends RecyclerView.Adapter<ChildMainAdapter.ChildViewHolder> {
-    private List<ChildPostContainer> children;
+    //private List<ChildPostContainer> children;
+    private ParentPostContainer parent;
 
     public class ChildViewHolder extends RecyclerView.ViewHolder {
         ChildMainItemBinding binding;
@@ -26,8 +28,11 @@ public class ChildMainAdapter extends RecyclerView.Adapter<ChildMainAdapter.Chil
         }
     }
 
-    public ChildMainAdapter() {
-        children = new ArrayList<ChildPostContainer>();
+    public ChildMainAdapter() { }
+
+    public ChildMainAdapter(ParentPostContainer parent) {
+        this.parent = parent;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -44,22 +49,25 @@ public class ChildMainAdapter extends RecyclerView.Adapter<ChildMainAdapter.Chil
 
     @Override
     public void onBindViewHolder(@NonNull ChildViewHolder viewHolder, int position) {
-        ChildPostContainer child = children.get(position);
+        ChildPostContainer child = getItem(position);
         viewHolder.binding.setChild(child);
         viewHolder.binding.executePendingBindings();
     }
 
     @Override
     public int getItemCount() {
-        return children.size();
+        if (parent == null)
+            return 0;
+        else
+            return parent.getChildren().size();
     }
 
     public ChildPostContainer getItem(int position) {
-        return children.get(position);
+        return parent.getChildren().get(position);
     }
 
-    public void setData(List<ChildPostContainer> data) {
-        this.children = data;
+    public void setSource(ParentPostContainer parent) {
+        this.parent = parent;
         notifyDataSetChanged();
     }
 }

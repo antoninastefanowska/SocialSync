@@ -13,6 +13,8 @@ import com.antonina.socialsynchro.databinding.ActivityAccountsBinding;
 import com.antonina.socialsynchro.gui.adapters.AccountMainAdapter;
 import com.antonina.socialsynchro.base.Account;
 
+import java.util.List;
+
 public class AccountsActivity extends AppCompatActivity {
     private final static int ADD = 0;
 
@@ -26,7 +28,7 @@ public class AccountsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_accounts);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_accounts);
-        recyclerView = (RecyclerView)findViewById(R.id.rvAccounts);
+        recyclerView = (RecyclerView)findViewById(R.id.recyclerview_accounts);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new AccountMainAdapter();
@@ -34,9 +36,17 @@ public class AccountsActivity extends AppCompatActivity {
         binding.setAccountMainAdapter(adapter);
     }
 
-    public void btAddAccount_onClick(View view) {
+    public void buttonAddAccount_onClick(View view) {
         Intent connectActivity = new Intent(AccountsActivity.this, ConnectActivity.class);
         startActivityForResult(connectActivity, ADD);
+    }
+
+    public void buttonRemoveAccount_onClick(View view) {
+        List<Account> selectedAccounts = adapter.getSelectedItems();
+        for (Account account : selectedAccounts) {
+            adapter.removeItem(account);
+            account.deleteFromDatabase();
+        }
     }
 
     @Override
@@ -47,6 +57,7 @@ public class AccountsActivity extends AppCompatActivity {
                 case ADD:
                     Account account = (Account)data.getSerializableExtra("account");
                     adapter.addItem(account);
+                    account.saveInDatabase();
                     break;
             }
         }

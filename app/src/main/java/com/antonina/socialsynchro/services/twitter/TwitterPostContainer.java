@@ -3,10 +3,10 @@ package com.antonina.socialsynchro.services.twitter;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.antonina.socialsynchro.content.ChildPostContainer;
 import com.antonina.socialsynchro.content.OnPublishedListener;
+import com.antonina.socialsynchro.content.OnUnpublishedListener;
 import com.antonina.socialsynchro.content.ParentPostContainer;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterCreateContentRequest;
@@ -20,9 +20,8 @@ public class TwitterPostContainer extends ChildPostContainer {
         super(data);
     }
 
-    public TwitterPostContainer(ParentPostContainer parent, TwitterAccount account) {
-        super(parent, account);
-        lock();
+    public TwitterPostContainer(TwitterAccount account) {
+        super(account);
     }
 
     @Override
@@ -84,13 +83,14 @@ public class TwitterPostContainer extends ChildPostContainer {
     }
 
     @Override
-    public void remove() {
+    public void unpublish(OnUnpublishedListener listener) {
         TwitterClient client = TwitterClient.getInstance();
         TwitterRemoveContentRequest request = TwitterRemoveContentRequest.builder()
                 .id(getExternalID())
                 .accessToken(getAccount().getAccessToken())
                 .secretToken(getAccount().getSecretToken())
                 .build();
+        final OnUnpublishedListener onUnpublishedListener = listener;
         final TwitterPostContainer instance = this;
         final LiveData<TwitterContentResponse> asyncResponse = client.removeContent(request);
         asyncResponse.observeForever(new Observer<TwitterContentResponse>() {
@@ -98,6 +98,7 @@ public class TwitterPostContainer extends ChildPostContainer {
             public void onChanged(@Nullable TwitterContentResponse response) {
                 if (response.getID().equals(getExternalID()))
                     instance.setExternalID(null);
+                onUnpublishedListener.onUnpublished(instance, response.getErrorString());
                 asyncResponse.removeObserver(this);
             }
         });

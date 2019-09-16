@@ -1,6 +1,6 @@
 package com.antonina.socialsynchro.content.attachments;
 
-public class VideoAttachmentType implements IAttachmentType {
+public class VideoAttachmentType extends AttachmentType {
     private static VideoAttachmentType instance;
 
     public static VideoAttachmentType getInstance() {

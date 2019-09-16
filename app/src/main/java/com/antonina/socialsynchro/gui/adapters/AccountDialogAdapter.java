@@ -5,8 +5,8 @@ import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,8 +21,9 @@ import java.util.List;
 
 public class AccountDialogAdapter extends RecyclerView.Adapter<AccountDialogAdapter.AccountViewHolder> {
     private List<Account> accounts;
-    private List<Account> checkedAccounts;
+    private List<Account> selectedAccounts;
     private List<Account> ignoredData;
+    private AppCompatActivity context;
 
     public static class AccountViewHolder extends RecyclerView.ViewHolder {
         public AccountDialogItemBinding binding;
@@ -33,10 +34,11 @@ public class AccountDialogAdapter extends RecyclerView.Adapter<AccountDialogAdap
         }
     }
 
-    public AccountDialogAdapter() {
+    public AccountDialogAdapter(AppCompatActivity context) {
         accounts = new ArrayList<Account>();
-        checkedAccounts = new ArrayList<Account>();
+        selectedAccounts = new ArrayList<Account>();
         ignoredData = new ArrayList<Account>();
+        this.context = context;
     }
 
     @NonNull
@@ -46,17 +48,14 @@ public class AccountDialogAdapter extends RecyclerView.Adapter<AccountDialogAdap
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View accountView = inflater.inflate(R.layout.account_dialog_item, parent, false);
-        AccountViewHolder viewHolder = new AccountViewHolder(accountView);
+        final AccountViewHolder viewHolder = new AccountViewHolder(accountView);
 
-        View itemView = viewHolder.itemView;
-        final AccountViewHolder vh = viewHolder;
-        itemView.setOnClickListener(new View.OnClickListener() {
+        accountView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int position = vh.getAdapterPosition();
+                int position = viewHolder.getAdapterPosition();
                 Account item = getItem(position);
-                Log.d("okno dialogowe", "Selected item: " + item.getName());
-                if (item.isChecked())
+                if (item.isSelected())
                     unselectItem(position);
                 else
                     selectItem(position);
@@ -68,7 +67,7 @@ public class AccountDialogAdapter extends RecyclerView.Adapter<AccountDialogAdap
 
     @Override
     public void onBindViewHolder(@NonNull AccountViewHolder viewHolder, int position) {
-        Account account = accounts.get(position);
+        Account account = getItem(position);
         viewHolder.binding.setAccount(account);
         viewHolder.binding.executePendingBindings();
     }
@@ -84,19 +83,19 @@ public class AccountDialogAdapter extends RecyclerView.Adapter<AccountDialogAdap
 
     public void selectItem(int position) {
         Account item = accounts.get(position);
-        if (item.isChecked())
+        if (item.isSelected())
             return;
-        item.check();
-        checkedAccounts.add(item);
+        item.select();
+        selectedAccounts.add(item);
         notifyItemChanged(position);
     }
 
     public void unselectItem(int position) {
         Account item = accounts.get(position);
-        if (!item.isChecked())
+        if (!item.isSelected())
             return;
-        item.uncheck();
-        checkedAccounts.remove(item);
+        item.unselect();
+        selectedAccounts.remove(item);
         notifyItemChanged(position);
     }
 
@@ -104,14 +103,14 @@ public class AccountDialogAdapter extends RecyclerView.Adapter<AccountDialogAdap
         return accounts;
     }
 
-    public List<Account> getCheckedItems() {
-        return checkedAccounts;
+    public List<Account> getSelectedItems() {
+        return selectedAccounts;
     }
 
     public void refreshData() {
         AccountRepository repository = AccountRepository.getInstance();
         final LiveData<List<Account>> accountLiveData = repository.getAllDataList();
-        accountLiveData.observeForever(new Observer<List<Account>>() {
+        accountLiveData.observe(context, new Observer<List<Account>>() {
             @Override
             public void onChanged(@Nullable List<Account> data) {
                 accounts.clear();
@@ -120,7 +119,6 @@ public class AccountDialogAdapter extends RecyclerView.Adapter<AccountDialogAdap
                         accounts.add(account);
                 }
                 notifyDataSetChanged();
-                accountLiveData.removeObserver(this);
             }
         });
     }

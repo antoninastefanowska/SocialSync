@@ -4,14 +4,14 @@ import android.databinding.BaseObservable;
 
 import java.io.Serializable;
 
-public abstract class SelectableItem extends BaseObservable implements Serializable {
-    private boolean checked = false;
+public abstract class SelectableItem extends BaseObservable {
+    private boolean selected = false;
 
-    public boolean isChecked() { return checked; }
+    public boolean isSelected() { return selected; }
 
-    public void check() { checked = true; }
+    public void select() { selected = true; }
 
-    public void uncheck() { checked = false; }
+    public void unselect() { selected = false; }
 
-    public void setChecked(boolean checked) { this.checked = checked; }
+    public void setSelected(boolean selected) { this.selected = selected; }
 }

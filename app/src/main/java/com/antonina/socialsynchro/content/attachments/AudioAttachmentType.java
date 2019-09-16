@@ -1,9 +1,13 @@
 package com.antonina.socialsynchro.content.attachments;
 
-public class AudioAttachmentType implements IAttachmentType {
+public class AudioAttachmentType extends AttachmentType {
     private static AudioAttachmentType instance;
 
-    public static AudioAttachmentType getInstance() { return instance; }
+    public static AudioAttachmentType getInstance() {
+        if (instance == null)
+            instance = new AudioAttachmentType();
+        return instance;
+    }
 
     private AudioAttachmentType() { }
 

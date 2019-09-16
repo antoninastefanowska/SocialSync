@@ -9,14 +9,16 @@ import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 import android.util.Pair;
 
+import com.antonina.socialsynchro.database.IDatabaseEntity;
 import com.antonina.socialsynchro.database.daos.BaseDao;
+import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-public abstract class BaseRepository<DataTableClass, EntityClass> {
+public abstract class BaseRepository<DataTableClass extends IDatabaseTable, EntityClass extends IDatabaseEntity> {
     private LiveData<Map<Long, EntityClass>> data;
     protected BaseDao<DataTableClass> dao;
 

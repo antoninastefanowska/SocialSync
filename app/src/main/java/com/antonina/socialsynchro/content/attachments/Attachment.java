@@ -2,6 +2,7 @@ package com.antonina.socialsynchro.content.attachments;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.databinding.Bindable;
 import android.support.annotation.Nullable;
 
 import com.antonina.socialsynchro.content.Post;
@@ -10,19 +11,27 @@ import com.antonina.socialsynchro.database.repositories.AttachmentRepository;
 import com.antonina.socialsynchro.database.repositories.PostRepository;
 import com.antonina.socialsynchro.database.tables.AttachmentTable;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
+import com.antonina.socialsynchro.gui.SelectableItem;
 import com.antonina.socialsynchro.services.IResponse;
 import com.antonina.socialsynchro.services.IServiceEntity;
 
-public abstract class Attachment implements IDatabaseEntity, IServiceEntity {
+import java.io.File;
+import java.io.Serializable;
+
+public abstract class Attachment extends SelectableItem implements IDatabaseEntity, IServiceEntity, Serializable {
     private long internalID;
     private String externalID;
-    private String filename;
+    private File file;
     private int sizeKb;
-    private IAttachmentType attachmentType;
+    private AttachmentType attachmentType;
     private Post parentPost;
     private boolean loading;
 
     public Attachment() { }
+
+    public Attachment(File file) {
+        this.file = file;
+    }
 
     @Override
     public long getInternalID() { return internalID; }
@@ -36,23 +45,24 @@ public abstract class Attachment implements IDatabaseEntity, IServiceEntity {
         this.externalID = externalID;
     }
 
-    public String getFilename() { return filename; }
+    @Bindable
+    public File getFile() { return file; }
 
-    public void setFilename(String filename) { this.filename = filename; }
+    public void setFile(File file) { this.file = file; }
 
+    @Bindable
     public int getSizeKb() { return sizeKb; }
 
     public void setSizeKb(int sizeKb) { this.sizeKb = sizeKb; }
 
-    public IAttachmentType getAttachmentType() { return attachmentType; }
+    public AttachmentType getAttachmentType() { return attachmentType; }
 
-    public void setAttachmentType(IAttachmentType attachmentType) { this.attachmentType = attachmentType; }
+    public void setAttachmentType(AttachmentType attachmentType) { this.attachmentType = attachmentType; }
 
     public Post getParentPost() { return parentPost; }
 
     public void setParentPost(Post parentPost) {
         this.parentPost = parentPost;
-        parentPost.addAttachment(this);
     }
 
     public Attachment(IDatabaseTable data) {
@@ -64,7 +74,7 @@ public abstract class Attachment implements IDatabaseEntity, IServiceEntity {
         AttachmentTable attachmentData = (AttachmentTable)data;
         this.internalID = attachmentData.id;
         this.externalID = attachmentData.externalID;
-        this.filename = attachmentData.filename;
+        this.file = new File(attachmentData.filepath);
         this.sizeKb = attachmentData.sizeKb;
         attachmentType = AttachmentTypes.getAttachmentType(attachmentData.attachmentTypeID);
 
@@ -74,7 +84,8 @@ public abstract class Attachment implements IDatabaseEntity, IServiceEntity {
         postLiveData.observeForever(new Observer<Post>() {
             @Override
             public void onChanged(@Nullable Post post) {
-                instance.setParentPost(post);
+                if (post != null)
+                    post.addAttachment(instance);
                 postLiveData.removeObserver(this);
             }
         });

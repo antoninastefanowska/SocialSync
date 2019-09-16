@@ -11,20 +11,20 @@
     </data>
 
     <android.support.constraint.ConstraintLayout
-        android:id="@+id/clMain"
+        android:id="@+id/layout_main"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorBackground">
 
         <LinearLayout
-            android:id="@+id/linearLayout"
+            android:id="@+id/linear_layout_main"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/margin_standard"
             android:orientation="vertical">
 
             <HorizontalScrollView
-                android:id="@+id/horizontalScrollView"
+                android:id="@+id/horizontal_scrollview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/padding_small"
@@ -35,26 +35,26 @@
                     android:layout_height="wrap_content">
 
                     <Button
-                        android:id="@+id/btAccounts"
+                        android:id="@+id/button_accounts"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="btAccounts_onClick"
+                        android:onClick="buttonAccounts_onClick"
                         android:text="Accounts"
                         style="@style/ButtonStyle" />
 
                     <Button
-                        android:id="@+id/btCreateContent"
+                        android:id="@+id/button_create_content"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="btCreateContent_onClick"
+                        android:onClick="buttonCreateContent_onClick"
                         android:text="Create content"
                         style="@style/ButtonStyle" />
 
                     <Button
-                        android:id="@+id/btRefresh"
+                        android:id="@+id/button_refresh"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="btRefresh_onClick"
+                        android:onClick="buttonRefresh_onClick"
                         android:text="Refresh"
                         style="@style/ButtonStyle" />
 
@@ -63,7 +63,7 @@
             </HorizontalScrollView>
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/rvMainParents"
+                android:id="@+id/recyclerview_parents"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scrollbars="vertical"

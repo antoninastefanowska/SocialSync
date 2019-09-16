@@ -4,7 +4,6 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.databinding.Bindable;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.antonina.socialsynchro.BR;
 import com.antonina.socialsynchro.base.Account;
@@ -41,10 +40,9 @@ public abstract class ChildPostContainer extends SelectableItem implements IPost
         createFromData(data);
     }
 
-    public ChildPostContainer(ParentPostContainer parent, Account account) {
+    public ChildPostContainer(Account account) {
         locked = true;
         post = null;
-        setParent(parent);
         setAccount(account);
     }
 
@@ -106,6 +104,12 @@ public abstract class ChildPostContainer extends SelectableItem implements IPost
     }
 
     @Override
+    public void setAttachments(List<Attachment> attachments) {
+        if (!locked)
+            post.setAttachments(attachments);
+    }
+
+    @Override
     public Post getPost() {
         if (locked)
             return parent.getPost();
@@ -117,7 +121,7 @@ public abstract class ChildPostContainer extends SelectableItem implements IPost
     public abstract void publish(OnPublishedListener listener);
 
     @Override
-    public abstract void remove();
+    public abstract void unpublish(OnUnpublishedListener listener);
 
     @Bindable
     public boolean isLocked() {
@@ -162,12 +166,6 @@ public abstract class ChildPostContainer extends SelectableItem implements IPost
 
     public void setParent(ParentPostContainer parent) {
         this.parent = parent;
-        parent.addChild(this);
-    }
-
-    public void removeParent() {
-        parent.removeChild(this);
-        this.parent = null;
     }
 
     @Override
@@ -177,7 +175,6 @@ public abstract class ChildPostContainer extends SelectableItem implements IPost
         this.externalID = childPostContainerData.externalID;
         this.locked = childPostContainerData.locked;
         this.synchronizationDate = childPostContainerData.synchronizationDate;
-        Log.d("rodzic", "załadowano dziecko nr. " + String.valueOf(this.internalID));
 
         final ChildPostContainer instance = this;
 
@@ -185,10 +182,8 @@ public abstract class ChildPostContainer extends SelectableItem implements IPost
         parentPostContainerLiveData.observeForever(new Observer<ParentPostContainer>() {
             @Override
             public void onChanged(@Nullable ParentPostContainer parentPostContainer) {
-                instance.setParent(parentPostContainer);
-                //Log.d("rodzic", "tu jestem");
-                //instance.notifyPropertyChanged(BR.parent);
-                //instance.notifyPropertyChanged(BR.child);
+                if (parentPostContainer != null)
+                    parentPostContainer.addChild(instance);
                 parentPostContainerLiveData.removeObserver(this);
             }
         });
@@ -198,9 +193,6 @@ public abstract class ChildPostContainer extends SelectableItem implements IPost
                 @Override
                 public void onChanged(@Nullable Post post) {
                     instance.post = post;
-                    //instance.notifyPropertyChanged(BR.parent);
-                    //instance.notifyPropertyChanged(BR.child);
-                    //instance.notifyPropertyChanged(BR.content);
                     postLiveData.removeObserver(this);
                 }
             });

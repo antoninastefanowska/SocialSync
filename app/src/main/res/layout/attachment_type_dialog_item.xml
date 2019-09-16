@@ -1,24 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
+
     <data>
         <variable
-            name="account"
-            type="com.antonina.socialsynchro.base.Account" />
+            name="attachmentType"
+            type="com.antonina.socialsynchro.content.attachments.AttachmentType" />
     </data>
 
     <LinearLayout
-        android:id="@+id/layout_account_dialog_item"
+        android:id="@+id/layout_main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="@dimen/padding_small" >
 
         <TextView
-            android:id="@+id/textview_account_name"
+            android:id="@+id/textview_attachment_type_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/colorBackground"
-            android:text="@{account.name}" />
+            android:text="@{attachmentType.name}" />
 
     </LinearLayout>
 

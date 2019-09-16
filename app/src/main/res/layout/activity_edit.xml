@@ -11,6 +11,9 @@
         <variable
             name="childAdapter"
             type="com.antonina.socialsynchro.gui.adapters.ChildEditAdapter" />
+        <variable
+            name="attachmentAdapter"
+            type="com.antonina.socialsynchro.gui.adapters.AttachmentAdapter" />
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -23,7 +26,7 @@
             android:orientation="vertical" >
 
             <HorizontalScrollView
-                android:id="@+id/horizontalScrollView"
+                android:id="@+id/horizontal_scrollview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/padding_small"
@@ -34,26 +37,26 @@
                     android:layout_height="wrap_content">
 
                     <Button
-                        android:id="@+id/btAddChild"
+                        android:id="@+id/button_add_child"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="btAddChild_onClick"
+                        android:onClick="buttonAddChild_onClick"
                         android:text="Add child"
                         style="@style/ButtonStyle" />
 
                     <Button
-                        android:id="@+id/btSave"
+                        android:id="@+id/button_save"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="btSave_onClick"
+                        android:onClick="buttonSave_onClick"
                         android:text="Save"
                         style="@style/ButtonStyle" />
 
                     <Button
-                        android:id="@+id/btPublish"
+                        android:id="@+id/button_publish"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:onClick="btPublish_onClick"
+                        android:onClick="buttonPublish_onClick"
                         android:text="Publish"
                         style="@style/ButtonStyle" />
 
@@ -62,14 +65,29 @@
             </HorizontalScrollView>
 
             <EditText
-                android:id="@+id/etParentContent"
+                android:id="@+id/edittext_parent_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName"
                 android:text="@={parent.content}" />
 
+            <Button
+                android:id="@+id/button_parent_add_attachment"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:onClick="buttonParentAddAttachment_onClick"
+                android:text="Add attachment" />
+
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/rvChildren"
+                android:id="@+id/recyclerview_parent_attachments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scrollbars="vertical"
+                android:adapter="@{attachmentAdapter}"
+                android:padding="@dimen/padding_small" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerview_children"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scrollbars="vertical"

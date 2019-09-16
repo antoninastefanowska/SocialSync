@@ -1,7 +1,7 @@
 package com.antonina.socialsynchro.content.attachments;
 
 public class AttachmentTypes {
-    private static final IAttachmentType[] attachments = new IAttachmentType[AttachmentTypeID.values().length];
+    private static final AttachmentType[] attachments = new AttachmentType[AttachmentTypeID.values().length];
     private static boolean initialized = false;
 
     private AttachmentTypes() { }
@@ -13,19 +13,19 @@ public class AttachmentTypes {
         initialized = true;
     }
 
-    public static IAttachmentType getAttachmentType(AttachmentTypeID attachmentTypeID) {
+    public static AttachmentType getAttachmentType(AttachmentTypeID attachmentTypeID) {
         if (!initialized)
             init();
         return attachments[attachmentTypeID.ordinal()];
     }
 
-    public static IAttachmentType getAttachmentType(int attachmentTypeID) {
+    public static AttachmentType getAttachmentType(int attachmentTypeID) {
         if (!initialized)
             init();
         return attachments[attachmentTypeID];
     }
 
-    public static IAttachmentType[] getAttachmentTypes() {
+    public static AttachmentType[] getAttachmentTypes() {
         if (!initialized)
             init();
         return attachments;

@@ -10,8 +10,10 @@ import com.antonina.socialsynchro.database.IDatabaseEntity;
 
 import java.util.Date;
 
+import static android.arch.persistence.room.ForeignKey.CASCADE;
+
 @Entity(tableName = "parent_post_container", foreignKeys = {
-        @ForeignKey(entity = PostTable.class, parentColumns = "id", childColumns = "post_id")})
+        @ForeignKey(entity = PostTable.class, parentColumns = "id", childColumns = "post_id", onDelete = CASCADE)})
 public class ParentPostContainerTable implements IDatabaseTable {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")

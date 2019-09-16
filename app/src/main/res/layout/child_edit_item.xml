@@ -7,41 +7,59 @@
         <variable
             name="child"
             type="com.antonina.socialsynchro.content.ChildPostContainer" />
+        <variable
+            name="attachmentAdapter"
+            type="com.antonina.socialsynchro.gui.adapters.AttachmentAdapter" />
     </data>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal" >
+        android:orientation="vertical">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="2" >
+            android:orientation="horizontal" >
 
-            <EditText
-                android:id="@+id/etChildContent"
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:text="@={child.content}"
-                android:enabled="@{!child.isLocked()}" />
+                android:orientation="vertical"
+                android:layout_weight="2" >
+
+                <EditText
+                    android:id="@+id/edittext_child_content"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:text="@={child.content}"
+                    android:enabled="@{!child.isLocked()}" />
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/loading_panel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="@{child.isLoading() ? View.VISIBLE : View.GONE}">
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminate="true" />
+
+            </RelativeLayout>
 
         </LinearLayout>
 
-        <RelativeLayout
-            android:id="@+id/loadingPanel"
-            android:layout_width="wrap_content"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerview_child_attachments"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="@{child.isLoading() ? View.VISIBLE : View.GONE}">
-
-            <ProgressBar
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:indeterminate="true" />
-
-        </RelativeLayout>
+            android:scrollbars="vertical"
+            android:adapter="@{attachmentAdapter}"
+            android:padding="@dimen/padding_small" />
 
     </LinearLayout>
 

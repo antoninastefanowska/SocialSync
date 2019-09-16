@@ -1,6 +1,6 @@
 package com.antonina.socialsynchro.content.attachments;
 
-public class ImageAttachmentType implements IAttachmentType {
+public class ImageAttachmentType extends AttachmentType {
     private static ImageAttachmentType instance;
 
     public static ImageAttachmentType getInstance() {

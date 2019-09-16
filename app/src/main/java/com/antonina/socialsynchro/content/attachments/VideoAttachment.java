@@ -2,6 +2,8 @@ package com.antonina.socialsynchro.content.attachments;
 
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 
+import java.io.File;
+
 public class VideoAttachment extends Attachment {
     private int height, width, lengthSeconds;
 
@@ -9,6 +11,11 @@ public class VideoAttachment extends Attachment {
         super(data);
         setAttachmentType(AttachmentTypes.getAttachmentType(AttachmentTypeID.Video));
         // TODO: Wydobyć pozostałe informacje z pliku - dotyczy też pozostałych załączników
+    }
+
+    public VideoAttachment(File file) {
+        super(file);
+        setAttachmentType(AttachmentTypes.getAttachmentType(AttachmentTypeID.Video));
     }
 
     public VideoAttachment() {

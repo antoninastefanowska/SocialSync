@@ -32,13 +32,13 @@ public class ChildPostContainerFactory implements IDatabaseEntityFactory {
         }
     }
 
-    public ChildPostContainer createNew(ParentPostContainer parent, Account account) {
+    public ChildPostContainer createNew(Account account) {
         ServiceID serviceID = account.getService().getID();
 
         switch(serviceID) {
             case Twitter:
                 TwitterAccount twitterAccount = (TwitterAccount)account;
-                return new TwitterPostContainer(parent, twitterAccount);
+                return new TwitterPostContainer(twitterAccount);
             default:
                 return null;
         }

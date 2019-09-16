@@ -3,19 +3,15 @@ package com.antonina.socialsynchro.gui.adapters;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.content.Context;
-import android.databinding.Observable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.antonina.socialsynchro.BR;
 import com.antonina.socialsynchro.R;
-import com.antonina.socialsynchro.content.ChildPostContainer;
 import com.antonina.socialsynchro.content.ParentPostContainer;
 import com.antonina.socialsynchro.database.repositories.ParentPostContainerRepository;
 import com.antonina.socialsynchro.databinding.ParentMainItemBinding;
@@ -34,7 +30,7 @@ public class ParentMainAdapter extends RecyclerView.Adapter<ParentMainAdapter.Pa
             super(view);
             binding = ParentMainItemBinding.bind(view);
 
-            RecyclerView childRecyclerView = view.findViewById(R.id.rvMainChildren);
+            RecyclerView childRecyclerView = view.findViewById(R.id.recyclerview_main_children);
             childRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
             childAdapter = new ChildMainAdapter();
@@ -55,16 +51,16 @@ public class ParentMainAdapter extends RecyclerView.Adapter<ParentMainAdapter.Pa
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View parentView = inflater.inflate(R.layout.parent_main_item, parent, false);
-        ParentMainAdapter.ParentViewHolder viewHolder = new ParentMainAdapter.ParentViewHolder(parentView);
+        ParentViewHolder viewHolder = new ParentViewHolder(parentView);
 
         return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(@NonNull ParentViewHolder viewHolder, int position) {
-        ParentPostContainer parent = parents.get(position);
+        ParentPostContainer parent = getItem(position);
         viewHolder.binding.setParent(parent);
-        viewHolder.childAdapter.setData(parent.getChildren());
+        viewHolder.childAdapter.setSource(parent);
         viewHolder.binding.executePendingBindings();
     }
 
@@ -92,7 +88,6 @@ public class ParentMainAdapter extends RecyclerView.Adapter<ParentMainAdapter.Pa
 
     public void addItem(ParentPostContainer item) {
         parents.add(item);
-        item.saveInDatabase();
         notifyItemInserted(parents.size() - 1);
     }
 }

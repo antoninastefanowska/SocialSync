@@ -2,10 +2,12 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    tools:context=".gui.dialogs.ChooseAccountDialog" >
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvAccountsDialog"
+        android:id="@+id/recyclerview_accounts_dialog"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scrollbars="vertical"
@@ -18,13 +20,13 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btCancel"
+            android:id="@+id/button_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Cancel" />
 
         <Button
-            android:id="@+id/btOk"
+            android:id="@+id/button_ok"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Ok" />

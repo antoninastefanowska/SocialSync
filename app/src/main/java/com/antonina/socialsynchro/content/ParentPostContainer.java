@@ -4,7 +4,6 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.databinding.Bindable;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.antonina.socialsynchro.BR;
 import com.antonina.socialsynchro.content.attachments.Attachment;
@@ -74,6 +73,11 @@ public class ParentPostContainer extends SelectableItem implements IPostContaine
     }
 
     @Override
+    public void setAttachments(List<Attachment> attachments) {
+        post.setAttachments(attachments);
+    }
+
+    @Override
     public void addAttachment(Attachment attachment) {
         post.addAttachment(attachment);
     }
@@ -96,21 +100,22 @@ public class ParentPostContainer extends SelectableItem implements IPostContaine
     }
 
     @Override
-    public void remove() {
+    public void unpublish(OnUnpublishedListener listener) {
         for (ChildPostContainer child : children) {
-            child.remove();
+            child.unpublish(listener);
         }
-        // TODO: Usuniecie z aplikacji
-        // TODO: Chyba nie będzie już potrzebne
     }
 
     public void addChild(ChildPostContainer child) {
         children.add(child);
+        child.setParent(this);
+        child.lock();
         notifyPropertyChanged(BR.parent);
     }
 
     public void removeChild(ChildPostContainer child) {
         children.remove(child);
+        child.setParent(null);
     }
 
     public Date getCreationDate() { return creationDate; }

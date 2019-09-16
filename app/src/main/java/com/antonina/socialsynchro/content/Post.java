@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Post implements IPost, IDatabaseEntity, Serializable {
+public class Post implements IPost, IDatabaseEntity {
     private long internalID;
     private String title;
     private String content;
@@ -19,6 +19,7 @@ public class Post implements IPost, IDatabaseEntity, Serializable {
     public Post() {
         title = "";
         content = "";
+        attachments = new ArrayList<Attachment>();
     }
 
     public Post(IDatabaseTable data) { createFromData(data); }
@@ -49,17 +50,22 @@ public class Post implements IPost, IDatabaseEntity, Serializable {
     }
 
     @Override
+    public void setAttachments(List<Attachment> attachments) {
+        this.attachments = attachments;
+    }
+
+    @Override
     public void addAttachment(Attachment attachment) {
-        if (attachments == null)
-            attachments = new ArrayList<Attachment>();
         attachments.add(attachment);
+        attachment.setParentPost(this);
     }
 
     @Override
     public void removeAttachment(Attachment attachment) {
-        if (attachments == null || attachments.isEmpty())
+        if (attachments.isEmpty())
             return;
         attachments.remove(attachment);
+        attachment.setParentPost(null);
     }
 
     @Override
@@ -68,6 +74,7 @@ public class Post implements IPost, IDatabaseEntity, Serializable {
         this.internalID = postData.id;
         this.title = postData.title;
         this.content = postData.content;
+        this.attachments = new ArrayList<Attachment>();
     }
 
     @Override

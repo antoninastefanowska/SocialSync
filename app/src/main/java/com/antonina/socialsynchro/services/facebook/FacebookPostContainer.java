@@ -2,13 +2,14 @@ package com.antonina.socialsynchro.services.facebook;
 
 import com.antonina.socialsynchro.content.ChildPostContainer;
 import com.antonina.socialsynchro.content.OnPublishedListener;
+import com.antonina.socialsynchro.content.OnUnpublishedListener;
 import com.antonina.socialsynchro.content.ParentPostContainer;
 
 public class FacebookPostContainer extends ChildPostContainer {
     private static final int MAX_CONTENT_LENGTH = 63206;
 
-    public FacebookPostContainer(ParentPostContainer parent, FacebookAccount account) {
-        super(parent, account);
+    public FacebookPostContainer(FacebookAccount account) {
+        super(account);
     }
 
     @Override
@@ -36,7 +37,7 @@ public class FacebookPostContainer extends ChildPostContainer {
     }
 
     @Override
-    public void remove() {
+    public void unpublish(OnUnpublishedListener listener) {
 
     }
 }
