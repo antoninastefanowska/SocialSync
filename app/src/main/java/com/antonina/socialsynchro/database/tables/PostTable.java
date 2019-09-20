@@ -7,6 +7,8 @@ import android.arch.persistence.room.PrimaryKey;
 import com.antonina.socialsynchro.content.Post;
 import com.antonina.socialsynchro.database.IDatabaseEntity;
 
+import java.util.Date;
+
 @Entity(tableName = "post")
 public class PostTable implements IDatabaseTable {
     @PrimaryKey(autoGenerate = true)
@@ -18,6 +20,12 @@ public class PostTable implements IDatabaseTable {
 
     @ColumnInfo(name = "content")
     public String content;
+
+    @ColumnInfo(name = "creation_date")
+    public Date creationDate;
+
+    @ColumnInfo(name = "modification_date")
+    public Date modificationDate;
 
     public PostTable() { }
 
@@ -36,6 +44,8 @@ public class PostTable implements IDatabaseTable {
         Post post = (Post)entity;
         this.title = post.getTitle();
         this.content = post.getContent();
+        this.creationDate = post.getCreationDate();
+        this.modificationDate = post.getModificationDate();
     }
 
     @Override

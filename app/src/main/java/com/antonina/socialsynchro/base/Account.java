@@ -12,13 +12,16 @@ import com.antonina.socialsynchro.services.IService;
 import com.antonina.socialsynchro.services.IServiceEntity;
 
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
 
 public abstract class Account extends GUIItem implements IDatabaseEntity, IServiceEntity, Serializable {
-    private long internalID;
+    private Long internalID;
     private String externalID;
     private String name;
     private String profilePictureUrl; // TODO: Zrobić placeholder. Zdecydować: Przechowywać zdjęcia profilowe? Czy pobierać je bezpośrednio z serwera i usuwać po wyjściu z aplikacji (nie będą dostępne offline)?
     private IService service;
+    private Date connectingDate;
     private boolean loading;
 
     public Account(IDatabaseTable table) { createFromData(table); }
@@ -29,6 +32,7 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
     public void createFromData(IDatabaseTable data) {
         AccountTable accountData = (AccountTable)data;
         this.internalID = accountData.id;
+        this.connectingDate = accountData.connectingDate;
         setName(accountData.name);
         setExternalID(accountData.externalID);
         setProfilePictureUrl(accountData.profilePictureUrl);
@@ -69,25 +73,38 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
 
     public void setService(IService service) { this.service = service; }
 
+    @Bindable
+    public Date getConnectingDate() {
+        return connectingDate;
+    }
+
     @Override
-    public long getInternalID() { return internalID; }
+    public Long getInternalID() { return internalID; }
 
     @Override
     public void saveInDatabase() {
+        if (internalID != null)
+            return;
+        connectingDate = Calendar.getInstance().getTime();
         AccountRepository repository = AccountRepository.getInstance();
         internalID = repository.insert(this);
     }
 
     @Override
     public void updateInDatabase() {
+        if (internalID == null)
+            return;
         AccountRepository repository = AccountRepository.getInstance();
         repository.update(this);
     }
 
     @Override
     public void deleteFromDatabase() {
+        if (internalID == null)
+            return;
         AccountRepository repository = AccountRepository.getInstance();
         repository.delete(this);
+        internalID = null;
     }
 
     @Override

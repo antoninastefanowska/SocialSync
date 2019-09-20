@@ -5,14 +5,12 @@ import android.arch.lifecycle.Observer;
 import android.databinding.Bindable;
 import android.support.annotation.Nullable;
 
-import com.antonina.socialsynchro.BR;
 import com.antonina.socialsynchro.content.attachments.Attachment;
-import com.antonina.socialsynchro.database.IDatabaseEntity;
+import com.antonina.socialsynchro.database.repositories.ChildPostContainerRepository;
 import com.antonina.socialsynchro.database.repositories.ParentPostContainerRepository;
 import com.antonina.socialsynchro.database.repositories.PostRepository;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 import com.antonina.socialsynchro.database.tables.ParentPostContainerTable;
-import com.antonina.socialsynchro.gui.GUIItem;
 import com.antonina.socialsynchro.gui.listeners.OnPublishedListener;
 import com.antonina.socialsynchro.gui.listeners.OnUnpublishedListener;
 
@@ -22,11 +20,12 @@ import java.util.List;
 
 public class ParentPostContainer extends PostContainer {
     private List<ChildPostContainer> children;
-    private Date creationDate;
+    private List<ChildPostContainer> deletedChildren;
 
     public ParentPostContainer() {
         post = new Post();
         children = new ArrayList<ChildPostContainer>();
+        deletedChildren = new ArrayList<ChildPostContainer>();
     }
 
     public ParentPostContainer(IDatabaseTable data) {
@@ -62,6 +61,18 @@ public class ParentPostContainer extends PostContainer {
         post.setContent(content);
     }
 
+    @Bindable
+    @Override
+    public Date getCreationDate() {
+        return post.getCreationDate();
+    }
+
+    @Bindable
+    @Override
+    public Date getModificationDate() {
+        return post.getModificationDate();
+    }
+
     public List<ChildPostContainer> getChildren() {
         return children;
     }
@@ -79,15 +90,13 @@ public class ParentPostContainer extends PostContainer {
     @Override
     public void addAttachment(Attachment attachment) {
         post.addAttachment(attachment);
-        if (listener != null)
-            listener.onUpdated();
+        notifyListener();
     }
 
     @Override
     public void removeAttachment(Attachment attachment) {
         post.removeAttachment(attachment);
-        if (listener != null)
-            listener.onUpdated();
+        notifyListener();
     }
 
     @Override
@@ -110,46 +119,57 @@ public class ParentPostContainer extends PostContainer {
     }
 
     public void addChild(ChildPostContainer child) {
-        children.add(child);
         child.setParent(this);
         child.lock();
-        if (listener != null)
-            listener.onUpdated();
+        children.add(child);
+        notifyListener();
     }
 
     public void removeChild(ChildPostContainer child) {
         children.remove(child);
         child.setParent(null);
-        if (listener != null)
-            listener.onUpdated();
+        if (child.getInternalID() != null)
+            deletedChildren.add(child);
+        notifyListener();
     }
-
-    public Date getCreationDate() { return creationDate; }
 
     @Override
     public void createFromData(IDatabaseTable data) {
-        ParentPostContainerTable parentPostContainerData = (ParentPostContainerTable)data;
+        ParentPostContainerTable parentPostContainerData = (ParentPostContainerTable) data;
         this.internalID = parentPostContainerData.id;
-        this.creationDate = parentPostContainerData.creationDate;
+
         this.children = new ArrayList<ChildPostContainer>();
         this.post = new Post(); //TODO: Tworzymy pusty obiekt zanim pobierzemy obiekt z bazy - zrobić to samo dla innych encji.
 
         final ParentPostContainer instance = this;
-        LiveData<Post> postLiveData = PostRepository.getInstance().getDataByID(parentPostContainerData.postID);
+        final LiveData<Post> postLiveData = PostRepository.getInstance().getDataByID(parentPostContainerData.postID);
         postLiveData.observeForever(new Observer<Post>() {
             @Override
             public void onChanged(@Nullable Post post) {
                 if (post != null) {
                     instance.post = post;
-                    if (listener != null)
-                        listener.onUpdated();
+                    notifyListener();
+                    postLiveData.removeObserver(this);
+                    postLiveData.removeObserver(this);
                 }
+            }
+        });
+        final LiveData<List<ChildPostContainer>> childrenLiveData = ChildPostContainerRepository.getInstance().getDataByParent(this);
+        childrenLiveData.observeForever(new Observer<List<ChildPostContainer>>() {
+            @Override
+            public void onChanged(@Nullable List<ChildPostContainer> children) {
+                for (ChildPostContainer child : children) {
+                    instance.addChild(child);
+                }
+                childrenLiveData.removeObserver(this);
             }
         });
     }
 
     @Override
     public void saveInDatabase() {
+        if (internalID != null)
+            return;
         post.saveInDatabase();
         ParentPostContainerRepository repository = ParentPostContainerRepository.getInstance();
         internalID = repository.insert(this);
@@ -159,20 +179,34 @@ public class ParentPostContainer extends PostContainer {
 
     @Override
     public void updateInDatabase() {
+        if (internalID == null)
+            return;
         post.updateInDatabase();
         ParentPostContainerRepository repository = ParentPostContainerRepository.getInstance();
         repository.update(this);
-        for (ChildPostContainer child : children)
-            child.updateInDatabase();
-        //TODO: Sprawdzić czy dziecko istnieje w bazie i dodać/usunąć
+
+        for (ChildPostContainer deletedChild : deletedChildren)
+            deletedChild.deleteFromDatabase();
+
+        deletedChildren.clear();
+
+        for (ChildPostContainer child : children) {
+            if (child.getInternalID() == null)
+                child.saveInDatabase();
+            else
+                child.updateInDatabase();
+        }
     }
 
     @Override
     public void deleteFromDatabase() {
+        if (internalID == null)
+            return;
         for (ChildPostContainer child : children)
             child.deleteFromDatabase();
         ParentPostContainerRepository repository = ParentPostContainerRepository.getInstance();
         repository.delete(this);
         post.deleteFromDatabase();
+        internalID = null;
     }
 }

@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import com.antonina.socialsynchro.R;
@@ -14,7 +15,7 @@ import com.antonina.socialsynchro.databinding.ActivityMainBinding;
 import com.antonina.socialsynchro.gui.adapters.ParentDisplayAdapter;
 
 public class MainActivity extends AppCompatActivity {
-    private final static int CREATE = 0;
+    private final static int ACCOUNTS = 0, CREATE = 1;
 
     private ActivityMainBinding binding;
     private RecyclerView parentRecyclerView;
@@ -32,11 +33,12 @@ public class MainActivity extends AppCompatActivity {
         parentAdapter = new ParentDisplayAdapter(this);
 
         binding.setParentAdapter(parentAdapter);
+        binding.executePendingBindings();
     }
 
     public void buttonAccounts_onClick(View view) {
         Intent accountsActivity = new Intent(MainActivity.this, AccountsActivity.class);
-        startActivity(accountsActivity);
+        startActivityForResult(accountsActivity, ACCOUNTS);
     }
 
     public void buttonCreateContent_onClick(View view) {
@@ -44,11 +46,22 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(editActivity, CREATE);
     }
 
+    public void buttonRemoveContent_onClick(View view) {
+        for (ParentPostContainer parent : parentAdapter.getItems())
+            parent.deleteFromDatabase();
+        parentAdapter.removeSelected();
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
+                case ACCOUNTS:
+                    boolean accountsDeleted = (boolean)data.getBooleanExtra("accountsDeleted", false);
+                    if (accountsDeleted)
+                        parentAdapter.loadData();
+                    break;
                 case CREATE:
                     ParentPostContainer parent = (ParentPostContainer)data.getSerializableExtra("parent");
                     parentAdapter.addItem(parent);

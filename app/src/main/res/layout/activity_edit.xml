@@ -41,7 +41,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:onClick="buttonAddChild_onClick"
-                        android:text="Add child"
+                        android:text="@string/add_child"
                         style="@style/ButtonStyle" />
 
                     <Button
@@ -49,7 +49,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:onClick="buttonSave_onClick"
-                        android:text="Save"
+                        android:text="@string/save"
                         style="@style/ButtonStyle" />
 
                     <Button
@@ -57,7 +57,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:onClick="buttonPublish_onClick"
-                        android:text="Publish"
+                        android:text="@string/publish"
                         style="@style/ButtonStyle" />
 
                 </LinearLayout>
@@ -76,7 +76,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:onClick="buttonParentAddAttachment_onClick"
-                android:text="Add attachment" />
+                android:text="@string/add_attachment" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerview_parent_attachments"

@@ -6,6 +6,8 @@ import com.antonina.socialsynchro.content.ParentPostContainer;
 import com.antonina.socialsynchro.database.ApplicationDatabase;
 import com.antonina.socialsynchro.database.tables.ParentPostContainerTable;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +27,17 @@ public class ParentPostContainerRepository extends BaseRepository<ParentPostCont
 
     public static void createInstance(Application application) {
         instance = new ParentPostContainerRepository(application);
+    }
+
+    @Override
+    protected List<ParentPostContainer> sortList(List<ParentPostContainer> list) {
+        Collections.sort(list, new Comparator<ParentPostContainer>() {
+            @Override
+            public int compare(ParentPostContainer o1, ParentPostContainer o2) {
+                return compareDates(o1.getCreationDate(), o2.getCreationDate());
+            }
+        });
+        return list;
     }
 
     @Override

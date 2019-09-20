@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 public abstract class GUIItem extends BaseObservable {
     private boolean selected = false;
-    protected OnUpdatedListener listener;
+    private OnUpdatedListener listener;
 
     public boolean isSelected() { return selected; }
 
@@ -24,5 +24,10 @@ public abstract class GUIItem extends BaseObservable {
 
     public OnUpdatedListener getListener() {
         return listener;
+    }
+
+    protected void notifyListener() {
+        if (listener != null)
+            listener.onUpdated();
     }
 }

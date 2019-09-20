@@ -22,7 +22,7 @@ public class AccountFactory implements IDatabaseEntityFactory {
         AccountTable accountData = (AccountTable)data;
         ServiceID serviceID = ServiceID.values()[(int)accountData.serviceID];
 
-        switch(serviceID) {
+        switch (serviceID) {
             case Twitter:
                 return new TwitterAccount(data);
             default:

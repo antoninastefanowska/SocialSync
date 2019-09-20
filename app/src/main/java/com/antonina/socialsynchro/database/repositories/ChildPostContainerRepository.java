@@ -5,6 +5,7 @@ import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 import android.os.AsyncTask;
+import android.util.Log;
 import android.util.Pair;
 
 import com.antonina.socialsynchro.content.ChildPostContainer;
@@ -15,6 +16,8 @@ import com.antonina.socialsynchro.database.daos.ChildPostContainerDao;
 import com.antonina.socialsynchro.database.tables.ChildPostContainerTable;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +60,17 @@ public class ChildPostContainerRepository extends BaseRepository<ChildPostContai
         return data;
     }
 
+    @Override
+    protected List<ChildPostContainer> sortList(List<ChildPostContainer> list) {
+        Collections.sort(list, new Comparator<ChildPostContainer>() {
+            @Override
+            public int compare(ChildPostContainer o1, ChildPostContainer o2) {
+                return compareDates(o1.getCreationDate(), o2.getCreationDate());
+            }
+        });
+        return list;
+    }
+
     public LiveData<List<ChildPostContainer>> getDataByParent(ParentPostContainer parent) {
         long parentID = parent.getInternalID();
         LiveData<List<ChildPostContainer>> result = null;
@@ -71,7 +85,7 @@ public class ChildPostContainerRepository extends BaseRepository<ChildPostContai
                     List<ChildPostContainer> output = new ArrayList<ChildPostContainer>();
                     for (Long id : input.first)
                         output.add(input.second.get(id));
-                    return output;
+                    return sortList(output);
                 }
             });
         } catch (ExecutionException | InterruptedException e) {

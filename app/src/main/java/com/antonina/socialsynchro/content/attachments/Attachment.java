@@ -19,7 +19,7 @@ import java.io.File;
 import java.io.Serializable;
 
 public abstract class Attachment extends GUIItem implements IDatabaseEntity, IServiceEntity, Serializable {
-    private long internalID;
+    private Long internalID;
     private String externalID;
     private File file;
     private int sizeKb;
@@ -34,7 +34,7 @@ public abstract class Attachment extends GUIItem implements IDatabaseEntity, ISe
     }
 
     @Override
-    public long getInternalID() { return internalID; }
+    public Long getInternalID() { return internalID; }
 
     @Override
     public String getExternalID() {
@@ -80,14 +80,15 @@ public abstract class Attachment extends GUIItem implements IDatabaseEntity, ISe
 
         final Attachment instance = this;
 
-        LiveData<Post> postLiveData = PostRepository.getInstance().getDataByID(attachmentData.postID);
+        //TODO: Niech lista załączników pobierana będzie w obiekcie postu.
+        final LiveData<Post> postLiveData = PostRepository.getInstance().getDataByID(attachmentData.postID);
         postLiveData.observeForever(new Observer<Post>() {
             @Override
             public void onChanged(@Nullable Post post) {
                 if (post != null) {
                     post.addAttachment(instance);
-                    if (listener != null)
-                        listener.onUpdated();
+                    notifyListener();
+                    postLiveData.removeObserver(this);
                 }
             }
         });
@@ -114,6 +115,7 @@ public abstract class Attachment extends GUIItem implements IDatabaseEntity, ISe
     public void deleteFromDatabase() {
         AttachmentRepository repository = AttachmentRepository.getInstance();
         repository.delete(this);
+        internalID = null;
     }
 
     @Override

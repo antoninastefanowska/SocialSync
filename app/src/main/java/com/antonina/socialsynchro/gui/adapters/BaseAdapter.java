@@ -52,16 +52,7 @@ public abstract class BaseAdapter<ItemClass extends GUIItem, ViewHolderClass ext
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View view = inflater.inflate(getItemLayout(), parent, false);
-        ViewHolderClass viewHolder = createViewHolder(view);
-
-        final int index = position;
-        ItemClass item = getItem(position);
-        item.setListener(new OnUpdatedListener() {
-            @Override
-            public void onUpdated() {
-                notifyItemChanged(index);
-            }
-        });
+        final ViewHolderClass viewHolder = createViewHolder(view);
 
         return viewHolder;
     }
@@ -69,6 +60,13 @@ public abstract class BaseAdapter<ItemClass extends GUIItem, ViewHolderClass ext
     @Override
     public void onBindViewHolder(@NonNull ViewHolderClass viewHolder, int position) {
         ItemClass item = getItem(position);
+        final int index = position;
+        item.setListener(new OnUpdatedListener() {
+            @Override
+            public void onUpdated() {
+                notifyItemChanged(index);
+            }
+        });
         setItemBinding(viewHolder, item);
         viewHolder.binding.executePendingBindings();
     }
@@ -97,14 +95,16 @@ public abstract class BaseAdapter<ItemClass extends GUIItem, ViewHolderClass ext
     }
 
     public void addItem(ItemClass item) {
-        items.add(item);
-        notifyItemInserted(getItemCount() - 1);
+        items.add(0, item);
+        notifyItemInserted(0);
     }
 
     public void removeItem(ItemClass item) {
         int position = getItemPosition(item);
-        items.remove(position);
-        notifyItemRemoved(position);
+        if (position != -1) {
+            items.remove(position);
+            notifyItemRemoved(position);
+        }
     }
 
     public void removeItem(int position) {
@@ -150,5 +150,11 @@ public abstract class BaseAdapter<ItemClass extends GUIItem, ViewHolderClass ext
 
     public List<ItemClass> getItems() {
         return items;
+    }
+
+    public void removeSelected() {
+        for (ItemClass item : selectedItems)
+            removeItem(item);
+        selectedItems.clear();
     }
 }

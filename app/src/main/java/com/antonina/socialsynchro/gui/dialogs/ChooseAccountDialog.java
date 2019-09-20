@@ -35,7 +35,7 @@ public class ChooseAccountDialog extends Dialog {
 
         requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         setContentView(R.layout.dialog_choose_account);
-        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_choose_account);
+        getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_choose_accounts);
 
         RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recyclerview_accounts_dialog);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
@@ -48,7 +48,8 @@ public class ChooseAccountDialog extends Dialog {
         buttonOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                buttonOk_onClick(v);
+                listener.onAccountsSelected(adapter.getSelectedItems());
+                dismiss();
             }
         });
 
@@ -56,29 +57,13 @@ public class ChooseAccountDialog extends Dialog {
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                buttonCancel_onClick(v);
+                cancel();
+                dismiss();
             }
         });
     }
 
-    @Override
-    public void show() {
-        if (adapter != null)
-            adapter.loadData();
-        super.show();
-    }
-
     public void setIgnoredData(List<Account> ignoredData) {
         this.ignoredData = ignoredData;
-    }
-
-    public void buttonCancel_onClick(View view) {
-        cancel();
-        dismiss();
-    }
-
-    public void buttonOk_onClick(View view) {
-        listener.onAccountsSelected(adapter.getSelectedItems());
-        dismiss();
     }
 }

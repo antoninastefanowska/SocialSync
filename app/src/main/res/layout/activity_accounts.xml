@@ -39,7 +39,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:onClick="buttonAddAccount_onClick"
-                        android:text="Add account"
+                        android:text="@string/add_account"
                         style="@style/ButtonStyle" />
 
                     <Button
@@ -47,7 +47,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:onClick="buttonRemoveAccount_onClick"
-                        android:text="Remove account"
+                        android:text="@string/remove_account"
                         style="@style/ButtonStyle" />
 
                 </LinearLayout>

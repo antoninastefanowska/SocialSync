@@ -73,6 +73,7 @@ public class AccountDialogAdapter extends BaseAdapter<Account, AccountDialogAdap
                         items.add(account);
                 }
                 notifyDataSetChanged();
+                accountLiveData.removeObserver(this);
             }
         });
     }

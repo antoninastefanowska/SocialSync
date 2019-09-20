@@ -1,11 +1,10 @@
 package com.antonina.socialsynchro.services.twitter.requests;
 
 import android.util.Base64;
-import android.util.Log;
 
 import com.antonina.socialsynchro.SocialSynchro;
 import com.antonina.socialsynchro.services.IRequest;
-import com.antonina.socialsynchro.utils.APIKey;
+import com.antonina.socialsynchro.services.APIKey;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -62,7 +61,7 @@ public abstract class TwitterRequest implements IRequest {
         public abstract TwitterRequest build();
 
         protected void collectParameters() {
-            authorizationParameters.put("oauth_consumer_key", APIKey.getKey(SocialSynchro.getAppContext(), "twitter_key"));
+            authorizationParameters.put("oauth_consumer_key", APIKey.getKey("twitter_key"));
             authorizationParameters.put("oauth_nonce", generateNonce());
             authorizationParameters.put("oauth_signature_method", "HMAC-SHA1");
             authorizationParameters.put("oauth_timestamp", Long.toString(Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000));
@@ -158,7 +157,7 @@ public abstract class TwitterRequest implements IRequest {
         private String buildSigningKey() {
             StringBuilder sb = new StringBuilder();
 
-            sb.append(percentEncode(APIKey.getKey(SocialSynchro.getAppContext(), "twitter_secretkey")));
+            sb.append(percentEncode(APIKey.getKey("twitter_secretkey")));
             sb.append("&");
             sb.append(percentEncode(getSecretToken()));
 

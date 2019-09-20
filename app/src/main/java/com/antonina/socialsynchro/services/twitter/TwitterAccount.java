@@ -63,16 +63,16 @@ public class TwitterAccount extends Account {
 
     @Override
     public void updateInDatabase() {
-        super.updateInDatabase();
         TwitterAccountInfoRepository repository = TwitterAccountInfoRepository.getInstance();
         repository.update(this);
+        super.updateInDatabase();
     }
 
     @Override
     public void deleteFromDatabase() {
-        super.deleteFromDatabase();
         TwitterAccountInfoRepository repository = TwitterAccountInfoRepository.getInstance();
         repository.delete(this);
+        super.deleteFromDatabase();
     }
 
     @Override

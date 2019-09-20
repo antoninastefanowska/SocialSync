@@ -3,4 +3,29 @@
     <string name="title_activity_connect">ConnectActivity</string>
     <string name="title_activity_accounts">AccountsActivity</string>
     <string name="title_activity_edit">EditActivity</string>
+
+    <string name="error_key_not_found">Failed to authorize request. API key not found.</string>
+    <string name="error_key_exception">Failed to authorize request. Could not retrieve API key. Exception: %s</string>
+    <string name="error_storage_permissions">Could not access storage - permission denied.</string>
+
+    <string name="add_account">Add account</string>
+    <string name="remove_account">Remove account</string>
+    <string name="sign_in_status">Sign in status</string>
+    <string name="sign_in">Sign in</string>
+    <string name="confirm_signing_in">Confirm signing in</string>
+    <string name="add_child">Add child</string>
+    <string name="remove_child">Remove child</string>
+    <string name="save">Save</string>
+    <string name="publish">Publish</string>
+    <string name="unpublish">Unpublish</string>
+    <string name="add_attachment">Add attachment</string>
+    <string name="confirm">Confirm</string>
+    <string name="accounts">Accounts</string>
+    <string name="create_content">Create content</string>
+    <string name="remove_content">Remove content</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+
+    <string name="title_choose_accounts">Choose accounts</string>
+    <string name="title_choose_attachment_type">Choose attachment type</string>
 </resources>

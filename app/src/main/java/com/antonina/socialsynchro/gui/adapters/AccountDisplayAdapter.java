@@ -66,6 +66,7 @@ public class AccountDisplayAdapter extends BaseAdapter<Account, AccountDisplayAd
             public void onChanged(@Nullable List<Account> data) {
                 items = data;
                 notifyDataSetChanged();
+                accountLiveData.removeObserver(this);
             }
         });
     }

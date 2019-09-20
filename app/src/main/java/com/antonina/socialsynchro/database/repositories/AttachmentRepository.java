@@ -57,6 +57,12 @@ public class AttachmentRepository extends BaseRepository<AttachmentTable, Attach
         return data;
     }
 
+    @Override
+    protected List<Attachment> sortList(List<Attachment> list) {
+        return list;
+        // TODO:
+    }
+
     public LiveData<List<Attachment>> getDataByPost(Post post) {
         long postID = post.getInternalID();
         LiveData<List<Attachment>> result = null;
@@ -72,7 +78,7 @@ public class AttachmentRepository extends BaseRepository<AttachmentTable, Attach
                     List<Attachment> output = new ArrayList<Attachment>();
                     for (Long id : input.first)
                         output.add(input.second.get(id));
-                    return output;
+                    return sortList(output);
                 }
             });
         } catch (ExecutionException | InterruptedException e) {

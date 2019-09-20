@@ -14,17 +14,30 @@ import com.antonina.socialsynchro.database.daos.BaseDao;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 public abstract class BaseRepository<DataTableClass extends IDatabaseTable, EntityClass extends IDatabaseEntity> {
     private LiveData<Map<Long, EntityClass>> data;
+    private boolean loaded = false;
     protected BaseDao<DataTableClass> dao;
 
     protected abstract Map<Long, EntityClass> convertToEntities(List<DataTableClass> input);
 
     protected abstract DataTableClass convertToTable(EntityClass entity, boolean isNew);
+
+    protected abstract List<EntityClass> sortList(List<EntityClass> list);
+
+    protected int compareDates(Date date1, Date date2) {
+        if (date1.getTime() > date2.getTime())
+            return -1;
+        else if (date1.getTime() < date2.getTime())
+            return 1;
+        else
+            return 0;
+    }
 
     protected void loadAllData() {
         try {
@@ -38,12 +51,17 @@ public abstract class BaseRepository<DataTableClass extends IDatabaseTable, Enti
             data.observeForever(new Observer<Map<Long, EntityClass>>() {
                 @Override
                 public void onChanged(@Nullable Map<Long, EntityClass> longEntityClassMap) {
+                    loaded = true;
                     data.removeObserver(this);
                 }
             });
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean isLoaded() {
+        return loaded;
     }
 
     public LiveData<Map<Long, EntityClass>> getAllData() {
@@ -54,7 +72,8 @@ public abstract class BaseRepository<DataTableClass extends IDatabaseTable, Enti
         LiveData<List<EntityClass>> result = Transformations.map(data, new Function<Map<Long, EntityClass>, List<EntityClass>>() {
             @Override
             public List<EntityClass> apply(Map<Long, EntityClass> input) {
-                return new ArrayList<EntityClass>(input.values());
+                List<EntityClass> list = new ArrayList<EntityClass>(input.values());
+                return sortList(list);
             }
         });
         return result;
@@ -87,6 +106,7 @@ public abstract class BaseRepository<DataTableClass extends IDatabaseTable, Enti
             BaseDao<DataTableClass> baseDao = dao;
             DataTableClass dataTable = convertToTable(entity, true);
             id = new InsertAsyncTask<DataTableClass>(baseDao).execute(dataTable).get();
+            loadAllData();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -97,12 +117,14 @@ public abstract class BaseRepository<DataTableClass extends IDatabaseTable, Enti
         BaseDao<DataTableClass> baseDao = dao;
         DataTableClass dataTable = convertToTable(entity, false);
         new DeleteAsyncTask<DataTableClass>(baseDao).execute(dataTable);
+        loadAllData();
     }
 
     public void update(EntityClass entity) {
         BaseDao<DataTableClass> baseDao = dao;
         DataTableClass dataTable = convertToTable(entity, false);
         new UpdateAsyncTask<DataTableClass>(baseDao).execute(dataTable);
+        loadAllData();
     }
 
     private static class GetAllDataAsyncTask<DataTableClass> extends AsyncTask<Void, Void, LiveData<List<DataTableClass>>> {
@@ -186,13 +208,15 @@ public abstract class BaseRepository<DataTableClass extends IDatabaseTable, Enti
             addSource(IDsource, new Observer<List<Long>>() {
                 @Override
                 public void onChanged(@Nullable List<Long> first) {
-                    setValue(Pair.create(first, dataSource.getValue()));
+                    if (dataSource.getValue() != null)
+                        setValue(Pair.create(first, dataSource.getValue()));
                 }
             });
             addSource(dataSource, new Observer<Map<Long, EntityClass>>() {
                 @Override
                 public void onChanged(@Nullable Map<Long, EntityClass> second) {
-                    setValue(Pair.create(IDsource.getValue(), second));
+                    if (IDsource.getValue() != null)
+                        setValue(Pair.create(IDsource.getValue(), second));
                 }
             });
         }

@@ -39,6 +39,11 @@ public class TwitterAccountInfoRepository extends BaseRepository<TwitterAccountI
         return data;
     }
 
+    @Override
+    protected List<TwitterAccount> sortList(List<TwitterAccount> list) {
+        return list;
+    }
+
     public LiveData<TwitterAccountInfoTable> getDataTableByID(long id) {
         LiveData<TwitterAccountInfoTable> result = null;
         try {

@@ -8,14 +8,11 @@ import android.support.annotation.Nullable;
 import com.antonina.socialsynchro.BR;
 import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.content.attachments.Attachment;
-import com.antonina.socialsynchro.database.IDatabaseEntity;
 import com.antonina.socialsynchro.database.repositories.AccountRepository;
 import com.antonina.socialsynchro.database.repositories.ChildPostContainerRepository;
-import com.antonina.socialsynchro.database.repositories.ParentPostContainerRepository;
 import com.antonina.socialsynchro.database.repositories.PostRepository;
 import com.antonina.socialsynchro.database.tables.ChildPostContainerTable;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
-import com.antonina.socialsynchro.gui.GUIItem;
 import com.antonina.socialsynchro.gui.listeners.OnPublishedListener;
 import com.antonina.socialsynchro.gui.listeners.OnUnpublishedListener;
 import com.antonina.socialsynchro.services.IResponse;
@@ -80,6 +77,24 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
         notifyPropertyChanged(BR.child);
     }
 
+    @Bindable
+    @Override
+    public Date getCreationDate() {
+        if (locked)
+            return parent.getCreationDate();
+        else
+            return post.getCreationDate();
+    }
+
+    @Bindable
+    @Override
+    public Date getModificationDate() {
+        if (locked)
+            return parent.getModificationDate();
+        else
+            return post.getModificationDate();
+    }
+
     @Override
     public List<Attachment> getAttachments() {
         if (locked)
@@ -92,8 +107,7 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     public void addAttachment(Attachment attachment) {
         if (!locked) {
             post.addAttachment(attachment);
-            if (listener != null)
-                listener.onUpdated();
+            notifyListener();
         }
     }
 
@@ -101,8 +115,7 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     public void removeAttachment(Attachment attachment) {
         if (!locked) {
             post.removeAttachment(attachment);
-            if (listener != null)
-                listener.onUpdated();
+            notifyListener();
         }
     }
 
@@ -171,6 +184,7 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
 
     public void setParent(ParentPostContainer parent) {
         this.parent = parent;
+        notifyListener();
     }
 
     @Override
@@ -183,19 +197,6 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
 
         final ChildPostContainer instance = this;
 
-        final LiveData<ParentPostContainer> parentPostContainerLiveData = ParentPostContainerRepository.getInstance().getDataByID(childPostContainerData.parentID);
-        parentPostContainerLiveData.observeForever(new Observer<ParentPostContainer>() {
-            @Override
-            public void onChanged(@Nullable ParentPostContainer parentPostContainer) {
-                if (parentPostContainer != null) {
-                    parentPostContainer.addChild(instance);
-                    if (listener != null)
-                        listener.onUpdated();
-                    if (parent.getListener() != null)
-                        parent.getListener().onUpdated();
-                }
-            }
-        });
         if (!locked) {
             final LiveData<Post> postLiveData = PostRepository.getInstance().getDataByID(childPostContainerData.postID);
             postLiveData.observeForever(new Observer<Post>() {
@@ -203,20 +204,20 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
                 public void onChanged(@Nullable Post post) {
                     if (post != null) {
                         instance.post = post;
-                        if (listener != null)
-                            listener.onUpdated();
+                        notifyListener();
+                        postLiveData.removeObserver(this);
                     }
                 }
             });
         }
-        LiveData<Account> accountLiveData = AccountRepository.getInstance().getDataByID(childPostContainerData.accountID);
+        final LiveData<Account> accountLiveData = AccountRepository.getInstance().getDataByID(childPostContainerData.accountID);
         accountLiveData.observeForever(new Observer<Account>() {
             @Override
             public void onChanged(@Nullable Account account) {
                 if (account != null) {
                     instance.account = account;
-                    if (listener != null)
-                        listener.onUpdated();
+                    notifyListener();
+                    accountLiveData.removeObserver(this);
                 }
             }
         });
@@ -229,6 +230,8 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
 
     @Override
     public void saveInDatabase() {
+        if (internalID != null)
+            return;
         if (!locked)
             post.saveInDatabase();
         ChildPostContainerRepository repository = ChildPostContainerRepository.getInstance();
@@ -237,6 +240,8 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
 
     @Override
     public void updateInDatabase() {
+        if (internalID == null)
+            return;
         if (!locked)
             post.updateInDatabase();
         ChildPostContainerRepository repository = ChildPostContainerRepository.getInstance();
@@ -245,10 +250,13 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
 
     @Override
     public void deleteFromDatabase() {
+        if (internalID == null)
+            return;
         ChildPostContainerRepository repository = ChildPostContainerRepository.getInstance();
         repository.delete(this);
         if (!locked)
             post.deleteFromDatabase();
+        internalID = null;
     }
 
     @Override

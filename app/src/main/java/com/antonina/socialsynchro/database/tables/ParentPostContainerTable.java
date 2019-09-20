@@ -8,8 +8,6 @@ import android.arch.persistence.room.PrimaryKey;
 import com.antonina.socialsynchro.content.ParentPostContainer;
 import com.antonina.socialsynchro.database.IDatabaseEntity;
 
-import java.util.Date;
-
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 @Entity(tableName = "parent_post_container", foreignKeys = {
@@ -22,9 +20,6 @@ public class ParentPostContainerTable implements IDatabaseTable {
     @ColumnInfo(name = "post_id", index = true)
     public long postID;
 
-    @ColumnInfo(name = "creation_date")
-    public Date creationDate;
-
     @Override
     public void createFromExistingEntity(IDatabaseEntity entity) {
         this.id = entity.getInternalID();
@@ -34,7 +29,6 @@ public class ParentPostContainerTable implements IDatabaseTable {
     @Override
     public void createFromNewEntity(IDatabaseEntity entity) {
         ParentPostContainer parentPostContainer = (ParentPostContainer)entity;
-        this.creationDate = parentPostContainer.getCreationDate();
         this.postID = parentPostContainer.getPost().getInternalID();
     }
 

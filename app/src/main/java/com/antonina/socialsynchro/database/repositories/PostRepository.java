@@ -46,4 +46,9 @@ public class PostRepository extends BaseRepository<PostTable, Post> {
             data.createFromExistingEntity(entity);
         return data;
     }
+
+    @Override
+    protected List<Post> sortList(List<Post> list) {
+        return list;
+    }
 }

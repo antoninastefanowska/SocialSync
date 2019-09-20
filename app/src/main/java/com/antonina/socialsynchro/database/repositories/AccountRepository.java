@@ -15,6 +15,8 @@ import com.antonina.socialsynchro.database.tables.AccountTable;
 import com.antonina.socialsynchro.services.IService;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +59,17 @@ public class AccountRepository extends BaseRepository<AccountTable, Account> {
         return data;
     }
 
+    @Override
+    protected List<Account> sortList(List<Account> list) {
+        Collections.sort(list, new Comparator<Account>() {
+            @Override
+            public int compare(Account o1, Account o2) {
+                return compareDates(o1.getConnectingDate(), o2.getConnectingDate());
+            }
+        });
+        return list;
+    }
+
     public LiveData<List<Account>> getDataByService(IService service) {
         long serviceID = service.getID().ordinal();
         LiveData<List<Account>> result = null;
@@ -72,7 +85,7 @@ public class AccountRepository extends BaseRepository<AccountTable, Account> {
                     List<Account> output = new ArrayList<Account>();
                     for (Long id : input.first)
                         output.add(input.second.get(id));
-                    return output;
+                    return sortList(output);
                 }
             });
         } catch (ExecutionException | InterruptedException e) {

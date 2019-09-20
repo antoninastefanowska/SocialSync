@@ -6,7 +6,7 @@ import com.antonina.socialsynchro.gui.listeners.OnPublishedListener;
 import com.antonina.socialsynchro.gui.listeners.OnUnpublishedListener;
 
 public abstract class PostContainer extends GUIItem implements IPost, IDatabaseEntity {
-    protected long internalID;
+    protected Long internalID;
     protected Post post;
 
     public abstract Post getPost();
@@ -18,7 +18,7 @@ public abstract class PostContainer extends GUIItem implements IPost, IDatabaseE
     public abstract boolean isPublished();
 
     @Override
-    public long getInternalID() {
+    public Long getInternalID() {
         return internalID;
     }
 }

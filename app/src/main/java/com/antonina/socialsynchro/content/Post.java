@@ -7,10 +7,14 @@ import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 import com.antonina.socialsynchro.database.tables.PostTable;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class Post implements IPost, IDatabaseEntity {
-    private long internalID;
+    private Long internalID;
+    private Date creationDate;
+    private Date modificationDate;
     private String title;
     private String content;
     private List<Attachment> attachments;
@@ -44,6 +48,15 @@ public class Post implements IPost, IDatabaseEntity {
     }
 
     @Override
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public Date getModificationDate() {
+        return modificationDate;
+    }
+
+    @Override
     public List<Attachment> getAttachments() {
         return attachments;
     }
@@ -73,27 +86,40 @@ public class Post implements IPost, IDatabaseEntity {
         this.internalID = postData.id;
         this.title = postData.title;
         this.content = postData.content;
+        this.creationDate = postData.creationDate;
+        this.modificationDate = postData.modificationDate;
         this.attachments = new ArrayList<Attachment>();
+        // TODO: Pobrać listę załączników
     }
 
     @Override
-    public long getInternalID() { return internalID; }
+    public Long getInternalID() { return internalID; }
 
     @Override
     public void saveInDatabase() {
+        if (internalID != null)
+            return;
+        creationDate = Calendar.getInstance().getTime();
+        modificationDate = creationDate;
         PostRepository repository = PostRepository.getInstance();
         internalID = repository.insert(this);
     }
 
     @Override
     public void updateInDatabase() {
+        if (internalID == null)
+            return;
+        modificationDate = Calendar.getInstance().getTime();
         PostRepository repository = PostRepository.getInstance();
         repository.update(this);
     }
 
     @Override
     public void deleteFromDatabase() {
+        if (internalID == null)
+            return;
         PostRepository repository = PostRepository.getInstance();
         repository.delete(this);
+        internalID = null;
     }
 }

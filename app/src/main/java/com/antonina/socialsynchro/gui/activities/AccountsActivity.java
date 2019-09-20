@@ -21,11 +21,14 @@ public class AccountsActivity extends AppCompatActivity {
     private ActivityAccountsBinding binding;
     private RecyclerView recyclerView;
     private AccountDisplayAdapter adapter;
+    private boolean accountsDeleted;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accounts);
+
+        accountsDeleted = false;
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_accounts);
         recyclerView = (RecyclerView)findViewById(R.id.recyclerview_accounts);
@@ -36,17 +39,24 @@ public class AccountsActivity extends AppCompatActivity {
         binding.setAccountAdapter(adapter);
     }
 
+    @Override
+    public void finish() {
+        Intent data = new Intent();
+        data.putExtra("accountsDeleted", accountsDeleted);
+        setResult(RESULT_OK, data);
+        super.finish();
+    }
+
     public void buttonAddAccount_onClick(View view) {
         Intent connectActivity = new Intent(AccountsActivity.this, ConnectActivity.class);
         startActivityForResult(connectActivity, ADD);
     }
 
     public void buttonRemoveAccount_onClick(View view) {
-        List<Account> selectedAccounts = adapter.getSelectedItems();
-        for (Account account : selectedAccounts) {
-            adapter.removeItem(account);
+        for (Account account : adapter.getSelectedItems())
             account.deleteFromDatabase();
-        }
+        adapter.removeSelected();
+        accountsDeleted = true;
     }
 
     @Override

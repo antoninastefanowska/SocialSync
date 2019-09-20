@@ -7,6 +7,8 @@ import android.arch.persistence.room.PrimaryKey;
 import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.database.IDatabaseEntity;
 
+import java.util.Date;
+
 @Entity(tableName = "account")
 public class AccountTable implements IDatabaseTable {
     @PrimaryKey(autoGenerate = true)
@@ -25,6 +27,9 @@ public class AccountTable implements IDatabaseTable {
     @ColumnInfo(name = "service_id")
     public int serviceID;
 
+    @ColumnInfo(name = "connecting_date")
+    public Date connectingDate;
+
     @Override
     public void createFromExistingEntity(IDatabaseEntity entity) {
         this.id = entity.getInternalID();
@@ -38,6 +43,7 @@ public class AccountTable implements IDatabaseTable {
         this.externalID = account.getExternalID();
         this.profilePictureUrl = account.getExternalID();
         this.serviceID = account.getService().getID().ordinal();
+        this.connectingDate = account.getConnectingDate();
     }
 
     @Override
