@@ -2,7 +2,6 @@ package com.antonina.socialsynchro.base;
 
 import android.databinding.Bindable;
 
-import com.antonina.socialsynchro.BR;
 import com.antonina.socialsynchro.database.IDatabaseEntity;
 import com.antonina.socialsynchro.database.repositories.AccountRepository;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
@@ -11,15 +10,17 @@ import com.antonina.socialsynchro.gui.GUIItem;
 import com.antonina.socialsynchro.services.IService;
 import com.antonina.socialsynchro.services.IServiceEntity;
 
-import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
-public abstract class Account extends GUIItem implements IDatabaseEntity, IServiceEntity, Serializable {
+@SuppressWarnings("WeakerAccess")
+public abstract class Account extends GUIItem implements IDatabaseEntity, IServiceEntity {
+    protected boolean updated = false;
+
     private Long internalID;
     private String externalID;
     private String name;
-    private String profilePictureUrl; // TODO: Zrobić placeholder. Zdecydować: Przechowywać zdjęcia profilowe? Czy pobierać je bezpośrednio z serwera i usuwać po wyjściu z aplikacji (nie będą dostępne offline)?
+    private String profilePictureURL; // TODO: Zrobić placeholder.
     private IService service;
     private Date connectingDate;
     private boolean loading;
@@ -35,7 +36,7 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
         this.connectingDate = accountData.connectingDate;
         setName(accountData.name);
         setExternalID(accountData.externalID);
-        setProfilePictureUrl(accountData.profilePictureUrl);
+        setProfilePictureURL(accountData.profilePictureUrl);
         setLoading(false);
     }
 
@@ -46,7 +47,6 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
 
     public void setName(String name) {
         this.name = name;
-        notifyPropertyChanged(BR.account);
     }
 
     @Override
@@ -57,21 +57,19 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
     @Override
     public void setExternalID(String serviceExternalIdentifier) {
         this.externalID = serviceExternalIdentifier;
-        notifyPropertyChanged(BR.account);
     }
 
     @Bindable
-    public String getProfilePictureUrl() { return profilePictureUrl; }
+    public String getProfilePictureURL() { return profilePictureURL; }
 
-    public void setProfilePictureUrl(String profilePictureUrl) {
-        this.profilePictureUrl = profilePictureUrl;
-        notifyPropertyChanged(BR.account);
+    protected void setProfilePictureURL(String profilePictureURL) {
+        this.profilePictureURL = profilePictureURL;
     }
 
     @Bindable
     public IService getService() { return service; }
 
-    public void setService(IService service) { this.service = service; }
+    protected void setService(IService service) { this.service = service; }
 
     @Bindable
     public Date getConnectingDate() {
@@ -87,7 +85,13 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
             return;
         connectingDate = Calendar.getInstance().getTime();
         AccountRepository repository = AccountRepository.getInstance();
-        internalID = repository.insert(this);
+        updated = repository.accountExists(externalID);
+        if (!updated)
+            internalID = repository.insert(this);
+        else {
+            internalID = repository.getIDByExternalID(externalID);
+            updateInDatabase();
+        }
     }
 
     @Override
@@ -115,5 +119,13 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
     @Override
     public void setLoading(boolean loading) {
         this.loading = loading;
+    }
+
+    public boolean hasBeenUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(boolean updated) {
+        this.updated = updated;
     }
 }

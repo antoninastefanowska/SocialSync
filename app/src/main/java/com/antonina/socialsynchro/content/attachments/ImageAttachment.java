@@ -7,6 +7,7 @@ import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 
 import java.io.File;
 
+@SuppressWarnings("WeakerAccess")
 public class ImageAttachment extends Attachment {
     private int height, width;
 

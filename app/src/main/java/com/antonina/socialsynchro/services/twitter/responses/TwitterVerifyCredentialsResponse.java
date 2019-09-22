@@ -21,9 +21,6 @@ public class TwitterVerifyCredentialsResponse extends TwitterResponse {
     @SerializedName("description")
     private String description;
 
-    @SerializedName("errors")
-    private ArrayList<ErrorResponse> errors;
-
     public String getID() { return id; }
 
     public String getName() { return name; }
@@ -33,16 +30,4 @@ public class TwitterVerifyCredentialsResponse extends TwitterResponse {
     public String getLocation() { return location; }
 
     public String getDescription() { return description; }
-
-    @Override
-    public String getErrorString() {
-        if (errors == null)
-            return null;
-        StringBuilder sb = new StringBuilder();
-        for (ErrorResponse error : errors) {
-            sb.append(error.toString());
-            sb.append('\n');
-        }
-        return sb.toString();
-    }
 }

@@ -58,7 +58,10 @@ public class TwitterAccount extends Account {
     public void saveInDatabase() {
         super.saveInDatabase();
         TwitterAccountInfoRepository repository = TwitterAccountInfoRepository.getInstance();
-        repository.insert(this);
+        if (!updated)
+            repository.insert(this);
+        else
+            updateInDatabase();
     }
 
     @Override

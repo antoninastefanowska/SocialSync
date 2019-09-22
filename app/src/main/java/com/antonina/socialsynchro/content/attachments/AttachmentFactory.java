@@ -19,7 +19,7 @@ public class AttachmentFactory implements IDatabaseEntityFactory {
     @Override
     public IDatabaseEntity createFromData(IDatabaseTable data) {
         AttachmentTable attachmentData = (AttachmentTable)data;
-        AttachmentTypeID attachmentTypeID = AttachmentTypeID.values()[(int)attachmentData.attachmentTypeID];
+        AttachmentTypeID attachmentTypeID = AttachmentTypeID.values()[attachmentData.attachmentTypeID];
 
         switch(attachmentTypeID) {
             case Image:

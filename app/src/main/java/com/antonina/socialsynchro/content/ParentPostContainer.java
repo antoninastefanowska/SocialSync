@@ -11,6 +11,7 @@ import com.antonina.socialsynchro.database.repositories.ParentPostContainerRepos
 import com.antonina.socialsynchro.database.repositories.PostRepository;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 import com.antonina.socialsynchro.database.tables.ParentPostContainerTable;
+import com.antonina.socialsynchro.gui.listeners.OnAttachmentUploadedListener;
 import com.antonina.socialsynchro.gui.listeners.OnPublishedListener;
 import com.antonina.socialsynchro.gui.listeners.OnUnpublishedListener;
 
@@ -24,8 +25,8 @@ public class ParentPostContainer extends PostContainer {
 
     public ParentPostContainer() {
         post = new Post();
-        children = new ArrayList<ChildPostContainer>();
-        deletedChildren = new ArrayList<ChildPostContainer>();
+        children = new ArrayList<>();
+        deletedChildren = new ArrayList<>();
     }
 
     public ParentPostContainer(IDatabaseTable data) {
@@ -100,9 +101,9 @@ public class ParentPostContainer extends PostContainer {
     }
 
     @Override
-    public void publish(OnPublishedListener listener) {
+    public void publish(OnPublishedListener listener, OnAttachmentUploadedListener attachmentListener) {
         for (ChildPostContainer child : children) {
-            child.publish(listener);
+            child.publish(listener, attachmentListener);
         }
     }
 
@@ -139,6 +140,7 @@ public class ParentPostContainer extends PostContainer {
         this.internalID = parentPostContainerData.id;
 
         this.children = new ArrayList<ChildPostContainer>();
+        this.deletedChildren = new ArrayList<ChildPostContainer>();
         this.post = new Post(); //TODO: Tworzymy pusty obiekt zanim pobierzemy obiekt z bazy - zrobić to samo dla innych encji.
 
         final ParentPostContainer instance = this;
@@ -150,7 +152,6 @@ public class ParentPostContainer extends PostContainer {
                     instance.post = post;
                     notifyListener();
                     postLiveData.removeObserver(this);
-                    postLiveData.removeObserver(this);
                 }
             }
         });
@@ -158,10 +159,10 @@ public class ParentPostContainer extends PostContainer {
         childrenLiveData.observeForever(new Observer<List<ChildPostContainer>>() {
             @Override
             public void onChanged(@Nullable List<ChildPostContainer> children) {
-                for (ChildPostContainer child : children) {
-                    instance.addChild(child);
-                }
-                childrenLiveData.removeObserver(this);
+                instance.children.clear();
+                for (ChildPostContainer child : children)
+                    if (child != null)
+                        instance.addChild(child);
             }
         });
     }

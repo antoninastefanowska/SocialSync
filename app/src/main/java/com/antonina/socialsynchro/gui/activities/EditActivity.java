@@ -8,6 +8,7 @@ import android.databinding.DataBindingUtil;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +23,8 @@ import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.content.ChildPostContainer;
 import com.antonina.socialsynchro.content.ChildPostContainerFactory;
 import com.antonina.socialsynchro.content.IPost;
+import com.antonina.socialsynchro.content.attachments.Attachment;
+import com.antonina.socialsynchro.gui.listeners.OnAttachmentUploadedListener;
 import com.antonina.socialsynchro.gui.listeners.OnPublishedListener;
 import com.antonina.socialsynchro.content.ParentPostContainer;
 import com.antonina.socialsynchro.content.attachments.AttachmentType;
@@ -33,7 +36,7 @@ import com.antonina.socialsynchro.gui.dialogs.ChooseAccountDialog;
 import com.antonina.socialsynchro.gui.listeners.OnAccountsSelectedListener;
 import com.antonina.socialsynchro.gui.dialogs.ChooseAttachmentTypeDialog;
 import com.antonina.socialsynchro.gui.listeners.OnAttachmentTypeSelectedListener;
-import com.antonina.socialsynchro.gui.helpers.SerializableList;
+import com.antonina.socialsynchro.gui.serialization.SerializableList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -122,24 +125,56 @@ public class EditActivity extends AppCompatActivity {
     }
 
     public void buttonSave_onClick(View view) {
-        exitActivity();
+        exitAndSave();
     }
 
     public void buttonPublish_onClick(View view) {
         final Activity context = this;
+        final View layout = findViewById(R.id.layout_main);
         parent.publish(new OnPublishedListener() {
             @Override
-            public void onPublished(ChildPostContainer publishedPost, String error) {
+            public void onPublished(ChildPostContainer publishedPost) {
                 childAdapter.updateItemView(publishedPost);
-                Toast toast = Toast.makeText(context, "Successfily published: " + publishedPost.getExternalID(), Toast.LENGTH_SHORT);
+                Snackbar snackbar = Snackbar.make(layout, "Succesfully published: " + publishedPost.getExternalID(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+                exitAndSave();
+            }
+
+            @Override
+            public void onError(ChildPostContainer post, String error) {
+                childAdapter.updateItemView(post);
+                Snackbar snackbar = Snackbar.make(layout, "Failed to publish. Error: " + error, Snackbar.LENGTH_LONG);
+                snackbar.show();
+            }
+        }, new OnAttachmentUploadedListener() {
+            @Override
+            public void onInitialized(Attachment attachment) {
+                Toast toast = Toast.makeText(context, "Attachment initialized: " + attachment.getFile().getName(), Toast.LENGTH_LONG);
                 toast.show();
-                exitActivity();
+            }
+
+            @Override
+            public void onProgress(Attachment attachment, int percentProgress) {
+                Toast toast = Toast.makeText(context, "Attachment upload progress: " + String.valueOf(percentProgress) + "%", Toast.LENGTH_LONG);
+                toast.show();
+            }
+
+            @Override
+            public void onFinished(Attachment attachment) {
+                Toast toast = Toast.makeText(context, "Attachment upload finished: " + attachment.getExternalID(), Toast.LENGTH_LONG);
+                toast.show();
+            }
+
+            @Override
+            public void onError(Attachment attachment, String error) {
+                Toast toast = Toast.makeText(context, "Attachment upload failed: " + attachment.getFile().getName(), Toast.LENGTH_LONG);
+                toast.show();
             }
         });
         childAdapter.notifyDataSetChanged();
     }
 
-    private void exitActivity() {
+    private void exitAndSave() {
         Intent mainActivity = new Intent();
         mainActivity.putExtra("parent", parent);
         setResult(RESULT_OK, mainActivity);
@@ -190,9 +225,16 @@ public class EditActivity extends AppCompatActivity {
                     for (ImageAttachment image : images) {
                         if (activePostContainer == parent)
                             parentAttachmentAdapter.addItem(image);
+                        else {
+                            // TODO
+                        }
                     }
                     if (activePostContainer == parent)
                         childAdapter.notifyDataSetChanged();
+                    else {
+                        ChildPostContainer activeChild = (ChildPostContainer)activePostContainer;
+                        childAdapter.updateItemView(activeChild);
+                    }
                     break;
             }
         }

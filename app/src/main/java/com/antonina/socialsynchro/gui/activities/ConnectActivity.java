@@ -2,12 +2,14 @@ package com.antonina.socialsynchro.gui.activities;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
 
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.services.callback.CallbackClient;
@@ -49,75 +51,110 @@ public class ConnectActivity extends AppCompatActivity {
     }
 
     public void buttonConnect_onClick(View view) {
+        getLoginToken();
+    }
+
+    public void buttonConfirm_onClick(View view) {
+        getVerifier();
+    }
+
+    private void getLoginToken() {
         TwitterClient client = TwitterClient.getInstance();
         TwitterGetLoginTokenRequest request = TwitterGetLoginTokenRequest.builder().build();
+        final Context context = this;
         final LiveData<TwitterGetLoginTokenResponse> asyncResponse = client.getLoginToken(request);
         asyncResponse.observe(this, new Observer<TwitterGetLoginTokenResponse>() {
             @Override
             public void onChanged(@Nullable TwitterGetLoginTokenResponse response) {
-                loginToken = response.getLoginToken();
-                secretLoginToken = response.getLoginSecretToken();
-                asyncResponse.removeObserver(this);
+                if (response.getErrorString() == null) {
+                    loginToken = response.getLoginToken();
+                    secretLoginToken = response.getLoginSecretToken();
 
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(TwitterClient.getLoginUrl(loginToken)));
-                startActivity(browserIntent);
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(TwitterClient.getLoginURL(loginToken)));
+                    startActivity(browserIntent);
+                } else {
+                    Toast toast = Toast.makeText(context, getResources().getString(R.string.error_login_token, response.getErrorString()), Toast.LENGTH_LONG);
+                    toast.show();
+                }
+                asyncResponse.removeObserver(this);
             }
         });
     }
 
-    public void buttonConfirm_onClick(View view) {
-        final CallbackClient client = CallbackClient.getInstance();
+    private void getVerifier() {
+        CallbackClient client = CallbackClient.getInstance();
         CallbackGetVerifierRequest request = CallbackGetVerifierRequest.builder()
                 .loginToken(loginToken)
                 .build();
+        final Context context = this;
         final LiveData<CallbackGetVerifierResponse> asyncResponse = client.getVerifier(request);
         asyncResponse.observe(this, new Observer<CallbackGetVerifierResponse>() {
             @Override
             public void onChanged(@Nullable CallbackGetVerifierResponse response) {
-                if (loginToken.equals(response.getLoginToken())) {
-                    verifier = response.getVerifier();
-                    createAccount();
+                if (response.getErrorString() == null) {
+                    if (loginToken.equals(response.getLoginToken())) {
+                        verifier = response.getVerifier();
+                        getAccessToken();
+                    }
+                } else {
+                    Toast toast = Toast.makeText(context, getResources().getString(R.string.error_verifier, response.getErrorString()), Toast.LENGTH_LONG);
+                    toast.show();
                 }
+                asyncResponse.removeObserver(this);
             }
         });
     }
 
-    private void createAccount() {
-        final TwitterClient client = TwitterClient.getInstance();
+    private void getAccessToken() {
+        TwitterClient client = TwitterClient.getInstance();
         TwitterGetAccessTokenRequest request = TwitterGetAccessTokenRequest.builder()
                 .loginToken(loginToken)
                 .secretLoginToken(secretLoginToken)
                 .verifier(verifier)
                 .build();
+        final Context context = this;
         final LiveData<TwitterGetAccessTokenResponse> asyncResponse = client.getAccessToken(request);
         asyncResponse.observe(this, new Observer<TwitterGetAccessTokenResponse>() {
             @Override
             public void onChanged(@Nullable TwitterGetAccessTokenResponse response) {
-                account = new TwitterAccount();
-                account.setAccessToken(response.getAccessToken());
-                account.setSecretToken(response.getSecretToken());
-
+                if (response.getErrorString() == null) {
+                    account = new TwitterAccount();
+                    account.setAccessToken(response.getAccessToken());
+                    account.setSecretToken(response.getSecretToken());
+                    verifyCredentials();
+                } else {
+                    Toast toast = Toast.makeText(context, getResources().getString(R.string.error_access_token, response.getErrorString()), Toast.LENGTH_LONG);
+                    toast.show();
+                }
                 asyncResponse.removeObserver(this);
-
-                TwitterVerifyCredentialsRequest request2 = TwitterVerifyCredentialsRequest.builder()
-                        .accessToken(account.getAccessToken())
-                        .secretToken(account.getSecretToken())
-                        .build();
-                final LiveData<TwitterVerifyCredentialsResponse> asyncVerifyCredentialsResponse = client.verifyCredentials(request2);
-                asyncVerifyCredentialsResponse.observeForever(new Observer<TwitterVerifyCredentialsResponse>() {
-                    @Override
-                    public void onChanged(@Nullable TwitterVerifyCredentialsResponse response) {
-                        account.createFromResponse(response);
-                        asyncVerifyCredentialsResponse.removeObserver(this);
-                        if (response.getErrorString() == null)
-                            exitActivity();
-                    }
-                });
             }
         });
     }
 
-    private void exitActivity() {
+    private void verifyCredentials() {
+        TwitterClient client = TwitterClient.getInstance();
+        TwitterVerifyCredentialsRequest request = TwitterVerifyCredentialsRequest.builder()
+                .accessToken(account.getAccessToken())
+                .secretToken(account.getSecretToken())
+                .build();
+        final Context context = this;
+        final LiveData<TwitterVerifyCredentialsResponse> asyncResponse = client.verifyCredentials(request);
+        asyncResponse.observeForever(new Observer<TwitterVerifyCredentialsResponse>() {
+            @Override
+            public void onChanged(@Nullable TwitterVerifyCredentialsResponse response) {
+                if (response.getErrorString() == null) {
+                    account.createFromResponse(response);
+                    exitAndSave();
+                } else {
+                    Toast toast = Toast.makeText(context, getResources().getString(R.string.error_account_info, response.getErrorString()), Toast.LENGTH_LONG);
+                    toast.show();
+                }
+                asyncResponse.removeObserver(this);
+            }
+        });
+    }
+
+    private void exitAndSave() {
         Intent accountsActivity = new Intent();
         accountsActivity.putExtra("account", account);
         setResult(RESULT_OK, accountsActivity);

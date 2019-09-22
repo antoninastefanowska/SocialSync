@@ -1,5 +1,6 @@
 package com.antonina.socialsynchro.content.attachments;
 
+@SuppressWarnings("WeakerAccess")
 public class AttachmentTypes {
     private static final AttachmentType[] attachments = new AttachmentType[AttachmentTypeID.values().length];
     private static boolean initialized = false;

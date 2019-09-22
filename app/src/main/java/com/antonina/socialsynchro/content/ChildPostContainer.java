@@ -13,6 +13,7 @@ import com.antonina.socialsynchro.database.repositories.ChildPostContainerReposi
 import com.antonina.socialsynchro.database.repositories.PostRepository;
 import com.antonina.socialsynchro.database.tables.ChildPostContainerTable;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
+import com.antonina.socialsynchro.gui.listeners.OnAttachmentUploadedListener;
 import com.antonina.socialsynchro.gui.listeners.OnPublishedListener;
 import com.antonina.socialsynchro.gui.listeners.OnUnpublishedListener;
 import com.antonina.socialsynchro.services.IResponse;
@@ -31,7 +32,6 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     protected ParentPostContainer parent;
 
     // TODO: dla każdej funkcji modyfikującej sprawdzić ograniczenia
-    // TODO: Zapamiętać: z bazy wczytane muszą być wpierw rodzice
 
     public ChildPostContainer(IDatabaseTable data) {
         createFromData(data);
@@ -134,7 +134,7 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     }
 
     @Override
-    public abstract void publish(OnPublishedListener listener);
+    public abstract void publish(OnPublishedListener listener, OnAttachmentUploadedListener attachmentListener);
 
     @Override
     public abstract void unpublish(OnUnpublishedListener listener);
@@ -190,10 +190,10 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     @Override
     public void createFromData(IDatabaseTable data) {
         ChildPostContainerTable childPostContainerData = (ChildPostContainerTable)data;
-        this.internalID = childPostContainerData.id;
-        this.externalID = childPostContainerData.externalID;
-        this.locked = childPostContainerData.locked;
-        this.synchronizationDate = childPostContainerData.synchronizationDate;
+        this.setInternalID(childPostContainerData.id);
+        this.setExternalID(childPostContainerData.externalID);
+        this.setLocked(childPostContainerData.locked);
+        this.setSynchronizationDate(childPostContainerData.synchronizationDate);
 
         final ChildPostContainer instance = this;
 
@@ -203,7 +203,7 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
                 @Override
                 public void onChanged(@Nullable Post post) {
                     if (post != null) {
-                        instance.post = post;
+                        instance.setPost(post);
                         notifyListener();
                         postLiveData.removeObserver(this);
                     }
@@ -215,17 +215,12 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
             @Override
             public void onChanged(@Nullable Account account) {
                 if (account != null) {
-                    instance.account = account;
+                    instance.setAccount(account);
                     notifyListener();
                     accountLiveData.removeObserver(this);
                 }
             }
         });
-    }
-
-    @Override
-    public void createFromResponse(IResponse response) {
-        // TODO
     }
 
     @Override
@@ -272,5 +267,9 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     @Override
     public boolean isPublished() {
         return (externalID != null);
+    }
+
+    private void setLocked(boolean locked) {
+        this.locked = locked;
     }
 }

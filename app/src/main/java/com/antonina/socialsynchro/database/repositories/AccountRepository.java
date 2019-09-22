@@ -94,6 +94,42 @@ public class AccountRepository extends BaseRepository<AccountTable, Account> {
         return result;
     }
 
+    public long getIDByExternalID(String externalID) {
+        long result = -1;
+        try {
+            AccountDao accountDao = (AccountDao)dao;
+            result = new GetIDByExternalIDAsyncTask(accountDao).execute(externalID).get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public boolean accountExists(String externalID) {
+        boolean result = false;
+        try {
+            AccountDao accountDao = (AccountDao)dao;
+            result = new AccountExistsAsyncTask(accountDao).execute(externalID).get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    @Override
+    public void update(Account account) {
+        super.update(account);
+        ChildPostContainerRepository childRepository = ChildPostContainerRepository.getInstance();
+        childRepository.loadAllData();
+    }
+
+    @Override
+    public void delete(Account account) {
+        super.delete(account);
+        ChildPostContainerRepository childRepository = ChildPostContainerRepository.getInstance();
+        childRepository.loadAllData();
+    }
+
     private static class GetIDByServiceAsyncTask extends AsyncTask<Long, Void, LiveData<List<Long>>> {
         private AccountDao accountDao;
 
@@ -104,6 +140,32 @@ public class AccountRepository extends BaseRepository<AccountTable, Account> {
         @Override
         protected LiveData<List<Long>> doInBackground(Long... params) {
             return accountDao.getIDByService(params[0]);
+        }
+    }
+
+    private static class GetIDByExternalIDAsyncTask extends AsyncTask<String, Void, Long> {
+        private AccountDao accountDao;
+
+        public GetIDByExternalIDAsyncTask(AccountDao dao) {
+            accountDao = dao;
+        }
+
+        @Override
+        protected Long doInBackground(String... params) {
+            return accountDao.getIDByExternalID(params[0]);
+        }
+    }
+
+    private static class AccountExistsAsyncTask extends AsyncTask<String, Void, Boolean> {
+        private AccountDao accountDao;
+
+        public AccountExistsAsyncTask(AccountDao dao) {
+            accountDao = dao;
+        }
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            return accountDao.accountExists(params[0]);
         }
     }
 }

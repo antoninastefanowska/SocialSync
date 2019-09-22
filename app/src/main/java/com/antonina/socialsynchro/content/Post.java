@@ -1,28 +1,36 @@
 package com.antonina.socialsynchro.content;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
+import android.support.annotation.Nullable;
+
 import com.antonina.socialsynchro.content.attachments.Attachment;
 import com.antonina.socialsynchro.database.IDatabaseEntity;
+import com.antonina.socialsynchro.database.repositories.AttachmentRepository;
 import com.antonina.socialsynchro.database.repositories.PostRepository;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 import com.antonina.socialsynchro.database.tables.PostTable;
+import com.antonina.socialsynchro.gui.GUIItem;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class Post implements IPost, IDatabaseEntity {
+public class Post extends GUIItem implements IPost, IDatabaseEntity {
     private Long internalID;
     private Date creationDate;
     private Date modificationDate;
     private String title;
     private String content;
     private List<Attachment> attachments;
+    private List<Attachment> deletedAttachments;
 
     public Post() {
         title = "";
         content = "";
         attachments = new ArrayList<Attachment>();
+        deletedAttachments = new ArrayList<Attachment>();
     }
 
     public Post(IDatabaseTable data) { createFromData(data); }
@@ -68,8 +76,9 @@ public class Post implements IPost, IDatabaseEntity {
 
     @Override
     public void addAttachment(Attachment attachment) {
-        attachments.add(attachment);
         attachment.setParentPost(this);
+        attachments.add(attachment);
+        notifyListener();
     }
 
     @Override
@@ -78,6 +87,9 @@ public class Post implements IPost, IDatabaseEntity {
             return;
         attachments.remove(attachment);
         attachment.setParentPost(null);
+        if (attachment.getInternalID() != null)
+            deletedAttachments.add(attachment);
+        notifyListener();
     }
 
     @Override
@@ -88,8 +100,20 @@ public class Post implements IPost, IDatabaseEntity {
         this.content = postData.content;
         this.creationDate = postData.creationDate;
         this.modificationDate = postData.modificationDate;
+
         this.attachments = new ArrayList<Attachment>();
-        // TODO: Pobrać listę załączników
+        this.deletedAttachments = new ArrayList<Attachment>();
+
+        final Post instance = this;
+        final LiveData<List<Attachment>> attachmentsLiveData = AttachmentRepository.getInstance().getDataByPost(this);
+        attachmentsLiveData.observeForever(new Observer<List<Attachment>>() {
+            @Override
+            public void onChanged(@Nullable List<Attachment> attachments) {
+                for (Attachment attachment : attachments)
+                    instance.addAttachment(attachment);
+                attachmentsLiveData.removeObserver(this);
+            }
+        });
     }
 
     @Override
@@ -103,6 +127,8 @@ public class Post implements IPost, IDatabaseEntity {
         modificationDate = creationDate;
         PostRepository repository = PostRepository.getInstance();
         internalID = repository.insert(this);
+        for (Attachment attachment : attachments)
+            attachment.saveInDatabase();
     }
 
     @Override
@@ -112,12 +138,26 @@ public class Post implements IPost, IDatabaseEntity {
         modificationDate = Calendar.getInstance().getTime();
         PostRepository repository = PostRepository.getInstance();
         repository.update(this);
+
+        for (Attachment deletedAttachment : deletedAttachments)
+            deletedAttachment.deleteFromDatabase();
+
+        deletedAttachments.clear();
+
+        for (Attachment attachment : attachments) {
+            if (attachment.getInternalID() == null)
+                attachment.saveInDatabase();
+            else
+                attachment.updateInDatabase();
+        }
     }
 
     @Override
     public void deleteFromDatabase() {
         if (internalID == null)
             return;
+        for (Attachment attachment : attachments)
+            attachment.deleteFromDatabase();
         PostRepository repository = PostRepository.getInstance();
         repository.delete(this);
         internalID = null;

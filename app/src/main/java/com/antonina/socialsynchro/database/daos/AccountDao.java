@@ -25,6 +25,12 @@ public interface AccountDao extends BaseDao<AccountTable> {
     @Query("SELECT id FROM account WHERE service_id = :serviceID")
     LiveData<List<Long>> getIDByService(long serviceID);
 
+    @Query("SELECT id FROM account WHERE external_id = :externalID")
+    long getIDByExternalID(String externalID);
+
+    @Query("SELECT COUNT(*) FROM account WHERE external_id = :externalID")
+    boolean accountExists(String externalID);
+
     @Insert
     long insert(AccountTable accountData);
 

@@ -66,7 +66,6 @@ public class AttachmentRepository extends BaseRepository<AttachmentTable, Attach
     public LiveData<List<Attachment>> getDataByPost(Post post) {
         long postID = post.getInternalID();
         LiveData<List<Attachment>> result = null;
-
         try {
             AttachmentDao attachmentDao = (AttachmentDao)dao;
             LiveData<List<Long>> IDs = new GetIDByPostAsyncTask(attachmentDao).execute(postID).get();

@@ -58,8 +58,8 @@ public class MainActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case ACCOUNTS:
-                    boolean accountsDeleted = (boolean)data.getBooleanExtra("accountsDeleted", false);
-                    if (accountsDeleted)
+                    boolean accountsChanged = data.getBooleanExtra("accountsChanged", false);
+                    if (accountsChanged)
                         parentAdapter.loadData();
                     break;
                 case CREATE:

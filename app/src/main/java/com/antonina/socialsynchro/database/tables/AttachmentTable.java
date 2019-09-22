@@ -23,9 +23,6 @@ public class AttachmentTable implements IDatabaseTable {
     @ColumnInfo(name = "filepath")
     public String filepath;
 
-    @ColumnInfo(name = "size_kb")
-    public int sizeKb;
-
     @ColumnInfo(name = "attachment_type_id")
     public int attachmentTypeID;
 
@@ -42,7 +39,6 @@ public class AttachmentTable implements IDatabaseTable {
     public void createFromNewEntity(IDatabaseEntity entity) {
         Attachment attachment = (Attachment)entity;
         this.filepath = attachment.getFile().getAbsolutePath();
-        this.sizeKb = attachment.getSizeKb();
         this.externalID = attachment.getExternalID();
         this.attachmentTypeID = attachment.getAttachmentType().getID().ordinal();
         this.postID = attachment.getParentPost().getInternalID();

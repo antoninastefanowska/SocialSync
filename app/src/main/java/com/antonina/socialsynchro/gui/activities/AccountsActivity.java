@@ -13,22 +13,20 @@ import com.antonina.socialsynchro.databinding.ActivityAccountsBinding;
 import com.antonina.socialsynchro.gui.adapters.AccountDisplayAdapter;
 import com.antonina.socialsynchro.base.Account;
 
-import java.util.List;
-
 public class AccountsActivity extends AppCompatActivity {
-    private final static int ADD = 0;
+    private final static int ADD_ACCOUNT = 0;
 
     private ActivityAccountsBinding binding;
     private RecyclerView recyclerView;
     private AccountDisplayAdapter adapter;
-    private boolean accountsDeleted;
+    private boolean accountsChanged;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accounts);
 
-        accountsDeleted = false;
+        accountsChanged = false;
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_accounts);
         recyclerView = (RecyclerView)findViewById(R.id.recyclerview_accounts);
@@ -42,21 +40,21 @@ public class AccountsActivity extends AppCompatActivity {
     @Override
     public void finish() {
         Intent data = new Intent();
-        data.putExtra("accountsDeleted", accountsDeleted);
+        data.putExtra("accountsChanged", accountsChanged);
         setResult(RESULT_OK, data);
         super.finish();
     }
 
     public void buttonAddAccount_onClick(View view) {
         Intent connectActivity = new Intent(AccountsActivity.this, ConnectActivity.class);
-        startActivityForResult(connectActivity, ADD);
+        startActivityForResult(connectActivity, ADD_ACCOUNT);
     }
 
     public void buttonRemoveAccount_onClick(View view) {
         for (Account account : adapter.getSelectedItems())
             account.deleteFromDatabase();
         adapter.removeSelected();
-        accountsDeleted = true;
+        accountsChanged = true;
     }
 
     @Override
@@ -64,10 +62,15 @@ public class AccountsActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
-                case ADD:
+                case ADD_ACCOUNT:
                     Account account = (Account)data.getSerializableExtra("account");
                     adapter.addItem(account);
                     account.saveInDatabase();
+                    if (account.hasBeenUpdated()) {
+                        adapter.loadData();
+                        accountsChanged = true;
+                        account.setUpdated(false);
+                    }
                     break;
             }
         }

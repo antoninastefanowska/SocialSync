@@ -6,17 +6,15 @@ import com.antonina.socialsynchro.gui.listeners.OnUpdatedListener;
 
 import java.io.Serializable;
 
-public abstract class GUIItem extends BaseObservable {
-    private boolean selected = false;
-    private OnUpdatedListener listener;
+public abstract class GUIItem extends BaseObservable implements Serializable {
+    private transient boolean selected = false;
+    private transient OnUpdatedListener listener;
 
     public boolean isSelected() { return selected; }
 
     public void select() { selected = true; }
 
     public void unselect() { selected = false; }
-
-    public void setSelected(boolean selected) { this.selected = selected; }
 
     public void setListener(OnUpdatedListener listener) {
         this.listener = listener;

@@ -2,7 +2,6 @@ package com.antonina.socialsynchro.services.twitter.requests;
 
 import android.util.Base64;
 
-import com.antonina.socialsynchro.SocialSynchro;
 import com.antonina.socialsynchro.services.IRequest;
 import com.antonina.socialsynchro.services.APIKey;
 
@@ -99,7 +98,6 @@ public abstract class TwitterRequest implements IRequest {
             int length = 42;
             StringBuilder sb = new StringBuilder();
             Random random = new Random();
-
             for (int i = 0; i < length; i++)
             {
                 int index = random.nextInt(ALPHANUM.length());

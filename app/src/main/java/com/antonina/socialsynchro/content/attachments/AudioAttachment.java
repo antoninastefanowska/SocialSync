@@ -4,6 +4,7 @@ import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 
 import java.io.File;
 
+@SuppressWarnings("WeakerAccess")
 public class AudioAttachment extends Attachment {
     private int lengthSeconds;
 
