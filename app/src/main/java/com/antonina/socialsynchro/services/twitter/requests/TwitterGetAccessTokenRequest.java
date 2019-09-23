@@ -1,5 +1,7 @@
 package com.antonina.socialsynchro.services.twitter.requests;
 
+import com.antonina.socialsynchro.services.twitter.requests.authorization.TwitterUserAuthorizationStrategy;
+
 public class TwitterGetAccessTokenRequest extends TwitterRequest {
     private final String verifier;
 
@@ -17,13 +19,25 @@ public class TwitterGetAccessTokenRequest extends TwitterRequest {
     }
 
     public static class Builder extends TwitterRequest.Builder {
+        private final static String REQUEST_URL = "https://api.twitter.com/oauth/access_token";
         private String loginToken;
         private String secretLoginToken;
         private String verifier;
 
         @Override
         public TwitterGetAccessTokenRequest build() {
-            return new TwitterGetAccessTokenRequest(buildUserAuthorizationHeader(), verifier);
+            prepareAuthorization();
+            return new TwitterGetAccessTokenRequest(authorization.buildAuthorizationHeader(), verifier);
+        }
+
+        @Override
+        protected void prepareAuthorization() {
+            authorization = new TwitterUserAuthorizationStrategy()
+                    .accessToken(loginToken)
+                    .secretToken(secretLoginToken)
+                    .requestMethod("POST")
+                    .requestURL(REQUEST_URL);
+            authorization.addAuthorizationParameter("oauth_verifier", verifier);
         }
 
         public Builder loginToken(String loginToken) {
@@ -39,31 +53,6 @@ public class TwitterGetAccessTokenRequest extends TwitterRequest {
         public Builder verifier(String verifier) {
             this.verifier = verifier;
             return this;
-        }
-
-        @Override
-        protected String getURL() {
-            return "https://api.twitter.com/oauth/access_token";
-        }
-
-        @Override
-        protected String getAccessToken() {
-            return loginToken;
-        }
-
-        @Override
-        protected String getSecretToken() {
-            return secretLoginToken;
-        }
-
-        @Override
-        protected String getHTTPMethod() { return "POST"; }
-
-        @Override
-        protected void collectParameters() {
-            authorizationParameters.put("oauth_token", getAccessToken());
-            authorizationParameters.put("oauth_verifier", verifier);
-            super.collectParameters();
         }
     }
 }

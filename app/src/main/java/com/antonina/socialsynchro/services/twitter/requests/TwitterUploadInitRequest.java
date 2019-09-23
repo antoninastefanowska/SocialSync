@@ -1,5 +1,7 @@
 package com.antonina.socialsynchro.services.twitter.requests;
 
+import com.antonina.socialsynchro.services.twitter.requests.authorization.TwitterUserAuthorizationStrategy;
+
 public class TwitterUploadInitRequest extends TwitterRequest {
     private final String totalBytes;
     private final String mediaType;
@@ -27,6 +29,7 @@ public class TwitterUploadInitRequest extends TwitterRequest {
     }
 
     public static class Builder extends TwitterRequest.Builder {
+        private final static String REQUEST_URL = "https://upload.twitter.com/1.1/media/upload.json";
         private String accessToken;
         private String secretToken;
         private String totalBytes;
@@ -34,7 +37,20 @@ public class TwitterUploadInitRequest extends TwitterRequest {
 
         @Override
         public TwitterUploadInitRequest build() {
-            return new TwitterUploadInitRequest(buildUserAuthorizationHeader(), totalBytes, mediaType);
+            prepareAuthorization();
+            return new TwitterUploadInitRequest(authorization.buildAuthorizationHeader(), totalBytes, mediaType);
+        }
+
+        @Override
+        protected void prepareAuthorization() {
+            authorization = new TwitterUserAuthorizationStrategy()
+                    .accessToken(accessToken)
+                    .secretToken(secretToken)
+                    .requestMethod("POST")
+                    .requestURL(REQUEST_URL);
+            authorization.addSignatureParameter("command", "INIT");
+            authorization.addSignatureParameter("total_bytes", totalBytes);
+            authorization.addSignatureParameter("media_type", mediaType);
         }
 
         public Builder accessToken(String accessToken) {
@@ -55,38 +71,6 @@ public class TwitterUploadInitRequest extends TwitterRequest {
         public Builder mediaType(String mediaType) {
             this.mediaType = mediaType;
             return this;
-        }
-
-        @Override
-        protected String getURL() {
-            return "https://upload.twitter.com/1.1/media/upload.json";
-        }
-
-        @Override
-        protected String getAccessToken() {
-            return accessToken;
-        }
-
-        @Override
-        protected String getSecretToken() {
-            return secretToken;
-        }
-
-        @Override
-        protected String getHTTPMethod() {
-            return "POST";
-        }
-
-        @Override
-        protected void collectParameters() {
-            authorizationParameters.put("command", "INIT");
-            authorizationParameters.put("total_bytes", totalBytes);
-            authorizationParameters.put("media_type", mediaType);
-            authorizationParameters.put("oauth_token", getAccessToken());
-            super.collectParameters();
-            authorizationParameters.remove("command");
-            authorizationParameters.remove("total_bytes");
-            authorizationParameters.remove("media_type");
         }
     }
 }

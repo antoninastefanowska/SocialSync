@@ -1,5 +1,7 @@
 package com.antonina.socialsynchro.services.twitter.requests;
 
+import com.antonina.socialsynchro.services.twitter.requests.authorization.TwitterUserAuthorizationStrategy;
+
 import java.util.List;
 
 public class TwitterCreateContentRequest extends TwitterRequest {
@@ -19,13 +21,25 @@ public class TwitterCreateContentRequest extends TwitterRequest {
     }
 
     public static class Builder extends TwitterRequest.Builder {
+        private final static String REQUEST_URL = "https://api.twitter.com/1.1/statuses/update.json";
         protected String status;
         private String accessToken;
         private String secretToken;
 
         @Override
         public TwitterCreateContentRequest build() {
-            return new TwitterCreateContentRequest(buildUserAuthorizationHeader(), status);
+            prepareAuthorization();
+            return new TwitterCreateContentRequest(authorization.buildAuthorizationHeader(), status);
+        }
+
+        @Override
+        protected void prepareAuthorization() {
+            authorization = new TwitterUserAuthorizationStrategy()
+                    .accessToken(accessToken)
+                    .secretToken(secretToken)
+                    .requestMethod("POST")
+                    .requestURL(REQUEST_URL);
+            authorization.addSignatureParameter("status", status);
         }
 
         public Builder status(String status) {
@@ -41,34 +55,6 @@ public class TwitterCreateContentRequest extends TwitterRequest {
         public Builder secretToken(String secretToken) {
             this.secretToken = secretToken;
             return this;
-        }
-
-        @Override
-        protected String getURL() {
-            return "https://api.twitter.com/1.1/statuses/update.json";
-        }
-
-        @Override
-        protected String getAccessToken() {
-            return accessToken;
-        }
-
-        @Override
-        protected String getSecretToken() {
-            return secretToken;
-        }
-
-        @Override
-        protected String getHTTPMethod() {
-            return "POST";
-        }
-
-        @Override
-        protected void collectParameters() {
-            authorizationParameters.put("status", status);
-            authorizationParameters.put("oauth_token", getAccessToken());
-            super.collectParameters();
-            authorizationParameters.remove("status");
         }
     }
 }

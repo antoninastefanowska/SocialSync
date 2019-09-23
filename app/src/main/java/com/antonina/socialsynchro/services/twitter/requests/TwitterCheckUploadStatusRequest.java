@@ -1,5 +1,7 @@
 package com.antonina.socialsynchro.services.twitter.requests;
 
+import com.antonina.socialsynchro.services.twitter.requests.authorization.TwitterUserAuthorizationStrategy;
+
 public class TwitterCheckUploadStatusRequest extends TwitterRequest {
     private final String mediaID;
 
@@ -21,13 +23,26 @@ public class TwitterCheckUploadStatusRequest extends TwitterRequest {
     }
 
     public static class Builder extends TwitterRequest.Builder {
+        private final static String REQUEST_URL = "https://upload.twitter.com/1.1/media/upload.json";
         private String accessToken;
         private String secretToken;
         private String mediaID;
 
         @Override
         public TwitterCheckUploadStatusRequest build() {
-            return new TwitterCheckUploadStatusRequest(buildUserAuthorizationHeader(), mediaID);
+            prepareAuthorization();
+            return new TwitterCheckUploadStatusRequest(authorization.buildAuthorizationHeader(), mediaID);
+        }
+
+        @Override
+        protected void prepareAuthorization() {
+            authorization = new TwitterUserAuthorizationStrategy()
+                    .accessToken(accessToken)
+                    .secretToken(secretToken)
+                    .requestMethod("GET")
+                    .requestURL(REQUEST_URL);
+            authorization.addSignatureParameter("command", "STATUS");
+            authorization.addSignatureParameter("media_id", mediaID);
         }
 
         public Builder accessToken(String accessToken) {
@@ -43,36 +58,6 @@ public class TwitterCheckUploadStatusRequest extends TwitterRequest {
         public Builder mediaID(String mediaID) {
             this.mediaID = mediaID;
             return this;
-        }
-
-        @Override
-        protected String getURL() {
-            return "https://upload.twitter.com/1.1/media/upload.json";
-        }
-
-        @Override
-        protected String getAccessToken() {
-            return accessToken;
-        }
-
-        @Override
-        protected String getSecretToken() {
-            return secretToken;
-        }
-
-        @Override
-        protected String getHTTPMethod() {
-            return "GET";
-        }
-
-        @Override
-        protected void collectParameters() {
-            authorizationParameters.put("command", "STATUS");
-            authorizationParameters.put("media_id", mediaID);
-            authorizationParameters.put("oauth_token", getAccessToken());
-            super.collectParameters();
-            authorizationParameters.remove("command");
-            authorizationParameters.remove("media_id");
         }
     }
 }

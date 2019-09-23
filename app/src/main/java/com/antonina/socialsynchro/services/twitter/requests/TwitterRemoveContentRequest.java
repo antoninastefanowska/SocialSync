@@ -1,5 +1,7 @@
 package com.antonina.socialsynchro.services.twitter.requests;
 
+import com.antonina.socialsynchro.services.twitter.requests.authorization.TwitterUserAuthorizationStrategy;
+
 public class TwitterRemoveContentRequest extends TwitterRequest {
     private final String id;
 
@@ -15,13 +17,24 @@ public class TwitterRemoveContentRequest extends TwitterRequest {
     }
 
     public static class Builder extends TwitterRequest.Builder {
+        private final static String REQUEST_URL = "https://api.twitter.com/1.1/statuses/destroy/";
         private String id;
         private String accessToken;
         private String secretToken;
 
         @Override
         public TwitterRemoveContentRequest build() {
-            return new TwitterRemoveContentRequest(buildUserAuthorizationHeader(), id);
+            prepareAuthorization();
+            return new TwitterRemoveContentRequest(authorization.buildAuthorizationHeader(), id);
+        }
+
+        @Override
+        protected void prepareAuthorization() {
+            authorization = new TwitterUserAuthorizationStrategy()
+                    .accessToken(accessToken)
+                    .secretToken(secretToken)
+                    .requestMethod("POST")
+                    .requestURL(REQUEST_URL + id + ".json");
         }
 
         public Builder id(String id) {
@@ -37,32 +50,6 @@ public class TwitterRemoveContentRequest extends TwitterRequest {
         public Builder secretToken(String secretToken) {
             this.secretToken = secretToken;
             return this;
-        }
-
-        @Override
-        protected String getURL() {
-            return "https://api.twitter.com/1.1/statuses/destroy/" + id + ".json";
-        }
-
-        @Override
-        protected String getAccessToken() {
-            return accessToken;
-        }
-
-        @Override
-        protected String getSecretToken() {
-            return secretToken;
-        }
-
-        @Override
-        protected String getHTTPMethod() {
-            return "POST";
-        }
-
-        @Override
-        protected void collectParameters() {
-            authorizationParameters.put("oauth_token", getAccessToken());
-            super.collectParameters();
         }
     }
 }

@@ -23,7 +23,14 @@ public class TwitterCreateContentWithMediaRequest extends TwitterCreateContentRe
 
         @Override
         public TwitterCreateContentWithMediaRequest build() {
-            return new TwitterCreateContentWithMediaRequest(buildUserAuthorizationHeader(), status, mediaIDs);
+            prepareAuthorization();
+            return new TwitterCreateContentWithMediaRequest(authorization.buildAuthorizationHeader(), status, mediaIDs);
+        }
+
+        @Override
+        protected void prepareAuthorization() {
+            super.prepareAuthorization();
+            authorization.addSignatureParameter("media_ids", mediaIDs);
         }
 
         public Builder mediaIDs(List<String> mediaIDs) {
@@ -48,13 +55,6 @@ public class TwitterCreateContentWithMediaRequest extends TwitterCreateContentRe
 
         public Builder secretToken(String secretToken) {
             return (Builder)super.secretToken(secretToken);
-        }
-
-        @Override
-        protected void collectParameters() {
-            authorizationParameters.put("media_ids", mediaIDs);
-            super.collectParameters();
-            authorizationParameters.remove("media_ids");
         }
     }
 }
