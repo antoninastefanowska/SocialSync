@@ -5,7 +5,6 @@ import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.util.Pair;
 
 import com.antonina.socialsynchro.content.ChildPostContainer;
@@ -23,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+@SuppressWarnings("WeakerAccess")
 public class ChildPostContainerRepository extends BaseRepository<ChildPostContainerTable, ChildPostContainer> {
     private static ChildPostContainerRepository instance;
 
@@ -42,9 +42,9 @@ public class ChildPostContainerRepository extends BaseRepository<ChildPostContai
 
     @Override
     protected Map<Long, ChildPostContainer> convertToEntities(List<ChildPostContainerTable> input) {
-        Map<Long, ChildPostContainer> output = new HashMap<Long, ChildPostContainer>();
+        Map<Long, ChildPostContainer> output = new HashMap<>();
         for (ChildPostContainerTable data : input) {
-            ChildPostContainer childPostContainer = (ChildPostContainer)ChildPostContainerFactory.getInstance().createFromData(data);
+            ChildPostContainer childPostContainer = ChildPostContainerFactory.getInstance().createFromData(data);
             output.put(childPostContainer.getInternalID(), childPostContainer);
         }
         return output;
@@ -77,12 +77,12 @@ public class ChildPostContainerRepository extends BaseRepository<ChildPostContai
         try {
             ChildPostContainerDao childPostContainerDao = (ChildPostContainerDao)dao;
             LiveData<List<Long>> IDs = new GetIDByParentAsyncTask(childPostContainerDao).execute(parentID).get();
-            FilterSource<ChildPostContainer> filterSource = new FilterSource<ChildPostContainer>(IDs, getAllData());
+            FilterSource<ChildPostContainer> filterSource = new FilterSource<>(IDs, getAllData());
 
             result = Transformations.map(filterSource, new Function<Pair<List<Long>, Map<Long, ChildPostContainer>>, List<ChildPostContainer>>() {
                 @Override
                 public List<ChildPostContainer> apply(Pair<List<Long>, Map<Long, ChildPostContainer>> input) {
-                    List<ChildPostContainer> output = new ArrayList<ChildPostContainer>();
+                    List<ChildPostContainer> output = new ArrayList<>();
                     for (Long id : input.first)
                         output.add(input.second.get(id));
                     return sortList(output);
@@ -95,7 +95,7 @@ public class ChildPostContainerRepository extends BaseRepository<ChildPostContai
     }
 
     private static class GetIDByParentAsyncTask extends AsyncTask<Long, Void, LiveData<List<Long>>> {
-        private ChildPostContainerDao dao;
+        private final ChildPostContainerDao dao;
 
         public GetIDByParentAsyncTask(ChildPostContainerDao dao) { this.dao = dao; }
 

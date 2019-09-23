@@ -3,7 +3,7 @@ package com.antonina.socialsynchro.services;
 import com.antonina.socialsynchro.services.twitter.TwitterService;
 
 public class Services {
-    private static final IService[] services = new IService[ServiceID.values().length];
+    private static final Service[] services = new Service[ServiceID.values().length];
     private static boolean initialized = false;
 
     private Services() { }
@@ -13,19 +13,19 @@ public class Services {
         initialized = true;
     }
 
-    public static IService getService(ServiceID serviceID) {
+    public static Service getService(ServiceID serviceID) {
         if (!initialized)
             init();
         return services[serviceID.ordinal()];
     }
 
-    public static IService getService(int serviceID) {
+    public static Service getService(int serviceID) {
         if (!initialized)
             init();
         return services[serviceID];
     }
 
-    public static IService[] getServices() {
+    public static Service[] getServices() {
         if (!initialized)
             init();
         return services;

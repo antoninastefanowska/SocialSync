@@ -1,7 +1,5 @@
 package com.antonina.socialsynchro.content;
 
-import android.util.Log;
-
 import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.database.IDatabaseEntityFactory;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
@@ -22,7 +20,7 @@ public class ChildPostContainerFactory implements IDatabaseEntityFactory {
     @Override
     public ChildPostContainer createFromData(IDatabaseTable data) {
         ChildPostContainerTable childPostContainerData = (ChildPostContainerTable)data;
-        ServiceID serviceID = ServiceID.values()[(int)childPostContainerData.serviceID];
+        ServiceID serviceID = ServiceID.values()[childPostContainerData.serviceID];
 
         switch(serviceID) {
             case Twitter:

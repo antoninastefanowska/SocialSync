@@ -1,7 +1,7 @@
 package com.antonina.socialsynchro.services.twitter.requests;
 
 public class TwitterRemoveContentRequest extends TwitterRequest {
-    private String id;
+    private final String id;
 
     private TwitterRemoveContentRequest(String authorizationHeader, String id) {
         super(authorizationHeader);

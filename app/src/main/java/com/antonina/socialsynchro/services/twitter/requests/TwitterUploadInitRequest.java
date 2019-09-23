@@ -1,8 +1,8 @@
 package com.antonina.socialsynchro.services.twitter.requests;
 
 public class TwitterUploadInitRequest extends TwitterRequest {
-    private String totalBytes;
-    private String mediaType;
+    private final String totalBytes;
+    private final String mediaType;
 
     private TwitterUploadInitRequest(String authorizationHeader, String totalBytes, String mediaType) {
         super(authorizationHeader);

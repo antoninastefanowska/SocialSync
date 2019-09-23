@@ -13,8 +13,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".gui.activities.ImageGalleryActivity"></activity>
+        android:theme="@style/AppTheme"
+        android:fullBackupContent="@xml/backup_descriptor">
+        <activity android:name=".gui.activities.ImageGalleryActivity" />
         <activity android:name=".gui.activities.StatisticsActivity" />
         <activity
             android:name=".gui.activities.EditActivity"
@@ -25,14 +26,13 @@
             android:label="@string/title_activity_accounts"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".gui.activities.ConnectActivity"
+            android:name=".gui.activities.TwitterLoginActivity"
             android:label="@string/title_activity_connect"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".gui.activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

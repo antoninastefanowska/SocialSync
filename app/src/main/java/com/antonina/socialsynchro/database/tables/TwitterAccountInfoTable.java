@@ -1,6 +1,5 @@
 package com.antonina.socialsynchro.database.tables;
 
-import android.accounts.Account;
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;

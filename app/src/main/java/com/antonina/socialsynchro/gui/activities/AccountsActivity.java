@@ -12,12 +12,13 @@ import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.databinding.ActivityAccountsBinding;
 import com.antonina.socialsynchro.gui.adapters.AccountDisplayAdapter;
 import com.antonina.socialsynchro.base.Account;
+import com.antonina.socialsynchro.gui.dialogs.ChooseServiceDialog;
+import com.antonina.socialsynchro.gui.listeners.OnServiceSelectedListener;
+import com.antonina.socialsynchro.services.Service;
 
 public class AccountsActivity extends AppCompatActivity {
     private final static int ADD_ACCOUNT = 0;
 
-    private ActivityAccountsBinding binding;
-    private RecyclerView recyclerView;
     private AccountDisplayAdapter adapter;
     private boolean accountsChanged;
 
@@ -28,8 +29,8 @@ public class AccountsActivity extends AppCompatActivity {
 
         accountsChanged = false;
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_accounts);
-        recyclerView = (RecyclerView)findViewById(R.id.recyclerview_accounts);
+        ActivityAccountsBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_accounts);
+        RecyclerView recyclerView = findViewById(R.id.recyclerview_accounts);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new AccountDisplayAdapter(this);
@@ -46,8 +47,20 @@ public class AccountsActivity extends AppCompatActivity {
     }
 
     public void buttonAddAccount_onClick(View view) {
-        Intent connectActivity = new Intent(AccountsActivity.this, ConnectActivity.class);
-        startActivityForResult(connectActivity, ADD_ACCOUNT);
+        ChooseServiceDialog dialog = new ChooseServiceDialog(this, new OnServiceSelectedListener() {
+            @Override
+            public void onServiceSelected(Service service) {
+                Class<? extends AppCompatActivity> activityClass = null;
+                switch (service.getID()) {
+                    case Twitter:
+                        activityClass = TwitterLoginActivity.class;
+                        break;
+                }
+                Intent loginActivity = new Intent(AccountsActivity.this, activityClass);
+                startActivityForResult(loginActivity, ADD_ACCOUNT);
+            }
+        });
+        dialog.show();
     }
 
     public void buttonRemoveAccount_onClick(View view) {

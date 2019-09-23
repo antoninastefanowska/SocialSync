@@ -15,6 +15,7 @@ import com.antonina.socialsynchro.databinding.AccountDisplayItemBinding;
 
 import java.util.List;
 
+@SuppressWarnings("WeakerAccess")
 public class AccountDisplayAdapter extends BaseAdapter<Account, AccountDisplayAdapter.AccountViewHolder> {
 
     public static class AccountViewHolder extends BaseAdapter.BaseViewHolder<AccountDisplayItemBinding> {

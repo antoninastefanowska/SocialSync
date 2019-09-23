@@ -19,16 +19,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-public abstract class BaseRepository<DataTableClass extends IDatabaseTable, EntityClass extends IDatabaseEntity> {
-    private LiveData<Map<Long, EntityClass>> data;
+@SuppressWarnings({"unchecked", "UnnecessaryLocalVariable", "WeakerAccess", "UseCompareMethod"})
+public abstract class BaseRepository<DataTableType extends IDatabaseTable, EntityType extends IDatabaseEntity> {
+    private LiveData<Map<Long, EntityType>> data;
     private boolean loaded = false;
-    protected BaseDao<DataTableClass> dao;
+    protected BaseDao<DataTableType> dao;
 
-    protected abstract Map<Long, EntityClass> convertToEntities(List<DataTableClass> input);
+    protected abstract Map<Long, EntityType> convertToEntities(List<DataTableType> input);
 
-    protected abstract DataTableClass convertToTable(EntityClass entity, boolean isNew);
+    protected abstract DataTableType convertToTable(EntityType entity, boolean isNew);
 
-    protected abstract List<EntityClass> sortList(List<EntityClass> list);
+    protected abstract List<EntityType> sortList(List<EntityType> list);
 
     protected int compareDates(Date date1, Date date2) {
         if (date1.getTime() > date2.getTime())
@@ -41,16 +42,17 @@ public abstract class BaseRepository<DataTableClass extends IDatabaseTable, Enti
 
     protected void loadAllData() {
         try {
-            LiveData<List<DataTableClass>> databaseData = new GetAllDataAsyncTask<DataTableClass>(dao).execute().get();
-            data = Transformations.map(databaseData, new Function<List<DataTableClass>, Map<Long, EntityClass>>() {
+            GetAllDataAsyncTask<DataTableType> asyncTask = new GetAllDataAsyncTask<>(dao);
+            LiveData<List<DataTableType>> databaseData = asyncTask.execute().get();
+            data = Transformations.map(databaseData, new Function<List<DataTableType>, Map<Long, EntityType>>() {
                 @Override
-                public Map<Long, EntityClass> apply(List<DataTableClass> input) {
+                public Map<Long, EntityType> apply(List<DataTableType> input) {
                     return convertToEntities(input);
                 }
             });
-            data.observeForever(new Observer<Map<Long, EntityClass>>() {
+            data.observeForever(new Observer<Map<Long, EntityType>>() {
                 @Override
-                public void onChanged(@Nullable Map<Long, EntityClass> longEntityClassMap) {
+                public void onChanged(@Nullable Map<Long, EntityType> longEntityTypeMap) {
                     loaded = true;
                     data.removeObserver(this);
                 }
@@ -64,15 +66,15 @@ public abstract class BaseRepository<DataTableClass extends IDatabaseTable, Enti
         return loaded;
     }
 
-    public LiveData<Map<Long, EntityClass>> getAllData() {
+    public LiveData<Map<Long, EntityType>> getAllData() {
         return data;
     }
 
-    public LiveData<List<EntityClass>> getAllDataList() {
-        LiveData<List<EntityClass>> result = Transformations.map(data, new Function<Map<Long, EntityClass>, List<EntityClass>>() {
+    public LiveData<List<EntityType>> getAllDataList() {
+        LiveData<List<EntityType>> result = Transformations.map(data, new Function<Map<Long, EntityType>, List<EntityType>>() {
             @Override
-            public List<EntityClass> apply(Map<Long, EntityClass> input) {
-                List<EntityClass> list = new ArrayList<EntityClass>(input.values());
+            public List<EntityType> apply(Map<Long, EntityType> input) {
+                List<EntityType> list = new ArrayList<>(input.values());
                 return sortList(list);
             }
         });
@@ -82,30 +84,32 @@ public abstract class BaseRepository<DataTableClass extends IDatabaseTable, Enti
     public int count() {
         int result = 0;
         try {
-            result = new CountAsyncTask<DataTableClass>(dao).execute().get();
+            CountAsyncTask<DataTableType> asyncTask = new CountAsyncTask<>(dao);
+            result = asyncTask.execute().get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
         return result;
     }
 
-    public LiveData<EntityClass> getDataByID(long accountID) {
+    public LiveData<EntityType> getDataByID(long accountID) {
         final long id = accountID;
-        LiveData<EntityClass> result = Transformations.map(data, new Function<Map<Long, EntityClass>, EntityClass> () {
+        LiveData<EntityType> result = Transformations.map(data, new Function<Map<Long, EntityType>, EntityType> () {
             @Override
-            public EntityClass apply(Map<Long, EntityClass> input) {
+            public EntityType apply(Map<Long, EntityType> input) {
                 return input.get(id);
             }
         });
         return result;
     }
 
-    public Long insert(EntityClass entity) {
+    public Long insert(EntityType entity) {
         Long id = null;
         try {
-            BaseDao<DataTableClass> baseDao = dao;
-            DataTableClass dataTable = convertToTable(entity, true);
-            id = new InsertAsyncTask<DataTableClass>(baseDao).execute(dataTable).get();
+            BaseDao<DataTableType> baseDao = dao;
+            DataTableType dataTable = convertToTable(entity, true);
+            InsertAsyncTask<DataTableType> asyncTask = new InsertAsyncTask<>(baseDao);
+            id = asyncTask.execute(dataTable).get();
             loadAllData();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
@@ -113,35 +117,37 @@ public abstract class BaseRepository<DataTableClass extends IDatabaseTable, Enti
         return id;
     }
 
-    public void delete(EntityClass entity) {
-        BaseDao<DataTableClass> baseDao = dao;
-        DataTableClass dataTable = convertToTable(entity, false);
-        new DeleteAsyncTask<DataTableClass>(baseDao).execute(dataTable);
+    public void delete(EntityType entity) {
+        BaseDao<DataTableType> baseDao = dao;
+        DataTableType dataTable = convertToTable(entity, false);
+        DeleteAsyncTask<DataTableType> asyncTask = new DeleteAsyncTask<>(baseDao);
+        asyncTask.execute(dataTable);
         loadAllData();
     }
 
-    public void update(EntityClass entity) {
-        BaseDao<DataTableClass> baseDao = dao;
-        DataTableClass dataTable = convertToTable(entity, false);
-        new UpdateAsyncTask<DataTableClass>(baseDao).execute(dataTable);
+    public void update(EntityType entity) {
+        BaseDao<DataTableType> baseDao = dao;
+        DataTableType dataTable = convertToTable(entity, false);
+        UpdateAsyncTask<DataTableType> asyncTask = new UpdateAsyncTask<>(baseDao);
+        asyncTask.execute(dataTable);
         loadAllData();
     }
 
-    private static class GetAllDataAsyncTask<DataTableClass> extends AsyncTask<Void, Void, LiveData<List<DataTableClass>>> {
-        private BaseDao<DataTableClass> dao;
+    private static class GetAllDataAsyncTask<DataTableType extends IDatabaseTable> extends AsyncTask<Void, Void, LiveData<List<DataTableType>>> {
+        private final BaseDao<DataTableType> dao;
 
-        public GetAllDataAsyncTask(BaseDao<DataTableClass> dao) { this.dao = dao; }
+        public GetAllDataAsyncTask(BaseDao<DataTableType> dao) { this.dao = dao; }
 
         @Override
-        protected LiveData<List<DataTableClass>> doInBackground(final Void... params) {
+        protected LiveData<List<DataTableType>> doInBackground(final Void... params) {
             return dao.getAllData();
         }
     }
 
-    private static class CountAsyncTask<DataTableClass> extends AsyncTask<Void, Void, Integer> {
-        private BaseDao<DataTableClass> dao;
+    private static class CountAsyncTask<DataTableType extends IDatabaseTable> extends AsyncTask<Void, Void, Integer> {
+        private final BaseDao<DataTableType> dao;
 
-        public CountAsyncTask(BaseDao<DataTableClass> dao) {
+        public CountAsyncTask(BaseDao<DataTableType> dao) {
             this.dao = dao;
         }
 
@@ -151,60 +157,63 @@ public abstract class BaseRepository<DataTableClass extends IDatabaseTable, Enti
         }
     }
 
-    protected static class GetDataByIDAsyncTask<DataTableClass> extends AsyncTask<Long, Void, LiveData<DataTableClass>> {
-        private BaseDao<DataTableClass> dao;
+    protected static class GetDataByIDAsyncTask<DataTableType extends IDatabaseTable> extends AsyncTask<Long, Void, LiveData<DataTableType>> {
+        private final BaseDao<DataTableType> dao;
 
-        public GetDataByIDAsyncTask(BaseDao<DataTableClass> dao) { this.dao = dao; }
+        public GetDataByIDAsyncTask(BaseDao<DataTableType> dao) { this.dao = dao; }
 
         @Override
-        protected LiveData<DataTableClass> doInBackground(final Long... params) {
+        protected LiveData<DataTableType> doInBackground(final Long... params) {
             return dao.getDataByID(params[0]);
         }
     }
 
-    private static class InsertAsyncTask<DataTableClass> extends AsyncTask<DataTableClass, Void, Long> {
-        private BaseDao<DataTableClass> dao;
+    private static class InsertAsyncTask<DataTableType extends IDatabaseTable> extends AsyncTask<DataTableType, Void, Long> {
+        private final BaseDao<DataTableType> dao;
 
-        public InsertAsyncTask(BaseDao<DataTableClass> dao) {
+        public InsertAsyncTask(BaseDao<DataTableType> dao) {
             this.dao = dao;
         }
 
+        @SafeVarargs
         @Override
-        protected Long doInBackground(final DataTableClass... params) {
+        protected final Long doInBackground(final DataTableType... params) {
             return dao.insert(params[0]);
         }
     }
 
-    private static class UpdateAsyncTask<DataTableClass> extends AsyncTask<DataTableClass, Void, Void> {
-        private BaseDao<DataTableClass> dao;
+    private static class UpdateAsyncTask<DataTableType extends IDatabaseTable> extends AsyncTask<DataTableType, Void, Void> {
+        private final BaseDao<DataTableType> dao;
 
-        public UpdateAsyncTask(BaseDao<DataTableClass> dao) {
+        public UpdateAsyncTask(BaseDao<DataTableType> dao) {
             this.dao = dao;
         }
 
+        @SafeVarargs
         @Override
-        protected Void doInBackground(final DataTableClass... params) {
+        protected final Void doInBackground(final DataTableType... params) {
             dao.update(params[0]);
             return null;
         }
     }
 
-    private static class DeleteAsyncTask<DataTableClass> extends AsyncTask<DataTableClass, Void, Void> {
-        private BaseDao<DataTableClass> dao;
+    private static class DeleteAsyncTask<DataTableType extends IDatabaseTable> extends AsyncTask<DataTableType, Void, Void> {
+        private final BaseDao<DataTableType> dao;
 
-        public DeleteAsyncTask(BaseDao<DataTableClass> dao) {
+        public DeleteAsyncTask(BaseDao<DataTableType> dao) {
             this.dao = dao;
         }
 
+        @SafeVarargs
         @Override
-        protected Void doInBackground(final DataTableClass... params) {
+        protected final Void doInBackground(final DataTableType... params) {
             dao.delete(params[0]);
             return null;
         }
     }
 
-    protected static class FilterSource<EntityClass> extends MediatorLiveData<Pair<List<Long>, Map<Long, EntityClass>>> {
-        public FilterSource(final LiveData<List<Long>> IDsource, final LiveData<Map<Long, EntityClass>> dataSource) {
+    protected static class FilterSource<EntityType extends IDatabaseEntity> extends MediatorLiveData<Pair<List<Long>, Map<Long, EntityType>>> {
+        public FilterSource(final LiveData<List<Long>> IDsource, final LiveData<Map<Long, EntityType>> dataSource) {
             addSource(IDsource, new Observer<List<Long>>() {
                 @Override
                 public void onChanged(@Nullable List<Long> first) {
@@ -212,9 +221,9 @@ public abstract class BaseRepository<DataTableClass extends IDatabaseTable, Enti
                         setValue(Pair.create(first, dataSource.getValue()));
                 }
             });
-            addSource(dataSource, new Observer<Map<Long, EntityClass>>() {
+            addSource(dataSource, new Observer<Map<Long, EntityType>>() {
                 @Override
-                public void onChanged(@Nullable Map<Long, EntityClass> second) {
+                public void onChanged(@Nullable Map<Long, EntityType> second) {
                     if (IDsource.getValue() != null)
                         setValue(Pair.create(IDsource.getValue(), second));
                 }

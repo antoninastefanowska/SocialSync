@@ -37,7 +37,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
-@SuppressWarnings("WeakerAccess")
+@SuppressWarnings({"WeakerAccess", "UnnecessaryCallToStringValueOf"})
 public class TwitterClient implements IClient {
     private static final String BASE_URL = "https://api.twitter.com/";
     private static final String BASE_UPLOAD_URL = "https://upload.twitter.com/";
@@ -100,10 +100,9 @@ public class TwitterClient implements IClient {
         return controller.start();
     }
 
-    @SuppressWarnings("UnnecessaryCallToStringValueOf")
     private static abstract class BaseController<RequestClass extends TwitterRequest, ResponseClass extends TwitterResponse> implements Callback<ResponseClass> {
-        protected RequestClass request;
-        private MutableLiveData<ResponseClass> asyncResponse;
+        protected final RequestClass request;
+        private final MutableLiveData<ResponseClass> asyncResponse;
 
         public BaseController(RequestClass request) {
             this.request = request;
@@ -150,8 +149,8 @@ public class TwitterClient implements IClient {
     }
 
     private static abstract class BaseRawController<RequestClass extends TwitterRequest, ResponseClass extends IRawResponse> implements Callback<ResponseBody> {
-        protected RequestClass request;
-        private MutableLiveData<ResponseClass> asyncResponse;
+        protected final RequestClass request;
+        private final MutableLiveData<ResponseClass> asyncResponse;
 
         public BaseRawController(RequestClass request) {
             this.request = request;

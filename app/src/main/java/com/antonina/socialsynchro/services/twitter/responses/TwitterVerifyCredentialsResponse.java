@@ -1,9 +1,6 @@
 package com.antonina.socialsynchro.services.twitter.responses;
 
-import com.antonina.socialsynchro.services.ErrorResponse;
 import com.google.gson.annotations.SerializedName;
-
-import java.util.ArrayList;
 
 public class TwitterVerifyCredentialsResponse extends TwitterResponse {
     @SerializedName("id_str")

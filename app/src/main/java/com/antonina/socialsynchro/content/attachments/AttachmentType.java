@@ -4,8 +4,6 @@ import android.databinding.Bindable;
 
 import com.antonina.socialsynchro.gui.GUIItem;
 
-import java.io.Serializable;
-
 public abstract class AttachmentType extends GUIItem {
     public abstract AttachmentTypeID getID();
 

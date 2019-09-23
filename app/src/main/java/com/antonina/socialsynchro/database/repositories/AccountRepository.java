@@ -12,7 +12,7 @@ import com.antonina.socialsynchro.base.AccountFactory;
 import com.antonina.socialsynchro.database.ApplicationDatabase;
 import com.antonina.socialsynchro.database.daos.AccountDao;
 import com.antonina.socialsynchro.database.tables.AccountTable;
-import com.antonina.socialsynchro.services.IService;
+import com.antonina.socialsynchro.services.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+@SuppressWarnings("WeakerAccess")
 public class AccountRepository extends BaseRepository<AccountTable, Account> {
     private static AccountRepository instance;
 
@@ -41,9 +42,9 @@ public class AccountRepository extends BaseRepository<AccountTable, Account> {
 
     @Override
     protected Map<Long, Account> convertToEntities(List<AccountTable> input) {
-        Map<Long, Account> output = new HashMap<Long, Account>();
+        Map<Long, Account> output = new HashMap<>();
         for (AccountTable accountData : input) {
-            Account account = (Account)AccountFactory.getInstance().createFromData(accountData);
+            Account account = AccountFactory.getInstance().createFromData(accountData);
             output.put(account.getInternalID(), account);
         }
         return output;
@@ -70,19 +71,19 @@ public class AccountRepository extends BaseRepository<AccountTable, Account> {
         return list;
     }
 
-    public LiveData<List<Account>> getDataByService(IService service) {
+    public LiveData<List<Account>> getDataByService(Service service) {
         long serviceID = service.getID().ordinal();
         LiveData<List<Account>> result = null;
 
         try {
             AccountDao accountDao = (AccountDao)dao;
             LiveData<List<Long>> IDs = new GetIDByServiceAsyncTask(accountDao).execute(serviceID).get();
-            FilterSource<Account> filterSource = new FilterSource<Account>(IDs, getAllData());
+            FilterSource<Account> filterSource = new FilterSource<>(IDs, getAllData());
 
             result = Transformations.map(filterSource, new Function<Pair<List<Long>, Map<Long, Account>>, List<Account>>() {
                 @Override
                 public List<Account> apply(Pair<List<Long>, Map<Long, Account>> input) {
-                    List<Account> output = new ArrayList<Account>();
+                    List<Account> output = new ArrayList<>();
                     for (Long id : input.first)
                         output.add(input.second.get(id));
                     return sortList(output);
@@ -131,7 +132,7 @@ public class AccountRepository extends BaseRepository<AccountTable, Account> {
     }
 
     private static class GetIDByServiceAsyncTask extends AsyncTask<Long, Void, LiveData<List<Long>>> {
-        private AccountDao accountDao;
+        private final AccountDao accountDao;
 
         public GetIDByServiceAsyncTask(AccountDao dao) {
             accountDao = dao;

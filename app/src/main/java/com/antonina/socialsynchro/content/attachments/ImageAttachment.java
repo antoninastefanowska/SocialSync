@@ -1,8 +1,5 @@
 package com.antonina.socialsynchro.content.attachments;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 
 import java.io.File;

@@ -9,10 +9,11 @@ import com.antonina.socialsynchro.content.ChildPostContainer;
 import com.antonina.socialsynchro.content.ParentPostContainer;
 import com.antonina.socialsynchro.databinding.ChildDisplayItemBinding;
 
+@SuppressWarnings("WeakerAccess")
 public class ChildDisplayAdapter extends BaseAdapter<ChildPostContainer, ChildDisplayAdapter.ChildViewHolder> {
     private ParentPostContainer parent;
 
-    public static class ChildViewHolder extends BaseAdapter.BaseViewHolder<ChildDisplayItemBinding> {
+    protected static class ChildViewHolder extends BaseAdapter.BaseViewHolder<ChildDisplayItemBinding> {
 
         public ChildViewHolder(@NonNull View view) {
             super(view);

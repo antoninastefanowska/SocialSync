@@ -6,8 +6,7 @@ import com.antonina.socialsynchro.gui.listeners.OnAttachmentUploadedListener;
 import com.antonina.socialsynchro.gui.listeners.OnPublishedListener;
 import com.antonina.socialsynchro.gui.listeners.OnUnpublishedListener;
 
-import java.io.Serializable;
-
+@SuppressWarnings("WeakerAccess")
 public abstract class PostContainer extends GUIItem implements IPost, IDatabaseEntity {
     protected Long internalID;
     protected Post post;

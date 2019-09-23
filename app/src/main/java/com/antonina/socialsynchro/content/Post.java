@@ -17,6 +17,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+@SuppressWarnings("WeakerAccess")
 public class Post extends GUIItem implements IPost, IDatabaseEntity {
     private Long internalID;
     private Date creationDate;
@@ -29,8 +30,8 @@ public class Post extends GUIItem implements IPost, IDatabaseEntity {
     public Post() {
         title = "";
         content = "";
-        attachments = new ArrayList<Attachment>();
-        deletedAttachments = new ArrayList<Attachment>();
+        attachments = new ArrayList<>();
+        deletedAttachments = new ArrayList<>();
     }
 
     public Post(IDatabaseTable data) { createFromData(data); }
@@ -101,17 +102,20 @@ public class Post extends GUIItem implements IPost, IDatabaseEntity {
         this.creationDate = postData.creationDate;
         this.modificationDate = postData.modificationDate;
 
-        this.attachments = new ArrayList<Attachment>();
-        this.deletedAttachments = new ArrayList<Attachment>();
+        this.attachments = new ArrayList<>();
+        this.deletedAttachments = new ArrayList<>();
 
         final Post instance = this;
         final LiveData<List<Attachment>> attachmentsLiveData = AttachmentRepository.getInstance().getDataByPost(this);
         attachmentsLiveData.observeForever(new Observer<List<Attachment>>() {
             @Override
             public void onChanged(@Nullable List<Attachment> attachments) {
-                for (Attachment attachment : attachments)
-                    instance.addAttachment(attachment);
-                attachmentsLiveData.removeObserver(this);
+                if (attachments != null) {
+                    for (Attachment attachment : attachments)
+                        if (attachment != null)
+                            instance.addAttachment(attachment);
+                    attachmentsLiveData.removeObserver(this);
+                }
             }
         });
     }

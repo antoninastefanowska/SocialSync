@@ -19,9 +19,7 @@ public class FacebookPostContainer extends ChildPostContainer {
     }
 
     @Override
-    public void setTitle(String title) {
-        return;
-    }
+    public void setTitle(String title) { }
 
     @Override
     public void setContent(String content) {

@@ -9,15 +9,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.antonina.socialsynchro.R;
+import com.antonina.socialsynchro.content.attachments.Attachment;
 import com.antonina.socialsynchro.content.attachments.ImageAttachment;
 import com.antonina.socialsynchro.databinding.ActivityImageGalleryBinding;
 import com.antonina.socialsynchro.gui.adapters.ImageGalleryAdapter;
 import com.antonina.socialsynchro.gui.serialization.SerializableList;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("CollectionAddAllCanBeReplacedWithConstructor")
 public class ImageGalleryActivity extends AppCompatActivity {
-    private ActivityImageGalleryBinding binding;
     private ImageGalleryAdapter imageAdapter;
 
     @Override
@@ -25,9 +27,9 @@ public class ImageGalleryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_gallery);
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_image_gallery);
+        ActivityImageGalleryBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_image_gallery);
         imageAdapter = new ImageGalleryAdapter(this);
-        RecyclerView imageRecyclerView = (RecyclerView)findViewById(R.id.recyclerview_images);
+        RecyclerView imageRecyclerView = findViewById(R.id.recyclerview_images);
         imageRecyclerView.setLayoutManager(new GridLayoutManager(this, 4));
 
         binding.setImageAdapter(imageAdapter);
@@ -36,9 +38,12 @@ public class ImageGalleryActivity extends AppCompatActivity {
 
     public void buttonConfirm_onClick(View view) {
         List<ImageAttachment> images = imageAdapter.getSelectedItems();
-        SerializableList<ImageAttachment> serializableImages = new SerializableList<ImageAttachment>(images);
+        List<Attachment> attachments = new ArrayList<>();
+        attachments.addAll(images);
+
+        SerializableList<Attachment> serializableAttachments = new SerializableList<>(attachments);
         Intent editActivity = new Intent();
-        editActivity.putExtra("images", serializableImages);
+        editActivity.putExtra("attachments", serializableAttachments);
         setResult(RESULT_OK, editActivity);
         finish();
     }

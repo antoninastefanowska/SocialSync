@@ -14,8 +14,8 @@ import com.antonina.socialsynchro.gui.adapters.AttachmentTypeDialogAdapter;
 import com.antonina.socialsynchro.gui.listeners.OnAttachmentTypeSelectedListener;
 
 public class ChooseAttachmentTypeDialog extends Dialog {
-    private AppCompatActivity context;
-    private OnAttachmentTypeSelectedListener listener;
+    private final AppCompatActivity context;
+    private final OnAttachmentTypeSelectedListener listener;
 
     public ChooseAttachmentTypeDialog(@NonNull AppCompatActivity context, OnAttachmentTypeSelectedListener listener) {
         super(context, R.style.DialogStyle);
@@ -31,7 +31,7 @@ public class ChooseAttachmentTypeDialog extends Dialog {
         setContentView(R.layout.dialog_choose_attachment_type);
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_choose_attachment_type);
 
-        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recyclerview_attachment_types_dialog);
+        RecyclerView recyclerView = findViewById(R.id.recyclerview_attachment_types_dialog);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
         AttachmentTypeDialogAdapter adapter = new AttachmentTypeDialogAdapter(context, new OnAttachmentTypeSelectedListener() {

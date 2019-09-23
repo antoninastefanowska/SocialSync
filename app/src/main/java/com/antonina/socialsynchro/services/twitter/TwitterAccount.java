@@ -36,10 +36,11 @@ public class TwitterAccount extends Account {
         dataTable.observeForever(new Observer<TwitterAccountInfoTable>() {
             @Override
             public void onChanged(@Nullable TwitterAccountInfoTable data) {
-                instance.setAccessToken(data.accessToken);
-                instance.setSecretToken(data.secretToken);
-
-                dataTable.removeObserver(this);
+                if (data != null) {
+                    instance.setAccessToken(data.accessToken);
+                    instance.setSecretToken(data.secretToken);
+                    dataTable.removeObserver(this);
+                }
             }
         });
     }

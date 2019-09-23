@@ -29,7 +29,7 @@ public class PostRepository extends BaseRepository<PostTable, Post> {
 
     @Override
     protected Map<Long, Post> convertToEntities(List<PostTable> input) {
-        Map<Long, Post> output = new HashMap<Long, Post>();
+        Map<Long, Post> output = new HashMap<>();
         for (PostTable postData : input) {
             Post post = new Post(postData);
             output.put(post.getInternalID(), post);

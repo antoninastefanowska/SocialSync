@@ -139,8 +139,8 @@ public class ParentPostContainer extends PostContainer {
         ParentPostContainerTable parentPostContainerData = (ParentPostContainerTable) data;
         this.internalID = parentPostContainerData.id;
 
-        this.children = new ArrayList<ChildPostContainer>();
-        this.deletedChildren = new ArrayList<ChildPostContainer>();
+        this.children = new ArrayList<>();
+        this.deletedChildren = new ArrayList<>();
         this.post = new Post(); //TODO: Tworzymy pusty obiekt zanim pobierzemy obiekt z bazy - zrobić to samo dla innych encji.
 
         final ParentPostContainer instance = this;
@@ -159,10 +159,12 @@ public class ParentPostContainer extends PostContainer {
         childrenLiveData.observeForever(new Observer<List<ChildPostContainer>>() {
             @Override
             public void onChanged(@Nullable List<ChildPostContainer> children) {
-                instance.children.clear();
-                for (ChildPostContainer child : children)
-                    if (child != null)
-                        instance.addChild(child);
+                if (children != null) {
+                    instance.children.clear();
+                    for (ChildPostContainer child : children)
+                        if (child != null)
+                            instance.addChild(child);
+                }
             }
         });
     }

@@ -1,7 +1,7 @@
 package com.antonina.socialsynchro.services.twitter.requests;
 
 public class TwitterCheckUploadStatusRequest extends TwitterRequest {
-    private String mediaID;
+    private final String mediaID;
 
     private TwitterCheckUploadStatusRequest(String authorizationHeader, String mediaID) {
         super(authorizationHeader);

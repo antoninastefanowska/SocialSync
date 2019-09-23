@@ -9,6 +9,7 @@
     <ImageView
         android:id="@+id/imageview_image"
         android:layout_width="@dimen/image_gallery_item"
-        android:layout_height="@dimen/image_gallery_item" />
+        android:layout_height="@dimen/image_gallery_item"
+        android:contentDescription="@string/gallery_image_content_description" />
 
 </layout>

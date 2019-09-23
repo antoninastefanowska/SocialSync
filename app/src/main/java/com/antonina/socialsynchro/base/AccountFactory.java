@@ -20,7 +20,7 @@ public class AccountFactory implements IDatabaseEntityFactory {
     @Override
     public Account createFromData(IDatabaseTable data) {
         AccountTable accountData = (AccountTable)data;
-        ServiceID serviceID = ServiceID.values()[(int)accountData.serviceID];
+        ServiceID serviceID = ServiceID.values()[accountData.serviceID];
 
         switch (serviceID) {
             case Twitter:

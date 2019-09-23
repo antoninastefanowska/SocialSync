@@ -19,8 +19,9 @@ import java.util.TreeMap;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
+@SuppressWarnings({"WeakerAccess", "StringBufferReplaceableByString"})
 public abstract class TwitterRequest implements IRequest {
-    private String authorizationHeader;
+    private final String authorizationHeader;
 
     protected TwitterRequest(String authorizationHeader) {
         this.authorizationHeader = authorizationHeader;
@@ -55,7 +56,7 @@ public abstract class TwitterRequest implements IRequest {
                 return percentEncode(s1).compareTo(percentEncode(s2));
             }
         };
-        protected Map<String, String> authorizationParameters = new TreeMap<String, String>(encodedComparator);
+        protected final Map<String, String> authorizationParameters = new TreeMap<>(encodedComparator);
 
         public abstract TwitterRequest build();
 

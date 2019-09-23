@@ -3,7 +3,7 @@ package com.antonina.socialsynchro.services.callback.requests;
 import com.antonina.socialsynchro.services.IRequest;
 
 public class CallbackGetVerifierRequest implements IRequest {
-    private String loginToken;
+    private final String loginToken;
 
     private CallbackGetVerifierRequest(String loginToken) {
         this.loginToken = loginToken;

@@ -7,7 +7,7 @@ import com.antonina.socialsynchro.database.repositories.AccountRepository;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 import com.antonina.socialsynchro.database.tables.AccountTable;
 import com.antonina.socialsynchro.gui.GUIItem;
-import com.antonina.socialsynchro.services.IService;
+import com.antonina.socialsynchro.services.Service;
 import com.antonina.socialsynchro.services.IServiceEntity;
 
 import java.util.Calendar;
@@ -21,7 +21,7 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
     private String externalID;
     private String name;
     private String profilePictureURL; // TODO: Zrobić placeholder.
-    private IService service;
+    private Service service;
     private Date connectingDate;
     private boolean loading;
 
@@ -67,9 +67,9 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
     }
 
     @Bindable
-    public IService getService() { return service; }
+    public Service getService() { return service; }
 
-    protected void setService(IService service) { this.service = service; }
+    protected void setService(Service service) { this.service = service; }
 
     @Bindable
     public Date getConnectingDate() {

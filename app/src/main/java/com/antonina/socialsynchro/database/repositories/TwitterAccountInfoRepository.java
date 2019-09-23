@@ -47,7 +47,8 @@ public class TwitterAccountInfoRepository extends BaseRepository<TwitterAccountI
     public LiveData<TwitterAccountInfoTable> getDataTableByID(long id) {
         LiveData<TwitterAccountInfoTable> result = null;
         try {
-            result = new GetDataByIDAsyncTask<TwitterAccountInfoTable>(dao).execute(id).get();
+            GetDataByIDAsyncTask<TwitterAccountInfoTable> asyncTask = new GetDataByIDAsyncTask<>(dao);
+            result = asyncTask.execute(id).get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }

@@ -2,6 +2,7 @@ package com.antonina.socialsynchro.services.twitter.responses;
 
 import com.google.gson.annotations.SerializedName;
 
+@SuppressWarnings("WeakerAccess")
 public class TwitterContentResponse extends TwitterResponse {
     @SerializedName("id")
     private String id;

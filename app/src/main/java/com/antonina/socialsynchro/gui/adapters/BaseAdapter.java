@@ -15,51 +15,50 @@ import com.antonina.socialsynchro.gui.listeners.OnUpdatedListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class BaseAdapter<ItemClass extends GUIItem, ViewHolderClass extends BaseAdapter.BaseViewHolder> extends RecyclerView.Adapter<ViewHolderClass> {
-    protected List<ItemClass> items;
-    protected List<ItemClass> selectedItems;
-    protected AppCompatActivity context;
+@SuppressWarnings("WeakerAccess")
+public abstract class BaseAdapter<ItemType extends GUIItem, ViewHolderType extends BaseAdapter.BaseViewHolder> extends RecyclerView.Adapter<ViewHolderType> {
+    private List<ItemType> selectedItems;
+    protected List<ItemType> items;
+    protected final AppCompatActivity context;
 
-    public abstract static class BaseViewHolder<ItemBindingClass extends ViewDataBinding> extends RecyclerView.ViewHolder {
-        public ItemBindingClass binding;
+    public abstract static class BaseViewHolder<ItemBindingType extends ViewDataBinding> extends RecyclerView.ViewHolder {
+        public final ItemBindingType binding;
 
         public BaseViewHolder(@NonNull View view) {
             super(view);
             binding = getBinding(view);
         }
 
-        protected abstract ItemBindingClass getBinding(View view);
+        protected abstract ItemBindingType getBinding(View view);
     }
 
     public BaseAdapter(AppCompatActivity context) {
         this.context = context;
-        items = new ArrayList<ItemClass>();
-        selectedItems = new ArrayList<ItemClass>();
+        items = new ArrayList<>();
+        selectedItems = new ArrayList<>();
     }
 
     protected abstract int getItemLayout();
 
-    protected abstract void setItemBinding(ViewHolderClass viewHolder, ItemClass item);
+    protected abstract void setItemBinding(ViewHolderType viewHolder, ItemType item);
 
-    protected abstract ViewHolderClass createViewHolder(View view);
+    protected abstract ViewHolderType createViewHolder(View view);
 
     public abstract void loadData();
 
     @NonNull
     @Override
-    public ViewHolderClass onCreateViewHolder(@NonNull ViewGroup parent, int position) {
+    public ViewHolderType onCreateViewHolder(@NonNull ViewGroup parent, int position) {
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View view = inflater.inflate(getItemLayout(), parent, false);
-        final ViewHolderClass viewHolder = createViewHolder(view);
-
-        return viewHolder;
+        return createViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolderClass viewHolder, int position) {
-        ItemClass item = getItem(position);
+    public void onBindViewHolder(@NonNull ViewHolderType viewHolder, int position) {
+        ItemType item = getItem(position);
         final int index = position;
         item.setListener(new OnUpdatedListener() {
             @Override
@@ -81,7 +80,7 @@ public abstract class BaseAdapter<ItemClass extends GUIItem, ViewHolderClass ext
             @Override
             public void onClick(View v) {
                 int position = viewHolder.getAdapterPosition();
-                ItemClass item = getItem(position);
+                ItemType item = getItem(position);
                 if (item.isSelected())
                     unselectItem(position);
                 else
@@ -90,16 +89,16 @@ public abstract class BaseAdapter<ItemClass extends GUIItem, ViewHolderClass ext
         });
     }
 
-    public ItemClass getItem(int position) {
+    public ItemType getItem(int position) {
         return items.get(position);
     }
 
-    public void addItem(ItemClass item) {
+    public void addItem(ItemType item) {
         items.add(0, item);
         notifyItemInserted(0);
     }
 
-    public void removeItem(ItemClass item) {
+    public void removeItem(ItemType item) {
         int position = getItemPosition(item);
         if (position != -1) {
             items.remove(position);
@@ -112,18 +111,18 @@ public abstract class BaseAdapter<ItemClass extends GUIItem, ViewHolderClass ext
         notifyItemRemoved(position);
     }
 
-    public void updateItemView(ItemClass item) {
+    public void updateItemView(ItemType item) {
         int position = getItemPosition(item);
         notifyItemChanged(position);
     }
 
-    public void setData(List<ItemClass> data) {
+    public void setData(List<ItemType> data) {
         items = data;
         notifyDataSetChanged();
     }
 
-    public void selectItem(int position) {
-        ItemClass item = getItem(position);
+    private void selectItem(int position) {
+        ItemType item = getItem(position);
         if (item.isSelected())
             return;
         item.select();
@@ -131,8 +130,8 @@ public abstract class BaseAdapter<ItemClass extends GUIItem, ViewHolderClass ext
         notifyItemChanged(position);
     }
 
-    public void unselectItem(int position) {
-        ItemClass item = getItem(position);
+    private void unselectItem(int position) {
+        ItemType item = getItem(position);
         if (!item.isSelected())
             return;
         item.unselect();
@@ -140,20 +139,20 @@ public abstract class BaseAdapter<ItemClass extends GUIItem, ViewHolderClass ext
         notifyItemChanged(position);
     }
 
-    public int getItemPosition(ItemClass item) {
+    public int getItemPosition(ItemType item) {
         return items.indexOf(item);
     }
 
-    public List<ItemClass> getSelectedItems() {
+    public List<ItemType> getSelectedItems() {
         return selectedItems;
     }
 
-    public List<ItemClass> getItems() {
+    public List<ItemType> getItems() {
         return items;
     }
 
     public void removeSelected() {
-        for (ItemClass item : selectedItems)
+        for (ItemType item : selectedItems)
             removeItem(item);
         selectedItems.clear();
     }

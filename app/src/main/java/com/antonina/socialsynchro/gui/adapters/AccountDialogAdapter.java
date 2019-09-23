@@ -16,6 +16,7 @@ import com.antonina.socialsynchro.databinding.AccountDialogItemBinding;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("WeakerAccess")
 public class AccountDialogAdapter extends BaseAdapter<Account, AccountDialogAdapter.AccountViewHolder> {
     private List<Account> ignoredData;
 
@@ -33,7 +34,7 @@ public class AccountDialogAdapter extends BaseAdapter<Account, AccountDialogAdap
 
     public AccountDialogAdapter(AppCompatActivity context) {
         super(context);
-        ignoredData = new ArrayList<Account>();
+        ignoredData = new ArrayList<>();
         loadData();
     }
 
@@ -67,13 +68,15 @@ public class AccountDialogAdapter extends BaseAdapter<Account, AccountDialogAdap
         accountLiveData.observe(context, new Observer<List<Account>>() {
             @Override
             public void onChanged(@Nullable List<Account> data) {
-                items.clear();
-                for (Account account : data) {
-                    if (!ignoredData.contains(account))
-                        items.add(account);
+                if (data != null) {
+                    items.clear();
+                    for (Account account : data) {
+                        if (!ignoredData.contains(account))
+                            items.add(account);
+                    }
+                    notifyDataSetChanged();
+                    accountLiveData.removeObserver(this);
                 }
-                notifyDataSetChanged();
-                accountLiveData.removeObserver(this);
             }
         });
     }
@@ -81,8 +84,7 @@ public class AccountDialogAdapter extends BaseAdapter<Account, AccountDialogAdap
     public void setIgnoredData(List<Account> ignoredData) {
         this.ignoredData = ignoredData;
         for (Account item : ignoredData) {
-            if (items.contains(item))
-                items.remove(item);
+            items.remove(item);
         }
     }
 }

@@ -24,7 +24,7 @@ import com.antonina.socialsynchro.services.twitter.responses.TwitterGetAccessTok
 import com.antonina.socialsynchro.services.twitter.responses.TwitterGetLoginTokenResponse;
 import com.antonina.socialsynchro.services.twitter.responses.TwitterVerifyCredentialsResponse;
 
-public class ConnectActivity extends AppCompatActivity {
+public class TwitterLoginActivity extends AppCompatActivity {
     private String loginToken;
     private String secretLoginToken;
     private String verifier;
@@ -33,7 +33,7 @@ public class ConnectActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_connect);
+        setContentView(R.layout.activity_twitter_login);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey("login_token"))
@@ -66,17 +66,19 @@ public class ConnectActivity extends AppCompatActivity {
         asyncResponse.observe(this, new Observer<TwitterGetLoginTokenResponse>() {
             @Override
             public void onChanged(@Nullable TwitterGetLoginTokenResponse response) {
-                if (response.getErrorString() == null) {
-                    loginToken = response.getLoginToken();
-                    secretLoginToken = response.getLoginSecretToken();
+                if (response != null) {
+                    if (response.getErrorString() == null) {
+                        loginToken = response.getLoginToken();
+                        secretLoginToken = response.getLoginSecretToken();
 
-                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(TwitterClient.getLoginURL(loginToken)));
-                    startActivity(browserIntent);
-                } else {
-                    Toast toast = Toast.makeText(context, getResources().getString(R.string.error_login_token, response.getErrorString()), Toast.LENGTH_LONG);
-                    toast.show();
+                        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(TwitterClient.getLoginURL(loginToken)));
+                        startActivity(browserIntent);
+                    } else {
+                        Toast toast = Toast.makeText(context, getResources().getString(R.string.error_login_token, response.getErrorString()), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                    asyncResponse.removeObserver(this);
                 }
-                asyncResponse.removeObserver(this);
             }
         });
     }
@@ -91,16 +93,18 @@ public class ConnectActivity extends AppCompatActivity {
         asyncResponse.observe(this, new Observer<CallbackGetVerifierResponse>() {
             @Override
             public void onChanged(@Nullable CallbackGetVerifierResponse response) {
-                if (response.getErrorString() == null) {
-                    if (loginToken.equals(response.getLoginToken())) {
-                        verifier = response.getVerifier();
-                        getAccessToken();
+                if (response != null) {
+                    if (response.getErrorString() == null) {
+                        if (loginToken.equals(response.getLoginToken())) {
+                            verifier = response.getVerifier();
+                            getAccessToken();
+                        }
+                    } else {
+                        Toast toast = Toast.makeText(context, getResources().getString(R.string.error_verifier, response.getErrorString()), Toast.LENGTH_LONG);
+                        toast.show();
                     }
-                } else {
-                    Toast toast = Toast.makeText(context, getResources().getString(R.string.error_verifier, response.getErrorString()), Toast.LENGTH_LONG);
-                    toast.show();
+                    asyncResponse.removeObserver(this);
                 }
-                asyncResponse.removeObserver(this);
             }
         });
     }
@@ -117,16 +121,18 @@ public class ConnectActivity extends AppCompatActivity {
         asyncResponse.observe(this, new Observer<TwitterGetAccessTokenResponse>() {
             @Override
             public void onChanged(@Nullable TwitterGetAccessTokenResponse response) {
-                if (response.getErrorString() == null) {
-                    account = new TwitterAccount();
-                    account.setAccessToken(response.getAccessToken());
-                    account.setSecretToken(response.getSecretToken());
-                    verifyCredentials();
-                } else {
-                    Toast toast = Toast.makeText(context, getResources().getString(R.string.error_access_token, response.getErrorString()), Toast.LENGTH_LONG);
-                    toast.show();
+                if (response != null) {
+                    if (response.getErrorString() == null) {
+                        account = new TwitterAccount();
+                        account.setAccessToken(response.getAccessToken());
+                        account.setSecretToken(response.getSecretToken());
+                        verifyCredentials();
+                    } else {
+                        Toast toast = Toast.makeText(context, getResources().getString(R.string.error_access_token, response.getErrorString()), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                    asyncResponse.removeObserver(this);
                 }
-                asyncResponse.removeObserver(this);
             }
         });
     }
@@ -142,14 +148,16 @@ public class ConnectActivity extends AppCompatActivity {
         asyncResponse.observeForever(new Observer<TwitterVerifyCredentialsResponse>() {
             @Override
             public void onChanged(@Nullable TwitterVerifyCredentialsResponse response) {
-                if (response.getErrorString() == null) {
-                    account.createFromResponse(response);
-                    exitAndSave();
-                } else {
-                    Toast toast = Toast.makeText(context, getResources().getString(R.string.error_account_info, response.getErrorString()), Toast.LENGTH_LONG);
-                    toast.show();
+                if (response != null) {
+                    if (response.getErrorString() == null) {
+                        account.createFromResponse(response);
+                        exitAndSave();
+                    } else {
+                        Toast toast = Toast.makeText(context, getResources().getString(R.string.error_account_info, response.getErrorString()), Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+                    asyncResponse.removeObserver(this);
                 }
-                asyncResponse.removeObserver(this);
             }
         });
     }

@@ -13,8 +13,4 @@ public class SerializableList<ItemClass> implements Serializable {
     public List<ItemClass> getList() {
         return list;
     }
-
-    public void setList(List<ItemClass> list) {
-        this.list = list;
-    }
 }

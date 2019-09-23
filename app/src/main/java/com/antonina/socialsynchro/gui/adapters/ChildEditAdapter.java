@@ -11,16 +11,17 @@ import com.antonina.socialsynchro.content.ChildPostContainer;
 import com.antonina.socialsynchro.content.ParentPostContainer;
 import com.antonina.socialsynchro.databinding.ChildEditItemBinding;
 
+@SuppressWarnings("WeakerAccess")
 public class ChildEditAdapter extends BaseAdapter<ChildPostContainer, ChildEditAdapter.ChildViewHolder> {
     private ParentPostContainer parent;
 
-    public static class ChildViewHolder extends BaseAdapter.BaseViewHolder<ChildEditItemBinding> {
-        public AttachmentEditAdapter attachmentAdapter;
+    protected static class ChildViewHolder extends BaseAdapter.BaseViewHolder<ChildEditItemBinding> {
+        public final AttachmentEditAdapter attachmentAdapter;
 
         public ChildViewHolder(@NonNull View view, AppCompatActivity context) {
             super(view);
 
-            RecyclerView attachmentRecyclerView = (RecyclerView)view.findViewById(R.id.recyclerview_child_attachments);
+            RecyclerView attachmentRecyclerView = view.findViewById(R.id.recyclerview_child_attachments);
             attachmentRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
             attachmentAdapter = new AttachmentEditAdapter(context);

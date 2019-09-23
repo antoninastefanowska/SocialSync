@@ -22,14 +22,15 @@ import java.util.Comparator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+@SuppressWarnings({"WeakerAccess", "UseCompareMethod"})
 public class ImageGalleryAdapter extends BaseAdapter<ImageAttachment, ImageGalleryAdapter.ImageViewHolder> {
 
     public static class ImageViewHolder extends BaseAdapter.BaseViewHolder<ImageGalleryItemBinding> {
-        public ImageView imageView;
+        public final ImageView imageView;
 
         public ImageViewHolder(@NonNull View view) {
             super(view);
-            imageView = (ImageView)view.findViewById(R.id.imageview_image);
+            imageView = view.findViewById(R.id.imageview_image);
         }
 
         @Override
@@ -94,7 +95,7 @@ public class ImageGalleryAdapter extends BaseAdapter<ImageAttachment, ImageGalle
         if (uri != null)
             cursor = context.managedQuery(uri, projection, null, null, sortOrder);
         if (cursor != null && cursor.moveToFirst()) {
-            SortedSet<String> sortedDirectories = new TreeSet<String>();
+            SortedSet<String> sortedDirectories = new TreeSet<>();
             do {
                 String directory = cursor.getString(0);
                 directory = directory.substring(0, directory.lastIndexOf("/"));
@@ -104,7 +105,7 @@ public class ImageGalleryAdapter extends BaseAdapter<ImageAttachment, ImageGalle
             sortedDirectories.toArray(directories);
         }
 
-        SortedSet<ImageAttachment> sortedImages = new TreeSet<ImageAttachment>(new Comparator<ImageAttachment>() {
+        SortedSet<ImageAttachment> sortedImages = new TreeSet<>(new Comparator<ImageAttachment>() {
             @Override
             public int compare(ImageAttachment o1, ImageAttachment o2) {
                 if (o1.getFile().lastModified() > o2.getFile().lastModified())
@@ -115,22 +116,24 @@ public class ImageGalleryAdapter extends BaseAdapter<ImageAttachment, ImageGalle
                     return 0;
             }
         });
-        for (String directoryPath : directories) {
-            File directory = new File(directoryPath);
-            File[] files = directory.listFiles();
-            if (files == null)
-                continue;
-            for (File file : files) {
-                if (file.isDirectory())
-                    files = file.listFiles();
-                if (isImage(file)) {
-                    ImageAttachment image = new ImageAttachment(file);
-                    sortedImages.add(image);
+        if (directories != null) {
+            for (String directoryPath : directories) {
+                File directory = new File(directoryPath);
+                File[] files = directory.listFiles();
+                if (files == null)
+                    continue;
+                for (File file : files) {
+                    if (file.isDirectory())
+                        files = file.listFiles();
+                    if (isImage(file)) {
+                        ImageAttachment image = new ImageAttachment(file);
+                        sortedImages.add(image);
+                    }
                 }
             }
+            items = new ArrayList<>(sortedImages);
+            notifyDataSetChanged();
         }
-        items = new ArrayList<ImageAttachment>(sortedImages);
-        notifyDataSetChanged();
     }
 
     private static boolean isImage(File file) {

@@ -11,7 +11,6 @@ import com.antonina.socialsynchro.database.repositories.PostRepository;
 import com.antonina.socialsynchro.database.repositories.TwitterAccountInfoRepository;
 
 public class SocialSynchro extends Application {
-    private static Context context;
     private static Application instance;
 
     public void onCreate() {
@@ -24,13 +23,10 @@ public class SocialSynchro extends Application {
         ChildPostContainerRepository.createInstance(this);
         TwitterAccountInfoRepository.createInstance(this);
 
-        context = getApplicationContext();
         instance = this;
     }
 
-    public static Context getAppContext() {
-        return context;
+    public static Application getInstance() {
+        return instance;
     }
-
-    public static Application getInstance() { return instance; }
 }

@@ -1,7 +1,7 @@
 package com.antonina.socialsynchro.services.twitter.requests;
 
 public class TwitterUploadFinalizeRequest extends TwitterRequest {
-    private String mediaID;
+    private final String mediaID;
 
     private TwitterUploadFinalizeRequest(String authorizationHeader, String mediaID) {
         super(authorizationHeader);

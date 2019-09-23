@@ -3,8 +3,8 @@ package com.antonina.socialsynchro.services.twitter.requests;
 import java.util.List;
 
 public class TwitterCreateContentRequest extends TwitterRequest {
-    private String status;
-    private String mediaIDs;
+    private final String status;
+    private final String mediaIDs;
 
     private TwitterCreateContentRequest(String authorizationHeader, String status, String mediaIDs) {
         super(authorizationHeader);

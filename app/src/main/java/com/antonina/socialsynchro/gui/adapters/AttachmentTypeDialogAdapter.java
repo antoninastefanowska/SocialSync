@@ -14,8 +14,9 @@ import com.antonina.socialsynchro.gui.listeners.OnAttachmentTypeSelectedListener
 import java.util.ArrayList;
 import java.util.Arrays;
 
+@SuppressWarnings("WeakerAccess")
 public class AttachmentTypeDialogAdapter extends BaseAdapter<AttachmentType, AttachmentTypeDialogAdapter.AttachmentTypeViewHolder> {
-    private OnAttachmentTypeSelectedListener listener;
+    private final OnAttachmentTypeSelectedListener listener;
 
     public static class AttachmentTypeViewHolder extends BaseAdapter.BaseViewHolder<AttachmentTypeDialogItemBinding> {
 
@@ -68,7 +69,7 @@ public class AttachmentTypeDialogAdapter extends BaseAdapter<AttachmentType, Att
     @Override
     public void loadData() {
         AttachmentType[] array = AttachmentTypes.getAttachmentTypes();
-        items = new ArrayList<AttachmentType>(Arrays.asList(array));
+        items = new ArrayList<>(Arrays.asList(array));
         notifyDataSetChanged();
     }
 }

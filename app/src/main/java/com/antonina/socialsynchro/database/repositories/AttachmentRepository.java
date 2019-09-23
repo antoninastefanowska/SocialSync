@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+@SuppressWarnings("WeakerAccess")
 public class AttachmentRepository extends BaseRepository<AttachmentTable, Attachment> {
     private static AttachmentRepository instance;
 
@@ -39,7 +40,7 @@ public class AttachmentRepository extends BaseRepository<AttachmentTable, Attach
 
     @Override
     protected Map<Long, Attachment> convertToEntities(List<AttachmentTable> input) {
-        Map<Long, Attachment> output = new HashMap<Long, Attachment>();
+        Map<Long, Attachment> output = new HashMap<>();
         for (AttachmentTable attachmentData : input) {
             Attachment attachment = (Attachment)AttachmentFactory.getInstance().createFromData(attachmentData);
             output.put(attachment.getInternalID(), attachment);
@@ -69,12 +70,12 @@ public class AttachmentRepository extends BaseRepository<AttachmentTable, Attach
         try {
             AttachmentDao attachmentDao = (AttachmentDao)dao;
             LiveData<List<Long>> IDs = new GetIDByPostAsyncTask(attachmentDao).execute(postID).get();
-            FilterSource<Attachment> filterSource = new FilterSource<Attachment>(IDs, getAllData());
+            FilterSource<Attachment> filterSource = new FilterSource<>(IDs, getAllData());
 
             result = Transformations.map(filterSource, new Function<Pair<List<Long>, Map<Long, Attachment>>, List<Attachment>>() {
                 @Override
                 public List<Attachment> apply(Pair<List<Long>, Map<Long, Attachment>> input) {
-                    List<Attachment> output = new ArrayList<Attachment>();
+                    List<Attachment> output = new ArrayList<>();
                     for (Long id : input.first)
                         output.add(input.second.get(id));
                     return sortList(output);
@@ -87,7 +88,7 @@ public class AttachmentRepository extends BaseRepository<AttachmentTable, Attach
     }
 
     private static class GetIDByPostAsyncTask extends AsyncTask<Long, Void, LiveData<List<Long>>> {
-        private AttachmentDao dao;
+        private final AttachmentDao dao;
 
         public GetIDByPostAsyncTask(AttachmentDao dao) { this.dao = dao; }
 

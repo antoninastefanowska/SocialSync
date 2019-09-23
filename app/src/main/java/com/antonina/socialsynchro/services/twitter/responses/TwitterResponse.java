@@ -6,6 +6,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 
+@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 public abstract class TwitterResponse implements IResponse {
     private String undefinedError;
 

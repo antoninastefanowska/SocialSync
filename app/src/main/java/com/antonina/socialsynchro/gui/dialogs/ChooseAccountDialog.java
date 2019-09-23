@@ -18,9 +18,9 @@ import com.antonina.socialsynchro.gui.listeners.OnAccountsSelectedListener;
 import java.util.List;
 
 public class ChooseAccountDialog extends Dialog {
-    private AppCompatActivity context;
+    private final AppCompatActivity context;
+    private final OnAccountsSelectedListener listener;
     private AccountDialogAdapter adapter;
-    private OnAccountsSelectedListener listener;
     private List<Account> ignoredData;
 
     public ChooseAccountDialog(@NonNull AppCompatActivity context, OnAccountsSelectedListener listener) {
@@ -36,15 +36,14 @@ public class ChooseAccountDialog extends Dialog {
         requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         setContentView(R.layout.dialog_choose_account);
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title_choose_accounts);
-
-        RecyclerView recyclerView = (RecyclerView)findViewById(R.id.recyclerview_accounts_dialog);
+        RecyclerView recyclerView = findViewById(R.id.recyclerview_accounts_dialog);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
 
         adapter = new AccountDialogAdapter(context);
         adapter.setIgnoredData(ignoredData);
         recyclerView.setAdapter(adapter);
 
-        Button buttonOk = (Button)findViewById(R.id.button_ok);
+        Button buttonOk = findViewById(R.id.button_ok);
         buttonOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,7 +52,7 @@ public class ChooseAccountDialog extends Dialog {
             }
         });
 
-        Button buttonCancel = (Button)findViewById(R.id.button_cancel);
+        Button buttonCancel = findViewById(R.id.button_cancel);
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

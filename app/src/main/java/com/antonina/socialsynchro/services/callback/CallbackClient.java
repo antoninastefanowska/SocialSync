@@ -16,6 +16,7 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+@SuppressWarnings("WeakerAccess")
 public class CallbackClient implements IClient {
     private final static String BASE_URL = "https://socialsynchro.pythonanywhere.com/callback/";
     private static CallbackClient instance;
@@ -34,12 +35,12 @@ public class CallbackClient implements IClient {
     }
 
     private static class GetVerifierController implements Callback<CallbackGetVerifierResponse> {
-        private CallbackGetVerifierRequest request;
-        private MutableLiveData<CallbackGetVerifierResponse> asyncResponse;
+        private final CallbackGetVerifierRequest request;
+        private final MutableLiveData<CallbackGetVerifierResponse> asyncResponse;
 
         public GetVerifierController(CallbackGetVerifierRequest request) {
             this.request = request;
-            asyncResponse = new MutableLiveData<CallbackGetVerifierResponse>();
+            asyncResponse = new MutableLiveData<>();
         }
 
         public LiveData<CallbackGetVerifierResponse> start() {

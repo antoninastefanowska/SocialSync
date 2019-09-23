@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 
 import com.antonina.socialsynchro.R;
@@ -17,8 +16,6 @@ import com.antonina.socialsynchro.gui.adapters.ParentDisplayAdapter;
 public class MainActivity extends AppCompatActivity {
     private final static int ACCOUNTS = 0, CREATE = 1;
 
-    private ActivityMainBinding binding;
-    private RecyclerView parentRecyclerView;
     private ParentDisplayAdapter parentAdapter;
 
     @Override
@@ -26,8 +23,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        parentRecyclerView = (RecyclerView)findViewById(R.id.recyclerview_parents);
+        ActivityMainBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        RecyclerView parentRecyclerView = findViewById(R.id.recyclerview_parents);
         parentRecyclerView.setHasFixedSize(true);
         parentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         parentAdapter = new ParentDisplayAdapter(this);

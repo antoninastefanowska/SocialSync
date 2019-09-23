@@ -7,7 +7,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -18,15 +17,16 @@ import com.antonina.socialsynchro.databinding.ParentDisplayItemBinding;
 
 import java.util.List;
 
+@SuppressWarnings("WeakerAccess")
 public class ParentDisplayAdapter extends BaseAdapter<ParentPostContainer, ParentDisplayAdapter.ParentViewHolder> {
 
     public static class ParentViewHolder extends BaseAdapter.BaseViewHolder<ParentDisplayItemBinding> {
-        public ChildDisplayAdapter childAdapter;
+        public final ChildDisplayAdapter childAdapter;
 
         public ParentViewHolder(@NonNull View view, AppCompatActivity context) {
             super(view);
 
-            RecyclerView childRecyclerView = (RecyclerView)view.findViewById(R.id.recyclerview_main_children);
+            RecyclerView childRecyclerView = view.findViewById(R.id.recyclerview_main_children);
             childRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
             childAdapter = new ChildDisplayAdapter(context);

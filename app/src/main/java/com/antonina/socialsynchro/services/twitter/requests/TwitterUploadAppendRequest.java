@@ -3,9 +3,9 @@ package com.antonina.socialsynchro.services.twitter.requests;
 import okhttp3.RequestBody;
 
 public class TwitterUploadAppendRequest extends TwitterRequest {
-    private String mediaID;
-    private String segmentIndex;
-    private RequestBody media;
+    private final String mediaID;
+    private final String segmentIndex;
+    private final RequestBody media;
 
     private TwitterUploadAppendRequest(String authorizationHeader, String mediaID, String segmentIndex, RequestBody media) {
         super(authorizationHeader);

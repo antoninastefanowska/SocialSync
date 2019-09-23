@@ -28,7 +28,6 @@ import com.antonina.socialsynchro.gui.listeners.OnAttachmentUploadedListener;
 import com.antonina.socialsynchro.gui.listeners.OnPublishedListener;
 import com.antonina.socialsynchro.content.ParentPostContainer;
 import com.antonina.socialsynchro.content.attachments.AttachmentType;
-import com.antonina.socialsynchro.content.attachments.ImageAttachment;
 import com.antonina.socialsynchro.databinding.ActivityEditBinding;
 import com.antonina.socialsynchro.gui.adapters.AttachmentEditAdapter;
 import com.antonina.socialsynchro.gui.adapters.ChildEditAdapter;
@@ -41,8 +40,9 @@ import com.antonina.socialsynchro.gui.serialization.SerializableList;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unchecked")
 public class EditActivity extends AppCompatActivity {
-    private final static int ADD_IMAGES = 0;
+    private final static int ADD_ATTACHMENTS = 0;
     private final static int REQUEST_STORAGE_ACCESS = 0;
 
     private ParentPostContainer parent;
@@ -69,11 +69,11 @@ public class EditActivity extends AppCompatActivity {
         ActivityEditBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_edit);
         binding.setParent(parent);
 
-        RecyclerView childRecyclerView = (RecyclerView)findViewById(R.id.recyclerview_children);
+        RecyclerView childRecyclerView = findViewById(R.id.recyclerview_children);
         childRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         childAdapter = new ChildEditAdapter(this, parent);
 
-        RecyclerView parentAttachmentRecyclerView = (RecyclerView)findViewById(R.id.recyclerview_parent_attachments);
+        RecyclerView parentAttachmentRecyclerView = findViewById(R.id.recyclerview_parent_attachments);
         parentAttachmentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         parentAttachmentAdapter = new AttachmentEditAdapter(this, parent);
 
@@ -81,7 +81,7 @@ public class EditActivity extends AppCompatActivity {
         binding.setAttachmentAdapter(parentAttachmentAdapter);
         binding.executePendingBindings();
 
-        EditText parentContent = (EditText)findViewById(R.id.edittext_parent_content);
+        EditText parentContent = findViewById(R.id.edittext_parent_content);
         parentContent.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -116,7 +116,7 @@ public class EditActivity extends AppCompatActivity {
             }
         });
 
-        List<Account> usedAccounts = new ArrayList<Account>();
+        List<Account> usedAccounts = new ArrayList<>();
         for (ChildPostContainer child : parent.getChildren())
             usedAccounts.add(child.getAccount());
 
@@ -155,7 +155,7 @@ public class EditActivity extends AppCompatActivity {
 
             @Override
             public void onProgress(Attachment attachment, int percentProgress) {
-                Toast toast = Toast.makeText(context, "Attachment upload progress: " + String.valueOf(percentProgress) + "%", Toast.LENGTH_LONG);
+                Toast toast = Toast.makeText(context, "Attachment upload progress: " + percentProgress + "%", Toast.LENGTH_LONG);
                 toast.show();
             }
 
@@ -199,16 +199,18 @@ public class EditActivity extends AppCompatActivity {
         ChooseAttachmentTypeDialog dialog = new ChooseAttachmentTypeDialog(this, new OnAttachmentTypeSelectedListener() {
             @Override
             public void onAttachmentTypeSelected(AttachmentType attachmentType) {
+                Class<? extends AppCompatActivity> activityClass = null;
                 switch (attachmentType.getID()) {
                     case Image:
-                        Intent addImages = new Intent(EditActivity.this, ImageGalleryActivity.class);
-                        startActivityForResult(addImages, ADD_IMAGES);
+                        activityClass = ImageGalleryActivity.class;
                         break;
                     case Audio:
                         break;
                     case Video:
                         break;
                 }
+                Intent addAttachments = new Intent(EditActivity.this, activityClass);
+                startActivityForResult(addAttachments, ADD_ATTACHMENTS);
             }
         });
         dialog.show();
@@ -219,12 +221,13 @@ public class EditActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
-                case ADD_IMAGES:
-                    SerializableList<ImageAttachment> serializableImages = (SerializableList<ImageAttachment>)data.getSerializableExtra("images");
-                    List<ImageAttachment> images = serializableImages.getList();
-                    for (ImageAttachment image : images) {
+                case ADD_ATTACHMENTS:
+                    SerializableList<Attachment> serializableAttachments = (SerializableList<Attachment>)data.getSerializableExtra("attachments");
+                    List<Attachment> attachments = serializableAttachments.getList();
+
+                    for (Attachment attachment : attachments) {
                         if (activePostContainer == parent)
-                            parentAttachmentAdapter.addItem(image);
+                            parentAttachmentAdapter.addItem(attachment);
                         else {
                             // TODO
                         }

@@ -1,7 +1,7 @@
 package com.antonina.socialsynchro.services.twitter.requests;
 
 public class TwitterGetAccessTokenRequest extends TwitterRequest {
-    private String verifier;
+    private final String verifier;
 
     private TwitterGetAccessTokenRequest(String authorizationHeader, String verifier) {
         super(authorizationHeader);

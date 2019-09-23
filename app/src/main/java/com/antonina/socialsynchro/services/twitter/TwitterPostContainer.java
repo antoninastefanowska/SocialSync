@@ -63,9 +63,7 @@ public class TwitterPostContainer extends ChildPostContainer {
     }
 
     @Override
-    public void setTitle(String title) {
-        return;
-    }
+    public void setTitle(String title) { }
 
     @Override
     public void setContent(String content) {
@@ -115,20 +113,22 @@ public class TwitterPostContainer extends ChildPostContainer {
         asyncResponse.observeForever(new Observer<TwitterContentResponse>() {
             @Override
             public void onChanged(@Nullable TwitterContentResponse response) {
-                setLoading(false);
-                if (response.getErrorString() == null) {
-                    instance.setExternalID(response.getID());
-                    publishListener.onPublished(instance);
-                } else {
-                    publishListener.onError(instance, response.getErrorString());
+                if (response != null) {
+                    setLoading(false);
+                    if (response.getErrorString() == null) {
+                        instance.setExternalID(response.getID());
+                        publishListener.onPublished(instance);
+                    } else {
+                        publishListener.onError(instance, response.getErrorString());
+                    }
+                    asyncResponse.removeObserver(this);
                 }
-                asyncResponse.removeObserver(this);
             }
         });
     }
 
     private void publishWithAttachments() {
-        List<String> mediaIDs = new ArrayList<String>();
+        List<String> mediaIDs = new ArrayList<>();
         for (Attachment attachment : getAttachments())
             mediaIDs.add(attachment.getExternalID());
 
@@ -144,14 +144,16 @@ public class TwitterPostContainer extends ChildPostContainer {
         asyncResponse.observeForever(new Observer<TwitterContentResponse>() {
             @Override
             public void onChanged(@Nullable TwitterContentResponse response) {
-                setLoading(false);
-                if (response.getErrorString() == null) {
-                    instance.setExternalID(response.getID());
-                    publishListener.onPublished(instance);
-                } else {
-                    publishListener.onError(instance, response.getErrorString());
+                if (response != null) {
+                    setLoading(false);
+                    if (response.getErrorString() == null) {
+                        instance.setExternalID(response.getID());
+                        publishListener.onPublished(instance);
+                    } else {
+                        publishListener.onError(instance, response.getErrorString());
+                    }
+                    asyncResponse.removeObserver(this);
                 }
-                asyncResponse.removeObserver(this);
             }
         });
     }
@@ -171,21 +173,23 @@ public class TwitterPostContainer extends ChildPostContainer {
         asyncResponse.observeForever(new Observer<TwitterUploadInitResponse>() {
             @Override
             public void onChanged(@Nullable TwitterUploadInitResponse response) {
-                if (response.getErrorString() == null) {
-                    attachment.setExternalID(response.getMediaID());
-                    listener.onInitialized(attachment);
+                if (response != null) {
+                    if (response.getErrorString() == null) {
+                        attachment.setExternalID(response.getMediaID());
+                        listener.onInitialized(attachment);
 
-                    long chunkStart = 0;
-                    long chunkEnd = fileSize < FILE_CHUNK_SIZE_BYTES ? fileSize - 1 : FILE_CHUNK_SIZE_BYTES - 1;
-                    int chunkStep = 0;
+                        long chunkStart = 0;
+                        long chunkEnd = fileSize < FILE_CHUNK_SIZE_BYTES ? fileSize - 1 : FILE_CHUNK_SIZE_BYTES - 1;
+                        int chunkStep = 0;
 
-                    uploadAppend(attachment, chunkStep, chunkStart, chunkEnd, listener);
-                } else {
-                    setLoading(false);
-                    listener.onError(attachment, response.getErrorString());
-                    publishListener.onError(instance, "Initialization error: " + response.getErrorString());
+                        uploadAppend(attachment, chunkStep, chunkStart, chunkEnd, listener);
+                    } else {
+                        setLoading(false);
+                        listener.onError(attachment, response.getErrorString());
+                        publishListener.onError(instance, "Initialization error: " + response.getErrorString());
+                    }
+                    asyncResponse.removeObserver(this);
                 }
-                asyncResponse.removeObserver(this);
             }
         });
     }
@@ -238,29 +242,31 @@ public class TwitterPostContainer extends ChildPostContainer {
         asyncResponse.observeForever(new Observer<TwitterUploadFinalizeResponse>() {
             @Override
             public void onChanged(@Nullable TwitterUploadFinalizeResponse response) {
-                if (response.getErrorString() == null) {
-                    attachment.setExternalID(response.getMediaID());
-                    TwitterUploadFinalizeResponse.ProcessingInfo info = response.getProcessingInfo();
-                    if (info == null)
-                        finishAttachmentUpload(attachment, listener);
-                    else {
-                        Timer timer = new Timer();
-                        TimerTask timerTask = new TimerTask() {
-                            @Override
-                            public void run() {
-                                checkUploadStatus(attachment, listener);
-                                cancel();
-                            }
-                        };
-                        timer.schedule(timerTask, info.getCheckAfterSecs() * 1000);
+                if (response != null) {
+                    if (response.getErrorString() == null) {
+                        attachment.setExternalID(response.getMediaID());
+                        TwitterUploadFinalizeResponse.ProcessingInfo info = response.getProcessingInfo();
+                        if (info == null)
+                            finishAttachmentUpload(attachment, listener);
+                        else {
+                            Timer timer = new Timer();
+                            TimerTask timerTask = new TimerTask() {
+                                @Override
+                                public void run() {
+                                    checkUploadStatus(attachment, listener);
+                                    cancel();
+                                }
+                            };
+                            timer.schedule(timerTask, info.getCheckAfterSecs() * 1000);
+                        }
+                    } else {
+                        setLoading(false);
+                        attachment.setExternalID(null);
+                        listener.onError(attachment, response.getErrorString());
+                        publishListener.onError(instance, response.getErrorString());
                     }
-                } else {
-                    setLoading(false);
-                    attachment.setExternalID(null);
-                    listener.onError(attachment, response.getErrorString());
-                    publishListener.onError(instance, response.getErrorString());
+                    asyncResponse.removeObserver(this);
                 }
-                asyncResponse.removeObserver(this);
             }
         });
     }
@@ -277,37 +283,39 @@ public class TwitterPostContainer extends ChildPostContainer {
         asyncResponse.observeForever(new Observer<TwitterCheckUploadStatusResponse>() {
             @Override
             public void onChanged(@Nullable TwitterCheckUploadStatusResponse response) {
-                if (response.getErrorString() == null) {
-                    TwitterCheckUploadStatusResponse.ProcessingInfo info = response.getProcessingInfo();
-                    switch (info.getState()) {
-                        case "succeeded":
-                            finishAttachmentUpload(attachment, listener);
-                            break;
-                        case "failed":
-                            attachment.setLoading(false);
-                            attachment.setExternalID(null);
-                            listener.onError(attachment, info.getErrorString());
-                            publishListener.onError(instance, info.getErrorString());
-                            break;
-                        case "in_progress":
-                            Timer timer = new Timer();
-                            TimerTask timerTask = new TimerTask() {
-                                @Override
-                                public void run() {
-                                    checkUploadStatus(attachment, listener);
-                                    cancel();
-                                }
-                            };
-                            timer.schedule(timerTask, info.getCheckAfterSecs() * 1000);
-                            break;
+                if (response != null) {
+                    if (response.getErrorString() == null) {
+                        TwitterCheckUploadStatusResponse.ProcessingInfo info = response.getProcessingInfo();
+                        switch (info.getState()) {
+                            case "succeeded":
+                                finishAttachmentUpload(attachment, listener);
+                                break;
+                            case "failed":
+                                attachment.setLoading(false);
+                                attachment.setExternalID(null);
+                                listener.onError(attachment, info.getErrorString());
+                                publishListener.onError(instance, info.getErrorString());
+                                break;
+                            case "in_progress":
+                                Timer timer = new Timer();
+                                TimerTask timerTask = new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        checkUploadStatus(attachment, listener);
+                                        cancel();
+                                    }
+                                };
+                                timer.schedule(timerTask, info.getCheckAfterSecs() * 1000);
+                                break;
+                        }
+                    } else {
+                        setLoading(false);
+                        attachment.setExternalID(null);
+                        listener.onError(attachment, response.getErrorString());
+                        publishListener.onError(instance, "Status check error: " + response.getErrorString());
                     }
-                } else {
-                    setLoading(false);
-                    attachment.setExternalID(null);
-                    listener.onError(attachment, response.getErrorString());
-                    publishListener.onError(instance, "Status check error: " + response.getErrorString());
+                    asyncResponse.removeObserver(this);
                 }
-                asyncResponse.removeObserver(this);
             }
         });
     }
@@ -335,15 +343,17 @@ public class TwitterPostContainer extends ChildPostContainer {
         asyncResponse.observeForever(new Observer<TwitterContentResponse>() {
             @Override
             public void onChanged(@Nullable TwitterContentResponse response) {
-                if (response.getErrorString() == null) {
-                    if (response.getID().equals(getExternalID())) {
-                        instance.setExternalID(null);
-                        listener.onUnpublished(instance);
+                if (response != null) {
+                    if (response.getErrorString() == null) {
+                        if (response.getID().equals(getExternalID())) {
+                            instance.setExternalID(null);
+                            listener.onUnpublished(instance);
+                        }
+                    } else {
+                        listener.onError(instance, response.getErrorString());
                     }
-                } else {
-                    listener.onError(instance, response.getErrorString());
+                    asyncResponse.removeObserver(this);
                 }
-                asyncResponse.removeObserver(this);
             }
         });
     }

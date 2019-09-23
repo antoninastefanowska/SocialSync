@@ -1,9 +1,9 @@
 package com.antonina.socialsynchro.services.twitter;
 
-import com.antonina.socialsynchro.services.IService;
+import com.antonina.socialsynchro.services.Service;
 import com.antonina.socialsynchro.services.ServiceID;
 
-public class TwitterService implements IService {
+public class TwitterService extends Service {
     private static TwitterService instance;
 
     public static TwitterService getInstance() {

@@ -16,7 +16,6 @@ import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 import com.antonina.socialsynchro.gui.listeners.OnAttachmentUploadedListener;
 import com.antonina.socialsynchro.gui.listeners.OnPublishedListener;
 import com.antonina.socialsynchro.gui.listeners.OnUnpublishedListener;
-import com.antonina.socialsynchro.services.IResponse;
 import com.antonina.socialsynchro.services.IServiceEntity;
 
 import java.util.Date;
@@ -33,11 +32,11 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
 
     // TODO: dla każdej funkcji modyfikującej sprawdzić ograniczenia
 
-    public ChildPostContainer(IDatabaseTable data) {
+    protected ChildPostContainer(IDatabaseTable data) {
         createFromData(data);
     }
 
-    public ChildPostContainer(Account account) {
+    protected ChildPostContainer(Account account) {
         locked = true;
         post = null;
         setAccount(account);
@@ -149,7 +148,6 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
         post = null;
     }
 
-
     public void unlock() {
         IPost parentPost = parent.getPost();
         locked = false;
@@ -166,17 +164,27 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
         return account;
     }
 
-    public void setAccount(Account account) { this.account = account; }
+    public void setAccount(Account account) {
+        this.account = account;
+    }
 
     @Override
-    public String getExternalID() { return externalID; }
+    public String getExternalID() {
+        return externalID;
+    }
 
     @Override
-    public void setExternalID(String externalID) { this.externalID = externalID; }
+    public void setExternalID(String externalID) {
+        this.externalID = externalID;
+    }
 
-    public Date getSynchronizationDate() { return synchronizationDate; }
+    public Date getSynchronizationDate() {
+        return synchronizationDate;
+    }
 
-    public void setSynchronizationDate(Date date) { this.synchronizationDate = synchronizationDate; }
+    private void setSynchronizationDate(Date synchronizationDate) {
+        this.synchronizationDate = synchronizationDate;
+    }
 
     public ParentPostContainer getParent() {
         return parent;

@@ -70,7 +70,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textPersonName"
-                android:text="@={parent.content}" />
+                android:hint="@string/edit_content_hint"
+                android:text="@={parent.content}"
+                tools:ignore="Autofill" />
 
             <Button
                 android:id="@+id/button_parent_add_attachment"

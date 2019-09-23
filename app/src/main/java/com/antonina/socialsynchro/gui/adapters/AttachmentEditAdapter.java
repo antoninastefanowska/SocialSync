@@ -9,10 +9,11 @@ import com.antonina.socialsynchro.content.IPost;
 import com.antonina.socialsynchro.content.attachments.Attachment;
 import com.antonina.socialsynchro.databinding.AttachmentEditItemBinding;
 
+@SuppressWarnings("WeakerAccess")
 public class AttachmentEditAdapter extends BaseAdapter<Attachment, AttachmentEditAdapter.AttachmentViewHolder> {
     private IPost postContainer;
 
-    public static class AttachmentViewHolder extends BaseAdapter.BaseViewHolder<AttachmentEditItemBinding> {
+    protected static class AttachmentViewHolder extends BaseAdapter.BaseViewHolder<AttachmentEditItemBinding> {
 
         public AttachmentViewHolder(@NonNull View view) {
             super(view);

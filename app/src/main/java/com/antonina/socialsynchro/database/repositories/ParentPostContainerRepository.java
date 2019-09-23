@@ -42,7 +42,7 @@ public class ParentPostContainerRepository extends BaseRepository<ParentPostCont
 
     @Override
     protected Map<Long, ParentPostContainer> convertToEntities(List<ParentPostContainerTable> input) {
-        Map<Long, ParentPostContainer> output = new HashMap<Long, ParentPostContainer>();
+        Map<Long, ParentPostContainer> output = new HashMap<>();
         for (ParentPostContainerTable parentPostContainerData : input) {
             ParentPostContainer parentPostContainer = new ParentPostContainer(parentPostContainerData);
             output.put(parentPostContainer.getInternalID(), parentPostContainer);
