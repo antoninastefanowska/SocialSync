@@ -67,4 +67,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+    public void buttonSynchronizeContent_onClick(View view) {
+        //TODO
+    }
 }

@@ -22,7 +22,7 @@ public class AccountTable implements IDatabaseTable {
     public String name;
 
     @ColumnInfo(name = "profile_picture_url")
-    public String profilePictureUrl;
+    public String profilePictureURL;
 
     @ColumnInfo(name = "service_id")
     public int serviceID;
@@ -41,7 +41,7 @@ public class AccountTable implements IDatabaseTable {
         Account account = (Account)entity;
         this.name = account.getName();
         this.externalID = account.getExternalID();
-        this.profilePictureUrl = account.getExternalID();
+        this.profilePictureURL = account.getProfilePictureURL();
         this.serviceID = account.getService().getID().ordinal();
         this.connectingDate = account.getConnectingDate();
     }

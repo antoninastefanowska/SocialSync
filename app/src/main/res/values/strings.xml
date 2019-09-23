@@ -13,8 +13,12 @@
     <string name="error_account_info">Could not retrieve account info. Error: %s</string>
     <string name="error_account_exists">Account already exists.</string>
 
+    <string name="message_account_synchronization">Account synchronization successful.</string>
+    <string name="error_account_synchronization">Account synchronization failed. Error: %s</string>
+
     <string name="add_account">Add account</string>
     <string name="remove_account">Remove account</string>
+    <string name="synchronize_account">Synchronize account</string>
     <string name="sign_in_status">Sign in status</string>
     <string name="sign_in">Sign in</string>
     <string name="confirm_signing_in">Confirm signing in</string>
@@ -28,10 +32,12 @@
     <string name="accounts">Accounts</string>
     <string name="create_content">Create content</string>
     <string name="remove_content">Remove content</string>
+    <string name="synchronize_content">Synchronize content</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
 
     <string name="gallery_image_content_description">Storage image file</string>
+    <string name="profile_picture_content_description">Profile picture</string>
     <string name="edit_content_hint">Content</string>
 
     <string name="title_choose_accounts">Choose accounts</string>

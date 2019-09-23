@@ -1,5 +1,6 @@
 package com.antonina.socialsynchro.gui.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Toast;
 
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.databinding.ActivityAccountsBinding;
@@ -14,6 +16,8 @@ import com.antonina.socialsynchro.gui.adapters.AccountDisplayAdapter;
 import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.gui.dialogs.ChooseServiceDialog;
 import com.antonina.socialsynchro.gui.listeners.OnServiceSelectedListener;
+import com.antonina.socialsynchro.gui.listeners.OnSynchronizedListener;
+import com.antonina.socialsynchro.services.IServiceEntity;
 import com.antonina.socialsynchro.services.Service;
 
 public class AccountsActivity extends AppCompatActivity {
@@ -50,13 +54,7 @@ public class AccountsActivity extends AppCompatActivity {
         ChooseServiceDialog dialog = new ChooseServiceDialog(this, new OnServiceSelectedListener() {
             @Override
             public void onServiceSelected(Service service) {
-                Class<? extends AppCompatActivity> activityClass = null;
-                switch (service.getID()) {
-                    case Twitter:
-                        activityClass = TwitterLoginActivity.class;
-                        break;
-                }
-                Intent loginActivity = new Intent(AccountsActivity.this, activityClass);
+                Intent loginActivity = new Intent(AccountsActivity.this, service.getLoginActivityClass());
                 startActivityForResult(loginActivity, ADD_ACCOUNT);
             }
         });
@@ -87,5 +85,24 @@ public class AccountsActivity extends AppCompatActivity {
                     break;
             }
         }
+    }
+
+    public void buttonSynchronizeAccount_onClick(View view) {
+        Account selectedAccount = adapter.getSelectedItem();
+        final Context context = this;
+        if (selectedAccount != null)
+            selectedAccount.synchronize(new OnSynchronizedListener() {
+                @Override
+                public void onSynchronized(IServiceEntity entity) {
+                    Toast toast = Toast.makeText(context, getResources().getString(R.string.message_account_synchronization), Toast.LENGTH_LONG);
+                    toast.show();
+                }
+
+                @Override
+                public void onError(IServiceEntity entity, String error) {
+                    Toast toast = Toast.makeText(context, getResources().getString(R.string.error_account_synchronization, error), Toast.LENGTH_LONG);
+                    toast.show();
+                }
+            });
     }
 }

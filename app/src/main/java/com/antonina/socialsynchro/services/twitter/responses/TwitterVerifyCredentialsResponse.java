@@ -18,6 +18,9 @@ public class TwitterVerifyCredentialsResponse extends TwitterResponse {
     @SerializedName("description")
     private String description;
 
+    @SerializedName("profile_image_url_https")
+    private String profilePictureURL;
+
     public String getID() { return id; }
 
     public String getName() { return name; }
@@ -27,4 +30,6 @@ public class TwitterVerifyCredentialsResponse extends TwitterResponse {
     public String getLocation() { return location; }
 
     public String getDescription() { return description; }
+
+    public String getProfilePictureURL() { return profilePictureURL; }
 }

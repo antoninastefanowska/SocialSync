@@ -8,9 +8,11 @@ import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.database.repositories.TwitterAccountInfoRepository;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 import com.antonina.socialsynchro.database.tables.TwitterAccountInfoTable;
+import com.antonina.socialsynchro.gui.listeners.OnSynchronizedListener;
 import com.antonina.socialsynchro.services.IResponse;
 import com.antonina.socialsynchro.services.ServiceID;
 import com.antonina.socialsynchro.services.Services;
+import com.antonina.socialsynchro.services.twitter.requests.TwitterVerifyCredentialsRequest;
 import com.antonina.socialsynchro.services.twitter.responses.TwitterVerifyCredentialsResponse;
 
 public class TwitterAccount extends Account {
@@ -82,7 +84,42 @@ public class TwitterAccount extends Account {
     @Override
     public void createFromResponse(IResponse response) {
         TwitterVerifyCredentialsResponse twitterResponse = (TwitterVerifyCredentialsResponse)response;
-        this.setExternalID(twitterResponse.getID());
-        this.setName(twitterResponse.getName());
+        setExternalID(twitterResponse.getID());
+        setName(twitterResponse.getName());
+        setProfilePictureURL(twitterResponse.getProfilePictureURL());
+    }
+
+    @Override
+    public void synchronize(final OnSynchronizedListener listener) {
+        setLoading(true);
+        notifyListener();
+        super.synchronize(listener);
+        TwitterClient client = TwitterClient.getInstance();
+        TwitterVerifyCredentialsRequest request = TwitterVerifyCredentialsRequest.builder()
+                .accessToken(getAccessToken())
+                .secretToken(getSecretToken())
+                .build();
+        final TwitterAccount instance = this;
+        final LiveData<TwitterVerifyCredentialsResponse> asyncResponse = client.verifyCredentials(request);
+        asyncResponse.observeForever(new Observer<TwitterVerifyCredentialsResponse>() {
+            @Override
+            public void onChanged(@Nullable TwitterVerifyCredentialsResponse response) {
+                if (response != null) {
+                    if (response.getErrorString() == null) {
+                        createFromResponse(response);
+                        setLoading(false);
+                        notifyListener();
+                        if (getInternalID() != null)
+                            updateInDatabase();
+                        listener.onSynchronized(instance);
+                    } else {
+                        setLoading(false);
+                        notifyListener();
+                        listener.onError(instance, response.getErrorString());
+                    }
+                    asyncResponse.removeObserver(this);
+                }
+            }
+        });
     }
 }

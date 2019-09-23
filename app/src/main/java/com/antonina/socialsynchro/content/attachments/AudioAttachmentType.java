@@ -1,5 +1,7 @@
 package com.antonina.socialsynchro.content.attachments;
 
+import android.support.v7.app.AppCompatActivity;
+
 public class AudioAttachmentType extends AttachmentType {
     private static AudioAttachmentType instance;
 
@@ -23,6 +25,11 @@ public class AudioAttachmentType extends AttachmentType {
 
     @Override
     public String getIconURL() {
+        return null;
+    }
+
+    @Override
+    public Class<? extends AppCompatActivity> getGalleryActivityClass() {
         return null;
     }
 }

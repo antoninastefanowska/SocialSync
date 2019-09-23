@@ -8,13 +8,16 @@ import com.antonina.socialsynchro.database.repositories.AttachmentRepository;
 import com.antonina.socialsynchro.database.tables.AttachmentTable;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 import com.antonina.socialsynchro.gui.GUIItem;
+import com.antonina.socialsynchro.gui.listeners.OnSynchronizedListener;
 import com.antonina.socialsynchro.services.IResponse;
 import com.antonina.socialsynchro.services.IServiceEntity;
+import com.antonina.socialsynchro.services.Service;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.URLConnection;
+import java.util.Date;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -142,4 +145,13 @@ public abstract class Attachment extends GUIItem implements IDatabaseEntity, ISe
     public RequestBody getChunkRequestBody(long chunkStart, long chunkEnd) {
         return RequestBody.create(MediaType.parse(getMIMEType()), getFileChunk(chunkStart, chunkEnd));
     }
+
+    @Override
+    public Service getService() { return null; }
+
+    @Override
+    public void synchronize(OnSynchronizedListener listener) { }
+
+    @Override
+    public Date getSynchronizationDate() { return null; }
 }

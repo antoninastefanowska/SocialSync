@@ -199,17 +199,7 @@ public class EditActivity extends AppCompatActivity {
         ChooseAttachmentTypeDialog dialog = new ChooseAttachmentTypeDialog(this, new OnAttachmentTypeSelectedListener() {
             @Override
             public void onAttachmentTypeSelected(AttachmentType attachmentType) {
-                Class<? extends AppCompatActivity> activityClass = null;
-                switch (attachmentType.getID()) {
-                    case Image:
-                        activityClass = ImageGalleryActivity.class;
-                        break;
-                    case Audio:
-                        break;
-                    case Video:
-                        break;
-                }
-                Intent addAttachments = new Intent(EditActivity.this, activityClass);
+                Intent addAttachments = new Intent(EditActivity.this, attachmentType.getGalleryActivityClass());
                 startActivityForResult(addAttachments, ADD_ATTACHMENTS);
             }
         });

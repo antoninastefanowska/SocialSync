@@ -12,6 +12,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.antonina.socialsynchro.R;
+import com.antonina.socialsynchro.gui.listeners.OnSynchronizedListener;
+import com.antonina.socialsynchro.services.IServiceEntity;
 import com.antonina.socialsynchro.services.callback.CallbackClient;
 import com.antonina.socialsynchro.services.callback.requests.CallbackGetVerifierRequest;
 import com.antonina.socialsynchro.services.callback.responses.CallbackGetVerifierResponse;
@@ -138,26 +140,17 @@ public class TwitterLoginActivity extends AppCompatActivity {
     }
 
     private void verifyCredentials() {
-        TwitterClient client = TwitterClient.getInstance();
-        TwitterVerifyCredentialsRequest request = TwitterVerifyCredentialsRequest.builder()
-                .accessToken(account.getAccessToken())
-                .secretToken(account.getSecretToken())
-                .build();
         final Context context = this;
-        final LiveData<TwitterVerifyCredentialsResponse> asyncResponse = client.verifyCredentials(request);
-        asyncResponse.observeForever(new Observer<TwitterVerifyCredentialsResponse>() {
+        account.synchronize(new OnSynchronizedListener() {
             @Override
-            public void onChanged(@Nullable TwitterVerifyCredentialsResponse response) {
-                if (response != null) {
-                    if (response.getErrorString() == null) {
-                        account.createFromResponse(response);
-                        exitAndSave();
-                    } else {
-                        Toast toast = Toast.makeText(context, getResources().getString(R.string.error_account_info, response.getErrorString()), Toast.LENGTH_LONG);
-                        toast.show();
-                    }
-                    asyncResponse.removeObserver(this);
-                }
+            public void onSynchronized(IServiceEntity entity) {
+                exitAndSave();
+            }
+
+            @Override
+            public void onError(IServiceEntity entity, String error) {
+                Toast toast = Toast.makeText(context, getResources().getString(R.string.error_account_info, error), Toast.LENGTH_LONG);
+                toast.show();
             }
         });
     }

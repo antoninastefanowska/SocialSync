@@ -6,6 +6,7 @@ import android.arch.lifecycle.MutableLiveData;
 import com.antonina.socialsynchro.services.IClient;
 import com.antonina.socialsynchro.services.IRawResponse;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterCreateContentRequest;
+import com.antonina.socialsynchro.services.twitter.requests.TwitterCreateContentWithMediaRequest;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterGetAccessTokenRequest;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterGetLoginTokenRequest;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterRemoveContentRequest;
@@ -67,6 +68,11 @@ public class TwitterClient implements IClient {
 
     public LiveData<TwitterContentResponse> createContent(TwitterCreateContentRequest request) {
         CreateContentController controller = new CreateContentController(request);
+        return controller.start();
+    }
+
+    public LiveData<TwitterContentResponse> createContentWithMedia(TwitterCreateContentWithMediaRequest request) {
+        CreateContentWithMediaController controller = new CreateContentWithMediaController(request);
         return controller.start();
     }
 
@@ -240,10 +246,29 @@ public class TwitterClient implements IClient {
 
         @Override
         protected Call<TwitterContentResponse> createCall(TwitterAPI twitterAPI) {
-            if (request.getMediaIDs() == null)
-                return twitterAPI.createContent(request.getStatus(), request.getAuthorizationHeader());
-            else
-                return twitterAPI.createContentWithMedia(request.getStatus(), request.getMediaIDs(), request.getAuthorizationHeader());
+            return twitterAPI.createContent(request.getStatus(), request.getAuthorizationHeader());
+        }
+
+        @Override
+        protected Class<TwitterContentResponse> getResponseClass() {
+            return TwitterContentResponse.class;
+        }
+
+        @Override
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+    }
+
+    private static class CreateContentWithMediaController extends BaseController<TwitterCreateContentWithMediaRequest, TwitterContentResponse> {
+
+        public CreateContentWithMediaController(TwitterCreateContentWithMediaRequest request) {
+            super(request);
+        }
+
+        @Override
+        protected Call<TwitterContentResponse> createCall(TwitterAPI twitterAPI) {
+            return twitterAPI.createContentWithMedia(request.getStatus(), request.getMediaIDs(), request.getAuthorizationHeader());
         }
 
         @Override

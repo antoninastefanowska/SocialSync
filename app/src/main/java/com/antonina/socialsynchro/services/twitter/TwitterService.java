@@ -1,5 +1,8 @@
 package com.antonina.socialsynchro.services.twitter;
 
+import android.support.v7.app.AppCompatActivity;
+
+import com.antonina.socialsynchro.gui.activities.TwitterLoginActivity;
 import com.antonina.socialsynchro.services.Service;
 import com.antonina.socialsynchro.services.ServiceID;
 
@@ -32,5 +35,10 @@ public class TwitterService extends Service {
     @Override
     public String getColorName() {
         return null;
+    }
+
+    @Override
+    public Class<? extends AppCompatActivity> getLoginActivityClass() {
+        return TwitterLoginActivity.class;
     }
 }

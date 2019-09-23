@@ -24,6 +24,7 @@ import java.util.TreeSet;
 
 @SuppressWarnings({"WeakerAccess", "UseCompareMethod"})
 public class ImageGalleryAdapter extends BaseAdapter<ImageAttachment, ImageGalleryAdapter.ImageViewHolder> {
+    private int imageSize;
 
     public static class ImageViewHolder extends BaseAdapter.BaseViewHolder<ImageGalleryItemBinding> {
         public final ImageView imageView;
@@ -41,6 +42,7 @@ public class ImageGalleryAdapter extends BaseAdapter<ImageAttachment, ImageGalle
 
     public ImageGalleryAdapter(AppCompatActivity context) {
         super(context);
+        imageSize = context.getResources().getDimensionPixelSize(R.dimen.image_gallery_item_size);
         loadData();
     }
 
@@ -52,7 +54,7 @@ public class ImageGalleryAdapter extends BaseAdapter<ImageAttachment, ImageGalle
     @Override
     protected void setItemBinding(ImageViewHolder viewHolder, ImageAttachment item) {
         viewHolder.binding.setImage(item);
-        RequestOptions options = new RequestOptions().override(50, 50).fitCenter();
+        RequestOptions options = new RequestOptions().override(imageSize).fitCenter();
         Glide.with(context)
                 .load(item.getFile())
                 .apply(options)

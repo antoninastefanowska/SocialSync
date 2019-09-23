@@ -36,6 +36,8 @@ public abstract class BaseAdapter<ItemType extends GUIItem, ViewHolderType exten
         this.context = context;
         items = new ArrayList<>();
         selectedItems = new ArrayList<>();
+
+
     }
 
     protected abstract int getItemLayout();
@@ -141,6 +143,13 @@ public abstract class BaseAdapter<ItemType extends GUIItem, ViewHolderType exten
 
     public int getItemPosition(ItemType item) {
         return items.indexOf(item);
+    }
+
+    public ItemType getSelectedItem() {
+        if (selectedItems.size() > 0)
+            return selectedItems.get(0);
+        else
+            return null;
     }
 
     public List<ItemType> getSelectedItems() {

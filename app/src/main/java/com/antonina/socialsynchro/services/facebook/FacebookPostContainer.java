@@ -3,6 +3,7 @@ package com.antonina.socialsynchro.services.facebook;
 import com.antonina.socialsynchro.content.ChildPostContainer;
 import com.antonina.socialsynchro.gui.listeners.OnAttachmentUploadedListener;
 import com.antonina.socialsynchro.gui.listeners.OnPublishedListener;
+import com.antonina.socialsynchro.gui.listeners.OnSynchronizedListener;
 import com.antonina.socialsynchro.gui.listeners.OnUnpublishedListener;
 import com.antonina.socialsynchro.services.IResponse;
 
@@ -42,6 +43,11 @@ public class FacebookPostContainer extends ChildPostContainer {
 
     @Override
     public void createFromResponse(IResponse response) {
+
+    }
+
+    @Override
+    public void synchronize(OnSynchronizedListener listener) {
 
     }
 }

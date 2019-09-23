@@ -7,6 +7,7 @@ import com.antonina.socialsynchro.database.repositories.AccountRepository;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 import com.antonina.socialsynchro.database.tables.AccountTable;
 import com.antonina.socialsynchro.gui.GUIItem;
+import com.antonina.socialsynchro.gui.listeners.OnSynchronizedListener;
 import com.antonina.socialsynchro.services.Service;
 import com.antonina.socialsynchro.services.IServiceEntity;
 
@@ -23,6 +24,7 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
     private String profilePictureURL; // TODO: Zrobić placeholder.
     private Service service;
     private Date connectingDate;
+    private Date synchronizationDate;
     private boolean loading;
 
     public Account(IDatabaseTable table) { createFromData(table); }
@@ -36,7 +38,7 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
         this.connectingDate = accountData.connectingDate;
         setName(accountData.name);
         setExternalID(accountData.externalID);
-        setProfilePictureURL(accountData.profilePictureUrl);
+        setProfilePictureURL(accountData.profilePictureURL);
         setLoading(false);
     }
 
@@ -67,9 +69,14 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
     }
 
     @Bindable
-    public Service getService() { return service; }
+    @Override
+    public Service getService() {
+        return service;
+    }
 
-    protected void setService(Service service) { this.service = service; }
+    protected void setService(Service service) {
+        this.service = service;
+    }
 
     @Bindable
     public Date getConnectingDate() {
@@ -127,5 +134,15 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
 
     public void setUpdated(boolean updated) {
         this.updated = updated;
+    }
+
+    @Override
+    public Date getSynchronizationDate() {
+        return synchronizationDate;
+    }
+
+    @Override
+    public void synchronize(OnSynchronizedListener listener) {
+        synchronizationDate = Calendar.getInstance().getTime();
     }
 }

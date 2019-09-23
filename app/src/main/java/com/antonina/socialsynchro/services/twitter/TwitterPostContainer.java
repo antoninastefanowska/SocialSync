@@ -8,10 +8,12 @@ import com.antonina.socialsynchro.content.ChildPostContainer;
 import com.antonina.socialsynchro.content.attachments.Attachment;
 import com.antonina.socialsynchro.gui.listeners.OnAttachmentUploadedListener;
 import com.antonina.socialsynchro.gui.listeners.OnPublishedListener;
+import com.antonina.socialsynchro.gui.listeners.OnSynchronizedListener;
 import com.antonina.socialsynchro.gui.listeners.OnUnpublishedListener;
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 import com.antonina.socialsynchro.services.IResponse;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterCreateContentRequest;
+import com.antonina.socialsynchro.services.twitter.requests.TwitterCreateContentWithMediaRequest;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterRemoveContentRequest;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterUploadAppendRequest;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterUploadFinalizeRequest;
@@ -101,6 +103,11 @@ public class TwitterPostContainer extends ChildPostContainer {
         //TODO
     }
 
+    @Override
+    public void synchronize(OnSynchronizedListener listener) {
+        //TODO
+    }
+
     private void publishJustContent() {
         TwitterClient client = TwitterClient.getInstance();
         TwitterCreateContentRequest request = TwitterCreateContentRequest.builder()
@@ -133,14 +140,14 @@ public class TwitterPostContainer extends ChildPostContainer {
             mediaIDs.add(attachment.getExternalID());
 
         TwitterClient client = TwitterClient.getInstance();
-        TwitterCreateContentRequest request = TwitterCreateContentRequest.builder()
+        TwitterCreateContentWithMediaRequest request = TwitterCreateContentWithMediaRequest.builder()
                 .accessToken(getAccount().getAccessToken())
                 .secretToken(getAccount().getSecretToken())
                 .status(getContent())
                 .mediaIDs(mediaIDs)
                 .build();
         final TwitterPostContainer instance = this;
-        final LiveData<TwitterContentResponse> asyncResponse = client.createContent(request);
+        final LiveData<TwitterContentResponse> asyncResponse = client.createContentWithMedia(request);
         asyncResponse.observeForever(new Observer<TwitterContentResponse>() {
             @Override
             public void onChanged(@Nullable TwitterContentResponse response) {

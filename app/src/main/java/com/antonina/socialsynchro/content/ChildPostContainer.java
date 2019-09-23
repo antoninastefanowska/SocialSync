@@ -17,6 +17,7 @@ import com.antonina.socialsynchro.gui.listeners.OnAttachmentUploadedListener;
 import com.antonina.socialsynchro.gui.listeners.OnPublishedListener;
 import com.antonina.socialsynchro.gui.listeners.OnUnpublishedListener;
 import com.antonina.socialsynchro.services.IServiceEntity;
+import com.antonina.socialsynchro.services.Service;
 
 import java.util.Date;
 import java.util.List;
@@ -176,6 +177,11 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     @Override
     public void setExternalID(String externalID) {
         this.externalID = externalID;
+    }
+
+    @Override
+    public Service getService() {
+        return account.getService();
     }
 
     public Date getSynchronizationDate() {
