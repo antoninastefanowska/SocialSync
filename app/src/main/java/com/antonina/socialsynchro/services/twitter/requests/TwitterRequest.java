@@ -31,7 +31,7 @@ public abstract class TwitterRequest implements IRequest {
         return authorizationHeader;
     }
 
-    protected static String percentEncode(String input) {
+    public static String percentEncode(String input) {
         String output = "";
 
         try {
