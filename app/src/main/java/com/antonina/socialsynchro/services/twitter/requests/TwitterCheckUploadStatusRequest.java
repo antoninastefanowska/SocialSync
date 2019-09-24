@@ -3,11 +3,13 @@ package com.antonina.socialsynchro.services.twitter.requests;
 import com.antonina.socialsynchro.services.twitter.requests.authorization.TwitterUserAuthorizationStrategy;
 
 public class TwitterCheckUploadStatusRequest extends TwitterRequest {
+    private final String command;
     private final String mediaID;
 
     private TwitterCheckUploadStatusRequest(String authorizationHeader, String mediaID) {
         super(authorizationHeader);
-        this.mediaID = mediaID;
+        this.command = percentEncode("STATUS");
+        this.mediaID = percentEncode(mediaID);
     }
 
     public static Builder builder() {
@@ -15,11 +17,11 @@ public class TwitterCheckUploadStatusRequest extends TwitterRequest {
     }
 
     public String getMediaID() {
-        return percentEncode(mediaID);
+        return mediaID;
     }
 
     public String getCommand() {
-        return percentEncode("STATUS");
+        return command;
     }
 
     public static class Builder extends TwitterRequest.Builder {
@@ -30,19 +32,19 @@ public class TwitterCheckUploadStatusRequest extends TwitterRequest {
 
         @Override
         public TwitterCheckUploadStatusRequest build() {
-            prepareAuthorization();
+            configureAuthorization();
             return new TwitterCheckUploadStatusRequest(authorization.buildAuthorizationHeader(), mediaID);
         }
 
         @Override
-        protected void prepareAuthorization() {
+        protected void configureAuthorization() {
             authorization = new TwitterUserAuthorizationStrategy()
                     .accessToken(accessToken)
                     .secretToken(secretToken)
                     .requestMethod("GET")
-                    .requestURL(REQUEST_URL);
-            authorization.addSignatureParameter("command", "STATUS");
-            authorization.addSignatureParameter("media_id", mediaID);
+                    .requestURL(REQUEST_URL)
+                    .addSignatureParameter("command", "STATUS")
+                    .addSignatureParameter("media_id", mediaID);
         }
 
         public Builder accessToken(String accessToken) {

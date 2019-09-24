@@ -2,7 +2,7 @@ package com.antonina.socialsynchro.services.twitter.responses;
 
 import com.google.gson.annotations.SerializedName;
 
-public class TwitterVerifyCredentialsResponse extends TwitterResponse {
+public class TwitterUserResponse extends TwitterResponse {
     @SerializedName("id_str")
     private String id;
 

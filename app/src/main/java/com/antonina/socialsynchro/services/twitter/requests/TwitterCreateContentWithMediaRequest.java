@@ -1,5 +1,7 @@
 package com.antonina.socialsynchro.services.twitter.requests;
 
+import com.antonina.socialsynchro.services.twitter.requests.authorization.TwitterUserAuthorizationStrategy;
+
 import java.util.List;
 
 public class TwitterCreateContentWithMediaRequest extends TwitterCreateContentRequest {
@@ -7,7 +9,7 @@ public class TwitterCreateContentWithMediaRequest extends TwitterCreateContentRe
 
     public TwitterCreateContentWithMediaRequest(String authorizationHeader, String status, String mediaIDs) {
         super(authorizationHeader, status);
-        this.mediaIDs = mediaIDs;
+        this.mediaIDs = percentEncode(mediaIDs);
     }
 
     public static Builder builder() {
@@ -23,14 +25,14 @@ public class TwitterCreateContentWithMediaRequest extends TwitterCreateContentRe
 
         @Override
         public TwitterCreateContentWithMediaRequest build() {
-            prepareAuthorization();
+            configureAuthorization();
             return new TwitterCreateContentWithMediaRequest(authorization.buildAuthorizationHeader(), status, mediaIDs);
         }
 
         @Override
-        protected void prepareAuthorization() {
-            super.prepareAuthorization();
-            authorization.addSignatureParameter("media_ids", mediaIDs);
+        protected void configureAuthorization() {
+            super.configureAuthorization();
+            ((TwitterUserAuthorizationStrategy)authorization).addSignatureParameter("media_ids", mediaIDs);
         }
 
         public Builder mediaIDs(List<String> mediaIDs) {

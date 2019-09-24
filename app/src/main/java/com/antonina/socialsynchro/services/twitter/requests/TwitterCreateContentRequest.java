@@ -2,18 +2,16 @@ package com.antonina.socialsynchro.services.twitter.requests;
 
 import com.antonina.socialsynchro.services.twitter.requests.authorization.TwitterUserAuthorizationStrategy;
 
-import java.util.List;
-
 public class TwitterCreateContentRequest extends TwitterRequest {
     private final String status;
 
     protected TwitterCreateContentRequest(String authorizationHeader, String status) {
         super(authorizationHeader);
-        this.status = status;
+        this.status = percentEncode(status);
     }
 
     public String getStatus() {
-        return percentEncode(status);
+        return status;
     }
 
     public static Builder builder() {
@@ -28,18 +26,18 @@ public class TwitterCreateContentRequest extends TwitterRequest {
 
         @Override
         public TwitterCreateContentRequest build() {
-            prepareAuthorization();
+            configureAuthorization();
             return new TwitterCreateContentRequest(authorization.buildAuthorizationHeader(), status);
         }
 
         @Override
-        protected void prepareAuthorization() {
+        protected void configureAuthorization() {
             authorization = new TwitterUserAuthorizationStrategy()
                     .accessToken(accessToken)
                     .secretToken(secretToken)
                     .requestMethod("POST")
-                    .requestURL(REQUEST_URL);
-            authorization.addSignatureParameter("status", status);
+                    .requestURL(REQUEST_URL)
+                    .addSignatureParameter("status", status);
         }
 
         public Builder status(String status) {

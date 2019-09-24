@@ -17,17 +17,17 @@ public class TwitterGetLoginTokenRequest extends TwitterRequest {
 
         @Override
         public TwitterGetLoginTokenRequest build() {
-            prepareAuthorization();
+            configureAuthorization();
             return new TwitterGetLoginTokenRequest(authorization.buildAuthorizationHeader());
         }
 
         @Override
-        protected void prepareAuthorization() {
+        protected void configureAuthorization() {
             authorization = new TwitterUserAuthorizationStrategy()
                     .secretToken("")
                     .requestMethod("POST")
-                    .requestURL(REQUEST_URL);
-            authorization.addAuthorizationParameter("oauth_callback", CALLBACK_URL);
+                    .requestURL(REQUEST_URL)
+                    .addAuthorizationParameter("oauth_callback", CALLBACK_URL);
         }
     }
 }

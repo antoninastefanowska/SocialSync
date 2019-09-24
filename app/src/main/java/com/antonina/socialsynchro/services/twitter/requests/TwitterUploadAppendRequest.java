@@ -5,14 +5,16 @@ import com.antonina.socialsynchro.services.twitter.requests.authorization.Twitte
 import okhttp3.RequestBody;
 
 public class TwitterUploadAppendRequest extends TwitterRequest {
+    private final String command;
     private final String mediaID;
     private final String segmentIndex;
     private final RequestBody media;
 
     private TwitterUploadAppendRequest(String authorizationHeader, String mediaID, String segmentIndex, RequestBody media) {
         super(authorizationHeader);
-        this.mediaID = mediaID;
-        this.segmentIndex = segmentIndex;
+        this.command = percentEncode("APPEND");
+        this.mediaID = percentEncode(mediaID);
+        this.segmentIndex = percentEncode(segmentIndex);
         this.media = media;
     }
 
@@ -21,11 +23,11 @@ public class TwitterUploadAppendRequest extends TwitterRequest {
     }
 
     public String getMediaID() {
-        return percentEncode(mediaID);
+        return mediaID;
     }
 
     public String getSegmentIndex() {
-        return percentEncode(segmentIndex);
+        return segmentIndex;
     }
 
     public RequestBody getMedia() {
@@ -33,7 +35,7 @@ public class TwitterUploadAppendRequest extends TwitterRequest {
     }
 
     public String getCommand() {
-        return percentEncode("APPEND");
+        return command;
     }
 
     public static class Builder extends TwitterRequest.Builder {
@@ -46,20 +48,20 @@ public class TwitterUploadAppendRequest extends TwitterRequest {
 
         @Override
         public TwitterUploadAppendRequest build() {
-            prepareAuthorization();
+            configureAuthorization();
             return new TwitterUploadAppendRequest(authorization.buildAuthorizationHeader(), mediaID, segmentIndex, media);
         }
 
         @Override
-        protected void prepareAuthorization() {
+        protected void configureAuthorization() {
             authorization = new TwitterUserAuthorizationStrategy()
                     .accessToken(accessToken)
                     .secretToken(secretToken)
                     .requestMethod("POST")
-                    .requestURL(REQUEST_URL);
-            authorization.addSignatureParameter("command", "APPEND");
-            authorization.addSignatureParameter("media_id", mediaID);
-            authorization.addSignatureParameter("segment_index", segmentIndex);
+                    .requestURL(REQUEST_URL)
+                    .addSignatureParameter("command", "APPEND")
+                    .addSignatureParameter("media_id", mediaID)
+                    .addSignatureParameter("segment_index", segmentIndex);
         }
 
         public Builder accessToken(String accessToken) {

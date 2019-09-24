@@ -81,6 +81,7 @@ public class EditActivity extends AppCompatActivity {
         binding.setAttachmentAdapter(parentAttachmentAdapter);
         binding.executePendingBindings();
 
+        /*
         EditText parentContent = findViewById(R.id.edittext_parent_content);
         parentContent.addTextChangedListener(new TextWatcher() {
             @Override
@@ -93,7 +94,7 @@ public class EditActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 childAdapter.notifyDataSetChanged();
             }
-        });
+        }); */
     }
 
     @Override
@@ -154,8 +155,8 @@ public class EditActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onProgress(Attachment attachment, int percentProgress) {
-                Toast toast = Toast.makeText(context, "Attachment upload progress: " + percentProgress + "%", Toast.LENGTH_LONG);
+            public void onProgress(Attachment attachment) {
+                Toast toast = Toast.makeText(context, "Attachment upload progress: " + attachment.getUploadProgress() + "%", Toast.LENGTH_LONG);
                 toast.show();
             }
 
@@ -221,10 +222,10 @@ public class EditActivity extends AppCompatActivity {
                         else {
                             // TODO
                         }
-                    }
+                    } /*
                     if (activePostContainer == parent)
-                        childAdapter.notifyDataSetChanged();
-                    else {
+                        childAdapter.notifyDataSetChanged(); */
+                    if (activePostContainer != parent) {
                         ChildPostContainer activeChild = (ChildPostContainer)activePostContainer;
                         childAdapter.updateItemView(activeChild);
                     }

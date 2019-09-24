@@ -9,11 +9,16 @@ import com.antonina.socialsynchro.database.repositories.TwitterAccountInfoReposi
 import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 import com.antonina.socialsynchro.database.tables.TwitterAccountInfoTable;
 import com.antonina.socialsynchro.gui.listeners.OnSynchronizedListener;
+import com.antonina.socialsynchro.services.ApplicationConfig;
 import com.antonina.socialsynchro.services.IResponse;
 import com.antonina.socialsynchro.services.ServiceID;
 import com.antonina.socialsynchro.services.Services;
+import com.antonina.socialsynchro.services.twitter.requests.TwitterGetUserRequest;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterVerifyCredentialsRequest;
-import com.antonina.socialsynchro.services.twitter.responses.TwitterVerifyCredentialsResponse;
+import com.antonina.socialsynchro.services.twitter.requests.authorization.TwitterApplicationAuthorizationStrategy;
+import com.antonina.socialsynchro.services.twitter.responses.TwitterUserResponse;
+
+import java.util.Calendar;
 
 public class TwitterAccount extends Account {
     private String accessToken;
@@ -83,7 +88,8 @@ public class TwitterAccount extends Account {
 
     @Override
     public void createFromResponse(IResponse response) {
-        TwitterVerifyCredentialsResponse twitterResponse = (TwitterVerifyCredentialsResponse)response;
+        TwitterUserResponse twitterResponse = (TwitterUserResponse)response;
+        setSynchronizationDate(Calendar.getInstance().getTime());
         setExternalID(twitterResponse.getID());
         setName(twitterResponse.getName());
         setProfilePictureURL(twitterResponse.getProfilePictureURL());
@@ -92,29 +98,37 @@ public class TwitterAccount extends Account {
     @Override
     public void synchronize(final OnSynchronizedListener listener) {
         setLoading(true);
-        notifyListener();
-        super.synchronize(listener);
-        TwitterClient client = TwitterClient.getInstance();
-        TwitterVerifyCredentialsRequest request = TwitterVerifyCredentialsRequest.builder()
-                .accessToken(getAccessToken())
-                .secretToken(getSecretToken())
-                .build();
+        TwitterConfig twitterConfig = ApplicationConfig.getInstance().getTwitterConfig();
+
+        final LiveData<TwitterUserResponse> asyncResponse;
+        if (twitterConfig.isApplicationAuthorizationEnabled() && getExternalID() != null) {
+            TwitterApplicationAuthorizationStrategy authorization = new TwitterApplicationAuthorizationStrategy();
+            TwitterGetUserRequest request = TwitterGetUserRequest.builder()
+                    .userID(getExternalID())
+                    .authorizationStrategy(authorization)
+                    .build();
+            asyncResponse = TwitterClient.getUser(request);
+        } else {
+            TwitterVerifyCredentialsRequest request = TwitterVerifyCredentialsRequest.builder()
+                    .accessToken(getAccessToken())
+                    .secretToken(getSecretToken())
+                    .build();
+            asyncResponse = TwitterClient.verifyCredentials(request);
+        }
+
         final TwitterAccount instance = this;
-        final LiveData<TwitterVerifyCredentialsResponse> asyncResponse = client.verifyCredentials(request);
-        asyncResponse.observeForever(new Observer<TwitterVerifyCredentialsResponse>() {
+        asyncResponse.observeForever(new Observer<TwitterUserResponse>() {
             @Override
-            public void onChanged(@Nullable TwitterVerifyCredentialsResponse response) {
+            public void onChanged(@Nullable TwitterUserResponse response) {
                 if (response != null) {
                     if (response.getErrorString() == null) {
                         createFromResponse(response);
                         setLoading(false);
-                        notifyListener();
                         if (getInternalID() != null)
                             updateInDatabase();
                         listener.onSynchronized(instance);
                     } else {
                         setLoading(false);
-                        notifyListener();
                         listener.onError(instance, response.getErrorString());
                     }
                     asyncResponse.removeObserver(this);

@@ -25,7 +25,6 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
     private Service service;
     private Date connectingDate;
     private Date synchronizationDate;
-    private boolean loading;
 
     public Account(IDatabaseTable table) { createFromData(table); }
 
@@ -118,16 +117,6 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
         internalID = null;
     }
 
-    @Override
-    public boolean isLoading() {
-        return loading;
-    }
-
-    @Override
-    public void setLoading(boolean loading) {
-        this.loading = loading;
-    }
-
     public boolean hasBeenUpdated() {
         return updated;
     }
@@ -141,8 +130,7 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
         return synchronizationDate;
     }
 
-    @Override
-    public void synchronize(OnSynchronizedListener listener) {
-        synchronizationDate = Calendar.getInstance().getTime();
+    protected void setSynchronizationDate(Date synchronizationDate) {
+        this.synchronizationDate = synchronizationDate;
     }
 }

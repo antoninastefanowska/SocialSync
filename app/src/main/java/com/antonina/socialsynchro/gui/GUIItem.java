@@ -1,12 +1,14 @@
 package com.antonina.socialsynchro.gui;
 
 import android.databinding.BaseObservable;
+import android.databinding.Bindable;
 
 import com.antonina.socialsynchro.gui.listeners.OnUpdatedListener;
 
 import java.io.Serializable;
 
 public abstract class GUIItem extends BaseObservable implements Serializable {
+    private transient boolean loading = false;
     private transient boolean selected = false;
     private transient OnUpdatedListener listener;
 
@@ -24,8 +26,18 @@ public abstract class GUIItem extends BaseObservable implements Serializable {
         return listener;
     }
 
-    protected void notifyListener() {
+    public void notifyListener() {
         if (listener != null)
-            listener.onUpdated();
+            listener.onUpdated(this);
+    }
+
+    public void setLoading(boolean loading) {
+        this.loading = loading;
+        notifyListener();
+    }
+
+    @Bindable
+    public boolean isLoading() {
+        return loading;
     }
 }

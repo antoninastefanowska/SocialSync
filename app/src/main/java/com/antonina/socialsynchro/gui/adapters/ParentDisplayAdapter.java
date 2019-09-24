@@ -76,9 +76,11 @@ public class ParentDisplayAdapter extends BaseAdapter<ParentPostContainer, Paren
         parentLiveData.observe(context, new Observer<List<ParentPostContainer>>() {
             @Override
             public void onChanged(@Nullable List<ParentPostContainer> data) {
-                items = data;
-                notifyDataSetChanged();
-                parentLiveData.removeObserver(this);
+                if (data != null) {
+                    items = data;
+                    notifyDataSetChanged();
+                    parentLiveData.removeObserver(this);
+                }
             }
         });
     }

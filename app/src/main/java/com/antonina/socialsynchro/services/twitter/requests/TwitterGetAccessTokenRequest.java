@@ -7,11 +7,11 @@ public class TwitterGetAccessTokenRequest extends TwitterRequest {
 
     private TwitterGetAccessTokenRequest(String authorizationHeader, String verifier) {
         super(authorizationHeader);
-        this.verifier = verifier;
+        this.verifier = percentEncode(verifier);
     }
 
     public String getVerifier() {
-        return percentEncode(verifier);
+        return verifier;
     }
 
     public static Builder builder() {
@@ -26,18 +26,18 @@ public class TwitterGetAccessTokenRequest extends TwitterRequest {
 
         @Override
         public TwitterGetAccessTokenRequest build() {
-            prepareAuthorization();
+            configureAuthorization();
             return new TwitterGetAccessTokenRequest(authorization.buildAuthorizationHeader(), verifier);
         }
 
         @Override
-        protected void prepareAuthorization() {
+        protected void configureAuthorization() {
             authorization = new TwitterUserAuthorizationStrategy()
                     .accessToken(loginToken)
                     .secretToken(secretLoginToken)
                     .requestMethod("POST")
-                    .requestURL(REQUEST_URL);
-            authorization.addAuthorizationParameter("oauth_verifier", verifier);
+                    .requestURL(REQUEST_URL)
+                    .addAuthorizationParameter("oauth_verifier", verifier);
         }
 
         public Builder loginToken(String loginToken) {

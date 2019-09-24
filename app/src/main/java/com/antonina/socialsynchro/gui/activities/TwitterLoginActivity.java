@@ -21,10 +21,8 @@ import com.antonina.socialsynchro.services.twitter.TwitterAccount;
 import com.antonina.socialsynchro.services.twitter.TwitterClient;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterGetAccessTokenRequest;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterGetLoginTokenRequest;
-import com.antonina.socialsynchro.services.twitter.requests.TwitterVerifyCredentialsRequest;
 import com.antonina.socialsynchro.services.twitter.responses.TwitterGetAccessTokenResponse;
 import com.antonina.socialsynchro.services.twitter.responses.TwitterGetLoginTokenResponse;
-import com.antonina.socialsynchro.services.twitter.responses.TwitterVerifyCredentialsResponse;
 
 public class TwitterLoginActivity extends AppCompatActivity {
     private String loginToken;
@@ -61,10 +59,9 @@ public class TwitterLoginActivity extends AppCompatActivity {
     }
 
     private void getLoginToken() {
-        TwitterClient client = TwitterClient.getInstance();
         TwitterGetLoginTokenRequest request = TwitterGetLoginTokenRequest.builder().build();
         final Context context = this;
-        final LiveData<TwitterGetLoginTokenResponse> asyncResponse = client.getLoginToken(request);
+        final LiveData<TwitterGetLoginTokenResponse> asyncResponse = TwitterClient.getLoginToken(request);
         asyncResponse.observe(this, new Observer<TwitterGetLoginTokenResponse>() {
             @Override
             public void onChanged(@Nullable TwitterGetLoginTokenResponse response) {
@@ -112,14 +109,13 @@ public class TwitterLoginActivity extends AppCompatActivity {
     }
 
     private void getAccessToken() {
-        TwitterClient client = TwitterClient.getInstance();
         TwitterGetAccessTokenRequest request = TwitterGetAccessTokenRequest.builder()
                 .loginToken(loginToken)
                 .secretLoginToken(secretLoginToken)
                 .verifier(verifier)
                 .build();
         final Context context = this;
-        final LiveData<TwitterGetAccessTokenResponse> asyncResponse = client.getAccessToken(request);
+        final LiveData<TwitterGetAccessTokenResponse> asyncResponse = TwitterClient.getAccessToken(request);
         asyncResponse.observe(this, new Observer<TwitterGetAccessTokenResponse>() {
             @Override
             public void onChanged(@Nullable TwitterGetAccessTokenResponse response) {

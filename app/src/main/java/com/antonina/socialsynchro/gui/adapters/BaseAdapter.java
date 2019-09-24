@@ -20,6 +20,7 @@ public abstract class BaseAdapter<ItemType extends GUIItem, ViewHolderType exten
     private List<ItemType> selectedItems;
     protected List<ItemType> items;
     protected final AppCompatActivity context;
+    private final OnUpdatedListener listener;
 
     public abstract static class BaseViewHolder<ItemBindingType extends ViewDataBinding> extends RecyclerView.ViewHolder {
         public final ItemBindingType binding;
@@ -36,8 +37,12 @@ public abstract class BaseAdapter<ItemType extends GUIItem, ViewHolderType exten
         this.context = context;
         items = new ArrayList<>();
         selectedItems = new ArrayList<>();
-
-
+        listener =  new OnUpdatedListener() {
+            @Override
+            public void onUpdated(GUIItem item) {
+                updateItemView((ItemType)item);
+            }
+        };
     }
 
     protected abstract int getItemLayout();
@@ -61,13 +66,7 @@ public abstract class BaseAdapter<ItemType extends GUIItem, ViewHolderType exten
     @Override
     public void onBindViewHolder(@NonNull ViewHolderType viewHolder, int position) {
         ItemType item = getItem(position);
-        final int index = position;
-        item.setListener(new OnUpdatedListener() {
-            @Override
-            public void onUpdated() {
-                notifyItemChanged(index);
-            }
-        });
+        item.setListener(listener);
         setItemBinding(viewHolder, item);
         viewHolder.binding.executePendingBindings();
     }

@@ -24,12 +24,12 @@ public class TwitterRemoveContentRequest extends TwitterRequest {
 
         @Override
         public TwitterRemoveContentRequest build() {
-            prepareAuthorization();
+            configureAuthorization();
             return new TwitterRemoveContentRequest(authorization.buildAuthorizationHeader(), id);
         }
 
         @Override
-        protected void prepareAuthorization() {
+        protected void configureAuthorization() {
             authorization = new TwitterUserAuthorizationStrategy()
                     .accessToken(accessToken)
                     .secretToken(secretToken)

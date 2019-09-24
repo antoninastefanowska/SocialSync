@@ -3,13 +3,15 @@ package com.antonina.socialsynchro.services.twitter.requests;
 import com.antonina.socialsynchro.services.twitter.requests.authorization.TwitterUserAuthorizationStrategy;
 
 public class TwitterUploadInitRequest extends TwitterRequest {
+    private final String command;
     private final String totalBytes;
     private final String mediaType;
 
     private TwitterUploadInitRequest(String authorizationHeader, String totalBytes, String mediaType) {
         super(authorizationHeader);
-        this.totalBytes = totalBytes;
-        this.mediaType = mediaType;
+        this.command = percentEncode("INIT");
+        this.totalBytes = percentEncode(totalBytes);
+        this.mediaType = percentEncode(mediaType);
     }
 
     public static Builder builder() {
@@ -17,15 +19,15 @@ public class TwitterUploadInitRequest extends TwitterRequest {
     }
 
     public String getTotalBytes() {
-        return percentEncode(totalBytes);
+        return totalBytes;
     }
 
     public String getMediaType() {
-        return percentEncode(mediaType);
+        return mediaType;
     }
 
     public String getCommand() {
-        return percentEncode("INIT");
+        return command;
     }
 
     public static class Builder extends TwitterRequest.Builder {
@@ -37,20 +39,20 @@ public class TwitterUploadInitRequest extends TwitterRequest {
 
         @Override
         public TwitterUploadInitRequest build() {
-            prepareAuthorization();
+            configureAuthorization();
             return new TwitterUploadInitRequest(authorization.buildAuthorizationHeader(), totalBytes, mediaType);
         }
 
         @Override
-        protected void prepareAuthorization() {
+        protected void configureAuthorization() {
             authorization = new TwitterUserAuthorizationStrategy()
                     .accessToken(accessToken)
                     .secretToken(secretToken)
                     .requestMethod("POST")
-                    .requestURL(REQUEST_URL);
-            authorization.addSignatureParameter("command", "INIT");
-            authorization.addSignatureParameter("total_bytes", totalBytes);
-            authorization.addSignatureParameter("media_type", mediaType);
+                    .requestURL(REQUEST_URL)
+                    .addSignatureParameter("command", "INIT")
+                    .addSignatureParameter("total_bytes", totalBytes)
+                    .addSignatureParameter("media_type", mediaType);
         }
 
         public Builder accessToken(String accessToken) {

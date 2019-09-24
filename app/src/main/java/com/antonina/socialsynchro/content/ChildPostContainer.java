@@ -5,7 +5,6 @@ import android.arch.lifecycle.Observer;
 import android.databinding.Bindable;
 import android.support.annotation.Nullable;
 
-import com.antonina.socialsynchro.BR;
 import com.antonina.socialsynchro.base.Account;
 import com.antonina.socialsynchro.content.attachments.Attachment;
 import com.antonina.socialsynchro.database.repositories.AccountRepository;
@@ -27,7 +26,6 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     private boolean locked;
     private Date synchronizationDate;
     private Account account;
-    private boolean loading;
 
     protected ParentPostContainer parent;
 
@@ -57,7 +55,6 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     public void setTitle(String title) {
         if (!locked)
             post.setTitle(title);
-        notifyPropertyChanged(BR.child);
     }
 
     @Bindable
@@ -74,7 +71,6 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     public void setContent(String content) {
         if (!locked)
             post.setContent(content);
-        notifyPropertyChanged(BR.child);
     }
 
     @Bindable
@@ -188,7 +184,7 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
         return synchronizationDate;
     }
 
-    private void setSynchronizationDate(Date synchronizationDate) {
+    protected void setSynchronizationDate(Date synchronizationDate) {
         this.synchronizationDate = synchronizationDate;
     }
 
@@ -266,16 +262,6 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
         if (!locked)
             post.deleteFromDatabase();
         internalID = null;
-    }
-
-    @Override
-    public boolean isLoading() {
-        return loading;
-    }
-
-    @Override
-    public void setLoading(boolean loading) {
-        this.loading = loading;
     }
 
     @Override

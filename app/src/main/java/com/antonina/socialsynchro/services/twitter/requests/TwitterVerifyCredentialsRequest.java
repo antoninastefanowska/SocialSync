@@ -18,12 +18,12 @@ public class TwitterVerifyCredentialsRequest extends TwitterRequest {
 
         @Override
         public TwitterVerifyCredentialsRequest build() {
-            prepareAuthorization();
+            configureAuthorization();
             return new TwitterVerifyCredentialsRequest(authorization.buildAuthorizationHeader());
         }
 
         @Override
-        protected void prepareAuthorization() {
+        protected void configureAuthorization() {
             authorization = new TwitterUserAuthorizationStrategy()
                     .accessToken(accessToken)
                     .secretToken(secretToken)

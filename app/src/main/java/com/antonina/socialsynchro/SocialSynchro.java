@@ -9,12 +9,15 @@ import com.antonina.socialsynchro.database.repositories.ChildPostContainerReposi
 import com.antonina.socialsynchro.database.repositories.ParentPostContainerRepository;
 import com.antonina.socialsynchro.database.repositories.PostRepository;
 import com.antonina.socialsynchro.database.repositories.TwitterAccountInfoRepository;
+import com.antonina.socialsynchro.services.ApplicationConfig;
 
 public class SocialSynchro extends Application {
     private static Application instance;
 
     public void onCreate() {
         super.onCreate();
+
+        ApplicationConfig.createInstance(this);
 
         AccountRepository.createInstance(this);
         PostRepository.createInstance(this);

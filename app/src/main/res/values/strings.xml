@@ -16,6 +16,9 @@
     <string name="message_account_synchronization">Account synchronization successful.</string>
     <string name="error_account_synchronization">Account synchronization failed. Error: %s</string>
 
+    <string name="message_content_synchronization">Content synchronization successful.</string>
+    <string name="error_content_synchronization">Content synchronization failed. Error: %s</string>
+
     <string name="add_account">Add account</string>
     <string name="remove_account">Remove account</string>
     <string name="synchronize_account">Synchronize account</string>

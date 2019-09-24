@@ -1,11 +1,12 @@
 package com.antonina.socialsynchro.services.twitter;
 
 import com.antonina.socialsynchro.services.twitter.responses.TwitterContentResponse;
+import com.antonina.socialsynchro.services.twitter.responses.TwitterGetBearerTokenResponse;
 import com.antonina.socialsynchro.services.twitter.responses.TwitterUploadAppendResponse;
 import com.antonina.socialsynchro.services.twitter.responses.TwitterUploadFinalizeResponse;
 import com.antonina.socialsynchro.services.twitter.responses.TwitterUploadInitResponse;
 import com.antonina.socialsynchro.services.twitter.responses.TwitterCheckUploadStatusResponse;
-import com.antonina.socialsynchro.services.twitter.responses.TwitterVerifyCredentialsResponse;
+import com.antonina.socialsynchro.services.twitter.responses.TwitterUserResponse;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -28,8 +29,15 @@ public interface TwitterAPI {
     @POST("/oauth/access_token")
     Call<ResponseBody> getAccessToken(@Field(value = "oauth_verifier", encoded = true) String verifier, @Header("Authorization") String authorization);
 
+    @FormUrlEncoded
+    @POST("/oauth2/token")
+    Call<TwitterGetBearerTokenResponse> getBearerToken(@Field(value = "grant_type", encoded = true) String grantType, @Header("Authorization") String authorization);
+
     @GET("/1.1/account/verify_credentials.json")
-    Call<TwitterVerifyCredentialsResponse> verifyCredentials(@Header("Authorization") String authorization);
+    Call<TwitterUserResponse> verifyCredentials(@Header("Authorization") String authorization);
+
+    @GET("/1.1/users/show.json")
+    Call<TwitterUserResponse> getUser(@Query(value = "user_id", encoded = true) String userID, @Header("Authorization") String authorization);
 
     @FormUrlEncoded
     @POST("/1.1/statuses/update.json")
@@ -41,6 +49,9 @@ public interface TwitterAPI {
 
     @POST("/1.1/statuses/destroy/{id}.json")
     Call<TwitterContentResponse> removeContent(@Path("id") String id, @Header("Authorization") String authorization);
+
+    @GET("/1.1/statuses/show.json")
+    Call<TwitterContentResponse> getContent(@Query(value = "id", encoded = true) String id, @Header("Authorization") String authorization);
 
     @FormUrlEncoded
     @POST("/1.1/media/upload.json")

@@ -20,6 +20,8 @@ import com.antonina.socialsynchro.gui.listeners.OnSynchronizedListener;
 import com.antonina.socialsynchro.services.IServiceEntity;
 import com.antonina.socialsynchro.services.Service;
 
+import java.util.List;
+
 public class AccountsActivity extends AppCompatActivity {
     private final static int ADD_ACCOUNT = 0;
 
@@ -88,21 +90,23 @@ public class AccountsActivity extends AppCompatActivity {
     }
 
     public void buttonSynchronizeAccount_onClick(View view) {
-        Account selectedAccount = adapter.getSelectedItem();
+        List<Account> selectedAccounts = adapter.getSelectedItems();
         final Context context = this;
-        if (selectedAccount != null)
-            selectedAccount.synchronize(new OnSynchronizedListener() {
-                @Override
-                public void onSynchronized(IServiceEntity entity) {
-                    Toast toast = Toast.makeText(context, getResources().getString(R.string.message_account_synchronization), Toast.LENGTH_LONG);
-                    toast.show();
-                }
+        OnSynchronizedListener listener = new OnSynchronizedListener() {
+            @Override
+            public void onSynchronized(IServiceEntity entity) {
+                Toast toast = Toast.makeText(context, getResources().getString(R.string.message_account_synchronization), Toast.LENGTH_LONG);
+                toast.show();
+            }
 
-                @Override
-                public void onError(IServiceEntity entity, String error) {
-                    Toast toast = Toast.makeText(context, getResources().getString(R.string.error_account_synchronization, error), Toast.LENGTH_LONG);
-                    toast.show();
-                }
-            });
+            @Override
+            public void onError(IServiceEntity entity, String error) {
+                Toast toast = Toast.makeText(context, getResources().getString(R.string.error_account_synchronization, error), Toast.LENGTH_LONG);
+                toast.show();
+            }
+        };
+        for (Account account : selectedAccounts) {
+            account.synchronize(listener);
+        }
     }
 }

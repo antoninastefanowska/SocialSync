@@ -2,8 +2,6 @@ package com.antonina.socialsynchro.services.twitter.requests.authorization;
 
 import android.util.Base64;
 
-import com.antonina.socialsynchro.services.APIKey;
-
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
@@ -17,6 +15,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import static com.antonina.socialsynchro.services.twitter.requests.TwitterRequest.percentEncode;
 
+@SuppressWarnings("StringBufferReplaceableByString")
 public class TwitterUserAuthorizationStrategy extends TwitterAuthorizationStrategy {
     private final static String UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     private final static String LOWER = UPPER.toLowerCase();
@@ -31,11 +30,13 @@ public class TwitterUserAuthorizationStrategy extends TwitterAuthorizationStrate
     private String requestMethod;
 
     public TwitterUserAuthorizationStrategy() {
+        super();
         authorizationParameters = new TreeMap<>();
         signatureParameters = new TreeMap<>();
     }
 
     public TwitterUserAuthorizationStrategy(String accessToken, String secretToken) {
+        super();
         authorizationParameters = new TreeMap<>();
         signatureParameters = new TreeMap<>();
 
@@ -43,43 +44,44 @@ public class TwitterUserAuthorizationStrategy extends TwitterAuthorizationStrate
         this.secretToken = secretToken;
     }
 
-    @Override
-    public TwitterAuthorizationStrategy accessToken(String accessToken) {
+    public TwitterUserAuthorizationStrategy accessToken(String accessToken) {
         addAuthorizationParameter("oauth_token", accessToken);
         return this;
     }
 
-    @Override
-    public TwitterAuthorizationStrategy secretToken(String secretToken) {
+    public TwitterUserAuthorizationStrategy secretToken(String secretToken) {
         this.secretToken = secretToken;
         return this;
     }
 
-    @Override
     public TwitterUserAuthorizationStrategy requestURL(String requestURL) {
         this.requestURL = requestURL;
         return this;
     }
 
-    @Override
     public TwitterUserAuthorizationStrategy requestMethod(String requestMethod) {
         this.requestMethod = requestMethod;
         return this;
     }
 
-    @Override
-    public void addAuthorizationParameter(String name, String value) {
+    public TwitterUserAuthorizationStrategy addAuthorizationParameter(String name, String value) {
         String encodedName = percentEncode(name);
         String encodedValue = percentEncode(value);
         authorizationParameters.put(encodedName, encodedValue);
         signatureParameters.put(encodedName, encodedValue);
+        return this;
     }
 
-    @Override
-    public void addSignatureParameter(String name, String value) {
+    public TwitterUserAuthorizationStrategy addSignatureParameter(String name, String value) {
         String encodedName = percentEncode(name);
         String encodedValue = percentEncode(value);
         signatureParameters.put(encodedName, encodedValue);
+        return this;
+    }
+
+    @Override
+    public boolean isUserAuthorization() {
+        return true;
     }
 
     @Override
@@ -102,7 +104,7 @@ public class TwitterUserAuthorizationStrategy extends TwitterAuthorizationStrate
     }
 
     private void collectRemainingParameters() {
-        addAuthorizationParameter("oauth_consumer_key", APIKey.getKey("twitter_key"));
+        addAuthorizationParameter("oauth_consumer_key", config.getKey("twitter_key"));
         addAuthorizationParameter("oauth_nonce", generateNonce());
         addAuthorizationParameter("oauth_signature_method", "HMAC-SHA1");
         addAuthorizationParameter("oauth_timestamp", Long.toString(Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000));
@@ -114,8 +116,7 @@ public class TwitterUserAuthorizationStrategy extends TwitterAuthorizationStrate
         int length = 42;
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
-        for (int i = 0; i < length; i++)
-        {
+        for (int i = 0; i < length; i++) {
             int index = random.nextInt(ALPHANUM.length());
             sb.append(ALPHANUM.charAt(index));
         }
@@ -171,7 +172,7 @@ public class TwitterUserAuthorizationStrategy extends TwitterAuthorizationStrate
     private String buildSigningKey() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(percentEncode(APIKey.getKey("twitter_secretkey")));
+        sb.append(percentEncode(config.getKey("twitter_secretkey")));
         sb.append("&");
         sb.append(percentEncode(secretToken));
 

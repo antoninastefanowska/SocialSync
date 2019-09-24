@@ -1,24 +1,10 @@
 package com.antonina.socialsynchro.services.twitter.requests;
 
-import android.util.Base64;
-
 import com.antonina.socialsynchro.services.IRequest;
-import com.antonina.socialsynchro.services.APIKey;
 import com.antonina.socialsynchro.services.twitter.requests.authorization.TwitterAuthorizationStrategy;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Calendar;
-import java.util.Comparator;
-import java.util.Map;
-import java.util.Random;
-import java.util.TimeZone;
-import java.util.TreeMap;
-
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
 
 @SuppressWarnings({"WeakerAccess", "StringBufferReplaceableByString"})
 public abstract class TwitterRequest implements IRequest {
@@ -51,6 +37,6 @@ public abstract class TwitterRequest implements IRequest {
 
         public abstract TwitterRequest build();
 
-        protected abstract void prepareAuthorization();
+        protected abstract void configureAuthorization();
     }
 }

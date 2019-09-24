@@ -29,7 +29,8 @@ public abstract class Attachment extends GUIItem implements IDatabaseEntity, ISe
     private File file;
     private AttachmentType attachmentType;
     private Post parentPost;
-    private boolean loading;
+
+    private int uploadProgress;
 
     public Attachment() { }
 
@@ -104,16 +105,6 @@ public abstract class Attachment extends GUIItem implements IDatabaseEntity, ISe
         internalID = null;
     }
 
-    @Override
-    public boolean isLoading() {
-        return loading;
-    }
-
-    @Override
-    public void setLoading(boolean loading) {
-        this.loading = loading;
-    }
-
     public String getFileExtension() {
         String filename = file.getName();
         int index = filename.lastIndexOf(".");
@@ -154,4 +145,13 @@ public abstract class Attachment extends GUIItem implements IDatabaseEntity, ISe
 
     @Override
     public Date getSynchronizationDate() { return null; }
+
+    @Bindable
+    public int getUploadProgress() {
+        return uploadProgress;
+    }
+
+    public void setUploadProgress(int uploadProgress) {
+        this.uploadProgress = uploadProgress;
+    }
 }

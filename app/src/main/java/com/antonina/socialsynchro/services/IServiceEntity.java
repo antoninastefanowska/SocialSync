@@ -9,8 +9,6 @@ public interface IServiceEntity {
     void setExternalID(String externalServiceIdentifier);
     String getExternalID();
     Service getService();
-    boolean isLoading();
-    void setLoading(boolean loading);
     void synchronize(OnSynchronizedListener listener);
     Date getSynchronizationDate();
 }

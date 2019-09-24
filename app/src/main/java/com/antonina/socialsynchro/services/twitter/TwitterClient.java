@@ -8,7 +8,10 @@ import com.antonina.socialsynchro.services.IRawResponse;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterCreateContentRequest;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterCreateContentWithMediaRequest;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterGetAccessTokenRequest;
+import com.antonina.socialsynchro.services.twitter.requests.TwitterGetBearerTokenRequest;
+import com.antonina.socialsynchro.services.twitter.requests.TwitterGetContentRequest;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterGetLoginTokenRequest;
+import com.antonina.socialsynchro.services.twitter.requests.TwitterGetUserRequest;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterRemoveContentRequest;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterRequest;
 import com.antonina.socialsynchro.services.twitter.requests.TwitterUploadAppendRequest;
@@ -18,13 +21,14 @@ import com.antonina.socialsynchro.services.twitter.requests.TwitterCheckUploadSt
 import com.antonina.socialsynchro.services.twitter.requests.TwitterVerifyCredentialsRequest;
 import com.antonina.socialsynchro.services.twitter.responses.TwitterContentResponse;
 import com.antonina.socialsynchro.services.twitter.responses.TwitterGetAccessTokenResponse;
+import com.antonina.socialsynchro.services.twitter.responses.TwitterGetBearerTokenResponse;
 import com.antonina.socialsynchro.services.twitter.responses.TwitterGetLoginTokenResponse;
 import com.antonina.socialsynchro.services.twitter.responses.TwitterResponse;
 import com.antonina.socialsynchro.services.twitter.responses.TwitterUploadAppendResponse;
 import com.antonina.socialsynchro.services.twitter.responses.TwitterUploadFinalizeResponse;
 import com.antonina.socialsynchro.services.twitter.responses.TwitterUploadInitResponse;
 import com.antonina.socialsynchro.services.twitter.responses.TwitterCheckUploadStatusResponse;
-import com.antonina.socialsynchro.services.twitter.responses.TwitterVerifyCredentialsResponse;
+import com.antonina.socialsynchro.services.twitter.responses.TwitterUserResponse;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -42,13 +46,6 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class TwitterClient implements IClient {
     private static final String BASE_URL = "https://api.twitter.com/";
     private static final String BASE_UPLOAD_URL = "https://upload.twitter.com/";
-    private static TwitterClient instance;
-
-    public static TwitterClient getInstance() {
-        if (instance == null)
-            instance = new TwitterClient();
-        return instance;
-    }
 
     private TwitterClient() { }
 
@@ -56,52 +53,67 @@ public class TwitterClient implements IClient {
         return "https://api.twitter.com/oauth/authorize?oauth_token=" + loginToken + "&force_login=true";
     }
 
-    public LiveData<TwitterGetLoginTokenResponse> getLoginToken(TwitterGetLoginTokenRequest request) {
+    public static LiveData<TwitterGetLoginTokenResponse> getLoginToken(TwitterGetLoginTokenRequest request) {
         GetLoginTokenController controller = new GetLoginTokenController(request);
         return controller.start();
     }
 
-    public LiveData<TwitterGetAccessTokenResponse> getAccessToken(TwitterGetAccessTokenRequest request) {
+    public static LiveData<TwitterGetAccessTokenResponse> getAccessToken(TwitterGetAccessTokenRequest request) {
         GetAccessTokenController controller = new GetAccessTokenController(request);
         return controller.start();
     }
 
-    public LiveData<TwitterContentResponse> createContent(TwitterCreateContentRequest request) {
-        CreateContentController controller = new CreateContentController(request);
+    public static LiveData<TwitterGetBearerTokenResponse> getBearerToken(TwitterGetBearerTokenRequest request) {
+        GetBearerTokenController controller = new GetBearerTokenController(request);
         return controller.start();
     }
 
-    public LiveData<TwitterContentResponse> createContentWithMedia(TwitterCreateContentWithMediaRequest request) {
-        CreateContentWithMediaController controller = new CreateContentWithMediaController(request);
-        return controller.start();
-    }
-
-    public LiveData<TwitterContentResponse> removeContent(TwitterRemoveContentRequest request) {
-        RemoveContentController controller = new RemoveContentController(request);
-        return controller.start();
-    }
-
-    public LiveData<TwitterVerifyCredentialsResponse> verifyCredentials(TwitterVerifyCredentialsRequest request) {
+    public static LiveData<TwitterUserResponse> verifyCredentials(TwitterVerifyCredentialsRequest request) {
         VerifyCredentialsController controller = new VerifyCredentialsController(request);
         return controller.start();
     }
 
-    public LiveData<TwitterUploadInitResponse> uploadInit(TwitterUploadInitRequest request) {
+    public static LiveData<TwitterUserResponse> getUser(TwitterGetUserRequest request) {
+        GetUserController controller = new GetUserController(request);
+        return controller.start();
+    }
+
+    public static LiveData<TwitterContentResponse> createContent(TwitterCreateContentRequest request) {
+        CreateContentController controller = new CreateContentController(request);
+        return controller.start();
+    }
+
+    public static LiveData<TwitterContentResponse> createContentWithMedia(TwitterCreateContentWithMediaRequest request) {
+        CreateContentWithMediaController controller = new CreateContentWithMediaController(request);
+        return controller.start();
+    }
+
+    public static LiveData<TwitterContentResponse> removeContent(TwitterRemoveContentRequest request) {
+        RemoveContentController controller = new RemoveContentController(request);
+        return controller.start();
+    }
+
+    public static LiveData<TwitterContentResponse> getContent(TwitterGetContentRequest request) {
+        GetContentController controller = new GetContentController(request);
+        return controller.start();
+    }
+
+    public static LiveData<TwitterUploadInitResponse> uploadInit(TwitterUploadInitRequest request) {
         UploadInitController controller = new UploadInitController(request);
         return controller.start();
     }
 
-    public LiveData<TwitterUploadAppendResponse> uploadAppend(TwitterUploadAppendRequest request) {
+    public static LiveData<TwitterUploadAppendResponse> uploadAppend(TwitterUploadAppendRequest request) {
         UploadAppendController controller = new UploadAppendController(request);
         return controller.start();
     }
 
-    public LiveData<TwitterUploadFinalizeResponse> uploadFinalize(TwitterUploadFinalizeRequest request) {
+    public static LiveData<TwitterUploadFinalizeResponse> uploadFinalize(TwitterUploadFinalizeRequest request) {
         UploadFinalizeController controller = new UploadFinalizeController(request);
         return controller.start();
     }
 
-    public LiveData<TwitterCheckUploadStatusResponse> checkUploadStatus(TwitterCheckUploadStatusRequest request) {
+    public static LiveData<TwitterCheckUploadStatusResponse> checkUploadStatus(TwitterCheckUploadStatusRequest request) {
         CheckUploadStatusController controller = new CheckUploadStatusController(request);
         return controller.start();
     }
@@ -238,6 +250,72 @@ public class TwitterClient implements IClient {
         }
     }
 
+    private static class GetBearerTokenController extends BaseController<TwitterGetBearerTokenRequest, TwitterGetBearerTokenResponse> {
+
+        public GetBearerTokenController(TwitterGetBearerTokenRequest request) {
+            super(request);
+        }
+
+        @Override
+        protected Call<TwitterGetBearerTokenResponse> createCall(TwitterAPI twitterAPI) {
+            return twitterAPI.getBearerToken(request.getGrantType(), request.getAuthorizationHeader());
+        }
+
+        @Override
+        protected Class<TwitterGetBearerTokenResponse> getResponseClass() {
+            return TwitterGetBearerTokenResponse.class;
+        }
+
+        @Override
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+    }
+
+    private static class VerifyCredentialsController extends BaseController<TwitterVerifyCredentialsRequest, TwitterUserResponse> {
+
+        public VerifyCredentialsController(TwitterVerifyCredentialsRequest request) {
+            super(request);
+        }
+
+        @Override
+        protected Call<TwitterUserResponse> createCall(TwitterAPI twitterAPI) {
+            return twitterAPI.verifyCredentials(request.getAuthorizationHeader());
+        }
+
+        @Override
+        protected Class<TwitterUserResponse> getResponseClass() {
+            return TwitterUserResponse.class;
+        }
+
+        @Override
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+    }
+
+    private static class GetUserController extends BaseController<TwitterGetUserRequest, TwitterUserResponse> {
+
+        public GetUserController(TwitterGetUserRequest request) {
+            super(request);
+        }
+
+        @Override
+        protected Call<TwitterUserResponse> createCall(TwitterAPI twitterAPI) {
+            return twitterAPI.getUser(request.getUserID(), request.getAuthorizationHeader());
+        }
+
+        @Override
+        protected Class<TwitterUserResponse> getResponseClass() {
+            return TwitterUserResponse.class;
+        }
+
+        @Override
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+    }
+
     private static class CreateContentController extends BaseController<TwitterCreateContentRequest, TwitterContentResponse> {
 
         public CreateContentController(TwitterCreateContentRequest request) {
@@ -304,20 +382,20 @@ public class TwitterClient implements IClient {
         }
     }
 
-    private static class VerifyCredentialsController extends BaseController<TwitterVerifyCredentialsRequest, TwitterVerifyCredentialsResponse> {
+    private static class GetContentController extends BaseController<TwitterGetContentRequest, TwitterContentResponse> {
 
-        public VerifyCredentialsController(TwitterVerifyCredentialsRequest request) {
+        public GetContentController(TwitterGetContentRequest request) {
             super(request);
         }
 
         @Override
-        protected Call<TwitterVerifyCredentialsResponse> createCall(TwitterAPI twitterAPI) {
-            return twitterAPI.verifyCredentials(request.getAuthorizationHeader());
+        protected Call<TwitterContentResponse> createCall(TwitterAPI twitterAPI) {
+            return twitterAPI.getContent(request.getID(), request.getAuthorizationHeader());
         }
 
         @Override
-        protected Class<TwitterVerifyCredentialsResponse> getResponseClass() {
-            return TwitterVerifyCredentialsResponse.class;
+        protected Class<TwitterContentResponse> getResponseClass() {
+            return TwitterContentResponse.class;
         }
 
         @Override

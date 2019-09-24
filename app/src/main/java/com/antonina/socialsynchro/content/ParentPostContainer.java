@@ -13,7 +13,9 @@ import com.antonina.socialsynchro.database.tables.IDatabaseTable;
 import com.antonina.socialsynchro.database.tables.ParentPostContainerTable;
 import com.antonina.socialsynchro.gui.listeners.OnAttachmentUploadedListener;
 import com.antonina.socialsynchro.gui.listeners.OnPublishedListener;
+import com.antonina.socialsynchro.gui.listeners.OnSynchronizedListener;
 import com.antonina.socialsynchro.gui.listeners.OnUnpublishedListener;
+import com.antonina.socialsynchro.services.IServiceEntity;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,6 +24,10 @@ import java.util.List;
 public class ParentPostContainer extends PostContainer {
     private List<ChildPostContainer> children;
     private List<ChildPostContainer> deletedChildren;
+
+    private int publishedChildren;
+    private int unpublishedChildren;
+    private int synchronizedChildren;
 
     public ParentPostContainer() {
         post = new Post();
@@ -48,6 +54,8 @@ public class ParentPostContainer extends PostContainer {
     @Override
     public void setTitle(String title) {
         post.setTitle(title);
+        notifyListener();
+        notifyChildrenListeners();
     }
 
     @Bindable
@@ -60,6 +68,8 @@ public class ParentPostContainer extends PostContainer {
     @Override
     public void setContent(String content) {
         post.setContent(content);
+        notifyListener();
+        notifyChildrenListeners();
     }
 
     @Bindable
@@ -86,24 +96,45 @@ public class ParentPostContainer extends PostContainer {
     @Override
     public void setAttachments(List<Attachment> attachments) {
         post.setAttachments(attachments);
+        notifyListener();
+        notifyChildrenListeners();
     }
 
     @Override
     public void addAttachment(Attachment attachment) {
         post.addAttachment(attachment);
         notifyListener();
+        notifyChildrenListeners();
     }
 
     @Override
     public void removeAttachment(Attachment attachment) {
         post.removeAttachment(attachment);
         notifyListener();
+        notifyChildrenListeners();
     }
 
     @Override
-    public void publish(OnPublishedListener listener, OnAttachmentUploadedListener attachmentListener) {
+    public void publish(final OnPublishedListener publishListener, OnAttachmentUploadedListener attachmentListener) {
+        publishedChildren = 0;
+        setLoading(true);
+        OnPublishedListener parentListener = new OnPublishedListener() {
+            @Override
+            public void onPublished(ChildPostContainer publishedPost) {
+                publishedChildren++;
+                publishListener.onPublished(publishedPost);
+                if (publishedChildren >= children.size())
+                    setLoading(false);
+            }
+
+            @Override
+            public void onError(ChildPostContainer post, String error) {
+                setLoading(false);
+                publishListener.onError(post, error);
+            }
+        };
         for (ChildPostContainer child : children) {
-            child.publish(listener, attachmentListener);
+            child.publish(parentListener, attachmentListener);
         }
     }
 
@@ -113,9 +144,50 @@ public class ParentPostContainer extends PostContainer {
     }
 
     @Override
-    public void unpublish(OnUnpublishedListener listener) {
+    public void synchronize(final OnSynchronizedListener listener) {
+        synchronizedChildren = 0;
+        setLoading(true);
+        OnSynchronizedListener parentListener = new OnSynchronizedListener() {
+            @Override
+            public void onSynchronized(IServiceEntity entity) {
+                synchronizedChildren++;
+                listener.onSynchronized(entity);
+                if (synchronizedChildren >= children.size())
+                    setLoading(false);
+            }
+
+            @Override
+            public void onError(IServiceEntity entity, String error) {
+                setLoading(false);
+                listener.onError(entity, error);
+            }
+        };
         for (ChildPostContainer child : children) {
-            child.unpublish(listener);
+            child.synchronize(parentListener);
+        }
+    }
+
+    @Override
+    public void unpublish(final OnUnpublishedListener listener) {
+        unpublishedChildren = 0;
+        setLoading(true);
+        OnUnpublishedListener parentListener = new OnUnpublishedListener() {
+            @Override
+            public void onUnpublished(ChildPostContainer unpublishedPost) {
+                unpublishedChildren++;
+                listener.onUnpublished(unpublishedPost);
+                if (unpublishedChildren >= children.size())
+                    setLoading(false);
+            }
+
+            @Override
+            public void onError(ChildPostContainer post, String error) {
+                setLoading(false);
+                listener.onError(post, error);
+            }
+        };
+        for (ChildPostContainer child : children) {
+            child.unpublish(parentListener);
         }
     }
 
@@ -211,5 +283,12 @@ public class ParentPostContainer extends PostContainer {
         repository.delete(this);
         post.deleteFromDatabase();
         internalID = null;
+    }
+
+    private void notifyChildrenListeners() {
+        for (ChildPostContainer child : children) {
+            if (child.isLocked())
+                child.notifyListener();
+        }
     }
 }
