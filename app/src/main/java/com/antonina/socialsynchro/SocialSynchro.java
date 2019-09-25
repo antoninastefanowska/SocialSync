@@ -1,15 +1,14 @@
 package com.antonina.socialsynchro;
 
 import android.app.Application;
-import android.content.Context;
 
-import com.antonina.socialsynchro.database.repositories.AccountRepository;
-import com.antonina.socialsynchro.database.repositories.AttachmentRepository;
-import com.antonina.socialsynchro.database.repositories.ChildPostContainerRepository;
-import com.antonina.socialsynchro.database.repositories.ParentPostContainerRepository;
-import com.antonina.socialsynchro.database.repositories.PostRepository;
-import com.antonina.socialsynchro.database.repositories.TwitterAccountInfoRepository;
-import com.antonina.socialsynchro.services.ApplicationConfig;
+import com.antonina.socialsynchro.common.database.repositories.AccountRepository;
+import com.antonina.socialsynchro.common.database.repositories.AttachmentRepository;
+import com.antonina.socialsynchro.common.database.repositories.ChildPostContainerRepository;
+import com.antonina.socialsynchro.common.database.repositories.ParentPostContainerRepository;
+import com.antonina.socialsynchro.common.database.repositories.PostRepository;
+import com.antonina.socialsynchro.services.twitter.database.repositories.TwitterAccountInfoRepository;
+import com.antonina.socialsynchro.common.utils.ApplicationConfig;
 
 public class SocialSynchro extends Application {
     private static Application instance;

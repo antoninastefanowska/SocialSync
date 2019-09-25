@@ -4,7 +4,7 @@
     <data>
         <variable
             name="image"
-            type="com.antonina.socialsynchro.content.attachments.ImageAttachment" />
+            type="com.antonina.socialsynchro.common.content.attachments.ImageAttachment" />
     </data>
 
     <ImageView

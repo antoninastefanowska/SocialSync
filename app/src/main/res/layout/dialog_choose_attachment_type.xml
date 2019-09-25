@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    tools:context=".gui.dialogs.ChooseAttachmentTypeDialog" >
+    tools:context=".common.gui.dialogs.ChooseAttachmentTypeDialog" >
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview_attachment_types_dialog"

@@ -2,12 +2,12 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".gui.activities.MainActivity">
+    tools:context=".common.gui.activities.MainActivity">
 
     <data>
         <variable
             name="parentAdapter"
-            type="com.antonina.socialsynchro.gui.adapters.ParentDisplayAdapter" />
+            type="com.antonina.socialsynchro.common.gui.adapters.ParentDisplayAdapter" />
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -64,6 +64,14 @@
                         android:layout_height="wrap_content"
                         android:onClick="buttonSynchronizeContent_onClick"
                         android:text="@string/synchronize_content"
+                        style="@style/ButtonStyle" />
+
+                    <Button
+                        android:id="@+id/button_check_limits"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="buttonCheckLimits_onClick"
+                        android:text="Check limits"
                         style="@style/ButtonStyle" />
 
                 </LinearLayout>

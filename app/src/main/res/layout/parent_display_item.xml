@@ -6,10 +6,10 @@
             type="android.view.View" />
         <variable
             name="parent"
-            type="com.antonina.socialsynchro.content.ParentPostContainer" />
+            type="com.antonina.socialsynchro.common.content.posts.ParentPostContainer" />
         <variable
             name="childAdapter"
-            type="com.antonina.socialsynchro.gui.adapters.ChildDisplayAdapter" />
+            type="com.antonina.socialsynchro.common.gui.adapters.ChildDisplayAdapter" />
     </data>
 
     <LinearLayout

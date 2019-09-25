@@ -4,7 +4,7 @@
     <data>
         <variable
             name="attachmentType"
-            type="com.antonina.socialsynchro.content.attachments.AttachmentType" />
+            type="com.antonina.socialsynchro.common.content.attachments.AttachmentType" />
     </data>
 
     <LinearLayout

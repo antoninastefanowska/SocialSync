@@ -4,7 +4,7 @@
     <data>
         <variable
             name="service"
-            type="com.antonina.socialsynchro.services.Service" />
+            type="com.antonina.socialsynchro.common.content.services.Service" />
     </data>
 
     <LinearLayout

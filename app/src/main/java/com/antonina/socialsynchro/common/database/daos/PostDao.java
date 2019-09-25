@@ -1,0 +1,33 @@
+package com.antonina.socialsynchro.common.database.daos;
+
+import android.arch.lifecycle.LiveData;
+import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Delete;
+import android.arch.persistence.room.Insert;
+import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Update;
+
+import com.antonina.socialsynchro.common.database.tables.PostTable;
+
+import java.util.List;
+
+@Dao
+public interface PostDao extends BaseDao<PostTable> {
+    @Query("SELECT * FROM post")
+    LiveData<List<PostTable>> getAllData();
+
+    @Query("SELECT * FROM post WHERE id = :postID")
+    LiveData<PostTable> getDataByID(long postID);
+
+    @Query("SELECT COUNT(*) FROM post")
+    int count();
+
+    @Insert
+    long insert(PostTable postData);
+
+    @Update
+    void update(PostTable postData);
+
+    @Delete
+    void delete(PostTable postData);
+}

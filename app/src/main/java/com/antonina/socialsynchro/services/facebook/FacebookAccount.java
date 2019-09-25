@@ -1,9 +1,9 @@
 package com.antonina.socialsynchro.services.facebook;
 
-import com.antonina.socialsynchro.base.Account;
-import com.antonina.socialsynchro.database.tables.AccountTable;
-import com.antonina.socialsynchro.gui.listeners.OnSynchronizedListener;
-import com.antonina.socialsynchro.services.IResponse;
+import com.antonina.socialsynchro.common.content.accounts.Account;
+import com.antonina.socialsynchro.common.database.tables.AccountTable;
+import com.antonina.socialsynchro.common.gui.listeners.OnSynchronizedListener;
+import com.antonina.socialsynchro.common.rest.IResponse;
 
 public class FacebookAccount extends Account {
 

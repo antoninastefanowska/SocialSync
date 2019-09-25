@@ -15,21 +15,21 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:fullBackupContent="@xml/backup_descriptor">
-        <activity android:name=".gui.activities.ImageGalleryActivity" />
-        <activity android:name=".gui.activities.StatisticsActivity" />
+        <activity android:name=".common.gui.activities.ImageGalleryActivity" />
+        <activity android:name=".common.gui.activities.StatisticsActivity" />
         <activity
-            android:name=".gui.activities.EditActivity"
+            android:name=".common.gui.activities.EditActivity"
             android:label="@string/title_activity_edit"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".gui.activities.AccountsActivity"
+            android:name=".common.gui.activities.AccountsActivity"
             android:label="@string/title_activity_accounts"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".gui.activities.TwitterLoginActivity"
+            android:name=".services.twitter.gui.TwitterLoginActivity"
             android:label="@string/title_activity_connect"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".gui.activities.MainActivity">
+        <activity android:name=".common.gui.activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <action android:name="android.intent.action.MAIN" />

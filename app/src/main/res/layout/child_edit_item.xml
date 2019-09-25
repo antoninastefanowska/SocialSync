@@ -7,10 +7,10 @@
             type="android.view.View" />
         <variable
             name="child"
-            type="com.antonina.socialsynchro.content.ChildPostContainer" />
+            type="com.antonina.socialsynchro.common.content.posts.ChildPostContainer" />
         <variable
             name="attachmentAdapter"
-            type="com.antonina.socialsynchro.gui.adapters.AttachmentEditAdapter" />
+            type="com.antonina.socialsynchro.common.gui.adapters.AttachmentEditAdapter" />
     </data>
 
     <LinearLayout

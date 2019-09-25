@@ -2,18 +2,18 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".gui.activities.EditActivity">
+    tools:context=".common.gui.activities.EditActivity">
 
     <data>
         <variable
             name="parent"
-            type="com.antonina.socialsynchro.content.ParentPostContainer" />
+            type="com.antonina.socialsynchro.common.content.posts.ParentPostContainer" />
         <variable
             name="childAdapter"
-            type="com.antonina.socialsynchro.gui.adapters.ChildEditAdapter" />
+            type="com.antonina.socialsynchro.common.gui.adapters.ChildEditAdapter" />
         <variable
             name="attachmentAdapter"
-            type="com.antonina.socialsynchro.gui.adapters.AttachmentEditAdapter" />
+            type="com.antonina.socialsynchro.common.gui.adapters.AttachmentEditAdapter" />
     </data>
 
     <android.support.constraint.ConstraintLayout

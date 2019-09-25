@@ -2,12 +2,12 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".gui.activities.ImageGalleryActivity">
+    tools:context=".common.gui.activities.ImageGalleryActivity">
 
     <data>
         <variable
             name="imageAdapter"
-            type="com.antonina.socialsynchro.gui.adapters.ImageGalleryAdapter" />
+            type="com.antonina.socialsynchro.common.gui.adapters.ImageGalleryAdapter" />
     </data>
 
     <android.support.constraint.ConstraintLayout
