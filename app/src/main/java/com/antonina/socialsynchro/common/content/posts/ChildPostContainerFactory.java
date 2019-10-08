@@ -3,8 +3,8 @@ package com.antonina.socialsynchro.common.content.posts;
 import com.antonina.socialsynchro.common.content.services.ServiceID;
 import com.antonina.socialsynchro.common.content.accounts.Account;
 import com.antonina.socialsynchro.common.database.IDatabaseEntityFactory;
-import com.antonina.socialsynchro.common.database.tables.IDatabaseTable;
-import com.antonina.socialsynchro.common.database.tables.ChildPostContainerTable;
+import com.antonina.socialsynchro.common.database.rows.ChildPostContainerRow;
+import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 import com.antonina.socialsynchro.services.twitter.content.TwitterAccount;
 import com.antonina.socialsynchro.services.twitter.content.TwitterPostContainer;
 
@@ -18,8 +18,8 @@ public class ChildPostContainerFactory implements IDatabaseEntityFactory {
     }
 
     @Override
-    public ChildPostContainer createFromData(IDatabaseTable data) {
-        ChildPostContainerTable childPostContainerData = (ChildPostContainerTable)data;
+    public ChildPostContainer createFromDatabaseRow(IDatabaseRow data) {
+        ChildPostContainerRow childPostContainerData = (ChildPostContainerRow)data;
         ServiceID serviceID = ServiceID.values()[childPostContainerData.serviceID];
 
         switch(serviceID) {

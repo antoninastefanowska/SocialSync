@@ -2,12 +2,12 @@ package com.antonina.socialsynchro.common.database.daos;
 
 import android.arch.lifecycle.LiveData;
 
-import com.antonina.socialsynchro.common.database.tables.IDatabaseTable;
+import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 
 import java.util.List;
 
 @SuppressWarnings("EmptyMethod")
-public interface BaseDao<DataTableType extends IDatabaseTable> {
+public interface BaseDao<DataTableType extends IDatabaseRow> {
     LiveData<List<DataTableType>> getAllData();
     LiveData<DataTableType> getDataByID(long id);
     int count();

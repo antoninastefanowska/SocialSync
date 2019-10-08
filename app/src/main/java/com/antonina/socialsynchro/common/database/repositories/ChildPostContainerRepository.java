@@ -12,18 +12,18 @@ import com.antonina.socialsynchro.common.content.posts.ChildPostContainerFactory
 import com.antonina.socialsynchro.common.content.posts.ParentPostContainer;
 import com.antonina.socialsynchro.common.database.ApplicationDatabase;
 import com.antonina.socialsynchro.common.database.daos.ChildPostContainerDao;
-import com.antonina.socialsynchro.common.database.tables.ChildPostContainerTable;
+import com.antonina.socialsynchro.common.database.rows.ChildPostContainerRow;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
 @SuppressWarnings("WeakerAccess")
-public class ChildPostContainerRepository extends BaseRepository<ChildPostContainerTable, ChildPostContainer> {
+public class ChildPostContainerRepository extends BaseRepository<ChildPostContainerRow, ChildPostContainer> {
     private static ChildPostContainerRepository instance;
 
     private ChildPostContainerRepository(Application application) {
@@ -41,22 +41,19 @@ public class ChildPostContainerRepository extends BaseRepository<ChildPostContai
     }
 
     @Override
-    protected Map<Long, ChildPostContainer> convertToEntities(List<ChildPostContainerTable> input) {
-        Map<Long, ChildPostContainer> output = new HashMap<>();
-        for (ChildPostContainerTable data : input) {
-            ChildPostContainer childPostContainer = ChildPostContainerFactory.getInstance().createFromData(data);
+    protected Map<Long, ChildPostContainer> convertToEntities(List<ChildPostContainerRow> input) {
+        Map<Long, ChildPostContainer> output = new TreeMap<>();
+        for (ChildPostContainerRow data : input) {
+            ChildPostContainer childPostContainer = ChildPostContainerFactory.getInstance().createFromDatabaseRow(data);
             output.put(childPostContainer.getInternalID(), childPostContainer);
         }
         return output;
     }
 
     @Override
-    protected ChildPostContainerTable convertToTable(ChildPostContainer entity, boolean isNew) {
-        ChildPostContainerTable data = new ChildPostContainerTable();
-        if (isNew)
-            data.createFromNewEntity(entity);
-        else
-            data.createFromExistingEntity(entity);
+    protected ChildPostContainerRow convertToRow(ChildPostContainer entity) {
+        ChildPostContainerRow data = new ChildPostContainerRow();
+        data.createFromEntity(entity);
         return data;
     }
 

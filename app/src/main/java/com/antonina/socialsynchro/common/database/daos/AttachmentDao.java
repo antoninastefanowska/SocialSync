@@ -7,17 +7,17 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
-import com.antonina.socialsynchro.common.database.tables.AttachmentTable;
+import com.antonina.socialsynchro.common.database.rows.AttachmentRow;
 
 import java.util.List;
 
 @Dao
-public interface AttachmentDao extends BaseDao<AttachmentTable> {
+public interface AttachmentDao extends BaseDao<AttachmentRow> {
     @Query("SELECT * FROM attachment")
-    LiveData<List<AttachmentTable>> getAllData();
+    LiveData<List<AttachmentRow>> getAllData();
 
     @Query("SELECT * FROM attachment WHERE id = :attachmentID")
-    LiveData<AttachmentTable> getDataByID(long attachmentID);
+    LiveData<AttachmentRow> getDataByID(long attachmentID);
 
     @Query("SELECT id FROM attachment WHERE post_id = :postID")
     LiveData<List<Long>> getIDByPost(long postID);
@@ -26,11 +26,11 @@ public interface AttachmentDao extends BaseDao<AttachmentTable> {
     int count();
 
     @Insert
-    long insert(AttachmentTable attachmentData);
+    long insert(AttachmentRow attachmentData);
 
     @Update
-    void update(AttachmentTable attachmentData);
+    void update(AttachmentRow attachmentData);
 
     @Delete
-    void delete(AttachmentTable attachmentData);
+    void delete(AttachmentRow attachmentData);
 }

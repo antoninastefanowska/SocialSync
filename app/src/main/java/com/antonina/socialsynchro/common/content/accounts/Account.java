@@ -1,17 +1,26 @@
 package com.antonina.socialsynchro.common.content.accounts;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.Observer;
 import android.databinding.Bindable;
+import android.support.annotation.Nullable;
 
 import com.antonina.socialsynchro.common.content.services.Service;
 import com.antonina.socialsynchro.common.database.IDatabaseEntity;
 import com.antonina.socialsynchro.common.database.repositories.AccountRepository;
-import com.antonina.socialsynchro.common.database.tables.IDatabaseTable;
-import com.antonina.socialsynchro.common.database.tables.AccountTable;
+import com.antonina.socialsynchro.common.database.repositories.RequestLimitRepository;
+import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
+import com.antonina.socialsynchro.common.database.rows.AccountRow;
 import com.antonina.socialsynchro.common.gui.GUIItem;
+import com.antonina.socialsynchro.common.gui.listeners.OnSynchronizedListener;
 import com.antonina.socialsynchro.common.rest.IServiceEntity;
+import com.antonina.socialsynchro.common.rest.RequestLimit;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 @SuppressWarnings("WeakerAccess")
 public abstract class Account extends GUIItem implements IDatabaseEntity, IServiceEntity {
@@ -25,19 +34,41 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
     private Date connectingDate;
     private Date synchronizationDate;
 
-    public Account(IDatabaseTable table) { createFromData(table); }
+    protected Map<String, RequestLimit> requestLimits;
 
-    public Account() { }
+    public Account(IDatabaseRow table) {
+        createFromDatabaseRow(table);
+        setLoading(false);
+    }
+
+    public Account() {
+        requestLimits = new TreeMap<>();
+        setLoading(false);
+    }
 
     @Override
-    public void createFromData(IDatabaseTable data) {
-        AccountTable accountData = (AccountTable)data;
-        this.internalID = accountData.id;
+    public void createFromDatabaseRow(IDatabaseRow data) {
+        AccountRow accountData = (AccountRow)data;
+        this.internalID = accountData.getID();
         this.connectingDate = accountData.connectingDate;
         setName(accountData.name);
         setExternalID(accountData.externalID);
         setProfilePictureURL(accountData.profilePictureURL);
-        setLoading(false);
+        requestLimits = new TreeMap<>();
+
+        RequestLimitRepository requestLimitRepository = RequestLimitRepository.getInstance();
+        final LiveData<List<RequestLimit>> requestLimitsLiveData = requestLimitRepository.getIDsByAccount(this);
+        requestLimitsLiveData.observeForever(new Observer<List<RequestLimit>>() {
+            @Override
+            public void onChanged(@Nullable List<RequestLimit> requestLimits) {
+                if (requestLimits != null) {
+                    for (RequestLimit requestLimit : requestLimits) {
+                        if (requestLimit != null)
+                            addRequestLimit(requestLimit);
+                    }
+                }
+            }
+        });
     }
 
     @Bindable
@@ -87,22 +118,23 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
     @Override
     public void saveInDatabase() {
         if (internalID != null)
-            return;
-        connectingDate = Calendar.getInstance().getTime();
-        AccountRepository repository = AccountRepository.getInstance();
-        updated = repository.accountExists(externalID);
-        if (!updated)
-            internalID = repository.insert(this);
-        else {
-            internalID = repository.getIDByExternalID(externalID);
             updateInDatabase();
+        else {
+            connectingDate = Calendar.getInstance().getTime();
+            AccountRepository repository = AccountRepository.getInstance();
+            int serviceID = service.getID().ordinal();
+            updated = repository.accountExists(externalID, serviceID);
+            if (!updated)
+                internalID = repository.insert(this);
+            else {
+                internalID = repository.getIDByExternalIDAndService(externalID, serviceID);
+                updateInDatabase();
+            }
         }
     }
 
     @Override
     public void updateInDatabase() {
-        if (internalID == null)
-            return;
         AccountRepository repository = AccountRepository.getInstance();
         repository.update(this);
     }
@@ -131,5 +163,16 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
 
     protected void setSynchronizationDate(Date synchronizationDate) {
         this.synchronizationDate = synchronizationDate;
+    }
+
+    public abstract void synchronizeRequestLimits(OnSynchronizedListener listener);
+
+    protected void addRequestLimit(RequestLimit requestLimit) {
+        requestLimit.setAccount(this);
+        requestLimits.put(requestLimit.getEndpoint(), requestLimit);
+    }
+
+    public RequestLimit getRequestLimit(String endpoint) {
+        return requestLimits.get(endpoint);
     }
 }

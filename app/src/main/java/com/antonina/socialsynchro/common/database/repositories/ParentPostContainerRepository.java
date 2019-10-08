@@ -4,15 +4,15 @@ import android.app.Application;
 
 import com.antonina.socialsynchro.common.content.posts.ParentPostContainer;
 import com.antonina.socialsynchro.common.database.ApplicationDatabase;
-import com.antonina.socialsynchro.common.database.tables.ParentPostContainerTable;
+import com.antonina.socialsynchro.common.database.rows.ParentPostContainerRow;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
-public class ParentPostContainerRepository extends BaseRepository<ParentPostContainerTable, ParentPostContainer> {
+public class ParentPostContainerRepository extends BaseRepository<ParentPostContainerRow, ParentPostContainer> {
     private static ParentPostContainerRepository instance;
 
     private ParentPostContainerRepository(Application application) {
@@ -41,9 +41,9 @@ public class ParentPostContainerRepository extends BaseRepository<ParentPostCont
     }
 
     @Override
-    protected Map<Long, ParentPostContainer> convertToEntities(List<ParentPostContainerTable> input) {
-        Map<Long, ParentPostContainer> output = new HashMap<>();
-        for (ParentPostContainerTable parentPostContainerData : input) {
+    protected Map<Long, ParentPostContainer> convertToEntities(List<ParentPostContainerRow> input) {
+        Map<Long, ParentPostContainer> output = new TreeMap<>();
+        for (ParentPostContainerRow parentPostContainerData : input) {
             ParentPostContainer parentPostContainer = new ParentPostContainer(parentPostContainerData);
             output.put(parentPostContainer.getInternalID(), parentPostContainer);
         }
@@ -51,12 +51,9 @@ public class ParentPostContainerRepository extends BaseRepository<ParentPostCont
     }
 
     @Override
-    protected ParentPostContainerTable convertToTable(ParentPostContainer entity, boolean isNew) {
-        ParentPostContainerTable data = new ParentPostContainerTable();
-        if (isNew)
-            data.createFromNewEntity(entity);
-        else
-            data.createFromExistingEntity(entity);
+    protected ParentPostContainerRow convertToRow(ParentPostContainer entity) {
+        ParentPostContainerRow data = new ParentPostContainerRow();
+        data.createFromEntity(entity);
         return data;
     }
 }

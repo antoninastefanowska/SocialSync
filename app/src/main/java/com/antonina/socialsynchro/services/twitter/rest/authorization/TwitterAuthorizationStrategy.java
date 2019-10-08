@@ -1,15 +1,12 @@
 package com.antonina.socialsynchro.services.twitter.rest.authorization;
 
-import com.antonina.socialsynchro.common.utils.ApplicationConfig;
+import com.antonina.socialsynchro.common.rest.BaseAuthorizationStrategy;
 
-public abstract class TwitterAuthorizationStrategy {
-    protected ApplicationConfig config;
+public abstract class TwitterAuthorizationStrategy extends BaseAuthorizationStrategy {
 
     public TwitterAuthorizationStrategy() {
-        config = ApplicationConfig.getInstance();
+        super();
     }
-
-    public abstract String buildAuthorizationHeader();
 
     public boolean isUserAuthorization() {
         return false;

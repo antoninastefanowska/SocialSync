@@ -1,4 +1,4 @@
-package com.antonina.socialsynchro.common.database.tables;
+package com.antonina.socialsynchro.common.database.rows;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
@@ -13,10 +13,10 @@ import java.util.Date;
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 @Entity(tableName = "child_post_container", foreignKeys = {
-        @ForeignKey(entity = PostTable.class, parentColumns = "id", childColumns = "post_id"),
-        @ForeignKey(entity = ParentPostContainerTable.class, parentColumns = "id", childColumns = "parent_id", onDelete = CASCADE),
-        @ForeignKey(entity = AccountTable.class, parentColumns = "id", childColumns = "account_id", onDelete = CASCADE)})
-public class ChildPostContainerTable implements IDatabaseTable {
+        @ForeignKey(entity = PostRow.class, parentColumns = "id", childColumns = "post_id"),
+        @ForeignKey(entity = ParentPostContainerRow.class, parentColumns = "id", childColumns = "parent_id", onDelete = CASCADE),
+        @ForeignKey(entity = AccountRow.class, parentColumns = "id", childColumns = "account_id", onDelete = CASCADE)})
+public class ChildPostContainerRow implements IDatabaseRow {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     public long id;
@@ -43,13 +43,10 @@ public class ChildPostContainerTable implements IDatabaseTable {
     public Long postID;
 
     @Override
-    public void createFromExistingEntity(IDatabaseEntity entity) {
-        this.id = entity.getInternalID();
-        createFromNewEntity(entity);
-    }
+    public void createFromEntity(IDatabaseEntity entity) {
+        if (entity.getInternalID() != null)
+            this.id = entity.getInternalID();
 
-    @Override
-    public void createFromNewEntity(IDatabaseEntity entity) {
         ChildPostContainer childPostContainer = (ChildPostContainer)entity;
         this.externalID = childPostContainer.getExternalID();
         this.locked = childPostContainer.isLocked();

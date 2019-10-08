@@ -1,4 +1,4 @@
-package com.antonina.socialsynchro.services.twitter.database.tables;
+package com.antonina.socialsynchro.services.twitter.database.rows;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
@@ -6,15 +6,16 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
 
 import com.antonina.socialsynchro.common.database.IDatabaseEntity;
-import com.antonina.socialsynchro.common.database.tables.AccountTable;
-import com.antonina.socialsynchro.common.database.tables.IDatabaseTable;
+import com.antonina.socialsynchro.common.database.rows.AccountRow;
+import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
+import com.antonina.socialsynchro.common.utils.SecurityUtils;
 import com.antonina.socialsynchro.services.twitter.content.TwitterAccount;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 @Entity(tableName = "twitter_account_info", foreignKeys = {
-        @ForeignKey(entity = AccountTable.class, parentColumns = "id", childColumns = "id", onDelete = CASCADE)})
-public class TwitterAccountInfoTable implements IDatabaseTable {
+        @ForeignKey(entity = AccountRow.class, parentColumns = "id", childColumns = "id", onDelete = CASCADE)})
+public class TwitterAccountInfoRow implements IDatabaseRow {
     @PrimaryKey
     @ColumnInfo(name = "id")
     public long id;
@@ -26,16 +27,11 @@ public class TwitterAccountInfoTable implements IDatabaseTable {
     public String secretToken;
 
     @Override
-    public void createFromExistingEntity(IDatabaseEntity entity) {
-        createFromNewEntity(entity);
-    }
-
-    @Override
-    public void createFromNewEntity(IDatabaseEntity entity) {
+    public void createFromEntity(IDatabaseEntity entity) {
         TwitterAccount account = (TwitterAccount)entity;
-        this.id = account.getInternalID(); // TODO: ID musi być pobrane z tabeli AccountTable
-        this.accessToken = account.getAccessToken();
-        this.secretToken = account.getSecretToken();
+        this.id = account.getInternalID();
+        this.accessToken = SecurityUtils.encrypt(account.getAccessToken());
+        this.secretToken = SecurityUtils.encrypt(account.getSecretToken());
     }
 
     @Override

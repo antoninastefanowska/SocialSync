@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 
+import com.antonina.socialsynchro.common.utils.SecurityUtils;
 import com.antonina.socialsynchro.services.twitter.rest.TwitterClient;
 import com.antonina.socialsynchro.services.twitter.rest.requests.TwitterGetBearerTokenRequest;
 import com.antonina.socialsynchro.services.twitter.rest.responses.TwitterGetBearerTokenResponse;
@@ -29,7 +30,7 @@ public class TwitterConfig {
     private void loadBearerToken() {
         final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(application);
         if (sharedPreferences.contains("twitter_bearer_token"))
-            bearerToken = sharedPreferences.getString("twitter_bearer_token", null);
+            bearerToken = SecurityUtils.decrypt(sharedPreferences.getString("twitter_bearer_token", null));
         else {
             TwitterGetBearerTokenRequest request = TwitterGetBearerTokenRequest.builder().build();
             final LiveData<TwitterGetBearerTokenResponse> asyncResponse = TwitterClient.getBearerToken(request);
@@ -41,7 +42,7 @@ public class TwitterConfig {
                             if (response.getTokenType().equals("bearer")) {
                                 bearerToken = response.getBearerToken();
                                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                                editor.putString("twitter_bearer_token", bearerToken);
+                                editor.putString("twitter_bearer_token", SecurityUtils.encrypt(bearerToken));
                                 editor.apply();
                             }
                         } else {

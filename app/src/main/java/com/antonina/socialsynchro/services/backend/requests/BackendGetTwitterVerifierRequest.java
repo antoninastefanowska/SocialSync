@@ -1,11 +1,10 @@
 package com.antonina.socialsynchro.services.backend.requests;
 
-import com.antonina.socialsynchro.common.rest.IRequest;
-
-public class BackendGetTwitterVerifierRequest implements IRequest {
+public class BackendGetTwitterVerifierRequest extends BackendRequest {
     private final String loginToken;
 
-    private BackendGetTwitterVerifierRequest(String loginToken) {
+    private BackendGetTwitterVerifierRequest(String authorizationHeader, String loginToken) {
+        super(authorizationHeader);
         this.loginToken = loginToken;
     }
 
@@ -17,11 +16,13 @@ public class BackendGetTwitterVerifierRequest implements IRequest {
         return new Builder();
     }
 
-    public static class Builder {
+    public static class Builder extends BackendRequest.Builder {
         private String loginToken;
 
+        @Override
         public BackendGetTwitterVerifierRequest build() {
-            return new BackendGetTwitterVerifierRequest(loginToken);
+            configureAuthorization();
+            return new BackendGetTwitterVerifierRequest(authorization.buildAuthorizationHeader(), loginToken);
         }
 
         public Builder loginToken(String loginToken) {

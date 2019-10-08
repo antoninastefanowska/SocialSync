@@ -11,8 +11,8 @@ import com.antonina.socialsynchro.common.content.attachments.Attachment;
 import com.antonina.socialsynchro.common.database.repositories.AccountRepository;
 import com.antonina.socialsynchro.common.database.repositories.ChildPostContainerRepository;
 import com.antonina.socialsynchro.common.database.repositories.PostRepository;
-import com.antonina.socialsynchro.common.database.tables.ChildPostContainerTable;
-import com.antonina.socialsynchro.common.database.tables.IDatabaseTable;
+import com.antonina.socialsynchro.common.database.rows.ChildPostContainerRow;
+import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 import com.antonina.socialsynchro.common.gui.listeners.OnAttachmentUploadedListener;
 import com.antonina.socialsynchro.common.gui.listeners.OnPublishedListener;
 import com.antonina.socialsynchro.common.gui.listeners.OnUnpublishedListener;
@@ -31,8 +31,8 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
 
     // TODO: dla każdej funkcji modyfikującej sprawdzić ograniczenia
 
-    protected ChildPostContainer(IDatabaseTable data) {
-        createFromData(data);
+    protected ChildPostContainer(IDatabaseRow data) {
+        createFromDatabaseRow(data);
     }
 
     protected ChildPostContainer(Account account) {
@@ -198,9 +198,9 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     }
 
     @Override
-    public void createFromData(IDatabaseTable data) {
-        ChildPostContainerTable childPostContainerData = (ChildPostContainerTable)data;
-        this.setInternalID(childPostContainerData.id);
+    public void createFromDatabaseRow(IDatabaseRow data) {
+        ChildPostContainerRow childPostContainerData = (ChildPostContainerRow)data;
+        this.setInternalID(childPostContainerData.getID());
         this.setExternalID(childPostContainerData.externalID);
         this.setLocked(childPostContainerData.locked);
         this.setSynchronizationDate(childPostContainerData.synchronizationDate);
@@ -236,19 +236,19 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     @Override
     public void saveInDatabase() {
         if (internalID != null)
-            return;
-        if (!locked)
-            post.saveInDatabase();
-        ChildPostContainerRepository repository = ChildPostContainerRepository.getInstance();
-        internalID = repository.insert(this);
+            updateInDatabase();
+        else {
+            if (!locked)
+                post.saveInDatabase();
+            ChildPostContainerRepository repository = ChildPostContainerRepository.getInstance();
+            internalID = repository.insert(this);
+        }
     }
 
     @Override
     public void updateInDatabase() {
-        if (internalID == null)
-            return;
         if (!locked)
-            post.updateInDatabase();
+            post.saveInDatabase();
         ChildPostContainerRepository repository = ChildPostContainerRepository.getInstance();
         repository.update(this);
     }

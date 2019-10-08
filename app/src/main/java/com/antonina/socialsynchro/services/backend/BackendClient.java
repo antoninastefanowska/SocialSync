@@ -1,76 +1,104 @@
 package com.antonina.socialsynchro.services.backend;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
 
-import com.antonina.socialsynchro.common.rest.IClient;
+import com.antonina.socialsynchro.common.rest.BaseClient;
+import com.antonina.socialsynchro.services.backend.requests.BackendGetRateLimitsRequest;
 import com.antonina.socialsynchro.services.backend.requests.BackendGetTwitterVerifierRequest;
+import com.antonina.socialsynchro.services.backend.requests.BackendUpdateRequestCounterRequest;
+import com.antonina.socialsynchro.services.backend.responses.BackendGetRateLimitsResponse;
 import com.antonina.socialsynchro.services.backend.responses.BackendGetTwitterVerifierResponse;
-import com.google.gson.Gson;
-
-import java.io.IOException;
+import com.antonina.socialsynchro.services.backend.responses.BackendUpdateRequestCounterResponse;
 
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 @SuppressWarnings("WeakerAccess")
-public class BackendClient implements IClient {
-    private final static String BASE_URL = "https://socialsynchro.pythonanywhere.com/callback/";
-    private static BackendClient instance;
-
-    public static BackendClient getInstance() {
-        if (instance == null)
-            instance = new BackendClient();
-        return instance;
-    }
+public class BackendClient extends BaseClient {
+    private final static String BASE_URL = "https://socialsynchro.pythonanywhere.com/backend/";
 
     private BackendClient() { }
 
-    public LiveData<BackendGetTwitterVerifierResponse> getVerifier(BackendGetTwitterVerifierRequest request) {
+    public static LiveData<BackendGetTwitterVerifierResponse> getTwitterVerifier(BackendGetTwitterVerifierRequest request) {
         GetTwitterVerifierController controller = new GetTwitterVerifierController(request);
         return controller.start();
     }
 
-    private static class GetTwitterVerifierController implements Callback<BackendGetTwitterVerifierResponse> {
-        private final BackendGetTwitterVerifierRequest request;
-        private final MutableLiveData<BackendGetTwitterVerifierResponse> asyncResponse;
+    public static LiveData<BackendGetRateLimitsResponse> getRateLimits(BackendGetRateLimitsRequest request) {
+        GetRateLimitsController controller = new GetRateLimitsController(request);
+        return controller.start();
+    }
+
+    public static LiveData<BackendUpdateRequestCounterResponse> updateRequestCounter(BackendUpdateRequestCounterRequest request) {
+        UpdateRequestCounterController controller = new UpdateRequestCounterController(request);
+        return controller.start();
+    }
+
+    private static class GetTwitterVerifierController extends BaseController<BackendGetTwitterVerifierRequest, BackendGetTwitterVerifierResponse> {
 
         public GetTwitterVerifierController(BackendGetTwitterVerifierRequest request) {
-            this.request = request;
-            asyncResponse = new MutableLiveData<>();
+            super(request);
         }
 
-        public LiveData<BackendGetTwitterVerifierResponse> start() {
-            Gson gson = new Gson();
-            Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(GsonConverterFactory.create(gson)).build();
+        @Override
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+
+        @Override
+        protected Call<BackendGetTwitterVerifierResponse> createCall() {
             BackendAPI backendAPI = retrofit.create(BackendAPI.class);
-            Call<BackendGetTwitterVerifierResponse> call = backendAPI.getTwitterVerifier(request.getLoginToken());
-            call.enqueue(this);
-            return asyncResponse;
+            return backendAPI.getTwitterVerifier(request.getLoginToken(), request.getAuthorizationHeader());
         }
 
         @Override
-        public void onResponse(Call<BackendGetTwitterVerifierResponse> call, Response<BackendGetTwitterVerifierResponse> response) {
-            if (response.isSuccessful()) {
-                asyncResponse.setValue(response.body());
-            } else {
-                try {
-                    BackendGetTwitterVerifierResponse objectResponse;
-                    Gson gson = new Gson();
-                    objectResponse = gson.fromJson(response.errorBody().string(), BackendGetTwitterVerifierResponse.class);
-                    asyncResponse.setValue(objectResponse);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+        protected Class<BackendGetTwitterVerifierResponse> getResponseClass() {
+            return BackendGetTwitterVerifierResponse.class;
+        }
+    }
+
+    private static class GetRateLimitsController extends BaseController<BackendGetRateLimitsRequest, BackendGetRateLimitsResponse> {
+
+        public GetRateLimitsController(BackendGetRateLimitsRequest request) {
+            super(request);
         }
 
         @Override
-        public void onFailure(Call<BackendGetTwitterVerifierResponse> call, Throwable t) {
-            t.printStackTrace();
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+
+        @Override
+        protected Call<BackendGetRateLimitsResponse> createCall() {
+            BackendAPI backendAPI = retrofit.create(BackendAPI.class);
+            return backendAPI.getRateLimits(request.getEndpoint(), request.getServiceName());
+        }
+
+        @Override
+        protected Class<BackendGetRateLimitsResponse> getResponseClass() {
+            return BackendGetRateLimitsResponse.class;
+        }
+    }
+
+    private static class UpdateRequestCounterController extends BaseController<BackendUpdateRequestCounterRequest, BackendUpdateRequestCounterResponse> {
+
+        public UpdateRequestCounterController(BackendUpdateRequestCounterRequest request) {
+            super(request);
+        }
+
+        @Override
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+
+        @Override
+        protected Call<BackendUpdateRequestCounterResponse> createCall() {
+            BackendAPI backendAPI = retrofit.create(BackendAPI.class);
+            return backendAPI.updateRequestCounter(request.getEndpoint(), request.getServiceName(), request.getAuthorizationHeader());
+        }
+
+        @Override
+        protected Class<BackendUpdateRequestCounterResponse> getResponseClass() {
+            return null;
         }
     }
 }

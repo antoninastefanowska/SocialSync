@@ -6,13 +6,19 @@ import android.support.annotation.Nullable;
 
 import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
 import com.antonina.socialsynchro.common.content.attachments.Attachment;
+import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 import com.antonina.socialsynchro.common.gui.listeners.OnAttachmentUploadedListener;
 import com.antonina.socialsynchro.common.gui.listeners.OnPublishedListener;
 import com.antonina.socialsynchro.common.gui.listeners.OnSynchronizedListener;
 import com.antonina.socialsynchro.common.gui.listeners.OnUnpublishedListener;
-import com.antonina.socialsynchro.common.database.tables.IDatabaseTable;
+import com.antonina.socialsynchro.common.rest.RequestLimit;
 import com.antonina.socialsynchro.common.utils.ApplicationConfig;
 import com.antonina.socialsynchro.common.rest.IResponse;
+import com.antonina.socialsynchro.common.utils.ConvertUtils;
+import com.antonina.socialsynchro.services.backend.BackendClient;
+import com.antonina.socialsynchro.services.backend.requests.BackendGetRateLimitsRequest;
+import com.antonina.socialsynchro.services.backend.requests.BackendUpdateRequestCounterRequest;
+import com.antonina.socialsynchro.services.backend.responses.BackendGetRateLimitsResponse;
 import com.antonina.socialsynchro.services.twitter.utils.TwitterConfig;
 import com.antonina.socialsynchro.services.twitter.rest.TwitterClient;
 import com.antonina.socialsynchro.services.twitter.rest.requests.TwitterCreateContentRequest;
@@ -59,7 +65,7 @@ public class TwitterPostContainer extends ChildPostContainer {
     private int gifNumber = 0;
     private int videoNumber = 0;
 
-    public TwitterPostContainer(IDatabaseTable data) {
+    public TwitterPostContainer(IDatabaseRow data) {
         super(data);
     }
 
@@ -101,13 +107,32 @@ public class TwitterPostContainer extends ChildPostContainer {
     }
 
     @Override
-    public void publish(OnPublishedListener publishListener, OnAttachmentUploadedListener attachmentListener) {
+    public void publish(final OnPublishedListener publishListener, final OnAttachmentUploadedListener attachmentListener) {
         setLoading(true);
-        if (!getAttachments().isEmpty())
-            for (Attachment attachment : getAttachments())
-                uploadAttachment(attachment, publishListener, attachmentListener);
-        else
-            publishJustContent(publishListener);
+        String endpoint = TwitterCreateContentRequest.getRequestEndpoint();
+        BackendGetRateLimitsRequest request = BackendGetRateLimitsRequest.builder()
+                .endpoint(endpoint)
+                .serviceName(getService().getName())
+                .build();
+        final TwitterPostContainer instance = this;
+        final LiveData<BackendGetRateLimitsResponse> asyncResponse = BackendClient.getRateLimits(request);
+        asyncResponse.observeForever(new Observer<BackendGetRateLimitsResponse>() {
+            @Override
+            public void onChanged(@Nullable BackendGetRateLimitsResponse response) {
+                if (response != null) {
+                    if (response.getRemaining() > 0) {
+                        if (!getAttachments().isEmpty())
+                            for (Attachment attachment : getAttachments())
+                                uploadAttachment(attachment, publishListener, attachmentListener);
+                        else
+                            publishJustContent(publishListener);
+                    } else {
+                        publishListener.onError(instance, ConvertUtils.requestLimitWaitMessage(response.getRemaining()));
+                    }
+                    asyncResponse.removeObserver(this);
+                }
+            }
+        });
     }
 
     @Override
@@ -136,6 +161,12 @@ public class TwitterPostContainer extends ChildPostContainer {
                     } else {
                         publishListener.onError(instance, response.getErrorString());
                     }
+                    String endpoint = TwitterCreateContentRequest.getRequestEndpoint();
+                    BackendUpdateRequestCounterRequest request = BackendUpdateRequestCounterRequest.builder()
+                            .endpoint(endpoint)
+                            .serviceName(getService().getName())
+                            .build();
+                    BackendClient.updateRequestCounter(request);
                     asyncResponse.removeObserver(this);
                 }
             }
@@ -166,6 +197,12 @@ public class TwitterPostContainer extends ChildPostContainer {
                     } else {
                         publishListener.onError(instance, response.getErrorString());
                     }
+                    String endpoint = TwitterCreateContentRequest.getRequestEndpoint();
+                    BackendUpdateRequestCounterRequest request = BackendUpdateRequestCounterRequest.builder()
+                            .endpoint(endpoint)
+                            .serviceName(getService().getName())
+                            .build();
+                    BackendClient.updateRequestCounter(request);
                     asyncResponse.removeObserver(this);
                 }
             }
@@ -173,146 +210,116 @@ public class TwitterPostContainer extends ChildPostContainer {
     }
 
     private void uploadAttachment(final Attachment attachment, final OnPublishedListener publishListener, final OnAttachmentUploadedListener attachmentListener) {
-        attachment.setUploadProgress(0);
-        attachment.setLoading(true);
-        final long fileSize = attachment.getSizeBytes();
-        TwitterUploadInitRequest request = TwitterUploadInitRequest.builder()
-                .accessToken(getAccount().getAccessToken())
-                .secretToken(getAccount().getSecretToken())
-                .mediaType(attachment.getMIMEType())
-                .totalBytes(fileSize)
-                .build();
-        final TwitterPostContainer instance = this;
-        final LiveData<TwitterUploadInitResponse> asyncResponse = TwitterClient.uploadInit(request);
-        asyncResponse.observeForever(new Observer<TwitterUploadInitResponse>() {
-            @Override
-            public void onChanged(@Nullable TwitterUploadInitResponse response) {
-                if (response != null) {
-                    if (response.getErrorString() == null) {
-                        attachment.setExternalID(response.getMediaID());
-                        attachmentListener.onInitialized(attachment);
+        String endpoint = TwitterUploadInitRequest.getRequestEndpoint();
+        final RequestLimit requestLimit = getAccount().getRequestLimit(endpoint);
+        if (requestLimit.getRemaining() > 0) {
+            attachment.setUploadProgress(0);
+            attachment.setLoading(true);
+            final long fileSize = attachment.getSizeBytes();
+            TwitterUploadInitRequest request = TwitterUploadInitRequest.builder()
+                    .accessToken(getAccount().getAccessToken())
+                    .secretToken(getAccount().getSecretToken())
+                    .mediaType(attachment.getMIMEType())
+                    .totalBytes(fileSize)
+                    .build();
+            final TwitterPostContainer instance = this;
+            final LiveData<TwitterUploadInitResponse> asyncResponse = TwitterClient.uploadInit(request);
+            asyncResponse.observeForever(new Observer<TwitterUploadInitResponse>() {
+                @Override
+                public void onChanged(@Nullable TwitterUploadInitResponse response) {
+                    if (response != null) {
+                        if (response.getErrorString() == null) {
+                            attachment.setExternalID(response.getMediaID());
+                            attachmentListener.onInitialized(attachment);
 
-                        long chunkStart = 0;
-                        long chunkEnd = fileSize > FILE_CHUNK_SIZE_BYTES ?  FILE_CHUNK_SIZE_BYTES - 1: fileSize - 1;
-                        int chunkStep = 0;
+                            long chunkStart = 0;
+                            long chunkEnd = fileSize > FILE_CHUNK_SIZE_BYTES ? FILE_CHUNK_SIZE_BYTES - 1 : fileSize - 1;
+                            int chunkStep = 0;
 
-                        uploadAppend(attachment, chunkStep, chunkStart, chunkEnd, publishListener, attachmentListener);
-                    } else {
-                        setLoading(false);
-                        attachmentListener.onError(attachment, response.getErrorString());
-                        publishListener.onError(instance, "Initialization error: " + response.getErrorString());
+                            uploadAppend(attachment, chunkStep, chunkStart, chunkEnd, publishListener, attachmentListener);
+                        } else {
+                            setLoading(false);
+                            attachmentListener.onError(attachment, response.getErrorString());
+                            publishListener.onError(instance, "Initialization error: " + response.getErrorString());
+                        }
+                        requestLimit.decrement();
+                        asyncResponse.removeObserver(this);
                     }
-                    asyncResponse.removeObserver(this);
                 }
-            }
-        });
+            });
+        } else {
+            attachmentListener.onError(attachment, ConvertUtils.requestLimitWaitMessage(requestLimit.getSecondsUntilReset()));
+            publishListener.onError(this, ConvertUtils.requestLimitWaitMessage(requestLimit.getSecondsUntilReset()));
+        }
     }
 
     private void uploadAppend(final Attachment attachment, final int chunkStep, final long chunkStart, final long chunkEnd, final OnPublishedListener publishListener, final OnAttachmentUploadedListener attachmentListener) {
-        TwitterUploadAppendRequest request = TwitterUploadAppendRequest.builder()
-                .accessToken(getAccount().getAccessToken())
-                .secretToken(getAccount().getSecretToken())
-                .mediaID(attachment.getExternalID())
-                .segmentIndex(chunkStep)
-                .media(attachment.getChunkRequestBody(chunkStart, chunkEnd))
-                .build();
-        final TwitterPostContainer instance = this;
-        final LiveData<TwitterUploadAppendResponse> asyncResponse = TwitterClient.uploadAppend(request);
-        asyncResponse.observeForever(new Observer<TwitterUploadAppendResponse>() {
-            @Override
-            public void onChanged(@Nullable TwitterUploadAppendResponse response) {
-                if (response == null) {
-                    long fileSize = attachment.getSizeBytes();
-                    int progress = (int)((double)(chunkEnd + 1) / fileSize * 100);
-                    attachment.setUploadProgress(progress);
-                    attachment.notifyListener();
-                    attachmentListener.onProgress(attachment);
-                    long remaining = fileSize - chunkEnd - 1;
-                    if (remaining > 0) {
-                        long nextChunkStart = chunkStart + FILE_CHUNK_SIZE_BYTES;
-                        long nextChunkEnd = remaining > FILE_CHUNK_SIZE_BYTES ? chunkEnd + FILE_CHUNK_SIZE_BYTES : fileSize - 1;
-                        int nextChunkStep = chunkStep + 1;
-                        uploadAppend(attachment, nextChunkStep, nextChunkStart, nextChunkEnd, publishListener, attachmentListener);
-                    } else
-                        uploadFinalize(attachment, publishListener, attachmentListener);
-                } else {
-                    setLoading(false);
-                    attachment.setExternalID(null);
-                    attachmentListener.onError(attachment, response.getErrorString());
-                    publishListener.onError(instance, response.getErrorString());
-                }
-                asyncResponse.removeObserver(this);
-            }
-        });
-    }
-
-    private void uploadFinalize(final Attachment attachment, final OnPublishedListener publishListener, final OnAttachmentUploadedListener attachmentListener) {
-        TwitterUploadFinalizeRequest request = TwitterUploadFinalizeRequest.builder()
-                .accessToken(getAccount().getAccessToken())
-                .secretToken(getAccount().getSecretToken())
-                .mediaID(attachment.getExternalID())
-                .build();
-        final TwitterPostContainer instance = this;
-        final LiveData<TwitterUploadFinalizeResponse> asyncResponse = TwitterClient.uploadFinalize(request);
-        asyncResponse.observeForever(new Observer<TwitterUploadFinalizeResponse>() {
-            @Override
-            public void onChanged(@Nullable TwitterUploadFinalizeResponse response) {
-                if (response != null) {
-                    if (response.getErrorString() == null) {
-                        attachment.setExternalID(response.getMediaID());
-                        TwitterUploadFinalizeResponse.ProcessingInfo info = response.getProcessingInfo();
-                        if (info == null)
-                            finishAttachmentUpload(attachment, publishListener, attachmentListener);
-                        else {
-                            Timer timer = new Timer();
-                            TimerTask timerTask = new TimerTask() {
-                                @Override
-                                public void run() {
-                                    checkUploadStatus(attachment, publishListener, attachmentListener);
-                                    cancel();
-                                }
-                            };
-                            timer.schedule(timerTask, info.getCheckAfterSecs() * 1000);
-                        }
+        String endpoint = TwitterUploadAppendRequest.getRequestEndpoint();
+        final RequestLimit requestLimit = getAccount().getRequestLimit(endpoint);
+        if (requestLimit.getRemaining() > 0) {
+            TwitterUploadAppendRequest request = TwitterUploadAppendRequest.builder()
+                    .accessToken(getAccount().getAccessToken())
+                    .secretToken(getAccount().getSecretToken())
+                    .mediaID(attachment.getExternalID())
+                    .segmentIndex(chunkStep)
+                    .media(attachment.getChunkRequestBody(chunkStart, chunkEnd))
+                    .build();
+            final TwitterPostContainer instance = this;
+            final LiveData<TwitterUploadAppendResponse> asyncResponse = TwitterClient.uploadAppend(request);
+            asyncResponse.observeForever(new Observer<TwitterUploadAppendResponse>() {
+                @Override
+                public void onChanged(@Nullable TwitterUploadAppendResponse response) {
+                    if (response == null) {
+                        long fileSize = attachment.getSizeBytes();
+                        int progress = (int) ((double) (chunkEnd + 1) / fileSize * 100);
+                        attachment.setUploadProgress(progress);
+                        attachment.notifyListener();
+                        attachmentListener.onProgress(attachment);
+                        long remaining = fileSize - chunkEnd - 1;
+                        if (remaining > 0) {
+                            long nextChunkStart = chunkStart + FILE_CHUNK_SIZE_BYTES;
+                            long nextChunkEnd = remaining > FILE_CHUNK_SIZE_BYTES ? chunkEnd + FILE_CHUNK_SIZE_BYTES : fileSize - 1;
+                            int nextChunkStep = chunkStep + 1;
+                            uploadAppend(attachment, nextChunkStep, nextChunkStart, nextChunkEnd, publishListener, attachmentListener);
+                        } else
+                            uploadFinalize(attachment, publishListener, attachmentListener);
                     } else {
                         setLoading(false);
                         attachment.setExternalID(null);
                         attachmentListener.onError(attachment, response.getErrorString());
                         publishListener.onError(instance, response.getErrorString());
                     }
+                    requestLimit.decrement();
                     asyncResponse.removeObserver(this);
                 }
-            }
-        });
+            });
+        } else {
+            attachmentListener.onError(attachment, ConvertUtils.requestLimitWaitMessage(requestLimit.getSecondsUntilReset()));
+            publishListener.onError(this, ConvertUtils.requestLimitWaitMessage(requestLimit.getSecondsUntilReset()));
+        }
     }
 
-    private void checkUploadStatus(final Attachment attachment, final OnPublishedListener publishListener, final OnAttachmentUploadedListener attachmentListener) {
-        TwitterCheckUploadStatusRequest request = TwitterCheckUploadStatusRequest.builder()
-                .accessToken(getAccount().getAccessToken())
-                .secretToken(getAccount().getSecretToken())
-                .mediaID(attachment.getExternalID())
-                .build();
-        final TwitterPostContainer instance = this;
-        final LiveData<TwitterCheckUploadStatusResponse> asyncResponse = TwitterClient.checkUploadStatus(request);
-        asyncResponse.observeForever(new Observer<TwitterCheckUploadStatusResponse>() {
-            @Override
-            public void onChanged(@Nullable TwitterCheckUploadStatusResponse response) {
-                if (response != null) {
-                    if (response.getErrorString() == null) {
-                        TwitterCheckUploadStatusResponse.ProcessingInfo info = response.getProcessingInfo();
-                        switch (info.getState()) {
-                            case "succeeded":
+    private void uploadFinalize(final Attachment attachment, final OnPublishedListener publishListener, final OnAttachmentUploadedListener attachmentListener) {
+        String endpoint = TwitterUploadAppendRequest.getRequestEndpoint();
+        final RequestLimit requestLimit = getAccount().getRequestLimit(endpoint);
+        if (requestLimit.getRemaining() > 0) {
+            TwitterUploadFinalizeRequest request = TwitterUploadFinalizeRequest.builder()
+                    .accessToken(getAccount().getAccessToken())
+                    .secretToken(getAccount().getSecretToken())
+                    .mediaID(attachment.getExternalID())
+                    .build();
+            final TwitterPostContainer instance = this;
+            final LiveData<TwitterUploadFinalizeResponse> asyncResponse = TwitterClient.uploadFinalize(request);
+            asyncResponse.observeForever(new Observer<TwitterUploadFinalizeResponse>() {
+                @Override
+                public void onChanged(@Nullable TwitterUploadFinalizeResponse response) {
+                    if (response != null) {
+                        if (response.getErrorString() == null) {
+                            attachment.setExternalID(response.getMediaID());
+                            TwitterUploadFinalizeResponse.ProcessingInfo info = response.getProcessingInfo();
+                            if (info == null)
                                 finishAttachmentUpload(attachment, publishListener, attachmentListener);
-                                break;
-                            case "failed":
-                                attachment.setLoading(false);
-                                attachment.setExternalID(null);
-                                attachmentListener.onError(attachment, info.getErrorString());
-                                publishListener.onError(instance, info.getErrorString());
-                                break;
-                            case "in_progress":
-                                attachment.setUploadProgress(info.getProgressPercent());
-                                attachment.notifyListener();
+                            else {
                                 Timer timer = new Timer();
                                 TimerTask timerTask = new TimerTask() {
                                     @Override
@@ -322,18 +329,77 @@ public class TwitterPostContainer extends ChildPostContainer {
                                     }
                                 };
                                 timer.schedule(timerTask, info.getCheckAfterSecs() * 1000);
-                                break;
+                            }
+                        } else {
+                            setLoading(false);
+                            attachment.setExternalID(null);
+                            attachmentListener.onError(attachment, response.getErrorString());
+                            publishListener.onError(instance, response.getErrorString());
                         }
-                    } else {
-                        setLoading(false);
-                        attachment.setExternalID(null);
-                        attachmentListener.onError(attachment, response.getErrorString());
-                        publishListener.onError(instance, "Status check error: " + response.getErrorString());
+                        requestLimit.decrement();
+                        asyncResponse.removeObserver(this);
                     }
-                    asyncResponse.removeObserver(this);
                 }
-            }
-        });
+            });
+        } else {
+            attachmentListener.onError(attachment, ConvertUtils.requestLimitWaitMessage(requestLimit.getSecondsUntilReset()));
+            publishListener.onError(this, ConvertUtils.requestLimitWaitMessage(requestLimit.getSecondsUntilReset()));
+        }
+    }
+
+    private void checkUploadStatus(final Attachment attachment, final OnPublishedListener publishListener, final OnAttachmentUploadedListener attachmentListener) {
+        String endpoint = TwitterCreateContentRequest.getRequestEndpoint();
+        final RequestLimit requestLimit = getAccount().getRequestLimit(endpoint);
+        if (requestLimit.getRemaining() > 0) {
+            TwitterCheckUploadStatusRequest request = TwitterCheckUploadStatusRequest.builder()
+                    .accessToken(getAccount().getAccessToken())
+                    .secretToken(getAccount().getSecretToken())
+                    .mediaID(attachment.getExternalID())
+                    .build();
+            final TwitterPostContainer instance = this;
+            final LiveData<TwitterCheckUploadStatusResponse> asyncResponse = TwitterClient.checkUploadStatus(request);
+            asyncResponse.observeForever(new Observer<TwitterCheckUploadStatusResponse>() {
+                @Override
+                public void onChanged(@Nullable TwitterCheckUploadStatusResponse response) {
+                    if (response != null) {
+                        if (response.getErrorString() == null) {
+                            TwitterCheckUploadStatusResponse.ProcessingInfo info = response.getProcessingInfo();
+                            switch (info.getState()) {
+                                case "succeeded":
+                                    finishAttachmentUpload(attachment, publishListener, attachmentListener);
+                                    break;
+                                case "failed":
+                                    attachment.setLoading(false);
+                                    attachment.setExternalID(null);
+                                    attachmentListener.onError(attachment, info.getErrorString());
+                                    publishListener.onError(instance, info.getErrorString());
+                                    break;
+                                case "in_progress":
+                                    attachment.setUploadProgress(info.getProgressPercent());
+                                    attachment.notifyListener();
+                                    Timer timer = new Timer();
+                                    TimerTask timerTask = new TimerTask() {
+                                        @Override
+                                        public void run() {
+                                            checkUploadStatus(attachment, publishListener, attachmentListener);
+                                            cancel();
+                                        }
+                                    };
+                                    timer.schedule(timerTask, info.getCheckAfterSecs() * 1000);
+                                    break;
+                            }
+                        } else {
+                            setLoading(false);
+                            attachment.setExternalID(null);
+                            attachmentListener.onError(attachment, response.getErrorString());
+                            publishListener.onError(instance, "Status check error: " + response.getErrorString());
+                        }
+                        requestLimit.decrement();
+                        asyncResponse.removeObserver(this);
+                    }
+                }
+            });
+        }
     }
 
     private void finishAttachmentUpload(Attachment attachment, OnPublishedListener publishListener, OnAttachmentUploadedListener attachmentListener) {
@@ -349,26 +415,46 @@ public class TwitterPostContainer extends ChildPostContainer {
 
     @Override
     public void unpublish(final OnUnpublishedListener listener) {
-        TwitterRemoveContentRequest request = TwitterRemoveContentRequest.builder()
-                .id(getExternalID())
-                .accessToken(getAccount().getAccessToken())
-                .secretToken(getAccount().getSecretToken())
+        final String endpoint = TwitterRemoveContentRequest.getRequestEndpoint();
+        BackendGetRateLimitsRequest request = BackendGetRateLimitsRequest.builder()
+                .endpoint(endpoint)
+                .serviceName(getService().getName())
                 .build();
         final TwitterPostContainer instance = this;
-        final LiveData<TwitterContentResponse> asyncResponse = TwitterClient.removeContent(request);
-        asyncResponse.observeForever(new Observer<TwitterContentResponse>() {
+        final LiveData<BackendGetRateLimitsResponse> asyncResponse = BackendClient.getRateLimits(request);
+        asyncResponse.observeForever(new Observer<BackendGetRateLimitsResponse>() {
             @Override
-            public void onChanged(@Nullable TwitterContentResponse response) {
+            public void onChanged(@Nullable BackendGetRateLimitsResponse response) {
                 if (response != null) {
-                    if (response.getErrorString() == null) {
-                        if (response.getID().equals(getExternalID())) {
-                            instance.setExternalID(null);
-                            listener.onUnpublished(instance);
-                        }
-                    } else {
-                        listener.onError(instance, response.getErrorString());
-                    }
-                    asyncResponse.removeObserver(this);
+                    if (response.getRemaining() > 0) {
+                        TwitterRemoveContentRequest request = TwitterRemoveContentRequest.builder()
+                                .id(getExternalID())
+                                .accessToken(getAccount().getAccessToken())
+                                .secretToken(getAccount().getSecretToken())
+                                .build();
+                        final LiveData<TwitterContentResponse> asyncResponse = TwitterClient.removeContent(request);
+                        asyncResponse.observeForever(new Observer<TwitterContentResponse>() {
+                            @Override
+                            public void onChanged(@Nullable TwitterContentResponse response) {
+                                if (response != null) {
+                                    if (response.getErrorString() == null) {
+                                        if (response.getID().equals(getExternalID())) {
+                                            instance.setExternalID(null);
+                                            listener.onUnpublished(instance);
+                                        }
+                                    } else
+                                        listener.onError(instance, response.getErrorString());
+                                    BackendUpdateRequestCounterRequest request = BackendUpdateRequestCounterRequest.builder()
+                                            .endpoint(endpoint)
+                                            .serviceName(getService().getName())
+                                            .build();
+                                    BackendClient.updateRequestCounter(request);
+                                    asyncResponse.removeObserver(this);
+                                }
+                            }
+                        });
+                    } else
+                        listener.onError(instance, ConvertUtils.requestLimitWaitMessage(response.getRemaining()));
                 }
             }
         });
@@ -376,34 +462,39 @@ public class TwitterPostContainer extends ChildPostContainer {
 
     @Override
     public void synchronize(final OnSynchronizedListener listener) {
-        setLoading(true);
-        TwitterConfig twitterConfig = ApplicationConfig.getInstance().getTwitterConfig();
-        TwitterAuthorizationStrategy authorization;
-        if (twitterConfig.isApplicationAuthorizationEnabled())
-            authorization = new TwitterApplicationAuthorizationStrategy();
-        else
-            authorization = new TwitterUserAuthorizationStrategy(getAccount().getAccessToken(), getAccount().getSecretToken());
+        String endpoint = TwitterGetContentRequest.getRequestEndpoint();
+        RequestLimit requestLimit = getAccount().getRequestLimit(endpoint);
+        if (requestLimit.getRemaining() > 0) {
+            setLoading(true);
+            TwitterConfig twitterConfig = ApplicationConfig.getInstance().getTwitterConfig();
+            TwitterAuthorizationStrategy authorization;
+            if (twitterConfig.isApplicationAuthorizationEnabled())
+                authorization = new TwitterApplicationAuthorizationStrategy();
+            else
+                authorization = new TwitterUserAuthorizationStrategy(getAccount().getAccessToken(), getAccount().getSecretToken());
 
-        TwitterGetContentRequest request = TwitterGetContentRequest.builder()
-                .id(getExternalID())
-                .authorizationStrategy(authorization)
-                .build();
-        final TwitterPostContainer instance = this;
-        final LiveData<TwitterContentResponse> asyncResponse = TwitterClient.getContent(request);
-        asyncResponse.observeForever(new Observer<TwitterContentResponse>() {
-            @Override
-            public void onChanged(@Nullable TwitterContentResponse response) {
-                if (response != null) {
-                    if (response.getErrorString() == null) {
-                        createFromResponse(response);
-                        setLoading(false);
-                        listener.onSynchronized(instance);
-                    } else {
-                        setLoading(false);
-                        listener.onError(instance, response.getErrorString());
+            TwitterGetContentRequest request = TwitterGetContentRequest.builder()
+                    .id(getExternalID())
+                    .authorizationStrategy(authorization)
+                    .build();
+            final TwitterPostContainer instance = this;
+            final LiveData<TwitterContentResponse> asyncResponse = TwitterClient.getContent(request);
+            asyncResponse.observeForever(new Observer<TwitterContentResponse>() {
+                @Override
+                public void onChanged(@Nullable TwitterContentResponse response) {
+                    if (response != null) {
+                        if (response.getErrorString() == null) {
+                            createFromResponse(response);
+                            setLoading(false);
+                            listener.onSynchronized(instance);
+                        } else {
+                            setLoading(false);
+                            listener.onError(instance, response.getErrorString());
+                        }
                     }
                 }
-            }
-        });
+            });
+        } else
+            listener.onError(this, ConvertUtils.requestLimitWaitMessage(requestLimit.getSecondsUntilReset()));
     }
 }

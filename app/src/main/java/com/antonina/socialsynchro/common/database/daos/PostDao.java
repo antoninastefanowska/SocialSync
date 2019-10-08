@@ -7,27 +7,27 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
-import com.antonina.socialsynchro.common.database.tables.PostTable;
+import com.antonina.socialsynchro.common.database.rows.PostRow;
 
 import java.util.List;
 
 @Dao
-public interface PostDao extends BaseDao<PostTable> {
+public interface PostDao extends BaseDao<PostRow> {
     @Query("SELECT * FROM post")
-    LiveData<List<PostTable>> getAllData();
+    LiveData<List<PostRow>> getAllData();
 
     @Query("SELECT * FROM post WHERE id = :postID")
-    LiveData<PostTable> getDataByID(long postID);
+    LiveData<PostRow> getDataByID(long postID);
 
     @Query("SELECT COUNT(*) FROM post")
     int count();
 
     @Insert
-    long insert(PostTable postData);
+    long insert(PostRow postData);
 
     @Update
-    void update(PostTable postData);
+    void update(PostRow postData);
 
     @Delete
-    void delete(PostTable postData);
+    void delete(PostRow postData);
 }

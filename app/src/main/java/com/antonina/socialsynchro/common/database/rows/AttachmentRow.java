@@ -1,4 +1,4 @@
-package com.antonina.socialsynchro.common.database.tables;
+package com.antonina.socialsynchro.common.database.rows;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
@@ -11,8 +11,8 @@ import com.antonina.socialsynchro.common.database.IDatabaseEntity;
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 @Entity(tableName = "attachment", foreignKeys = {
-        @ForeignKey(entity = PostTable.class, parentColumns = "id", childColumns = "post_id", onDelete = CASCADE)})
-public class AttachmentTable implements IDatabaseTable {
+        @ForeignKey(entity = PostRow.class, parentColumns = "id", childColumns = "post_id", onDelete = CASCADE)})
+public class AttachmentRow implements IDatabaseRow {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     public long id;
@@ -30,13 +30,10 @@ public class AttachmentTable implements IDatabaseTable {
     public long postID;
 
     @Override
-    public void createFromExistingEntity(IDatabaseEntity entity) {
-        this.id = entity.getInternalID();
-        createFromNewEntity(entity);
-    }
+    public void createFromEntity(IDatabaseEntity entity) {
+        if (entity.getInternalID() != null)
+            this.id = entity.getInternalID();
 
-    @Override
-    public void createFromNewEntity(IDatabaseEntity entity) {
         Attachment attachment = (Attachment)entity;
         this.filepath = attachment.getFile().getAbsolutePath();
         this.externalID = attachment.getExternalID();

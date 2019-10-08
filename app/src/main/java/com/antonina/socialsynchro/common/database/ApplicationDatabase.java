@@ -13,15 +13,17 @@ import com.antonina.socialsynchro.common.database.daos.AttachmentDao;
 import com.antonina.socialsynchro.common.database.daos.ChildPostContainerDao;
 import com.antonina.socialsynchro.common.database.daos.ParentPostContainerDao;
 import com.antonina.socialsynchro.common.database.daos.PostDao;
+import com.antonina.socialsynchro.common.database.daos.RequestLimitDao;
+import com.antonina.socialsynchro.common.database.rows.AttachmentRow;
+import com.antonina.socialsynchro.common.database.rows.ParentPostContainerRow;
+import com.antonina.socialsynchro.common.database.rows.RequestLimitRow;
 import com.antonina.socialsynchro.services.twitter.database.daos.TwitterAccountInfoDao;
-import com.antonina.socialsynchro.common.database.tables.AccountTable;
-import com.antonina.socialsynchro.common.database.tables.AttachmentTable;
-import com.antonina.socialsynchro.common.database.tables.ChildPostContainerTable;
-import com.antonina.socialsynchro.common.database.tables.ParentPostContainerTable;
-import com.antonina.socialsynchro.common.database.tables.PostTable;
-import com.antonina.socialsynchro.services.twitter.database.tables.TwitterAccountInfoTable;
+import com.antonina.socialsynchro.common.database.rows.AccountRow;
+import com.antonina.socialsynchro.common.database.rows.ChildPostContainerRow;
+import com.antonina.socialsynchro.common.database.rows.PostRow;
+import com.antonina.socialsynchro.services.twitter.database.rows.TwitterAccountInfoRow;
 
-@Database(entities = {AccountTable.class, PostTable.class, AttachmentTable.class, ChildPostContainerTable.class, ParentPostContainerTable.class, TwitterAccountInfoTable.class}, version = 1, exportSchema = false)
+@Database(entities = {AccountRow.class, PostRow.class, AttachmentRow.class, ChildPostContainerRow.class, ParentPostContainerRow.class, RequestLimitRow.class, TwitterAccountInfoRow.class}, version = 1, exportSchema = false)
 @TypeConverters(DateConverter.class)
 public abstract class ApplicationDatabase extends RoomDatabase {
     private static volatile ApplicationDatabase instance;
@@ -31,6 +33,7 @@ public abstract class ApplicationDatabase extends RoomDatabase {
     public abstract AttachmentDao attachmentDao();
     public abstract ChildPostContainerDao childPostContainerDao();
     public abstract ParentPostContainerDao parentPostContainerDao();
+    public abstract RequestLimitDao requestLimitDao();
     public abstract TwitterAccountInfoDao twitterAccountDao();
 
     public static ApplicationDatabase getDatabase(final Context context) {

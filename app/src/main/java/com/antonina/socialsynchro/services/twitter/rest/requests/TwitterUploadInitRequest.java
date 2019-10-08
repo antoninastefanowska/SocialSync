@@ -30,6 +30,10 @@ public class TwitterUploadInitRequest extends TwitterRequest {
         return command;
     }
 
+    public static String getRequestEndpoint() {
+        return "/media/upload";
+    }
+
     public static class Builder extends TwitterRequest.Builder {
         private final static String REQUEST_URL = "https://upload.twitter.com/1.1/media/upload.json";
         private String accessToken;

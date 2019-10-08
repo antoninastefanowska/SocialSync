@@ -1,21 +1,16 @@
 package com.antonina.socialsynchro.services.twitter.rest.requests;
 
-import com.antonina.socialsynchro.common.rest.IRequest;
+import com.antonina.socialsynchro.common.rest.BaseRequest;
 import com.antonina.socialsynchro.services.twitter.rest.authorization.TwitterAuthorizationStrategy;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 @SuppressWarnings({"WeakerAccess", "StringBufferReplaceableByString"})
-public abstract class TwitterRequest implements IRequest {
-    private final String authorizationHeader;
+public abstract class TwitterRequest extends BaseRequest {
 
     protected TwitterRequest(String authorizationHeader) {
-        this.authorizationHeader = authorizationHeader;
-    }
-
-    public String getAuthorizationHeader() {
-        return authorizationHeader;
+        super(authorizationHeader);
     }
 
     public static String percentEncode(String input) {
@@ -32,11 +27,10 @@ public abstract class TwitterRequest implements IRequest {
         return output;
     }
 
-    protected abstract static class Builder {
+    public static abstract class Builder extends BaseRequest.Builder {
         protected TwitterAuthorizationStrategy authorization;
 
+        @Override
         public abstract TwitterRequest build();
-
-        protected abstract void configureAuthorization();
     }
 }

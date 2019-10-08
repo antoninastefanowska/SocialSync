@@ -18,6 +18,10 @@ public class TwitterCreateContentRequest extends TwitterRequest {
         return new Builder();
     }
 
+    public static String getRequestEndpoint() {
+        return "/statuses/update";
+    }
+
     public static class Builder extends TwitterRequest.Builder {
         private final static String REQUEST_URL = "https://api.twitter.com/1.1/statuses/update.json";
         protected String status;

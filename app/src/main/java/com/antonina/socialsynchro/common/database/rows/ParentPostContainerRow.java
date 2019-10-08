@@ -1,4 +1,4 @@
-package com.antonina.socialsynchro.common.database.tables;
+package com.antonina.socialsynchro.common.database.rows;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
@@ -11,8 +11,8 @@ import com.antonina.socialsynchro.common.database.IDatabaseEntity;
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 @Entity(tableName = "parent_post_container", foreignKeys = {
-        @ForeignKey(entity = PostTable.class, parentColumns = "id", childColumns = "post_id", onDelete = CASCADE)})
-public class ParentPostContainerTable implements IDatabaseTable {
+        @ForeignKey(entity = PostRow.class, parentColumns = "id", childColumns = "post_id", onDelete = CASCADE)})
+public class ParentPostContainerRow implements IDatabaseRow {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     public long id;
@@ -21,13 +21,10 @@ public class ParentPostContainerTable implements IDatabaseTable {
     public long postID;
 
     @Override
-    public void createFromExistingEntity(IDatabaseEntity entity) {
-        this.id = entity.getInternalID();
-        createFromNewEntity(entity);
-    }
+    public void createFromEntity(IDatabaseEntity entity) {
+        if (entity.getInternalID() != null)
+            this.id = entity.getInternalID();
 
-    @Override
-    public void createFromNewEntity(IDatabaseEntity entity) {
         ParentPostContainer parentPostContainer = (ParentPostContainer)entity;
         this.postID = parentPostContainer.getPost().getInternalID();
     }

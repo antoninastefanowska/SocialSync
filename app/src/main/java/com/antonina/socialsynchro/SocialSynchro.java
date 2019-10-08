@@ -7,6 +7,7 @@ import com.antonina.socialsynchro.common.database.repositories.AttachmentReposit
 import com.antonina.socialsynchro.common.database.repositories.ChildPostContainerRepository;
 import com.antonina.socialsynchro.common.database.repositories.ParentPostContainerRepository;
 import com.antonina.socialsynchro.common.database.repositories.PostRepository;
+import com.antonina.socialsynchro.common.database.repositories.RequestLimitRepository;
 import com.antonina.socialsynchro.services.twitter.database.repositories.TwitterAccountInfoRepository;
 import com.antonina.socialsynchro.common.utils.ApplicationConfig;
 
@@ -23,6 +24,8 @@ public class SocialSynchro extends Application {
         AttachmentRepository.createInstance(this);
         ParentPostContainerRepository.createInstance(this);
         ChildPostContainerRepository.createInstance(this);
+        RequestLimitRepository.createInstance(this);
+
         TwitterAccountInfoRepository.createInstance(this);
 
         instance = this;

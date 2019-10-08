@@ -9,8 +9,8 @@ import com.antonina.socialsynchro.common.content.attachments.Attachment;
 import com.antonina.socialsynchro.common.database.repositories.ChildPostContainerRepository;
 import com.antonina.socialsynchro.common.database.repositories.ParentPostContainerRepository;
 import com.antonina.socialsynchro.common.database.repositories.PostRepository;
-import com.antonina.socialsynchro.common.database.tables.IDatabaseTable;
-import com.antonina.socialsynchro.common.database.tables.ParentPostContainerTable;
+import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
+import com.antonina.socialsynchro.common.database.rows.ParentPostContainerRow;
 import com.antonina.socialsynchro.common.gui.listeners.OnAttachmentUploadedListener;
 import com.antonina.socialsynchro.common.gui.listeners.OnPublishedListener;
 import com.antonina.socialsynchro.common.gui.listeners.OnSynchronizedListener;
@@ -35,8 +35,8 @@ public class ParentPostContainer extends PostContainer {
         deletedChildren = new ArrayList<>();
     }
 
-    public ParentPostContainer(IDatabaseTable data) {
-        createFromData(data);
+    public ParentPostContainer(IDatabaseRow data) {
+        createFromDatabaseRow(data);
     }
 
     @Override
@@ -207,9 +207,9 @@ public class ParentPostContainer extends PostContainer {
     }
 
     @Override
-    public void createFromData(IDatabaseTable data) {
-        ParentPostContainerTable parentPostContainerData = (ParentPostContainerTable) data;
-        this.internalID = parentPostContainerData.id;
+    public void createFromDatabaseRow(IDatabaseRow data) {
+        ParentPostContainerRow parentPostContainerData = (ParentPostContainerRow) data;
+        this.internalID = parentPostContainerData.getID();
 
         this.children = new ArrayList<>();
         this.deletedChildren = new ArrayList<>();
@@ -244,33 +244,28 @@ public class ParentPostContainer extends PostContainer {
     @Override
     public void saveInDatabase() {
         if (internalID != null)
-            return;
-        post.saveInDatabase();
-        ParentPostContainerRepository repository = ParentPostContainerRepository.getInstance();
-        internalID = repository.insert(this);
-        for (ChildPostContainer child : children)
-            child.saveInDatabase();
+            updateInDatabase();
+        else {
+            post.saveInDatabase();
+            ParentPostContainerRepository repository = ParentPostContainerRepository.getInstance();
+            internalID = repository.insert(this);
+            for (ChildPostContainer child : children)
+                child.saveInDatabase();
+        }
     }
 
     @Override
     public void updateInDatabase() {
-        if (internalID == null)
-            return;
-        post.updateInDatabase();
+        post.saveInDatabase();
         ParentPostContainerRepository repository = ParentPostContainerRepository.getInstance();
         repository.update(this);
-
         for (ChildPostContainer deletedChild : deletedChildren)
             deletedChild.deleteFromDatabase();
 
         deletedChildren.clear();
 
-        for (ChildPostContainer child : children) {
-            if (child.getInternalID() == null)
-                child.saveInDatabase();
-            else
-                child.updateInDatabase();
-        }
+        for (ChildPostContainer child : children)
+            child.saveInDatabase();
     }
 
     @Override

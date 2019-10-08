@@ -12,16 +12,20 @@ public class TwitterCheckUploadStatusRequest extends TwitterRequest {
         this.mediaID = percentEncode(mediaID);
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
     public String getMediaID() {
         return mediaID;
     }
 
     public String getCommand() {
         return command;
+    }
+
+    public static String getRequestEndpoint() {
+        return "/media/upload";
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     public static class Builder extends TwitterRequest.Builder {

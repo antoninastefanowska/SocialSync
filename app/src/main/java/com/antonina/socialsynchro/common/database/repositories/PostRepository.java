@@ -4,13 +4,13 @@ import android.app.Application;
 
 import com.antonina.socialsynchro.common.content.posts.Post;
 import com.antonina.socialsynchro.common.database.ApplicationDatabase;
-import com.antonina.socialsynchro.common.database.tables.PostTable;
+import com.antonina.socialsynchro.common.database.rows.PostRow;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
-public class PostRepository extends BaseRepository<PostTable, Post> {
+public class PostRepository extends BaseRepository<PostRow, Post> {
     private static PostRepository instance;
 
     private PostRepository(Application application) {
@@ -28,9 +28,9 @@ public class PostRepository extends BaseRepository<PostTable, Post> {
     }
 
     @Override
-    protected Map<Long, Post> convertToEntities(List<PostTable> input) {
-        Map<Long, Post> output = new HashMap<>();
-        for (PostTable postData : input) {
+    protected Map<Long, Post> convertToEntities(List<PostRow> input) {
+        Map<Long, Post> output = new TreeMap<>();
+        for (PostRow postData : input) {
             Post post = new Post(postData);
             output.put(post.getInternalID(), post);
         }
@@ -38,12 +38,9 @@ public class PostRepository extends BaseRepository<PostTable, Post> {
     }
 
     @Override
-    protected PostTable convertToTable(Post entity, boolean isNew) {
-        PostTable data = new PostTable();
-        if (isNew)
-            data.createFromNewEntity(entity);
-        else
-            data.createFromExistingEntity(entity);
+    protected PostRow convertToRow(Post entity) {
+        PostRow data = new PostRow();
+        data.createFromEntity(entity);
         return data;
     }
 

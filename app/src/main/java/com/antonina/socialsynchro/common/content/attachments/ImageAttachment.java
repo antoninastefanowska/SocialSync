@@ -1,6 +1,6 @@
 package com.antonina.socialsynchro.common.content.attachments;
 
-import com.antonina.socialsynchro.common.database.tables.IDatabaseTable;
+import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 
 import java.io.File;
 
@@ -8,7 +8,7 @@ import java.io.File;
 public class ImageAttachment extends Attachment {
     private int height, width;
 
-    public ImageAttachment(IDatabaseTable data) {
+    public ImageAttachment(IDatabaseRow data) {
         super(data);
         setAttachmentType(AttachmentTypes.getAttachmentType(AttachmentTypeID.Image));
     }

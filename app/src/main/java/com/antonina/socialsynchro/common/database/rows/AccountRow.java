@@ -1,4 +1,4 @@
-package com.antonina.socialsynchro.common.database.tables;
+package com.antonina.socialsynchro.common.database.rows;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
@@ -10,7 +10,7 @@ import com.antonina.socialsynchro.common.database.IDatabaseEntity;
 import java.util.Date;
 
 @Entity(tableName = "account")
-public class AccountTable implements IDatabaseTable {
+public class AccountRow implements IDatabaseRow {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
     public long id;
@@ -31,13 +31,10 @@ public class AccountTable implements IDatabaseTable {
     public Date connectingDate;
 
     @Override
-    public void createFromExistingEntity(IDatabaseEntity entity) {
-        this.id = entity.getInternalID();
-        createFromNewEntity(entity);
-    }
+    public void createFromEntity(IDatabaseEntity entity) {
+        if (entity.getInternalID() != null)
+            this.id = entity.getInternalID();
 
-    @Override
-    public void createFromNewEntity(IDatabaseEntity entity) {
         Account account = (Account)entity;
         this.name = account.getName();
         this.externalID = account.getExternalID();

@@ -7,29 +7,29 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
 
-import com.antonina.socialsynchro.common.database.tables.ParentPostContainerTable;
+import com.antonina.socialsynchro.common.database.rows.ParentPostContainerRow;
 
 import java.util.List;
 
 @Dao
-public interface ParentPostContainerDao extends BaseDao<ParentPostContainerTable> {
+public interface ParentPostContainerDao extends BaseDao<ParentPostContainerRow> {
     @Query("SELECT * FROM parent_post_container")
-    LiveData<List<ParentPostContainerTable>> getAllData();
+    LiveData<List<ParentPostContainerRow>> getAllData();
 
     @Query("SELECT * FROM parent_post_container WHERE id = :id")
-    LiveData<ParentPostContainerTable> getDataByID(long id);
+    LiveData<ParentPostContainerRow> getDataByID(long id);
 
     @Query("SELECT COUNT(*) FROM parent_post_container")
     int count();
 
     @Insert
-    long insert(ParentPostContainerTable parentPostContainerData);
+    long insert(ParentPostContainerRow parentPostContainerData);
 
     @Update
-    void update(ParentPostContainerTable parentPostContainerData);
+    void update(ParentPostContainerRow parentPostContainerData);
 
     @Delete
-    void delete(ParentPostContainerTable parentPostContainerData);
+    void delete(ParentPostContainerRow parentPostContainerData);
 
 
 }

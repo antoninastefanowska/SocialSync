@@ -10,12 +10,12 @@ public class TwitterGetBearerTokenRequest extends TwitterRequest {
         this.grantType = percentEncode("client_credentials");
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
     public String getGrantType() {
         return grantType;
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     public static class Builder extends TwitterRequest.Builder {

@@ -1,7 +1,7 @@
 package com.antonina.socialsynchro.common.database;
 
-import com.antonina.socialsynchro.common.database.tables.IDatabaseTable;
+import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 
 public interface IDatabaseEntityFactory {
-    IDatabaseEntity createFromData(IDatabaseTable data);
+    IDatabaseEntity createFromDatabaseRow(IDatabaseRow data);
 }

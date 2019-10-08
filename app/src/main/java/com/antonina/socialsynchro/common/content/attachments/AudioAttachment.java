@@ -1,6 +1,6 @@
 package com.antonina.socialsynchro.common.content.attachments;
 
-import com.antonina.socialsynchro.common.database.tables.IDatabaseTable;
+import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 
 import java.io.File;
 
@@ -8,7 +8,7 @@ import java.io.File;
 public class AudioAttachment extends Attachment {
     private int lengthSeconds;
 
-    public AudioAttachment(IDatabaseTable data) {
+    public AudioAttachment(IDatabaseRow data) {
         super(data);
         setAttachmentType(AttachmentTypes.getAttachmentType(AttachmentTypeID.Audio));
     }

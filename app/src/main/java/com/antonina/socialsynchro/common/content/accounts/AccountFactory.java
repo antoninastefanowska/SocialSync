@@ -2,8 +2,8 @@ package com.antonina.socialsynchro.common.content.accounts;
 
 import com.antonina.socialsynchro.common.content.services.ServiceID;
 import com.antonina.socialsynchro.common.database.IDatabaseEntityFactory;
-import com.antonina.socialsynchro.common.database.tables.AccountTable;
-import com.antonina.socialsynchro.common.database.tables.IDatabaseTable;
+import com.antonina.socialsynchro.common.database.rows.AccountRow;
+import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 import com.antonina.socialsynchro.services.twitter.content.TwitterAccount;
 
 public class AccountFactory implements IDatabaseEntityFactory {
@@ -18,8 +18,8 @@ public class AccountFactory implements IDatabaseEntityFactory {
     private AccountFactory() { }
 
     @Override
-    public Account createFromData(IDatabaseTable data) {
-        AccountTable accountData = (AccountTable)data;
+    public Account createFromDatabaseRow(IDatabaseRow data) {
+        AccountRow accountData = (AccountRow)data;
         ServiceID serviceID = ServiceID.values()[accountData.serviceID];
 
         switch (serviceID) {

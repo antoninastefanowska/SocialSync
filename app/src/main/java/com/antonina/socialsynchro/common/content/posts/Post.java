@@ -8,8 +8,8 @@ import com.antonina.socialsynchro.common.content.attachments.Attachment;
 import com.antonina.socialsynchro.common.database.IDatabaseEntity;
 import com.antonina.socialsynchro.common.database.repositories.AttachmentRepository;
 import com.antonina.socialsynchro.common.database.repositories.PostRepository;
-import com.antonina.socialsynchro.common.database.tables.IDatabaseTable;
-import com.antonina.socialsynchro.common.database.tables.PostTable;
+import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
+import com.antonina.socialsynchro.common.database.rows.PostRow;
 import com.antonina.socialsynchro.common.gui.GUIItem;
 
 import java.util.ArrayList;
@@ -34,7 +34,7 @@ public class Post extends GUIItem implements IPost, IDatabaseEntity {
         deletedAttachments = new ArrayList<>();
     }
 
-    public Post(IDatabaseTable data) { createFromData(data); }
+    public Post(IDatabaseRow data) { createFromDatabaseRow(data); }
 
     @Override
     public String getContent() {
@@ -94,9 +94,9 @@ public class Post extends GUIItem implements IPost, IDatabaseEntity {
     }
 
     @Override
-    public void createFromData(IDatabaseTable data) {
-        PostTable postData = (PostTable)data;
-        this.internalID = postData.id;
+    public void createFromDatabaseRow(IDatabaseRow data) {
+        PostRow postData = (PostRow)data;
+        this.internalID = postData.getID();
         this.title = postData.title;
         this.content = postData.content;
         this.creationDate = postData.creationDate;
@@ -126,19 +126,19 @@ public class Post extends GUIItem implements IPost, IDatabaseEntity {
     @Override
     public void saveInDatabase() {
         if (internalID != null)
-            return;
-        creationDate = Calendar.getInstance().getTime();
-        modificationDate = creationDate;
-        PostRepository repository = PostRepository.getInstance();
-        internalID = repository.insert(this);
-        for (Attachment attachment : attachments)
-            attachment.saveInDatabase();
+            updateInDatabase();
+        else {
+            creationDate = Calendar.getInstance().getTime();
+            modificationDate = creationDate;
+            PostRepository repository = PostRepository.getInstance();
+            internalID = repository.insert(this);
+            for (Attachment attachment : attachments)
+                attachment.saveInDatabase();
+        }
     }
 
     @Override
     public void updateInDatabase() {
-        if (internalID == null)
-            return;
         modificationDate = Calendar.getInstance().getTime();
         PostRepository repository = PostRepository.getInstance();
         repository.update(this);
@@ -148,12 +148,8 @@ public class Post extends GUIItem implements IPost, IDatabaseEntity {
 
         deletedAttachments.clear();
 
-        for (Attachment attachment : attachments) {
-            if (attachment.getInternalID() == null)
-                attachment.saveInDatabase();
-            else
-                attachment.updateInDatabase();
-        }
+        for (Attachment attachment : attachments)
+            attachment.saveInDatabase();
     }
 
     @Override

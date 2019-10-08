@@ -13,7 +13,7 @@ public class TwitterGetLoginTokenRequest extends TwitterRequest {
 
     public static class Builder extends TwitterRequest.Builder {
         private final static String REQUEST_URL = "https://api.twitter.com/oauth/request_token";
-        private final static String CALLBACK_URL = "https://socialsynchro.pythonanywhere.com/callback/post_verifier";
+        private final static String CALLBACK_URL = "https://socialsynchro.pythonanywhere.com/backend/post_twitter_verifier";
 
         @Override
         public TwitterGetLoginTokenRequest build() {

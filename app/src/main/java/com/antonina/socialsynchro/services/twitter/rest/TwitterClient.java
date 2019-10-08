@@ -1,11 +1,8 @@
 package com.antonina.socialsynchro.services.twitter.rest;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MutableLiveData;
-import android.util.Log;
 
-import com.antonina.socialsynchro.common.rest.IClient;
-import com.antonina.socialsynchro.common.rest.IRawResponse;
+import com.antonina.socialsynchro.common.rest.BaseClient;
 import com.antonina.socialsynchro.services.twitter.rest.requests.TwitterCreateContentRequest;
 import com.antonina.socialsynchro.services.twitter.rest.requests.TwitterCreateContentWithMediaRequest;
 import com.antonina.socialsynchro.services.twitter.rest.requests.TwitterGetAccessTokenRequest;
@@ -15,7 +12,6 @@ import com.antonina.socialsynchro.services.twitter.rest.requests.TwitterGetLogin
 import com.antonina.socialsynchro.services.twitter.rest.requests.TwitterGetRateLimitsRequest;
 import com.antonina.socialsynchro.services.twitter.rest.requests.TwitterGetUserRequest;
 import com.antonina.socialsynchro.services.twitter.rest.requests.TwitterRemoveContentRequest;
-import com.antonina.socialsynchro.services.twitter.rest.requests.TwitterRequest;
 import com.antonina.socialsynchro.services.twitter.rest.requests.TwitterUploadAppendRequest;
 import com.antonina.socialsynchro.services.twitter.rest.requests.TwitterUploadFinalizeRequest;
 import com.antonina.socialsynchro.services.twitter.rest.requests.TwitterUploadInitRequest;
@@ -26,27 +22,17 @@ import com.antonina.socialsynchro.services.twitter.rest.responses.TwitterGetAcce
 import com.antonina.socialsynchro.services.twitter.rest.responses.TwitterGetBearerTokenResponse;
 import com.antonina.socialsynchro.services.twitter.rest.responses.TwitterGetLoginTokenResponse;
 import com.antonina.socialsynchro.services.twitter.rest.responses.TwitterGetRateLimitsResponse;
-import com.antonina.socialsynchro.services.twitter.rest.responses.TwitterResponse;
 import com.antonina.socialsynchro.services.twitter.rest.responses.TwitterUploadAppendResponse;
 import com.antonina.socialsynchro.services.twitter.rest.responses.TwitterUploadFinalizeResponse;
 import com.antonina.socialsynchro.services.twitter.rest.responses.TwitterUploadInitResponse;
 import com.antonina.socialsynchro.services.twitter.rest.responses.TwitterCheckUploadStatusResponse;
 import com.antonina.socialsynchro.services.twitter.rest.responses.TwitterUserResponse;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import java.io.IOException;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 @SuppressWarnings({"WeakerAccess", "UnnecessaryCallToStringValueOf"})
-public class TwitterClient implements IClient {
+public class TwitterClient extends BaseClient {
     private static final String BASE_URL = "https://api.twitter.com/";
     private static final String BASE_UPLOAD_URL = "https://upload.twitter.com/";
 
@@ -126,105 +112,6 @@ public class TwitterClient implements IClient {
         return controller.start();
     }
 
-    private static abstract class BaseController<RequestClass extends TwitterRequest, ResponseClass extends TwitterResponse> implements Callback<ResponseClass> {
-        protected final RequestClass request;
-        private final MutableLiveData<ResponseClass> asyncResponse;
-
-        public BaseController(RequestClass request) {
-            this.request = request;
-            this.asyncResponse = new MutableLiveData<>();
-        }
-
-        protected abstract Call<ResponseClass> createCall(TwitterAPI twitterAPI);
-
-        protected abstract Class<ResponseClass> getResponseClass();
-
-        protected abstract String getBaseURL();
-
-        public LiveData<ResponseClass> start() {
-            Gson gson = new GsonBuilder().setLenient().create();
-            Retrofit retrofit = new Retrofit.Builder().baseUrl(getBaseURL()).addConverterFactory(GsonConverterFactory.create(gson)).build();
-            TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
-            Call<ResponseClass> call = createCall(twitterAPI);
-            call.enqueue(this);
-            return asyncResponse;
-        }
-
-        @Override
-        public void onResponse(Call<ResponseClass> call, Response<ResponseClass> response) {
-            Log.d("limity", response.raw().toString());
-            if (response.isSuccessful())
-                asyncResponse.setValue(response.body());
-            else {
-                try {
-                    ResponseClass objectResponse;
-                    Gson gson = new Gson();
-                    objectResponse = gson.fromJson(response.errorBody().string(), getResponseClass());
-                    if (objectResponse.getErrorString() == null)
-                        objectResponse.setUndefinedError("Code: " + String.valueOf(response.code()));
-                    asyncResponse.setValue(objectResponse);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        @Override
-        public void onFailure(Call<ResponseClass> call, Throwable t) {
-            t.printStackTrace();
-        }
-    }
-
-    private static abstract class BaseRawController<RequestClass extends TwitterRequest, ResponseClass extends IRawResponse> implements Callback<ResponseBody> {
-        protected final RequestClass request;
-        private final MutableLiveData<ResponseClass> asyncResponse;
-
-        public BaseRawController(RequestClass request) {
-            this.request = request;
-            this.asyncResponse = new MutableLiveData<>();
-        }
-
-        protected abstract Call<ResponseBody> createCall(TwitterAPI twitterAPI);
-
-        protected abstract ResponseClass createResponse();
-
-        public LiveData<ResponseClass> start() {
-            Retrofit retrofit = new Retrofit.Builder().baseUrl(BASE_URL).addConverterFactory(ScalarsConverterFactory.create()).build();
-            TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
-            Call<ResponseBody> call = createCall(twitterAPI);
-            call.enqueue(this);
-            return asyncResponse;
-        }
-
-        @Override
-        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-            ResponseClass objectResponse = createResponse();
-            if (response.isSuccessful()) {
-                String stringResponse = "";
-                try {
-                    stringResponse = response.body().string();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                objectResponse.createFromString(stringResponse);
-            } else {
-                String errorResponse = "";
-                try {
-                    errorResponse = response.errorBody().string();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                objectResponse.createFromErrorString(errorResponse);
-            }
-            asyncResponse.setValue(objectResponse);
-        }
-
-        @Override
-        public void onFailure(Call<ResponseBody> call, Throwable t) {
-            t.printStackTrace();
-        }
-    }
-
     private static class GetLoginTokenController extends BaseRawController<TwitterGetLoginTokenRequest, TwitterGetLoginTokenResponse> {
 
         public GetLoginTokenController(TwitterGetLoginTokenRequest request) {
@@ -232,7 +119,13 @@ public class TwitterClient implements IClient {
         }
 
         @Override
-        protected Call<ResponseBody> createCall(TwitterAPI twitterAPI) {
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+
+        @Override
+        protected Call<ResponseBody> createCall() {
+            TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
             return twitterAPI.getLoginToken(request.getAuthorizationHeader());
         }
 
@@ -249,7 +142,13 @@ public class TwitterClient implements IClient {
         }
 
         @Override
-        protected Call<ResponseBody> createCall(TwitterAPI twitterAPI) {
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+
+        @Override
+        protected Call<ResponseBody> createCall() {
+            TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
             return twitterAPI.getAccessToken(request.getVerifier(), request.getAuthorizationHeader());
         }
 
@@ -266,7 +165,8 @@ public class TwitterClient implements IClient {
         }
 
         @Override
-        protected Call<TwitterGetBearerTokenResponse> createCall(TwitterAPI twitterAPI) {
+        protected Call<TwitterGetBearerTokenResponse> createCall() {
+            TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
             return twitterAPI.getBearerToken(request.getGrantType(), request.getAuthorizationHeader());
         }
 
@@ -288,7 +188,8 @@ public class TwitterClient implements IClient {
         }
 
         @Override
-        protected Call<TwitterUserResponse> createCall(TwitterAPI twitterAPI) {
+        protected Call<TwitterUserResponse> createCall() {
+            TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
             return twitterAPI.verifyCredentials(request.getAuthorizationHeader());
         }
 
@@ -310,7 +211,8 @@ public class TwitterClient implements IClient {
         }
 
         @Override
-        protected Call<TwitterUserResponse> createCall(TwitterAPI twitterAPI) {
+        protected Call<TwitterUserResponse> createCall() {
+            TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
             return twitterAPI.getUser(request.getUserID(), request.getAuthorizationHeader());
         }
 
@@ -332,7 +234,8 @@ public class TwitterClient implements IClient {
         }
 
         @Override
-        protected Call<TwitterContentResponse> createCall(TwitterAPI twitterAPI) {
+        protected Call<TwitterContentResponse> createCall() {
+            TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
             return twitterAPI.createContent(request.getStatus(), request.getAuthorizationHeader());
         }
 
@@ -354,7 +257,8 @@ public class TwitterClient implements IClient {
         }
 
         @Override
-        protected Call<TwitterContentResponse> createCall(TwitterAPI twitterAPI) {
+        protected Call<TwitterContentResponse> createCall() {
+            TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
             return twitterAPI.createContentWithMedia(request.getStatus(), request.getMediaIDs(), request.getAuthorizationHeader());
         }
 
@@ -376,7 +280,8 @@ public class TwitterClient implements IClient {
         }
 
         @Override
-        protected Call<TwitterContentResponse> createCall(TwitterAPI twitterAPI) {
+        protected Call<TwitterContentResponse> createCall() {
+            TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
             return twitterAPI.removeContent(request.getID(), request.getAuthorizationHeader());
         }
 
@@ -398,7 +303,8 @@ public class TwitterClient implements IClient {
         }
 
         @Override
-        protected Call<TwitterContentResponse> createCall(TwitterAPI twitterAPI) {
+        protected Call<TwitterContentResponse> createCall() {
+            TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
             return twitterAPI.getContent(request.getID(), request.getAuthorizationHeader());
         }
 
@@ -420,7 +326,8 @@ public class TwitterClient implements IClient {
         }
 
         @Override
-        protected Call<TwitterUploadInitResponse> createCall(TwitterAPI twitterAPI) {
+        protected Call<TwitterUploadInitResponse> createCall() {
+            TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
             return twitterAPI.uploadInit(request.getCommand(), request.getTotalBytes(), request.getMediaType(), request.getAuthorizationHeader());
         }
 
@@ -442,7 +349,8 @@ public class TwitterClient implements IClient {
         }
 
         @Override
-        protected Call<TwitterUploadAppendResponse> createCall(TwitterAPI twitterAPI) {
+        protected Call<TwitterUploadAppendResponse> createCall() {
+            TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
             return twitterAPI.uploadAppend(request.getCommand(), request.getMediaID(), request.getSegmentIndex(), request.getMedia(), request.getAuthorizationHeader());
         }
 
@@ -464,7 +372,8 @@ public class TwitterClient implements IClient {
         }
 
         @Override
-        protected Call<TwitterUploadFinalizeResponse> createCall(TwitterAPI twitterAPI) {
+        protected Call<TwitterUploadFinalizeResponse> createCall() {
+            TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
             return twitterAPI.uploadFinalize(request.getCommand(), request.getMediaID(), request.getAuthorizationHeader());
         }
 
@@ -486,7 +395,8 @@ public class TwitterClient implements IClient {
         }
 
         @Override
-        protected Call<TwitterCheckUploadStatusResponse> createCall(TwitterAPI twitterAPI) {
+        protected Call<TwitterCheckUploadStatusResponse> createCall() {
+            TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
             return twitterAPI.checkUploadStatus(request.getCommand(), request.getMediaID(), request.getAuthorizationHeader());
         }
 
@@ -508,7 +418,8 @@ public class TwitterClient implements IClient {
         }
 
         @Override
-        protected Call<TwitterGetRateLimitsResponse> createCall(TwitterAPI twitterAPI) {
+        protected Call<TwitterGetRateLimitsResponse> createCall() {
+            TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
             return twitterAPI.getRateLimits(request.getResources(), request.getAuthorizationHeader());
         }
 

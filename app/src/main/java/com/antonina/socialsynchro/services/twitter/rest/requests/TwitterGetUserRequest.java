@@ -15,6 +15,10 @@ public class TwitterGetUserRequest extends TwitterRequest {
         return userID;
     }
 
+    public static String getRequestEndpoint() {
+        return "/users/show/:id";
+    }
+
     public static Builder builder() {
         return new Builder();
     }

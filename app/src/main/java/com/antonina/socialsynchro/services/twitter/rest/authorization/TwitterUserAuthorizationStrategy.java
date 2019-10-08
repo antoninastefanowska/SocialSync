@@ -2,6 +2,7 @@ package com.antonina.socialsynchro.services.twitter.rest.authorization;
 
 import android.util.Base64;
 
+import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
@@ -136,17 +137,16 @@ public class TwitterUserAuthorizationStrategy extends TwitterAuthorizationStrate
         signingKey = buildSigningKey();
 
         Mac mac;
-        SecretKeySpec secret = new SecretKeySpec(signingKey.getBytes(), "HmacSHA1");
         try {
             mac = Mac.getInstance("HmacSHA1");
+            SecretKeySpec secret = new SecretKeySpec(signingKey.getBytes("UTF-8"), "HmacSHA1");
             mac.init(secret);
-        } catch (NoSuchAlgorithmException | InvalidKeyException e) {
+            byte[] encodedBytes = mac.doFinal(baseString.getBytes("UTF-8"));
+            signature = new String(Base64.encode(encodedBytes, 0), "UTF-8");
+        } catch (NoSuchAlgorithmException | InvalidKeyException | UnsupportedEncodingException e) {
             e.printStackTrace();
             return null;
         }
-
-        byte[] encodedBytes = mac.doFinal(baseString.getBytes());
-        signature = new String(Base64.encode(encodedBytes, 0));
         signature = signature.substring(0, signature.length() - 1);
 
         return signature;

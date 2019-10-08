@@ -7,6 +7,10 @@ public class TwitterVerifyCredentialsRequest extends TwitterRequest {
         super(authorizationHeader);
     }
 
+    public static String getRequestEndpoint() {
+        return "/account/verify_credentials";
+    }
+
     public static Builder builder() {
         return new Builder();
     }

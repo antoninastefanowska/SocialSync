@@ -18,6 +18,10 @@ public class TwitterGetRateLimitsRequest extends TwitterRequest {
         return resources;
     }
 
+    public static String getRequestEndpoint() {
+        return "/application/rate_limit_status";
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -39,8 +43,8 @@ public class TwitterGetRateLimitsRequest extends TwitterRequest {
             if (authorization.isUserAuthorization()) {
                 ((TwitterUserAuthorizationStrategy)authorization)
                         .requestMethod("GET")
-                        .requestURL(REQUEST_URL);
-                        //.addSignatureParameter("resources", resourcesString);
+                        .requestURL(REQUEST_URL)
+                        .addSignatureParameter("resources", resourcesString);
             }
         }
 

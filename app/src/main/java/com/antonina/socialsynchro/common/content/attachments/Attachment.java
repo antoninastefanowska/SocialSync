@@ -5,8 +5,8 @@ import android.databinding.Bindable;
 import com.antonina.socialsynchro.common.content.posts.Post;
 import com.antonina.socialsynchro.common.database.IDatabaseEntity;
 import com.antonina.socialsynchro.common.database.repositories.AttachmentRepository;
-import com.antonina.socialsynchro.common.database.tables.AttachmentTable;
-import com.antonina.socialsynchro.common.database.tables.IDatabaseTable;
+import com.antonina.socialsynchro.common.database.rows.AttachmentRow;
+import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 import com.antonina.socialsynchro.common.gui.GUIItem;
 import com.antonina.socialsynchro.common.gui.listeners.OnSynchronizedListener;
 import com.antonina.socialsynchro.common.rest.IResponse;
@@ -68,14 +68,14 @@ public abstract class Attachment extends GUIItem implements IDatabaseEntity, ISe
         this.parentPost = parentPost;
     }
 
-    public Attachment(IDatabaseTable data) {
-        createFromData(data);
+    public Attachment(IDatabaseRow data) {
+        createFromDatabaseRow(data);
     }
 
     @Override
-    public void createFromData(IDatabaseTable data) {
-        AttachmentTable attachmentData = (AttachmentTable)data;
-        this.internalID = attachmentData.id;
+    public void createFromDatabaseRow(IDatabaseRow data) {
+        AttachmentRow attachmentData = (AttachmentRow)data;
+        this.internalID = attachmentData.getID();
         this.externalID = attachmentData.externalID;
         this.file = new File(attachmentData.filepath);
         this.attachmentType = AttachmentTypes.getAttachmentType(attachmentData.attachmentTypeID);
@@ -88,8 +88,12 @@ public abstract class Attachment extends GUIItem implements IDatabaseEntity, ISe
 
     @Override
     public void saveInDatabase() {
-        AttachmentRepository repository = AttachmentRepository.getInstance();
-        internalID = repository.insert(this);
+        if (internalID != null)
+            updateInDatabase();
+        else {
+            AttachmentRepository repository = AttachmentRepository.getInstance();
+            internalID = repository.insert(this);
+        }
     }
 
     @Override
@@ -100,6 +104,8 @@ public abstract class Attachment extends GUIItem implements IDatabaseEntity, ISe
 
     @Override
     public void deleteFromDatabase() {
+        if (internalID == null)
+            return;
         AttachmentRepository repository = AttachmentRepository.getInstance();
         repository.delete(this);
         internalID = null;

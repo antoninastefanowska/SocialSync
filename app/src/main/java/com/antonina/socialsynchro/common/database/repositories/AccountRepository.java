@@ -11,19 +11,19 @@ import com.antonina.socialsynchro.common.content.accounts.Account;
 import com.antonina.socialsynchro.common.content.accounts.AccountFactory;
 import com.antonina.socialsynchro.common.database.ApplicationDatabase;
 import com.antonina.socialsynchro.common.database.daos.AccountDao;
-import com.antonina.socialsynchro.common.database.tables.AccountTable;
+import com.antonina.socialsynchro.common.database.rows.AccountRow;
 import com.antonina.socialsynchro.common.content.services.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
 @SuppressWarnings("WeakerAccess")
-public class AccountRepository extends BaseRepository<AccountTable, Account> {
+public class AccountRepository extends BaseRepository<AccountRow, Account> {
     private static AccountRepository instance;
 
     private AccountRepository(Application application) {
@@ -41,22 +41,19 @@ public class AccountRepository extends BaseRepository<AccountTable, Account> {
     }
 
     @Override
-    protected Map<Long, Account> convertToEntities(List<AccountTable> input) {
-        Map<Long, Account> output = new HashMap<>();
-        for (AccountTable accountData : input) {
-            Account account = AccountFactory.getInstance().createFromData(accountData);
+    protected Map<Long, Account> convertToEntities(List<AccountRow> input) {
+        Map<Long, Account> output = new TreeMap<>();
+        for (AccountRow accountData : input) {
+            Account account = AccountFactory.getInstance().createFromDatabaseRow(accountData);
             output.put(account.getInternalID(), account);
         }
         return output;
     }
 
     @Override
-    protected AccountTable convertToTable(Account entity, boolean isNew) {
-        AccountTable data = new AccountTable();
-        if (isNew)
-            data.createFromNewEntity(entity);
-        else
-            data.createFromExistingEntity(entity);
+    protected AccountRow convertToRow(Account entity) {
+        AccountRow data = new AccountRow();
+        data.createFromEntity(entity);
         return data;
     }
 
@@ -95,22 +92,22 @@ public class AccountRepository extends BaseRepository<AccountTable, Account> {
         return result;
     }
 
-    public long getIDByExternalID(String externalID) {
+    public long getIDByExternalIDAndService(String externalID, int serviceID) {
         long result = -1;
         try {
             AccountDao accountDao = (AccountDao)dao;
-            result = new GetIDByExternalIDAsyncTask(accountDao).execute(externalID).get();
+            result = new GetIDByExternalIDAsyncTask(accountDao).execute(new Pair<>(externalID, serviceID)).get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
         return result;
     }
 
-    public boolean accountExists(String externalID) {
+    public boolean accountExists(String externalID, int serviceID) {
         boolean result = false;
         try {
             AccountDao accountDao = (AccountDao)dao;
-            result = new AccountExistsAsyncTask(accountDao).execute(externalID).get();
+            result = new AccountExistsAsyncTask(accountDao).execute(new Pair<>(externalID, serviceID)).get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
@@ -144,7 +141,7 @@ public class AccountRepository extends BaseRepository<AccountTable, Account> {
         }
     }
 
-    private static class GetIDByExternalIDAsyncTask extends AsyncTask<String, Void, Long> {
+    private static class GetIDByExternalIDAsyncTask extends AsyncTask<Pair<String, Integer>, Void, Long> {
         private AccountDao accountDao;
 
         public GetIDByExternalIDAsyncTask(AccountDao dao) {
@@ -152,21 +149,22 @@ public class AccountRepository extends BaseRepository<AccountTable, Account> {
         }
 
         @Override
-        protected Long doInBackground(String... params) {
-            return accountDao.getIDByExternalID(params[0]);
+        protected Long doInBackground(Pair<String, Integer>... params) {
+            return accountDao.getIDByExternalIDAndService(params[0].first, params[0].second);
         }
     }
 
-    private static class AccountExistsAsyncTask extends AsyncTask<String, Void, Boolean> {
+    private static class AccountExistsAsyncTask extends AsyncTask<Pair<String, Integer>, Void, Boolean> {
         private AccountDao accountDao;
 
         public AccountExistsAsyncTask(AccountDao dao) {
             accountDao = dao;
         }
 
+        @SafeVarargs
         @Override
-        protected Boolean doInBackground(String... params) {
-            return accountDao.accountExists(params[0]);
+        protected final Boolean doInBackground(Pair<String, Integer>... params) {
+            return accountDao.accountExists(params[0].first, params[0].second);
         }
     }
 }

@@ -15,6 +15,10 @@ public class TwitterGetContentRequest extends TwitterRequest {
         return id;
     }
 
+    public static String getRequestEndpoint() {
+        return "/statuses/show/:id";
+    }
+
     public static Builder builder() {
         return new Builder();
     }

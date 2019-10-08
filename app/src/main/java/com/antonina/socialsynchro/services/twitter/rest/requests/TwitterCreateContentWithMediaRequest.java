@@ -12,12 +12,16 @@ public class TwitterCreateContentWithMediaRequest extends TwitterCreateContentRe
         this.mediaIDs = percentEncode(mediaIDs);
     }
 
-    public static Builder builder() {
-        return new Builder();
-    }
-
     public String getMediaIDs() {
         return mediaIDs;
+    }
+
+    public static String getRequestEndpoint() {
+        return "/statuses/update";
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     public static class Builder extends TwitterCreateContentRequest.Builder {

@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.common.gui.listeners.OnSynchronizedListener;
 import com.antonina.socialsynchro.common.rest.IServiceEntity;
+import com.antonina.socialsynchro.common.rest.RequestLimit;
 import com.antonina.socialsynchro.services.backend.BackendClient;
 import com.antonina.socialsynchro.services.backend.requests.BackendGetTwitterVerifierRequest;
 import com.antonina.socialsynchro.services.backend.responses.BackendGetTwitterVerifierResponse;
@@ -21,8 +22,10 @@ import com.antonina.socialsynchro.services.twitter.content.TwitterAccount;
 import com.antonina.socialsynchro.services.twitter.rest.TwitterClient;
 import com.antonina.socialsynchro.services.twitter.rest.requests.TwitterGetAccessTokenRequest;
 import com.antonina.socialsynchro.services.twitter.rest.requests.TwitterGetLoginTokenRequest;
+import com.antonina.socialsynchro.services.twitter.rest.requests.TwitterVerifyCredentialsRequest;
 import com.antonina.socialsynchro.services.twitter.rest.responses.TwitterGetAccessTokenResponse;
 import com.antonina.socialsynchro.services.twitter.rest.responses.TwitterGetLoginTokenResponse;
+import com.antonina.socialsynchro.services.twitter.rest.responses.TwitterUserResponse;
 
 public class TwitterLoginActivity extends AppCompatActivity {
     private String loginToken;
@@ -83,12 +86,11 @@ public class TwitterLoginActivity extends AppCompatActivity {
     }
 
     private void getVerifier() {
-        BackendClient client = BackendClient.getInstance();
         BackendGetTwitterVerifierRequest request = BackendGetTwitterVerifierRequest.builder()
                 .loginToken(loginToken)
                 .build();
         final Context context = this;
-        final LiveData<BackendGetTwitterVerifierResponse> asyncResponse = client.getVerifier(request);
+        final LiveData<BackendGetTwitterVerifierResponse> asyncResponse = BackendClient.getTwitterVerifier(request);
         asyncResponse.observe(this, new Observer<BackendGetTwitterVerifierResponse>() {
             @Override
             public void onChanged(@Nullable BackendGetTwitterVerifierResponse response) {
@@ -124,7 +126,16 @@ public class TwitterLoginActivity extends AppCompatActivity {
                         account = new TwitterAccount();
                         account.setAccessToken(response.getAccessToken());
                         account.setSecretToken(response.getSecretToken());
-                        verifyCredentials();
+                        account.synchronizeRequestLimits(new OnSynchronizedListener() {
+                            @Override
+                            public void onSynchronized(IServiceEntity entity) {
+                                verifyCredentials();
+                            }
+                            @Override
+                            public void onError(IServiceEntity entity, String error) {
+                                //TODO
+                            }
+                        });
                     } else {
                         Toast toast = Toast.makeText(context, getResources().getString(R.string.error_access_token, response.getErrorString()), Toast.LENGTH_LONG);
                         toast.show();
@@ -136,19 +147,33 @@ public class TwitterLoginActivity extends AppCompatActivity {
     }
 
     private void verifyCredentials() {
-        final Context context = this;
-        account.synchronize(new OnSynchronizedListener() {
-            @Override
-            public void onSynchronized(IServiceEntity entity) {
-                exitAndSave();
-            }
-
-            @Override
-            public void onError(IServiceEntity entity, String error) {
-                Toast toast = Toast.makeText(context, getResources().getString(R.string.error_account_info, error), Toast.LENGTH_LONG);
-                toast.show();
-            }
-        });
+        String endpoint = TwitterVerifyCredentialsRequest.getRequestEndpoint();
+        RequestLimit requestLimit = account.getRequestLimit(endpoint);
+        if (requestLimit.getRemaining() > 0) {
+            TwitterVerifyCredentialsRequest request = TwitterVerifyCredentialsRequest.builder()
+                    .accessToken(account.getAccessToken())
+                    .secretToken(account.getSecretToken())
+                    .build();
+            final Context context = this;
+            final LiveData<TwitterUserResponse> asyncResponse = TwitterClient.verifyCredentials(request);
+            asyncResponse.observeForever(new Observer<TwitterUserResponse>() {
+                @Override
+                public void onChanged(@Nullable TwitterUserResponse response) {
+                    if (response != null) {
+                        if (response.getErrorString() == null) {
+                            account.createFromResponse(response);
+                            exitAndSave();
+                        } else {
+                            Toast toast = Toast.makeText(context, getResources().getString(R.string.error_account_info, response.getErrorString()), Toast.LENGTH_LONG);
+                            toast.show();
+                        }
+                        asyncResponse.removeObserver(this);
+                    }
+                }
+            });
+        } else {
+            //TODO
+        }
     }
 
     private void exitAndSave() {

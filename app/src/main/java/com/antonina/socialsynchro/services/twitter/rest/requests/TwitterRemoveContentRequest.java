@@ -12,6 +12,10 @@ public class TwitterRemoveContentRequest extends TwitterRequest {
 
     public String getID() { return id; }
 
+    public static String getRequestEndpoint() {
+        return "/statuses/destroy/:id";
+    }
+
     public static Builder builder() {
         return new Builder();
     }

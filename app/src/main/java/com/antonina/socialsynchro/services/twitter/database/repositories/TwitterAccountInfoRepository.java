@@ -6,13 +6,13 @@ import android.arch.lifecycle.LiveData;
 import com.antonina.socialsynchro.common.database.ApplicationDatabase;
 import com.antonina.socialsynchro.common.database.repositories.BaseRepository;
 import com.antonina.socialsynchro.services.twitter.content.TwitterAccount;
-import com.antonina.socialsynchro.services.twitter.database.tables.TwitterAccountInfoTable;
+import com.antonina.socialsynchro.services.twitter.database.rows.TwitterAccountInfoRow;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
-public class TwitterAccountInfoRepository extends BaseRepository<TwitterAccountInfoTable, TwitterAccount> {
+public class TwitterAccountInfoRepository extends BaseRepository<TwitterAccountInfoRow, TwitterAccount> {
     private static TwitterAccountInfoRepository instance;
 
     private TwitterAccountInfoRepository(Application application) {
@@ -29,14 +29,14 @@ public class TwitterAccountInfoRepository extends BaseRepository<TwitterAccountI
     }
 
     @Override
-    protected Map<Long, TwitterAccount> convertToEntities(List<TwitterAccountInfoTable> input) {
+    protected Map<Long, TwitterAccount> convertToEntities(List<TwitterAccountInfoRow> input) {
         return null;
     }
 
     @Override
-    protected TwitterAccountInfoTable convertToTable(TwitterAccount entity, boolean isNew) {
-        TwitterAccountInfoTable data = new TwitterAccountInfoTable();
-        data.createFromExistingEntity(entity);
+    protected TwitterAccountInfoRow convertToRow(TwitterAccount entity) {
+        TwitterAccountInfoRow data = new TwitterAccountInfoRow();
+        data.createFromEntity(entity);
         return data;
     }
 
@@ -45,10 +45,10 @@ public class TwitterAccountInfoRepository extends BaseRepository<TwitterAccountI
         return list;
     }
 
-    public LiveData<TwitterAccountInfoTable> getDataTableByID(long id) {
-        LiveData<TwitterAccountInfoTable> result = null;
+    public LiveData<TwitterAccountInfoRow> getDataTableByID(long id) {
+        LiveData<TwitterAccountInfoRow> result = null;
         try {
-            GetDataByIDAsyncTask<TwitterAccountInfoTable> asyncTask = new GetDataByIDAsyncTask<>(dao);
+            GetDataByIDAsyncTask<TwitterAccountInfoRow> asyncTask = new GetDataByIDAsyncTask<>(dao);
             result = asyncTask.execute(id).get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();

@@ -12,16 +12,16 @@ import com.antonina.socialsynchro.common.content.attachments.Attachment;
 import com.antonina.socialsynchro.common.content.attachments.AttachmentFactory;
 import com.antonina.socialsynchro.common.database.ApplicationDatabase;
 import com.antonina.socialsynchro.common.database.daos.AttachmentDao;
-import com.antonina.socialsynchro.common.database.tables.AttachmentTable;
+import com.antonina.socialsynchro.common.database.rows.AttachmentRow;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
 @SuppressWarnings("WeakerAccess")
-public class AttachmentRepository extends BaseRepository<AttachmentTable, Attachment> {
+public class AttachmentRepository extends BaseRepository<AttachmentRow, Attachment> {
     private static AttachmentRepository instance;
 
     private AttachmentRepository(Application application) {
@@ -39,22 +39,19 @@ public class AttachmentRepository extends BaseRepository<AttachmentTable, Attach
     }
 
     @Override
-    protected Map<Long, Attachment> convertToEntities(List<AttachmentTable> input) {
-        Map<Long, Attachment> output = new HashMap<>();
-        for (AttachmentTable attachmentData : input) {
-            Attachment attachment = (Attachment)AttachmentFactory.getInstance().createFromData(attachmentData);
+    protected Map<Long, Attachment> convertToEntities(List<AttachmentRow> input) {
+        Map<Long, Attachment> output = new TreeMap<>();
+        for (AttachmentRow attachmentData : input) {
+            Attachment attachment = (Attachment)AttachmentFactory.getInstance().createFromDatabaseRow(attachmentData);
             output.put(attachment.getInternalID(), attachment);
         }
         return output;
     }
 
     @Override
-    protected AttachmentTable convertToTable(Attachment entity, boolean isNew) {
-        AttachmentTable data = new AttachmentTable();
-        if (isNew)
-            data.createFromNewEntity(entity);
-        else
-            data.createFromExistingEntity(entity);
+    protected AttachmentRow convertToRow(Attachment entity) {
+        AttachmentRow data = new AttachmentRow();
+        data.createFromEntity(entity);
         return data;
     }
 
