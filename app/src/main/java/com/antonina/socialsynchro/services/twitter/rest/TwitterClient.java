@@ -179,6 +179,11 @@ public class TwitterClient extends BaseClient {
         protected String getBaseURL() {
             return BASE_URL;
         }
+
+        @Override
+        protected TwitterGetBearerTokenResponse createResponse() {
+            return new TwitterGetBearerTokenResponse();
+        }
     }
 
     private static class VerifyCredentialsController extends BaseController<TwitterVerifyCredentialsRequest, TwitterUserResponse> {
@@ -201,6 +206,11 @@ public class TwitterClient extends BaseClient {
         @Override
         protected String getBaseURL() {
             return BASE_URL;
+        }
+
+        @Override
+        protected TwitterUserResponse createResponse() {
+            return new TwitterUserResponse();
         }
     }
 
@@ -225,6 +235,11 @@ public class TwitterClient extends BaseClient {
         protected String getBaseURL() {
             return BASE_URL;
         }
+
+        @Override
+        protected TwitterUserResponse createResponse() {
+            return new TwitterUserResponse();
+        }
     }
 
     private static class CreateContentController extends BaseController<TwitterCreateContentRequest, TwitterContentResponse> {
@@ -247,6 +262,11 @@ public class TwitterClient extends BaseClient {
         @Override
         protected String getBaseURL() {
             return BASE_URL;
+        }
+
+        @Override
+        protected TwitterContentResponse createResponse() {
+            return new TwitterContentResponse();
         }
     }
 
@@ -271,6 +291,11 @@ public class TwitterClient extends BaseClient {
         protected String getBaseURL() {
             return BASE_URL;
         }
+
+        @Override
+        protected TwitterContentResponse createResponse() {
+            return new TwitterContentResponse();
+        }
     }
 
     private static class RemoveContentController extends BaseController<TwitterRemoveContentRequest, TwitterContentResponse> {
@@ -293,6 +318,11 @@ public class TwitterClient extends BaseClient {
         @Override
         protected String getBaseURL() {
             return BASE_URL;
+        }
+
+        @Override
+        protected TwitterContentResponse createResponse() {
+            return new TwitterContentResponse();
         }
     }
 
@@ -317,6 +347,11 @@ public class TwitterClient extends BaseClient {
         protected String getBaseURL() {
             return BASE_URL;
         }
+
+        @Override
+        protected TwitterContentResponse createResponse() {
+            return new TwitterContentResponse();
+        }
     }
 
     private static class UploadInitController extends BaseController<TwitterUploadInitRequest, TwitterUploadInitResponse> {
@@ -339,6 +374,11 @@ public class TwitterClient extends BaseClient {
         @Override
         protected String getBaseURL() {
             return BASE_UPLOAD_URL;
+        }
+
+        @Override
+        protected TwitterUploadInitResponse createResponse() {
+            return new TwitterUploadInitResponse();
         }
     }
 
@@ -363,6 +403,11 @@ public class TwitterClient extends BaseClient {
         protected String getBaseURL() {
             return BASE_UPLOAD_URL;
         }
+
+        @Override
+        protected TwitterUploadAppendResponse createResponse() {
+            return new TwitterUploadAppendResponse();
+        }
     }
 
     private static class UploadFinalizeController extends BaseController<TwitterUploadFinalizeRequest, TwitterUploadFinalizeResponse> {
@@ -385,6 +430,11 @@ public class TwitterClient extends BaseClient {
         @Override
         protected String getBaseURL() {
             return BASE_UPLOAD_URL;
+        }
+
+        @Override
+        protected TwitterUploadFinalizeResponse createResponse() {
+            return new TwitterUploadFinalizeResponse();
         }
     }
 
@@ -409,6 +459,11 @@ public class TwitterClient extends BaseClient {
         protected String getBaseURL() {
             return BASE_UPLOAD_URL;
         }
+
+        @Override
+        protected TwitterCheckUploadStatusResponse createResponse() {
+            return new TwitterCheckUploadStatusResponse();
+        }
     }
 
     private static class GetRateLimitsController extends BaseController<TwitterGetRateLimitsRequest, TwitterGetRateLimitsResponse> {
@@ -431,6 +486,11 @@ public class TwitterClient extends BaseClient {
         @Override
         protected String getBaseURL() {
             return BASE_URL;
+        }
+
+        @Override
+        protected TwitterGetRateLimitsResponse createResponse() {
+            return new TwitterGetRateLimitsResponse();
         }
     }
 }

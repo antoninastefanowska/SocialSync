@@ -17,13 +17,15 @@ import com.antonina.socialsynchro.common.database.daos.RequestLimitDao;
 import com.antonina.socialsynchro.common.database.rows.AttachmentRow;
 import com.antonina.socialsynchro.common.database.rows.ParentPostContainerRow;
 import com.antonina.socialsynchro.common.database.rows.RequestLimitRow;
+import com.antonina.socialsynchro.services.facebook.database.daos.FacebookAccountInfoDao;
+import com.antonina.socialsynchro.services.facebook.database.rows.FacebookAccountInfoRow;
 import com.antonina.socialsynchro.services.twitter.database.daos.TwitterAccountInfoDao;
 import com.antonina.socialsynchro.common.database.rows.AccountRow;
 import com.antonina.socialsynchro.common.database.rows.ChildPostContainerRow;
 import com.antonina.socialsynchro.common.database.rows.PostRow;
 import com.antonina.socialsynchro.services.twitter.database.rows.TwitterAccountInfoRow;
 
-@Database(entities = {AccountRow.class, PostRow.class, AttachmentRow.class, ChildPostContainerRow.class, ParentPostContainerRow.class, RequestLimitRow.class, TwitterAccountInfoRow.class}, version = 1, exportSchema = false)
+@Database(entities = {AccountRow.class, PostRow.class, AttachmentRow.class, ChildPostContainerRow.class, ParentPostContainerRow.class, RequestLimitRow.class, TwitterAccountInfoRow.class, FacebookAccountInfoRow.class}, version = 1, exportSchema = false)
 @TypeConverters(DateConverter.class)
 public abstract class ApplicationDatabase extends RoomDatabase {
     private static volatile ApplicationDatabase instance;
@@ -34,7 +36,9 @@ public abstract class ApplicationDatabase extends RoomDatabase {
     public abstract ChildPostContainerDao childPostContainerDao();
     public abstract ParentPostContainerDao parentPostContainerDao();
     public abstract RequestLimitDao requestLimitDao();
+
     public abstract TwitterAccountInfoDao twitterAccountDao();
+    public abstract FacebookAccountInfoDao facebookAccountInfoDao();
 
     public static ApplicationDatabase getDatabase(final Context context) {
         if (instance == null) {

@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.antonina.socialsynchro.R;
+import com.antonina.socialsynchro.common.gui.serialization.SerializableList;
 import com.antonina.socialsynchro.databinding.ActivityAccountsBinding;
 import com.antonina.socialsynchro.common.gui.adapters.AccountDisplayAdapter;
 import com.antonina.socialsynchro.common.content.accounts.Account;
@@ -79,25 +80,6 @@ public class AccountsActivity extends AppCompatActivity {
         accountsChanged = true;
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case ADD_ACCOUNT:
-                    Account account = (Account)data.getSerializableExtra("account");
-                    adapter.addItem(account);
-                    account.saveInDatabase();
-                    if (account.hasBeenUpdated()) {
-                        adapter.loadData();
-                        accountsChanged = true;
-                        account.setUpdated(false);
-                    }
-                    break;
-            }
-        }
-    }
-
     public void buttonSynchronizeAccount_onClick(View view) {
         List<Account> selectedAccounts = adapter.getSelectedItems();
         final Context context = this;
@@ -144,6 +126,28 @@ public class AccountsActivity extends AppCompatActivity {
                     }
                 }
             });
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case ADD_ACCOUNT:
+                    SerializableList<Account> serializableAccounts = (SerializableList<Account>)data.getSerializableExtra("accounts");
+                    List<Account> accounts = serializableAccounts.getList();
+                    for (Account account : accounts) {
+                        adapter.addItem(account);
+                        account.saveInDatabase();
+                        if (account.hasBeenUpdated()) {
+                            adapter.loadData();
+                            accountsChanged = true;
+                            account.setUpdated(false);
+                        }
+                    }
+                    break;
+            }
         }
     }
 }

@@ -2,6 +2,8 @@ package com.antonina.socialsynchro.services.twitter.rest.authorization;
 
 import android.util.Base64;
 
+import com.antonina.socialsynchro.common.utils.GenerateUtils;
+
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -18,11 +20,6 @@ import static com.antonina.socialsynchro.services.twitter.rest.requests.TwitterR
 
 @SuppressWarnings("StringBufferReplaceableByString")
 public class TwitterUserAuthorizationStrategy extends TwitterAuthorizationStrategy {
-    private final static String UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    private final static String LOWER = UPPER.toLowerCase();
-    private final static String NUM = "1234567890";
-    private final static String ALPHANUM = UPPER + LOWER + NUM;
-
     private final Map<String, String> authorizationParameters;
     private final Map<String, String> signatureParameters;
 
@@ -114,14 +111,7 @@ public class TwitterUserAuthorizationStrategy extends TwitterAuthorizationStrate
     }
 
     private String generateNonce() {
-        int length = 42;
-        StringBuilder sb = new StringBuilder();
-        Random random = new Random();
-        for (int i = 0; i < length; i++) {
-            int index = random.nextInt(ALPHANUM.length());
-            sb.append(ALPHANUM.charAt(index));
-        }
-        return sb.toString();
+        return GenerateUtils.generateRandomString(42);
     }
 
     private String buildSignature() {

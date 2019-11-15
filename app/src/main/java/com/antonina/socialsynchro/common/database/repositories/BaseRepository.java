@@ -22,7 +22,6 @@ import java.util.concurrent.ExecutionException;
 @SuppressWarnings({"unchecked", "UnnecessaryLocalVariable", "WeakerAccess", "UseCompareMethod"})
 public abstract class BaseRepository<DataRowType extends IDatabaseRow, EntityType extends IDatabaseEntity> {
     private LiveData<Map<Long, EntityType>> data;
-    private boolean loaded = false;
     protected BaseDao<DataRowType> dao;
 
     protected abstract Map<Long, EntityType> convertToEntities(List<DataRowType> input);
@@ -53,17 +52,12 @@ public abstract class BaseRepository<DataRowType extends IDatabaseRow, EntityTyp
             data.observeForever(new Observer<Map<Long, EntityType>>() {
                 @Override
                 public void onChanged(@Nullable Map<Long, EntityType> longEntityTypeMap) {
-                    loaded = true;
                     data.removeObserver(this);
                 }
             });
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-    public boolean isLoaded() {
-        return loaded;
     }
 
     public LiveData<Map<Long, EntityType>> getAllData() {

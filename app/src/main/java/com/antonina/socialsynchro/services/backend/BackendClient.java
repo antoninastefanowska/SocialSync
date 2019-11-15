@@ -3,9 +3,11 @@ package com.antonina.socialsynchro.services.backend;
 import android.arch.lifecycle.LiveData;
 
 import com.antonina.socialsynchro.common.rest.BaseClient;
+import com.antonina.socialsynchro.services.backend.requests.BackendGetFacebookTokenRequest;
 import com.antonina.socialsynchro.services.backend.requests.BackendGetRateLimitsRequest;
 import com.antonina.socialsynchro.services.backend.requests.BackendGetTwitterVerifierRequest;
 import com.antonina.socialsynchro.services.backend.requests.BackendUpdateRequestCounterRequest;
+import com.antonina.socialsynchro.services.backend.responses.BackendGetFacebookTokenResponse;
 import com.antonina.socialsynchro.services.backend.responses.BackendGetRateLimitsResponse;
 import com.antonina.socialsynchro.services.backend.responses.BackendGetTwitterVerifierResponse;
 import com.antonina.socialsynchro.services.backend.responses.BackendUpdateRequestCounterResponse;
@@ -20,6 +22,11 @@ public class BackendClient extends BaseClient {
 
     public static LiveData<BackendGetTwitterVerifierResponse> getTwitterVerifier(BackendGetTwitterVerifierRequest request) {
         GetTwitterVerifierController controller = new GetTwitterVerifierController(request);
+        return controller.start();
+    }
+
+    public static LiveData<BackendGetFacebookTokenResponse> getFacebookToken(BackendGetFacebookTokenRequest request) {
+        GetFacebookTokenController controller = new GetFacebookTokenController(request);
         return controller.start();
     }
 
@@ -45,6 +52,11 @@ public class BackendClient extends BaseClient {
         }
 
         @Override
+        protected BackendGetTwitterVerifierResponse createResponse() {
+            return new BackendGetTwitterVerifierResponse();
+        }
+
+        @Override
         protected Call<BackendGetTwitterVerifierResponse> createCall() {
             BackendAPI backendAPI = retrofit.create(BackendAPI.class);
             return backendAPI.getTwitterVerifier(request.getLoginToken(), request.getAuthorizationHeader());
@@ -53,6 +65,34 @@ public class BackendClient extends BaseClient {
         @Override
         protected Class<BackendGetTwitterVerifierResponse> getResponseClass() {
             return BackendGetTwitterVerifierResponse.class;
+        }
+    }
+
+    private static class GetFacebookTokenController extends BaseController<BackendGetFacebookTokenRequest, BackendGetFacebookTokenResponse> {
+
+        public GetFacebookTokenController(BackendGetFacebookTokenRequest request) {
+            super(request);
+        }
+
+        @Override
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+
+        @Override
+        protected BackendGetFacebookTokenResponse createResponse() {
+            return new BackendGetFacebookTokenResponse();
+        }
+
+        @Override
+        protected Call<BackendGetFacebookTokenResponse> createCall() {
+            BackendAPI backendAPI = retrofit.create(BackendAPI.class);
+            return backendAPI.getFacebookToken(request.getState(), request.getAuthorizationHeader());
+        }
+
+        @Override
+        protected Class<BackendGetFacebookTokenResponse> getResponseClass() {
+            return BackendGetFacebookTokenResponse.class;
         }
     }
 
@@ -65,6 +105,11 @@ public class BackendClient extends BaseClient {
         @Override
         protected String getBaseURL() {
             return BASE_URL;
+        }
+
+        @Override
+        protected BackendGetRateLimitsResponse createResponse() {
+            return new BackendGetRateLimitsResponse();
         }
 
         @Override
@@ -88,6 +133,11 @@ public class BackendClient extends BaseClient {
         @Override
         protected String getBaseURL() {
             return BASE_URL;
+        }
+
+        @Override
+        protected BackendUpdateRequestCounterResponse createResponse() {
+            return new BackendUpdateRequestCounterResponse();
         }
 
         @Override

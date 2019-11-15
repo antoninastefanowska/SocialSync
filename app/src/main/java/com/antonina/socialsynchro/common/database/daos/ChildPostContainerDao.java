@@ -20,7 +20,7 @@ public interface ChildPostContainerDao extends BaseDao<ChildPostContainerRow> {
     LiveData<ChildPostContainerRow> getDataByID(long id);
 
     @Query("SELECT id FROM child_post_container WHERE parent_id = :parentID")
-    LiveData<List<Long>> getIDByParent(long parentID);
+    LiveData<List<Long>> getIDsByParent(long parentID);
 
     @Query("SELECT COUNT(*) FROM child_post_container")
     int count();

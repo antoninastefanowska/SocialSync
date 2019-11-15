@@ -69,7 +69,7 @@ public class AccountRepository extends BaseRepository<AccountRow, Account> {
     }
 
     public LiveData<List<Account>> getDataByService(Service service) {
-        long serviceID = service.getID().ordinal();
+        int serviceID = service.getID().ordinal();
         LiveData<List<Account>> result = null;
 
         try {
@@ -92,8 +92,10 @@ public class AccountRepository extends BaseRepository<AccountRow, Account> {
         return result;
     }
 
-    public long getIDByExternalIDAndService(String externalID, int serviceID) {
+    public long getIDByExternalIDAndService(String externalID, Service service) {
         long result = -1;
+        int serviceID = service.getID().ordinal();
+
         try {
             AccountDao accountDao = (AccountDao)dao;
             result = new GetIDByExternalIDAsyncTask(accountDao).execute(new Pair<>(externalID, serviceID)).get();
@@ -103,8 +105,10 @@ public class AccountRepository extends BaseRepository<AccountRow, Account> {
         return result;
     }
 
-    public boolean accountExists(String externalID, int serviceID) {
+    public boolean accountExists(String externalID, Service service) {
         boolean result = false;
+        int serviceID = service.getID().ordinal();
+
         try {
             AccountDao accountDao = (AccountDao)dao;
             result = new AccountExistsAsyncTask(accountDao).execute(new Pair<>(externalID, serviceID)).get();
@@ -128,7 +132,7 @@ public class AccountRepository extends BaseRepository<AccountRow, Account> {
         childRepository.loadAllData();
     }
 
-    private static class GetIDByServiceAsyncTask extends AsyncTask<Long, Void, LiveData<List<Long>>> {
+    private static class GetIDByServiceAsyncTask extends AsyncTask<Integer, Void, LiveData<List<Long>>> {
         private final AccountDao accountDao;
 
         public GetIDByServiceAsyncTask(AccountDao dao) {
@@ -136,8 +140,8 @@ public class AccountRepository extends BaseRepository<AccountRow, Account> {
         }
 
         @Override
-        protected LiveData<List<Long>> doInBackground(Long... params) {
-            return accountDao.getIDByService(params[0]);
+        protected LiveData<List<Long>> doInBackground(Integer... params) {
+            return accountDao.getIDsByService(params[0]);
         }
     }
 

@@ -32,5 +32,7 @@ public abstract class TwitterRequest extends BaseRequest {
 
         @Override
         public abstract TwitterRequest build();
+
+        protected abstract void configureAuthorization();
     }
 }

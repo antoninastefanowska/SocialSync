@@ -14,7 +14,5 @@ public abstract class BaseRequest {
     protected abstract static class Builder {
 
         public abstract BaseRequest build();
-
-        protected abstract void configureAuthorization();
     }
 }

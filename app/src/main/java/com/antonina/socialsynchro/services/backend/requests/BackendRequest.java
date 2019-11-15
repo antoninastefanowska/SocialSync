@@ -15,7 +15,6 @@ public abstract class BackendRequest extends BaseRequest {
         @Override
         public abstract BackendRequest build();
 
-        @Override
         protected void configureAuthorization() {
             authorization = new BackendAuthorizationStrategy();
         }

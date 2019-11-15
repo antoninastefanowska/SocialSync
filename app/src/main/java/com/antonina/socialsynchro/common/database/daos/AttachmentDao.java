@@ -20,7 +20,7 @@ public interface AttachmentDao extends BaseDao<AttachmentRow> {
     LiveData<AttachmentRow> getDataByID(long attachmentID);
 
     @Query("SELECT id FROM attachment WHERE post_id = :postID")
-    LiveData<List<Long>> getIDByPost(long postID);
+    LiveData<List<Long>> getIDsByPost(long postID);
 
     @Query("SELECT COUNT(*) FROM attachment")
     int count();

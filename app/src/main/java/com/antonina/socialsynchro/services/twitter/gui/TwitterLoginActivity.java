@@ -12,7 +12,9 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.antonina.socialsynchro.R;
+import com.antonina.socialsynchro.common.content.accounts.Account;
 import com.antonina.socialsynchro.common.gui.listeners.OnSynchronizedListener;
+import com.antonina.socialsynchro.common.gui.serialization.SerializableList;
 import com.antonina.socialsynchro.common.rest.IServiceEntity;
 import com.antonina.socialsynchro.common.rest.RequestLimit;
 import com.antonina.socialsynchro.services.backend.BackendClient;
@@ -26,6 +28,9 @@ import com.antonina.socialsynchro.services.twitter.rest.requests.TwitterVerifyCr
 import com.antonina.socialsynchro.services.twitter.rest.responses.TwitterGetAccessTokenResponse;
 import com.antonina.socialsynchro.services.twitter.rest.responses.TwitterGetLoginTokenResponse;
 import com.antonina.socialsynchro.services.twitter.rest.responses.TwitterUserResponse;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TwitterLoginActivity extends AppCompatActivity {
     private String loginToken;
@@ -101,7 +106,7 @@ public class TwitterLoginActivity extends AppCompatActivity {
                             getAccessToken();
                         }
                     } else {
-                        Toast toast = Toast.makeText(context, getResources().getString(R.string.error_verifier, response.getErrorString()), Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(context, getResources().getString(R.string.error_twitter_verifier, response.getErrorString()), Toast.LENGTH_LONG);
                         toast.show();
                     }
                     asyncResponse.removeObserver(this);
@@ -177,8 +182,12 @@ public class TwitterLoginActivity extends AppCompatActivity {
     }
 
     private void exitAndSave() {
+        List<Account> accounts = new ArrayList<>();
+        accounts.add(account);
+        SerializableList<Account> serializableAccounts = new SerializableList<>(accounts);
+
         Intent accountsActivity = new Intent();
-        accountsActivity.putExtra("account", account);
+        accountsActivity.putExtra("accounts", serializableAccounts);
         setResult(RESULT_OK, accountsActivity);
         finish();
     }

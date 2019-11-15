@@ -122,12 +122,11 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
         else {
             connectingDate = Calendar.getInstance().getTime();
             AccountRepository repository = AccountRepository.getInstance();
-            int serviceID = service.getID().ordinal();
-            updated = repository.accountExists(externalID, serviceID);
+            updated = repository.accountExists(externalID, service);
             if (!updated)
                 internalID = repository.insert(this);
             else {
-                internalID = repository.getIDByExternalIDAndService(externalID, serviceID);
+                internalID = repository.getIDByExternalIDAndService(externalID, service);
                 updateInDatabase();
             }
         }

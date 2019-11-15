@@ -1,4 +1,4 @@
-package com.antonina.socialsynchro.services.facebook;
+package com.antonina.socialsynchro.services.facebook.content;
 
 import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
 import com.antonina.socialsynchro.common.gui.listeners.OnAttachmentUploadedListener;

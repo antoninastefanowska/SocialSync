@@ -4,6 +4,7 @@ import com.antonina.socialsynchro.common.content.services.ServiceID;
 import com.antonina.socialsynchro.common.database.IDatabaseEntityFactory;
 import com.antonina.socialsynchro.common.database.rows.AccountRow;
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
+import com.antonina.socialsynchro.services.facebook.content.FacebookAccount;
 import com.antonina.socialsynchro.services.twitter.content.TwitterAccount;
 
 public class AccountFactory implements IDatabaseEntityFactory {
@@ -25,6 +26,8 @@ public class AccountFactory implements IDatabaseEntityFactory {
         switch (serviceID) {
             case Twitter:
                 return new TwitterAccount(data);
+            case Facebook:
+                return new FacebookAccount(data);
             default:
                 return null;
         }

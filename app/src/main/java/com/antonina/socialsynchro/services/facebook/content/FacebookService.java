@@ -1,30 +1,30 @@
-package com.antonina.socialsynchro.services.twitter.content;
+package com.antonina.socialsynchro.services.facebook.content;
 
 import android.support.v7.app.AppCompatActivity;
 
-import com.antonina.socialsynchro.services.twitter.gui.TwitterLoginActivity;
 import com.antonina.socialsynchro.common.content.services.Service;
 import com.antonina.socialsynchro.common.content.services.ServiceID;
+import com.antonina.socialsynchro.services.facebook.gui.FacebookLoginActivity;
 
-public class TwitterService extends Service {
-    private static TwitterService instance;
+public class FacebookService extends Service {
+    private static FacebookService instance;
 
-    private TwitterService() { }
+    private FacebookService() { }
 
-    public static TwitterService getInstance() {
+    public static FacebookService getInstance() {
         if (instance == null)
-            instance = new TwitterService();
+            instance = new FacebookService();
         return instance;
     }
 
     @Override
     public ServiceID getID() {
-        return ServiceID.Twitter;
+        return ServiceID.Facebook;
     }
 
     @Override
     public String getName() {
-        return "Twitter";
+        return "Facebook";
     }
 
     @Override
@@ -39,6 +39,6 @@ public class TwitterService extends Service {
 
     @Override
     public Class<? extends AppCompatActivity> getLoginActivityClass() {
-        return TwitterLoginActivity.class;
+        return FacebookLoginActivity.class;
     }
 }

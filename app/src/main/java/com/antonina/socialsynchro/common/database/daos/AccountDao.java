@@ -23,7 +23,7 @@ public interface AccountDao extends BaseDao<AccountRow> {
     LiveData<AccountRow> getDataByID(long accountID);
 
     @Query("SELECT id FROM account WHERE service_id = :serviceID")
-    LiveData<List<Long>> getIDByService(long serviceID);
+    LiveData<List<Long>> getIDsByService(int serviceID);
 
     @Query("SELECT id FROM account WHERE external_id = :externalID AND service_id = :serviceID")
     long getIDByExternalIDAndService(String externalID, int serviceID);

@@ -2,10 +2,10 @@ package com.antonina.socialsynchro.common.rest;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.IOException;
 
@@ -29,6 +29,8 @@ public abstract class BaseClient {
         }
 
         protected abstract String getBaseURL();
+
+        protected abstract ResponseType createResponse();
 
         public abstract LiveData<ResponseType> start();
     }
@@ -60,9 +62,18 @@ public abstract class BaseClient {
             else {
                 try {
                     ResponseType objectResponse;
-                    objectResponse = gson.fromJson(response.errorBody().string(), getResponseClass());
+                    try {
+                        objectResponse = gson.fromJson(response.errorBody().string(), getResponseClass());
+                    } catch (IllegalStateException | JsonSyntaxException e) {
+                        objectResponse = response.body();
+
+                        if (objectResponse == null) {
+                            objectResponse = createResponse();
+                            objectResponse.setUndefinedError("Code: " + response.code() + " " + " Message: " + response.message());
+                        }
+                    }
                     if (objectResponse.getErrorString() == null)
-                        objectResponse.setUndefinedError("Code: " + String.valueOf(response.code()));
+                        objectResponse.setUndefinedError("Code: " + response.code() + " Message: " + response.message());
                     asyncResponse.setValue(objectResponse);
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -85,8 +96,6 @@ public abstract class BaseClient {
         }
 
         protected abstract Call<ResponseBody> createCall();
-
-        protected abstract ResponseType createResponse();
 
         public LiveData<ResponseType> start() {
             Call<ResponseBody> call = createCall();

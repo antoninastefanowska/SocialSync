@@ -44,8 +44,8 @@ public class TwitterAccount extends Account {
         super.createFromDatabaseRow(data);
 
         TwitterAccountInfoRepository repository = TwitterAccountInfoRepository.getInstance();
-        final LiveData<TwitterAccountInfoRow> dataTable = repository.getDataTableByID(data.getID());
         final TwitterAccount instance = this;
+        final LiveData<TwitterAccountInfoRow> dataTable = repository.getDataTableByID(data.getID());
         dataTable.observeForever(new Observer<TwitterAccountInfoRow>() {
             @Override
             public void onChanged(@Nullable TwitterAccountInfoRow data) {

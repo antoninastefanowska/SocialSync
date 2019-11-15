@@ -91,7 +91,7 @@ public class AttachmentRepository extends BaseRepository<AttachmentRow, Attachme
 
         @Override
         protected LiveData<List<Long>> doInBackground(final Long... params) {
-            return dao.getIDByPost(params[0]);
+            return dao.getIDsByPost(params[0]);
         }
     }
 }

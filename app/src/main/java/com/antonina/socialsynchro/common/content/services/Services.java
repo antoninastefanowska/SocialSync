@@ -1,5 +1,6 @@
 package com.antonina.socialsynchro.common.content.services;
 
+import com.antonina.socialsynchro.services.facebook.content.FacebookService;
 import com.antonina.socialsynchro.services.twitter.content.TwitterService;
 
 public class Services {
@@ -10,6 +11,7 @@ public class Services {
 
     private static void init() {
         services[ServiceID.Twitter.ordinal()] = TwitterService.getInstance();
+        services[ServiceID.Facebook.ordinal()] = FacebookService.getInstance();
         initialized = true;
     }
 

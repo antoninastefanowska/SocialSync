@@ -82,7 +82,7 @@ public class ChildPostContainerRepository extends BaseRepository<ChildPostContai
                     List<ChildPostContainer> output = new ArrayList<>();
                     for (Long id : input.first)
                         output.add(input.second.get(id));
-                    return sortList(output);
+                    return output;
                 }
             });
         } catch (ExecutionException | InterruptedException e) {
@@ -98,7 +98,7 @@ public class ChildPostContainerRepository extends BaseRepository<ChildPostContai
 
         @Override
         protected LiveData<List<Long>> doInBackground(final Long... params) {
-            return dao.getIDByParent(params[0]);
+            return dao.getIDsByParent(params[0]);
         }
     }
 }
