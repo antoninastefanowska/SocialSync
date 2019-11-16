@@ -37,7 +37,7 @@ public class TwitterCheckUploadStatusRequest extends TwitterRequest {
         @Override
         public TwitterCheckUploadStatusRequest build() {
             configureAuthorization();
-            return new TwitterCheckUploadStatusRequest(authorization.buildAuthorizationHeader(), mediaID);
+            return new TwitterCheckUploadStatusRequest(authorization.buildAuthorizationString(), mediaID);
         }
 
         @Override

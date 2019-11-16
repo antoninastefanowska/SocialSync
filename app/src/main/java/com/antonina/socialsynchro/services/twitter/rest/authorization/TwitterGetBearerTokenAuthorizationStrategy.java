@@ -11,7 +11,7 @@ public class TwitterGetBearerTokenAuthorizationStrategy extends TwitterAuthoriza
     }
 
     @Override
-    public String buildAuthorizationHeader() {
+    public String buildAuthorizationString() {
         String consumerKey = percentEncode(config.getKey("twitter_consumer_key"));
         String consumerSecretKey = percentEncode(config.getKey("twitter_consumer_secret_key"));
         String credentials = consumerKey + ":" + consumerSecretKey;

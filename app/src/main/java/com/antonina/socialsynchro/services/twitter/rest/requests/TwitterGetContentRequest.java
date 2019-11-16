@@ -30,7 +30,7 @@ public class TwitterGetContentRequest extends TwitterRequest {
         @Override
         public TwitterGetContentRequest build() {
             configureAuthorization();
-            return new TwitterGetContentRequest(authorization.buildAuthorizationHeader(), id);
+            return new TwitterGetContentRequest(authorization.buildAuthorizationString(), id);
         }
 
         @Override

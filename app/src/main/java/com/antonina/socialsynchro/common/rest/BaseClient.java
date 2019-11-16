@@ -2,14 +2,20 @@ package com.antonina.socialsynchro.common.rest;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
+import okhttp3.Headers;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
+import okio.Buffer;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -57,6 +63,7 @@ public abstract class BaseClient {
 
         @Override
         public void onResponse(Call<ResponseType> call, Response<ResponseType> response) {
+            Log.d("blad", requestBodyToString(call.request().body()));
             if (response.isSuccessful())
                 asyncResponse.setValue(response.body());
             else {
@@ -83,7 +90,9 @@ public abstract class BaseClient {
 
         @Override
         public void onFailure(Call<ResponseType> call, Throwable t) {
-            t.printStackTrace();
+            ResponseType objectResponse = createResponse();
+            objectResponse.setUndefinedError(t.getMessage());
+            asyncResponse.setValue(objectResponse);
         }
     }
 
@@ -128,7 +137,37 @@ public abstract class BaseClient {
 
         @Override
         public void onFailure(Call<ResponseBody> call, Throwable t) {
-            t.printStackTrace();
+            ResponseType objectResponse = createResponse();
+            objectResponse.setUndefinedError(t.getMessage());
+            asyncResponse.setValue(objectResponse);
         }
+    }
+
+    private static String requestBodyToString(RequestBody requestBody) {
+        try {
+            Buffer buffer = new Buffer();
+            if (requestBody != null) {
+                requestBody.writeTo(buffer);
+                return buffer.readUtf8();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    private static String headersToString(Headers headers) {
+        StringBuilder sb = new StringBuilder();
+        Map<String, List<String>> multimap = headers.toMultimap();
+        for (Map.Entry<String, List<String>> entry : multimap.entrySet()) {
+            sb.append(entry.getKey());
+            sb.append(": ");
+            for (String value : entry.getValue()) {
+                sb.append(value);
+                sb.append(", ");
+            }
+            sb.append("\n");
+        }
+        return sb.toString();
     }
 }

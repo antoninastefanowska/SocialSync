@@ -2,32 +2,32 @@ package com.antonina.socialsynchro.services.facebook.rest.requests;
 
 import com.antonina.socialsynchro.services.facebook.rest.authorization.FacebookAuthorizationStrategy;
 
-public class FacebookGetPageRequest extends FacebookRequest {
-    private final String pageID;
+public class FacebookGetContentRequest extends FacebookRequest {
+    private final String postID;
 
-    private FacebookGetPageRequest(String authorizationHeader, String pageID) {
+    private FacebookGetContentRequest(String authorizationHeader, String postID) {
         super(authorizationHeader);
-        this.pageID = pageID;
+        this.postID = postID;
     }
 
     public static Builder builder() {
         return new Builder();
     }
 
-    public String getPageID() {
-        return pageID;
+    public String getPostID() {
+        return postID;
     }
 
     public static class Builder extends FacebookRequest.Builder {
-        private String pageID;
+        private String postID;
 
         @Override
-        public FacebookGetPageRequest build() {
-            return new FacebookGetPageRequest(authorization.buildAuthorizationString(), pageID);
+        public FacebookGetContentRequest build() {
+            return new FacebookGetContentRequest(authorization.buildAuthorizationString(), postID);
         }
 
-        public Builder pageID(String pageID) {
-            this.pageID = pageID;
+        public Builder postID(String postID) {
+            this.postID = postID;
             return this;
         }
 

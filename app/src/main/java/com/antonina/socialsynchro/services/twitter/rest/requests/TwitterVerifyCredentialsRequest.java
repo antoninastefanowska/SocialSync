@@ -23,7 +23,7 @@ public class TwitterVerifyCredentialsRequest extends TwitterRequest {
         @Override
         public TwitterVerifyCredentialsRequest build() {
             configureAuthorization();
-            return new TwitterVerifyCredentialsRequest(authorization.buildAuthorizationHeader());
+            return new TwitterVerifyCredentialsRequest(authorization.buildAuthorizationString());
         }
 
         @Override

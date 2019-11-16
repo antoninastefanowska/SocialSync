@@ -9,7 +9,7 @@ public class FacebookUserAuthorizationStrategy extends FacebookAuthorizationStra
     }
 
     @Override
-    public String buildAuthorizationHeader() {
+    public String buildAuthorizationString() {
         return accessToken;
     }
 }

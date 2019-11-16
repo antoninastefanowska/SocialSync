@@ -23,7 +23,7 @@ public class FacebookGetUserPagesRequest extends FacebookRequest {
 
         @Override
         public FacebookGetUserPagesRequest build() {
-            return new FacebookGetUserPagesRequest(authorization.buildAuthorizationHeader(), userID);
+            return new FacebookGetUserPagesRequest(authorization.buildAuthorizationString(), userID);
         }
 
         public Builder userID(String userID) {

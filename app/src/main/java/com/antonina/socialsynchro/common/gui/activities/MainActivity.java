@@ -15,7 +15,9 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.antonina.socialsynchro.R;
+import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
 import com.antonina.socialsynchro.common.content.posts.ParentPostContainer;
+import com.antonina.socialsynchro.common.gui.listeners.OnUnpublishedListener;
 import com.antonina.socialsynchro.databinding.ActivityMainBinding;
 import com.antonina.socialsynchro.common.gui.adapters.ParentDisplayAdapter;
 import com.antonina.socialsynchro.common.gui.listeners.OnSynchronizedListener;
@@ -61,6 +63,25 @@ public class MainActivity extends AppCompatActivity {
         for (ParentPostContainer parent : parentAdapter.getSelectedItems())
             parent.deleteFromDatabase();
         parentAdapter.removeSelected();
+    }
+
+    public void buttonUnpublishContent_onClick(View view) {
+        final Context context = this;
+        OnUnpublishedListener listener = new OnUnpublishedListener() {
+            @Override
+            public void onUnpublished(ChildPostContainer unpublishedPost) {
+                Toast toast = Toast.makeText(context, getResources().getString(R.string.message_content_unpublish), Toast.LENGTH_LONG);
+                toast.show();
+            }
+
+            @Override
+            public void onError(ChildPostContainer post, String error) {
+                Toast toast = Toast.makeText(context, getResources().getString(R.string.error_content_unpublish, error), Toast.LENGTH_LONG);
+                toast.show();
+            }
+        };
+        for (ParentPostContainer parent : parentAdapter.getSelectedItems())
+            parent.unpublish(listener);
     }
 
     @Override

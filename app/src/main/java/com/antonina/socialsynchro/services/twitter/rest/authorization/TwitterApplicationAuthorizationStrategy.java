@@ -7,7 +7,7 @@ public class TwitterApplicationAuthorizationStrategy extends TwitterAuthorizatio
     }
 
     @Override
-    public String buildAuthorizationHeader() {
+    public String buildAuthorizationString() {
         return "Bearer " + config.getTwitterConfig().getBearerToken();
     }
 }

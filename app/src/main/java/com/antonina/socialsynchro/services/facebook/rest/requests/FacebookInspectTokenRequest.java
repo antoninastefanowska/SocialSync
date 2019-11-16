@@ -1,7 +1,6 @@
 package com.antonina.socialsynchro.services.facebook.rest.requests;
 
 import com.antonina.socialsynchro.services.facebook.rest.authorization.FacebookApplicationAuthorizationStrategy;
-import com.antonina.socialsynchro.services.facebook.rest.authorization.FacebookAuthorizationStrategy;
 
 public class FacebookInspectTokenRequest extends FacebookRequest {
     private final String inputToken;
@@ -25,7 +24,7 @@ public class FacebookInspectTokenRequest extends FacebookRequest {
         @Override
         public FacebookInspectTokenRequest build() {
             configureAuthorization();
-            return new FacebookInspectTokenRequest(authorization.buildAuthorizationHeader(), inputToken);
+            return new FacebookInspectTokenRequest(authorization.buildAuthorizationString(), inputToken);
         }
 
         private void configureAuthorization() {

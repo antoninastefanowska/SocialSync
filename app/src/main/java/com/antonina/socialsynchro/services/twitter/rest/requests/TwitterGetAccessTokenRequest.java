@@ -27,7 +27,7 @@ public class TwitterGetAccessTokenRequest extends TwitterRequest {
         @Override
         public TwitterGetAccessTokenRequest build() {
             configureAuthorization();
-            return new TwitterGetAccessTokenRequest(authorization.buildAuthorizationHeader(), verifier);
+            return new TwitterGetAccessTokenRequest(authorization.buildAuthorizationString(), verifier);
         }
 
         @Override

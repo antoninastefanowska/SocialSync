@@ -151,6 +151,6 @@ public class FacebookAccount extends Account {
 
     @Override
     public void synchronizeRequestLimits(OnSynchronizedListener listener) {
-
+        //TODO
     }
 }

@@ -4,12 +4,10 @@ import com.antonina.socialsynchro.services.facebook.rest.authorization.FacebookA
 
 public class FacebookGetPagePictureRequest extends FacebookRequest {
     private final String pageID;
-    private final boolean redirect;
 
     private FacebookGetPagePictureRequest(String authorizationHeader, String pageID) {
         super(authorizationHeader);
         this.pageID = pageID;
-        redirect = false;
     }
 
     public static Builder builder() {
@@ -21,7 +19,7 @@ public class FacebookGetPagePictureRequest extends FacebookRequest {
     }
 
     public boolean getRedirect() {
-        return redirect;
+        return false;
     }
 
     public static class Builder extends FacebookRequest.Builder {
@@ -29,7 +27,7 @@ public class FacebookGetPagePictureRequest extends FacebookRequest {
 
         @Override
         public FacebookGetPagePictureRequest build() {
-            return new FacebookGetPagePictureRequest(authorization.buildAuthorizationHeader(), pageID);
+            return new FacebookGetPagePictureRequest(authorization.buildAuthorizationString(), pageID);
         }
 
         public Builder pageID(String pageID) {

@@ -83,7 +83,7 @@ public class TwitterUserAuthorizationStrategy extends TwitterAuthorizationStrate
     }
 
     @Override
-    public String buildAuthorizationHeader() {
+    public String buildAuthorizationString() {
         collectRemainingParameters();
 
         StringBuilder sb = new StringBuilder("OAuth ");

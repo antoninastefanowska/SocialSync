@@ -29,7 +29,7 @@ public class BackendUpdateRequestCounterRequest extends BackendRequest {
         @Override
         public BackendUpdateRequestCounterRequest build() {
             configureAuthorization();
-            return new BackendUpdateRequestCounterRequest(authorization.buildAuthorizationHeader(), endpoint, serviceName);
+            return new BackendUpdateRequestCounterRequest(authorization.buildAuthorizationString(), endpoint, serviceName);
         }
 
         public Builder endpoint(String endpoint) {

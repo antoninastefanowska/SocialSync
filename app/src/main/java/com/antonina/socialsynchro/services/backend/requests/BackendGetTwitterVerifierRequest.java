@@ -22,7 +22,7 @@ public class BackendGetTwitterVerifierRequest extends BackendRequest {
         @Override
         public BackendGetTwitterVerifierRequest build() {
             configureAuthorization();
-            return new BackendGetTwitterVerifierRequest(authorization.buildAuthorizationHeader(), loginToken);
+            return new BackendGetTwitterVerifierRequest(authorization.buildAuthorizationString(), loginToken);
         }
 
         public Builder loginToken(String loginToken) {

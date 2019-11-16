@@ -31,7 +31,7 @@ public class TwitterCreateContentRequest extends TwitterRequest {
         @Override
         public TwitterCreateContentRequest build() {
             configureAuthorization();
-            return new TwitterCreateContentRequest(authorization.buildAuthorizationHeader(), status);
+            return new TwitterCreateContentRequest(authorization.buildAuthorizationString(), status);
         }
 
         @Override

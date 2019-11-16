@@ -37,7 +37,7 @@ public class TwitterUploadFinalizeRequest extends TwitterRequest {
         @Override
         public TwitterUploadFinalizeRequest build() {
             configureAuthorization();
-            return new TwitterUploadFinalizeRequest(authorization.buildAuthorizationHeader(), mediaID);
+            return new TwitterUploadFinalizeRequest(authorization.buildAuthorizationString(), mediaID);
         }
 
         @Override

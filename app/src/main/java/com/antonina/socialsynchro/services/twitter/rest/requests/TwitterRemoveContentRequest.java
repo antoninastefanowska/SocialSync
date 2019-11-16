@@ -29,7 +29,7 @@ public class TwitterRemoveContentRequest extends TwitterRequest {
         @Override
         public TwitterRemoveContentRequest build() {
             configureAuthorization();
-            return new TwitterRemoveContentRequest(authorization.buildAuthorizationHeader(), id);
+            return new TwitterRemoveContentRequest(authorization.buildAuthorizationString(), id);
         }
 
         @Override

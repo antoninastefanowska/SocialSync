@@ -107,6 +107,13 @@ public class TwitterPostContainer extends ChildPostContainer {
     }
 
     @Override
+    public void createFromResponse(IResponse response) {
+        TwitterContentResponse twitterResponse = (TwitterContentResponse)response;
+        setSynchronizationDate(Calendar.getInstance().getTime());
+        //TODO: pobrać statystyki
+    }
+
+    @Override
     public void publish(final OnPublishedListener publishListener, final OnAttachmentUploadedListener attachmentListener) {
         setLoading(true);
         String endpoint = TwitterCreateContentRequest.getRequestEndpoint();
@@ -133,13 +140,6 @@ public class TwitterPostContainer extends ChildPostContainer {
                 }
             }
         });
-    }
-
-    @Override
-    public void createFromResponse(IResponse response) {
-        TwitterContentResponse twitterResponse = (TwitterContentResponse)response;
-        setSynchronizationDate(Calendar.getInstance().getTime());
-        //TODO: pobrać statystyki
     }
 
     private void publishJustContent(final OnPublishedListener publishListener) {

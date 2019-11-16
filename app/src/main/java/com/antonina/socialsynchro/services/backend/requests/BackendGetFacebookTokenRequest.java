@@ -22,7 +22,7 @@ public class BackendGetFacebookTokenRequest extends BackendRequest {
         @Override
         public BackendGetFacebookTokenRequest build() {
             configureAuthorization();
-            return new BackendGetFacebookTokenRequest(state, authorization.buildAuthorizationHeader());
+            return new BackendGetFacebookTokenRequest(state, authorization.buildAuthorizationString());
         }
 
         public Builder state(String state) {

@@ -7,7 +7,7 @@ public class FacebookApplicationAuthorizationStrategy extends FacebookAuthorizat
     }
 
     @Override
-    public String buildAuthorizationHeader() {
+    public String buildAuthorizationString() {
         String appID = config.getKey("facebook_app_id");
         String appSecret = config.getKey("facebook_app_secret");
         return appID + "|" + appSecret;

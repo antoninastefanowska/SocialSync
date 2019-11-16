@@ -4,10 +4,18 @@ import android.arch.lifecycle.LiveData;
 
 import com.antonina.socialsynchro.common.rest.BaseClient;
 import com.antonina.socialsynchro.common.utils.ApplicationConfig;
+import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookCreateContentRequest;
+import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookCreateContentWithMediaRequest;
+import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookGetContentRequest;
 import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookGetPagePictureRequest;
 import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookGetPageRequest;
 import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookGetUserPagesRequest;
 import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookInspectTokenRequest;
+import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookRemoveContentRequest;
+import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookUpdateContentRequest;
+import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookUploadPhotoRequest;
+import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookContentResponse;
+import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookIdentifierResponse;
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookGetPagePictureResponse;
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookGetUserPagesResponse;
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookInspectTokenResponse;
@@ -45,6 +53,36 @@ public class FacebookClient extends BaseClient {
 
     public static LiveData<FacebookGetPagePictureResponse> getPagePicture(FacebookGetPagePictureRequest request) {
         GetPagePictureController controller = new GetPagePictureController(request);
+        return controller.start();
+    }
+
+    public static LiveData<FacebookIdentifierResponse> createContent(FacebookCreateContentRequest request) {
+        CreateContentController controller = new CreateContentController(request);
+        return controller.start();
+    }
+
+    public static LiveData<FacebookIdentifierResponse> createContentWithMedia(FacebookCreateContentWithMediaRequest request) {
+        CreateContentWithMediaController controller = new CreateContentWithMediaController(request);
+        return controller.start();
+    }
+
+    public static LiveData<FacebookContentResponse> getContent(FacebookGetContentRequest request) {
+        GetContentController controller = new GetContentController(request);
+        return controller.start();
+    }
+
+    public static LiveData<FacebookIdentifierResponse> updateContent(FacebookUpdateContentRequest request) {
+        UpdateContentController controller = new UpdateContentController(request);
+        return controller.start();
+    }
+
+    public static LiveData<FacebookIdentifierResponse> removeContent(FacebookRemoveContentRequest request) {
+        RemoveContentController controller = new RemoveContentController(request);
+        return controller.start();
+    }
+
+    public static LiveData<FacebookIdentifierResponse> uploadPhoto(FacebookUploadPhotoRequest request) {
+        UploadPhotoController controller = new UploadPhotoController(request);
         return controller.start();
     }
 
@@ -157,6 +195,174 @@ public class FacebookClient extends BaseClient {
         @Override
         protected Class<FacebookGetPagePictureResponse> getResponseClass() {
             return FacebookGetPagePictureResponse.class;
+        }
+    }
+
+    private static class CreateContentController extends BaseController<FacebookCreateContentRequest, FacebookIdentifierResponse> {
+
+        public CreateContentController(FacebookCreateContentRequest request) {
+            super(request);
+        }
+
+        @Override
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+
+        @Override
+        protected FacebookIdentifierResponse createResponse() {
+            return new FacebookIdentifierResponse();
+        }
+
+        @Override
+        protected Call<FacebookIdentifierResponse> createCall() {
+            FacebookAPI facebookAPI = retrofit.create(FacebookAPI.class);
+            return facebookAPI.createContent(request.getPageID(), request.getMessage(), request.getAuthorizationHeader());
+        }
+
+        @Override
+        protected Class<FacebookIdentifierResponse> getResponseClass() {
+            return FacebookIdentifierResponse.class;
+        }
+    }
+
+    private static class CreateContentWithMediaController extends BaseController<FacebookCreateContentWithMediaRequest, FacebookIdentifierResponse> {
+
+        public CreateContentWithMediaController(FacebookCreateContentWithMediaRequest request) {
+            super(request);
+        }
+
+        @Override
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+
+        @Override
+        protected FacebookIdentifierResponse createResponse() {
+            return new FacebookIdentifierResponse();
+        }
+
+        @Override
+        protected Call<FacebookIdentifierResponse> createCall() {
+            FacebookAPI facebookAPI = retrofit.create(FacebookAPI.class);
+            return facebookAPI.createContentWithMedia(request.getPageID(), request.getMessage(), request.getMediaIDs(), request.getAuthorizationHeader());
+        }
+
+        @Override
+        protected Class<FacebookIdentifierResponse> getResponseClass() {
+            return FacebookIdentifierResponse.class;
+        }
+    }
+
+    private static class GetContentController extends BaseController<FacebookGetContentRequest, FacebookContentResponse> {
+
+        public GetContentController(FacebookGetContentRequest request) {
+            super(request);
+        }
+
+        @Override
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+
+        @Override
+        protected FacebookContentResponse createResponse() {
+            return new FacebookContentResponse();
+        }
+
+        @Override
+        protected Call<FacebookContentResponse> createCall() {
+            FacebookAPI facebookAPI = retrofit.create(FacebookAPI.class);
+            return facebookAPI.getContent(request.getPostID(), request.getAuthorizationHeader());
+        }
+
+        @Override
+        protected Class<FacebookContentResponse> getResponseClass() {
+            return FacebookContentResponse.class;
+        }
+    }
+
+    private static class UpdateContentController extends BaseController<FacebookUpdateContentRequest, FacebookIdentifierResponse> {
+
+        public UpdateContentController(FacebookUpdateContentRequest request) {
+            super(request);
+        }
+
+        @Override
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+
+        @Override
+        protected FacebookIdentifierResponse createResponse() {
+            return new FacebookIdentifierResponse();
+        }
+
+        @Override
+        protected Call<FacebookIdentifierResponse> createCall() {
+            FacebookAPI facebookAPI = retrofit.create(FacebookAPI.class);
+            return facebookAPI.updateContent(request.getPostID(), request.getMessage(), request.getAuthorizationHeader());
+        }
+
+        @Override
+        protected Class<FacebookIdentifierResponse> getResponseClass() {
+            return FacebookIdentifierResponse.class;
+        }
+    }
+
+    private static class RemoveContentController extends BaseController<FacebookRemoveContentRequest, FacebookIdentifierResponse> {
+
+        public RemoveContentController(FacebookRemoveContentRequest request) {
+            super(request);
+        }
+
+        @Override
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+
+        @Override
+        protected FacebookIdentifierResponse createResponse() {
+            return new FacebookIdentifierResponse();
+        }
+
+        @Override
+        protected Call<FacebookIdentifierResponse> createCall() {
+            FacebookAPI facebookAPI = retrofit.create(FacebookAPI.class);
+            return facebookAPI.removeContent(request.getPostID(), request.getAuthorizationHeader());
+        }
+
+        @Override
+        protected Class<FacebookIdentifierResponse> getResponseClass() {
+            return FacebookIdentifierResponse.class;
+        }
+    }
+
+    private static class UploadPhotoController extends BaseController<FacebookUploadPhotoRequest, FacebookIdentifierResponse> {
+
+        public UploadPhotoController(FacebookUploadPhotoRequest request) {
+            super(request);
+        }
+
+        @Override
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+
+        @Override
+        protected FacebookIdentifierResponse createResponse() {
+            return new FacebookIdentifierResponse();
+        }
+
+        @Override
+        protected Call<FacebookIdentifierResponse> createCall() {
+            FacebookAPI facebookAPI = retrofit.create(FacebookAPI.class);
+            return facebookAPI.uploadPhoto(request.getPageID(), request.getPhoto(), request.getPublished(), request.getAuthorizationHeader());
+        }
+
+        @Override
+        protected Class<FacebookIdentifierResponse> getResponseClass() {
+            return FacebookIdentifierResponse.class;
         }
     }
 }

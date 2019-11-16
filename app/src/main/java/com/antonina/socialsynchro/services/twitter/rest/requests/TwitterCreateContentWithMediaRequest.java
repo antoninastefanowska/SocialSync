@@ -7,7 +7,7 @@ import java.util.List;
 public class TwitterCreateContentWithMediaRequest extends TwitterCreateContentRequest {
     private final String mediaIDs;
 
-    public TwitterCreateContentWithMediaRequest(String authorizationHeader, String status, String mediaIDs) {
+    private TwitterCreateContentWithMediaRequest(String authorizationHeader, String status, String mediaIDs) {
         super(authorizationHeader, status);
         this.mediaIDs = percentEncode(mediaIDs);
     }
@@ -30,7 +30,7 @@ public class TwitterCreateContentWithMediaRequest extends TwitterCreateContentRe
         @Override
         public TwitterCreateContentWithMediaRequest build() {
             configureAuthorization();
-            return new TwitterCreateContentWithMediaRequest(authorization.buildAuthorizationHeader(), status, mediaIDs);
+            return new TwitterCreateContentWithMediaRequest(authorization.buildAuthorizationString(), status, mediaIDs);
         }
 
         @Override

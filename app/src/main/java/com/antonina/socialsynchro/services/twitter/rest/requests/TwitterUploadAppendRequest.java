@@ -53,7 +53,7 @@ public class TwitterUploadAppendRequest extends TwitterRequest {
         @Override
         public TwitterUploadAppendRequest build() {
             configureAuthorization();
-            return new TwitterUploadAppendRequest(authorization.buildAuthorizationHeader(), mediaID, segmentIndex, media);
+            return new TwitterUploadAppendRequest(authorization.buildAuthorizationString(), mediaID, segmentIndex, media);
         }
 
         @Override

@@ -44,7 +44,7 @@ public class TwitterUploadInitRequest extends TwitterRequest {
         @Override
         public TwitterUploadInitRequest build() {
             configureAuthorization();
-            return new TwitterUploadInitRequest(authorization.buildAuthorizationHeader(), totalBytes, mediaType);
+            return new TwitterUploadInitRequest(authorization.buildAuthorizationString(), totalBytes, mediaType);
         }
 
         @Override

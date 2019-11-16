@@ -34,7 +34,7 @@ public class TwitterGetRateLimitsRequest extends TwitterRequest {
         @Override
         public TwitterGetRateLimitsRequest build() {
             configureAuthorization();
-            return new TwitterGetRateLimitsRequest(authorization.buildAuthorizationHeader(), resourcesString);
+            return new TwitterGetRateLimitsRequest(authorization.buildAuthorizationString(), resourcesString);
         }
 
         @Override

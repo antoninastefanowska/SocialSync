@@ -18,7 +18,7 @@ public class TwitterGetLoginTokenRequest extends TwitterRequest {
         @Override
         public TwitterGetLoginTokenRequest build() {
             configureAuthorization();
-            return new TwitterGetLoginTokenRequest(authorization.buildAuthorizationHeader());
+            return new TwitterGetLoginTokenRequest(authorization.buildAuthorizationString());
         }
 
         @Override

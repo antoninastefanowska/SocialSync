@@ -67,6 +67,14 @@
                         style="@style/ButtonStyle" />
 
                     <Button
+                        android:id="@+id/button_unpublish_content"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:onClick="buttonUnpublishContent_onClick"
+                        android:text="@string/unpublish"
+                        style="@style/ButtonStyle" />
+
+                    <Button
                         android:id="@+id/button_check_limits"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

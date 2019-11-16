@@ -9,5 +9,5 @@ public abstract class BaseAuthorizationStrategy {
         config = ApplicationConfig.getInstance();
     }
 
-    public abstract String buildAuthorizationHeader();
+    public abstract String buildAuthorizationString();
 }

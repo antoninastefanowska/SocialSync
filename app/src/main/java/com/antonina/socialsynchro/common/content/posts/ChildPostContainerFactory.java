@@ -5,6 +5,8 @@ import com.antonina.socialsynchro.common.content.accounts.Account;
 import com.antonina.socialsynchro.common.database.IDatabaseEntityFactory;
 import com.antonina.socialsynchro.common.database.rows.ChildPostContainerRow;
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
+import com.antonina.socialsynchro.services.facebook.content.FacebookAccount;
+import com.antonina.socialsynchro.services.facebook.content.FacebookPostContainer;
 import com.antonina.socialsynchro.services.twitter.content.TwitterAccount;
 import com.antonina.socialsynchro.services.twitter.content.TwitterPostContainer;
 
@@ -25,6 +27,8 @@ public class ChildPostContainerFactory implements IDatabaseEntityFactory {
         switch(serviceID) {
             case Twitter:
                 return new TwitterPostContainer(data);
+            case Facebook:
+                return new FacebookPostContainer(data);
             default:
                 return null;
         }
@@ -37,6 +41,9 @@ public class ChildPostContainerFactory implements IDatabaseEntityFactory {
             case Twitter:
                 TwitterAccount twitterAccount = (TwitterAccount)account;
                 return new TwitterPostContainer(twitterAccount);
+            case Facebook:
+                FacebookAccount facebookAccount = (FacebookAccount)account;
+                return new FacebookPostContainer(facebookAccount);
             default:
                 return null;
         }

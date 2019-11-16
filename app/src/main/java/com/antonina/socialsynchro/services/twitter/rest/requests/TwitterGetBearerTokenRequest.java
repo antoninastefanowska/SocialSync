@@ -23,7 +23,7 @@ public class TwitterGetBearerTokenRequest extends TwitterRequest {
         @Override
         public TwitterGetBearerTokenRequest build() {
             configureAuthorization();
-            return new TwitterGetBearerTokenRequest(authorization.buildAuthorizationHeader());
+            return new TwitterGetBearerTokenRequest(authorization.buildAuthorizationString());
         }
 
         @Override

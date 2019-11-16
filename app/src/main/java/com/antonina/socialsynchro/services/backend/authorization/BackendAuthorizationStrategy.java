@@ -15,7 +15,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class BackendAuthorizationStrategy extends BaseAuthorizationStrategy {
     @Override
-    public String buildAuthorizationHeader() {
+    public String buildAuthorizationString() {
         String consumerKey = config.getKey("backend_consumer_key");
         String consumerSecretKey = config.getKey("backend_consumer_secret_key");
         String timestamp = Long.toString(Calendar.getInstance(TimeZone.getTimeZone("UTC")).getTimeInMillis() / 1000);
