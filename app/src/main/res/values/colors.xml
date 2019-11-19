@@ -9,5 +9,13 @@
     <color name="colorDark">#044F51</color>
     <color name="colorLight">#E7FEFF</color>
     <color name="colorBackground">#2D5F89</color>
-    <color name="colorAccent">#D81B60</color>
+    <color name="colorBackgroundDark">#0F3F68</color>
+    <color name="colorAccent">#FEFFD5</color>
+    <color name="colorBlack">#000000</color>
+
+    <color name="colorFacebook">#3A559F</color>
+    <color name="colorFontFacebook">#FFFFFF</color>
+
+    <color name="colorTwitter">#00ACED</color>
+    <color name="colorFontTwitter">#FFFFFF</color>
 </resources>

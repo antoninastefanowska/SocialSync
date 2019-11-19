@@ -1,10 +1,13 @@
 package com.antonina.socialsynchro.services.facebook.content;
 
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.drawable.Drawable;
 
+import com.antonina.socialsynchro.R;
+import com.antonina.socialsynchro.SocialSynchro;
+import com.antonina.socialsynchro.common.content.accounts.LoginFlow;
 import com.antonina.socialsynchro.common.content.services.Service;
 import com.antonina.socialsynchro.common.content.services.ServiceID;
-import com.antonina.socialsynchro.services.facebook.gui.FacebookLoginActivity;
+import com.antonina.socialsynchro.common.gui.activities.LoginActivity;
 
 public class FacebookService extends Service {
     private static FacebookService instance;
@@ -33,12 +36,22 @@ public class FacebookService extends Service {
     }
 
     @Override
-    public String getColorName() {
-        return null;
+    public int getColor() {
+        return SocialSynchro.getInstance().getResources().getColor(R.color.colorFacebook);
     }
 
     @Override
-    public Class<? extends AppCompatActivity> getLoginActivityClass() {
-        return FacebookLoginActivity.class;
+    public int getFontColor() {
+        return SocialSynchro.getInstance().getResources().getColor(R.color.colorFontFacebook);
+    }
+
+    @Override
+    public Drawable getPanelBackground() {
+        return SocialSynchro.getInstance().getResources().getDrawable(R.drawable.background_facebook_panel);
+    }
+
+    @Override
+    public LoginFlow createLoginFlow(LoginActivity context) {
+        return new FacebookLoginFlow(context);
     }
 }

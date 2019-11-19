@@ -18,52 +18,102 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <HorizontalScrollView
+            android:id="@+id/horizontal_scrollview"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:baselineAligned="false">
+            android:layout_marginBottom="@dimen/margin_standard">
 
             <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="2" >
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-                <EditText
-                    android:id="@+id/edittext_child_content"
-                    android:layout_width="match_parent"
+                <Button
+                    android:id="@+id/button_parent_add_attachment"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:inputType="textPersonName"
-                    android:hint="@string/edit_content_hint"
-                    android:text="@={child.content}"
-                    android:enabled="@{!child.isLocked()}"
-                    tools:ignore="Autofill" />
+                    android:text="@string/add_attachment"
+                    style="@style/ButtonStyle" />
+
+                <Button
+                    android:id="@+id/button_lock"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lock"
+                    style="@style/ButtonStyle" />
+
+                <Button
+                    android:id="@+id/button_publish"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/publish"
+                    style="@style/ButtonStyle" />
+
+                <Button
+                    android:id="@+id/button_unpublish_content"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/unpublish"
+                    style="@style/ButtonStyle" />
 
             </LinearLayout>
 
-            <RelativeLayout
-                android:id="@+id/loading_panel"
-                android:layout_width="wrap_content"
+        </HorizontalScrollView>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/edittext_child_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:visibility="@{child.isLoading() ? View.VISIBLE : View.GONE}">
+                android:text="@={child.content}"
+                android:enabled="@{!child.isLocked()}"
+                tools:ignore="Autofill"
+                style="@style/EditContentStyle" />
 
-                <ProgressBar
-                    android:layout_width="@dimen/progress_bar_size_small"
-                    android:layout_height="@dimen/progress_bar_size_small"
-                    android:indeterminate="true" />
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            </RelativeLayout>
+                <EditText
+                    android:id="@+id/edittext_child_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@={child.title}"
+                    android:enabled="@{!child.isLocked()}"
+                    android:background="@{child.service.panelBackground}"
+                    android:textColor="@{child.service.fontColor}"
+                    tools:ignore="Autofill"
+                    style="@style/EditTitleStyle" />
 
-        </LinearLayout>
+                <include layout="@layout/layout_profile_picture" />
+
+                <RelativeLayout
+                    android:id="@+id/loading_panel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="@{child.isLoading() ? View.VISIBLE : View.GONE}"
+                    style="@style/LoadingPanelStyle" >
+
+                    <ProgressBar
+                        android:layout_width="@dimen/progress_bar_size_small"
+                        android:layout_height="@dimen/progress_bar_size_small"
+                        android:indeterminate="true" />
+
+                </RelativeLayout>
+
+            </FrameLayout>
+
+        </FrameLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerview_child_attachments"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:scrollbars="vertical"
-            android:adapter="@{attachmentAdapter}"
-            android:padding="@dimen/padding_small" />
+            android:adapter="@{attachmentAdapter}" />
 
     </LinearLayout>
 

@@ -8,9 +8,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
+import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.common.gui.GUIItem;
 import com.antonina.socialsynchro.common.gui.listeners.OnUpdatedListener;
+import com.antonina.socialsynchro.common.gui.other.MaskTransformation;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +28,7 @@ public abstract class BaseAdapter<ItemType extends GUIItem, ViewHolderType exten
     protected final AppCompatActivity context;
     private final OnUpdatedListener listener;
 
-    public abstract static class BaseViewHolder<ItemBindingType extends ViewDataBinding> extends RecyclerView.ViewHolder {
+    protected abstract static class BaseViewHolder<ItemBindingType extends ViewDataBinding> extends RecyclerView.ViewHolder {
         public final ItemBindingType binding;
 
         public BaseViewHolder(@NonNull View view) {
@@ -163,5 +169,21 @@ public abstract class BaseAdapter<ItemType extends GUIItem, ViewHolderType exten
         for (ItemType item : selectedItems)
             removeItem(item);
         selectedItems.clear();
+    }
+
+    protected void loadPicture(ImageView imageView, int imageSize, String url) {
+        RequestOptions options = new RequestOptions()
+                .override(imageSize)
+                .fitCenter()
+                .transform(new MaskTransformation(context));
+        Glide.with(context)
+                .load(url)
+                .apply(options)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(imageView);
+    }
+
+    protected int getPictureSize() {
+        return context.getResources().getDimensionPixelSize(R.dimen.profile_picture_size);
     }
 }

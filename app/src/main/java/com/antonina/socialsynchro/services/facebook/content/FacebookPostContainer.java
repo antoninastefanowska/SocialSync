@@ -36,14 +36,6 @@ public class FacebookPostContainer extends ChildPostContainer {
     }
 
     @Override
-    public String getTitle() {
-        return "";
-    }
-
-    @Override
-    public void setTitle(String title) { }
-
-    @Override
     public void setContent(String content) {
         if (content.length() > MAX_CONTENT_LENGTH) {
             unlock();

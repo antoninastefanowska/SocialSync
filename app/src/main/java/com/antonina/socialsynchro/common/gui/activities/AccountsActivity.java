@@ -15,7 +15,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.antonina.socialsynchro.R;
-import com.antonina.socialsynchro.common.gui.serialization.SerializableList;
+import com.antonina.socialsynchro.common.gui.other.SerializableList;
 import com.antonina.socialsynchro.databinding.ActivityAccountsBinding;
 import com.antonina.socialsynchro.common.gui.adapters.AccountDisplayAdapter;
 import com.antonina.socialsynchro.common.content.accounts.Account;
@@ -66,7 +66,8 @@ public class AccountsActivity extends AppCompatActivity {
         ChooseServiceDialog dialog = new ChooseServiceDialog(this, new OnServiceSelectedListener() {
             @Override
             public void onServiceSelected(Service service) {
-                Intent loginActivity = new Intent(AccountsActivity.this, service.getLoginActivityClass());
+                Intent loginActivity = new Intent(AccountsActivity.this, LoginActivity.class);
+                loginActivity.putExtra("service", service);
                 startActivityForResult(loginActivity, ADD_ACCOUNT);
             }
         });

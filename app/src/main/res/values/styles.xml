@@ -29,10 +29,80 @@
 
     <style name="ButtonStyle">
         <item name="android:textSize">@dimen/text_size_standard</item>
-        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:background">@drawable/background_button</item>
         <item name="android:textColor">@color/colorDark</item>
         <item name="android:padding">@dimen/padding_standard</item>
+        <item name="android:layout_marginRight">@dimen/margin_standard</item>
+    </style>
+
+    <style name="AloneButtonStyle" parent="ButtonStyle">
+        <item name="android:layout_marginRight">@dimen/no_margin</item>
         <item name="android:layout_margin">@dimen/margin_standard</item>
+    </style>
+
+    <style name="OperationButtonStyle" parent="ButtonStyle">
+        <item name="android:layout_marginTop">@dimen/no_margin</item>
+        <item name="android:layout_marginLeft">@dimen/no_margin</item>
+        <item name="android:layout_marginRight">@dimen/no_margin</item>
+    </style>
+
+    <style name="TextTitleStyle">
+        <item name="android:background">@drawable/background_button</item>
+        <item name="android:paddingTop">@dimen/padding_standard</item>
+        <item name="android:paddingRight">@dimen/padding_standard</item>
+        <item name="android:paddingBottom">@dimen/padding_standard</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/colorDark</item>
+        <item name="android:layout_marginLeft">@dimen/profile_picture_offset_margin</item>
+        <item name="android:layout_marginTop">@dimen/margin_standard</item>
+        <item name="android:layout_marginBottom">@dimen/margin_standard</item>
+        <item name="android:layout_marginRight">@dimen/margin_standard</item>
+        <item name="android:paddingLeft">@dimen/profile_picture_offset_padding</item>
+    </style>
+
+    <style name="EditTitleStyle" parent="TextTitleStyle">
+        <item name="android:inputType">textPersonName</item>
+        <item name="android:hint">@string/edit_title_hint</item>
+    </style>
+
+    <style name="TextContentStyle">
+        <item name="android:minHeight">@dimen/edit_content_min_height</item>
+        <item name="android:background">@color/colorLight</item>
+        <item name="android:paddingLeft">@dimen/padding_standard</item>
+        <item name="android:paddingBottom">@dimen/padding_standard</item>
+        <item name="android:paddingRight">@dimen/padding_standard</item>
+        <item name="android:layout_marginLeft">@dimen/profile_picture_offset_margin</item>
+        <item name="android:layout_marginTop">@dimen/profile_picture_offset_margin</item>
+        <item name="android:paddingTop">@dimen/profile_picture_offset_padding</item>
+        <item name="android:layout_marginRight">@dimen/margin_big</item>
+        <item name="android:layout_marginBottom">@dimen/margin_standard</item>
+    </style>
+
+    <style name="EditContentStyle" parent="TextContentStyle">
+        <item name="android:gravity">top</item>
+        <item name="android:inputType">textPersonName</item>
+        <item name="android:hint">@string/edit_content_hint</item>
+    </style>
+
+    <style name="MainLayoutStyle">
+        <item name="android:background">@color/colorBackground</item>
+    </style>
+
+    <style name="LoadingPanelStyle">
+        <item name="android:padding">@dimen/padding_small</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_marginTop">@dimen/margin_small</item>
+        <item name="android:layout_marginLeft">@dimen/margin_small</item>
+    </style>
+
+    <style name="TextAttachmentStyle">
+        <item name="android:padding">@dimen/padding_small</item>
+        <item name="android:background">@color/colorBackgroundDark</item>
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_marginLeft">@dimen/margin_big</item>
+        <item name="android:layout_marginRight">@dimen/margin_big</item>
+        <item name="android:layout_marginBottom">@dimen/margin_standard</item>
     </style>
 
 </resources>

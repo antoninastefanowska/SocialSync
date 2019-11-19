@@ -1,27 +1,22 @@
-package com.antonina.socialsynchro.services.facebook.gui;
+package com.antonina.socialsynchro.services.facebook.content;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.common.content.accounts.Account;
+import com.antonina.socialsynchro.common.content.accounts.LoginFlow;
+import com.antonina.socialsynchro.common.gui.activities.LoginActivity;
 import com.antonina.socialsynchro.common.gui.listeners.OnSynchronizedListener;
-import com.antonina.socialsynchro.common.gui.serialization.SerializableList;
 import com.antonina.socialsynchro.common.rest.IServiceEntity;
 import com.antonina.socialsynchro.common.utils.GenerateUtils;
 import com.antonina.socialsynchro.services.backend.BackendClient;
 import com.antonina.socialsynchro.services.backend.requests.BackendGetFacebookTokenRequest;
 import com.antonina.socialsynchro.services.backend.responses.BackendGetFacebookTokenResponse;
-import com.antonina.socialsynchro.services.facebook.content.FacebookAccount;
 import com.antonina.socialsynchro.services.facebook.rest.FacebookClient;
 import com.antonina.socialsynchro.services.facebook.rest.authorization.FacebookUserAuthorizationStrategy;
 import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookGetUserPagesRequest;
@@ -33,7 +28,7 @@ import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookPageR
 import java.util.ArrayList;
 import java.util.List;
 
-public class FacebookLoginActivity extends AppCompatActivity {
+public class FacebookLoginFlow extends LoginFlow {
     private String state;
     private String userToken;
     private String userID;
@@ -41,53 +36,26 @@ public class FacebookLoginActivity extends AppCompatActivity {
     private List<Account> accounts;
     private int loadedCount;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_facebook_login);
-
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey("state"))
-                state = savedInstanceState.getString("state");
-            if (savedInstanceState.containsKey("user_token"))
-                userToken = savedInstanceState.getString("user_token");
-            if (savedInstanceState.containsKey("user_id"))
-                userID = savedInstanceState.getString("user_id");
-        }
-
+    public FacebookLoginFlow(LoginActivity context) {
+        super(context);
         accounts = new ArrayList<>();
         loadedCount = 0;
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putString("state", state);
-        outState.putString("user_token", userToken);
-        outState.putString("user_id", userID);
-        super.onSaveInstanceState(outState);
-    }
-
-    public void buttonConnect_onClick(View view) {
-        connect();
-    }
-
-    public void buttonConfirm_onClick(View view) {
-        getAccessToken();
-    }
-
-    private void connect() {
+    public void signIn() {
         state = GenerateUtils.generateRandomString(30);
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(FacebookClient.getLoginURL(state)));
-        startActivity(browserIntent);
+        context.startActivity(browserIntent);
     }
 
-    private void getAccessToken() {
+    @Override
+    public void confirm() {
         BackendGetFacebookTokenRequest request = BackendGetFacebookTokenRequest.builder()
                 .state(state)
                 .build();
-        final Context context = this;
         final LiveData<BackendGetFacebookTokenResponse> asyncResponse = BackendClient.getFacebookToken(request);
-        asyncResponse.observe(this, new Observer<BackendGetFacebookTokenResponse>() {
+        asyncResponse.observe(context, new Observer<BackendGetFacebookTokenResponse>() {
             @Override
             public void onChanged(@Nullable BackendGetFacebookTokenResponse response) {
                 if (response != null) {
@@ -97,7 +65,7 @@ public class FacebookLoginActivity extends AppCompatActivity {
                             inspectToken();
                         }
                     } else {
-                        Toast toast = Toast.makeText(context, getResources().getString(R.string.error_facebook_token, response.getErrorString()), Toast.LENGTH_LONG);
+                        Toast toast = Toast.makeText(context, context.getResources().getString(R.string.error_facebook_token, response.getErrorString()), Toast.LENGTH_LONG);
                         toast.show();
                     }
                     asyncResponse.removeObserver(this);
@@ -111,7 +79,7 @@ public class FacebookLoginActivity extends AppCompatActivity {
                 .inputToken(userToken)
                 .build();
         final LiveData<FacebookInspectTokenResponse> asyncResponse = FacebookClient.inspectToken(request);
-        asyncResponse.observe(this, new Observer<FacebookInspectTokenResponse>() {
+        asyncResponse.observe(context, new Observer<FacebookInspectTokenResponse>() {
             @Override
             public void onChanged(@Nullable FacebookInspectTokenResponse response) {
                 if (response != null) {
@@ -130,9 +98,8 @@ public class FacebookLoginActivity extends AppCompatActivity {
                 .userID(userID)
                 .authorizationStrategy(authorization)
                 .build();
-        final Context context = this;
         final LiveData<FacebookGetUserPagesResponse> asyncResponse = FacebookClient.getUserPages(request);
-        asyncResponse.observe(this, new Observer<FacebookGetUserPagesResponse>() {
+        asyncResponse.observe(context, new Observer<FacebookGetUserPagesResponse>() {
             @Override
             public void onChanged(@Nullable FacebookGetUserPagesResponse response) {
                 if (response != null) {
@@ -144,12 +111,12 @@ public class FacebookLoginActivity extends AppCompatActivity {
                             public void onSynchronized(IServiceEntity entity) {
                                 loadedCount++;
                                 if (loadedCount >= pageCount)
-                                    exitAndSave();
+                                    complete();
                             }
 
                             @Override
                             public void onError(IServiceEntity entity, String error) {
-                                Toast toast = Toast.makeText(context, getResources().getString(R.string.error_account_info, error), Toast.LENGTH_LONG);
+                                Toast toast = Toast.makeText(context, context.getResources().getString(R.string.error_account_info, error), Toast.LENGTH_LONG);
                                 toast.show();
                             }
                         };
@@ -166,11 +133,8 @@ public class FacebookLoginActivity extends AppCompatActivity {
         });
     }
 
-    private void exitAndSave() {
-        SerializableList<Account> serializableAccounts = new SerializableList<>(accounts);
-        Intent accountsActivity = new Intent();
-        accountsActivity.putExtra("accounts", serializableAccounts);
-        setResult(RESULT_OK, accountsActivity);
-        finish();
+    @Override
+    protected void complete() {
+        context.exitAndSave(accounts);
     }
 }

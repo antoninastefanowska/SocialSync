@@ -19,85 +19,122 @@
     <android.support.constraint.ConstraintLayout
         android:id="@+id/layout_main"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        style="@style/MainLayoutStyle" >
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" >
+            android:layout_height="match_parent">
 
-            <HorizontalScrollView
-                android:id="@+id/horizontal_scrollview"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/padding_small"
-                android:scrollbars="none">
+                android:orientation="vertical"
+                android:padding="@dimen/padding_big">
 
-                <LinearLayout
+                <HorizontalScrollView
+                    android:id="@+id/horizontal_scrollview"
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/margin_standard">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <Button
+                            android:id="@+id/button_add_child"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:onClick="buttonAddChild_onClick"
+                            android:text="@string/add_child"
+                            style="@style/ButtonStyle" />
+
+                        <Button
+                            android:id="@+id/button_parent_add_attachment"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:onClick="buttonParentAddAttachment_onClick"
+                            android:text="@string/add_attachment"
+                            style="@style/ButtonStyle" />
+
+                        <Button
+                            android:id="@+id/button_save"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:onClick="buttonSave_onClick"
+                            android:text="@string/save"
+                            style="@style/ButtonStyle" />
+
+                        <Button
+                            android:id="@+id/button_publish"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:onClick="buttonPublish_onClick"
+                            android:text="@string/publish"
+                            style="@style/ButtonStyle" />
+
+                        <Button
+                            android:id="@+id/button_unpublish_content"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/unpublish"
+                            style="@style/ButtonStyle" />
+
+                    </LinearLayout>
+
+                </HorizontalScrollView>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <Button
-                        android:id="@+id/button_add_child"
-                        android:layout_width="wrap_content"
+                    <EditText
+                        android:id="@+id/edittext_parent_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:onClick="buttonAddChild_onClick"
-                        android:text="@string/add_child"
-                        style="@style/ButtonStyle" />
+                        android:text="@={parent.content}"
+                        tools:ignore="Autofill"
+                        style="@style/EditContentStyle" />
 
-                    <Button
-                        android:id="@+id/button_save"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:onClick="buttonSave_onClick"
-                        android:text="@string/save"
-                        style="@style/ButtonStyle" />
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                    <Button
-                        android:id="@+id/button_publish"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:onClick="buttonPublish_onClick"
-                        android:text="@string/publish"
-                        style="@style/ButtonStyle" />
+                        <EditText
+                            android:id="@+id/edittext_parent_title"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@={parent.title}"
+                            tools:ignore="Autofill"
+                            style="@style/EditTitleStyle" />
 
-                </LinearLayout>
+                        <ImageView
+                            android:layout_width="@dimen/profile_picture_background_size"
+                            android:layout_height="@dimen/profile_picture_background_size"
+                            android:src="@drawable/background_avatar" />
 
-            </HorizontalScrollView>
+                    </FrameLayout>
 
-            <EditText
-                android:id="@+id/edittext_parent_content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textPersonName"
-                android:hint="@string/edit_content_hint"
-                android:text="@={parent.content}"
-                tools:ignore="Autofill" />
+                </FrameLayout>
 
-            <Button
-                android:id="@+id/button_parent_add_attachment"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="buttonParentAddAttachment_onClick"
-                android:text="@string/add_attachment" />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerview_parent_attachments"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none"
+                    android:adapter="@{attachmentAdapter}" />
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerview_parent_attachments"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scrollbars="vertical"
-                android:adapter="@{attachmentAdapter}"
-                android:padding="@dimen/padding_small" />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerview_children"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none"
+                    android:adapter="@{childAdapter}" />
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerview_children"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="vertical"
-                android:adapter="@{childAdapter}"
-                android:padding="@dimen/padding_standard" />
+            </LinearLayout>
 
-        </LinearLayout>
+        </ScrollView>
 
     </android.support.constraint.ConstraintLayout>
 

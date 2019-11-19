@@ -36,6 +36,7 @@
     <string name="save">Save</string>
     <string name="publish">Publish</string>
     <string name="unpublish">Unpublish</string>
+    <string name="lock">Lock</string>
     <string name="add_attachment">Add attachment</string>
     <string name="confirm">Confirm</string>
     <string name="accounts">Accounts</string>
@@ -48,8 +49,10 @@
     <string name="gallery_image_content_description">Storage image file</string>
     <string name="profile_picture_content_description">Profile picture</string>
     <string name="edit_content_hint">Content</string>
+    <string name="edit_title_hint">Title</string>
 
     <string name="title_choose_accounts">Choose accounts</string>
     <string name="title_choose_attachment_type">Choose attachment type</string>
     <string name="title_choose_service">Choose service</string>
+    <string name="title_activity_test">TestActivity</string>
 </resources>

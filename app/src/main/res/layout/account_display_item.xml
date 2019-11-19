@@ -8,48 +8,33 @@
             type="com.antonina.socialsynchro.common.content.accounts.Account" />
     </data>
 
-    <LinearLayout
+    <FrameLayout
         android:id="@+id/layout_account_item_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="@color/colorSecondary"
-        android:padding="@dimen/padding_small"
-        android:layout_margin="@dimen/margin_small" >
+        android:layout_margin="@dimen/margin_small">
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/imageview_profile_picture"
-                android:layout_width="@dimen/profile_picture_size"
-                android:layout_height="@dimen/profile_picture_size"
-                android:contentDescription="@string/profile_picture_content_description" />
-
-        </RelativeLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
+        <TextView
+            android:id="@+id/textview_account_name"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_weight="2"
-            android:layout_gravity="center">
+            android:minHeight="@dimen/profile_picture_background_size"
+            android:text="@{account.name, default=Account}"
+            android:gravity="center_vertical"
+            android:textColor="@{account.service.fontColor}"
+            android:background="@{account.service.panelBackground}"
+            android:textStyle="bold"
+            android:layout_marginTop="@dimen/no_margin"
+            style="@style/TextTitleStyle"/>
 
-            <TextView
-                android:id="@+id/textview_account_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@{account.name}"
-                android:textColor="@color/colorBackground" />
-
-        </LinearLayout>
+        <include layout="@layout/layout_profile_picture" />
 
         <RelativeLayout
             android:id="@+id/loading_panel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="@{account.isLoading() ? View.VISIBLE : View.GONE}">
+            android:visibility="@{account.isLoading() ? View.VISIBLE : View.GONE}"
+            style="@style/LoadingPanelStyle" >
 
             <ProgressBar
                 android:layout_width="@dimen/progress_bar_size_small"
@@ -58,5 +43,5 @@
 
         </RelativeLayout>
 
-    </LinearLayout>
+    </FrameLayout>
 </layout>

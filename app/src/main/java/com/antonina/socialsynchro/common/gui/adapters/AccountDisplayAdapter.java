@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.common.content.accounts.Account;
 import com.antonina.socialsynchro.common.database.repositories.AccountRepository;
+import com.antonina.socialsynchro.common.gui.other.MaskTransformation;
 import com.antonina.socialsynchro.databinding.AccountDisplayItemBinding;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
@@ -23,7 +24,7 @@ import java.util.List;
 public class AccountDisplayAdapter extends BaseAdapter<Account, AccountDisplayAdapter.AccountViewHolder> {
     private int imageSize;
 
-    public static class AccountViewHolder extends BaseAdapter.BaseViewHolder<AccountDisplayItemBinding> {
+    protected static class AccountViewHolder extends BaseAdapter.BaseViewHolder<AccountDisplayItemBinding> {
         public final ImageView imageView;
 
         public AccountViewHolder(@NonNull View view) {
@@ -39,7 +40,7 @@ public class AccountDisplayAdapter extends BaseAdapter<Account, AccountDisplayAd
 
     public AccountDisplayAdapter(AppCompatActivity context) {
         super(context);
-        imageSize = context.getResources().getDimensionPixelSize(R.dimen.profile_picture_size);
+        imageSize = getPictureSize();
         loadData();
     }
 
@@ -51,12 +52,7 @@ public class AccountDisplayAdapter extends BaseAdapter<Account, AccountDisplayAd
     @Override
     protected void setItemBinding(AccountViewHolder viewHolder, Account item) {
         viewHolder.binding.setAccount(item);
-        RequestOptions options = new RequestOptions().override(imageSize).fitCenter();
-        Glide.with(context)
-                .load(item.getProfilePictureURL())
-                .apply(options)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(viewHolder.imageView);
+        loadPicture(viewHolder.imageView, imageSize, item.getProfilePictureURL());
     }
 
     @Override

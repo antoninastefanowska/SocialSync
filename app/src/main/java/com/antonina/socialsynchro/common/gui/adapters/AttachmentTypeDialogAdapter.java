@@ -18,7 +18,7 @@ import java.util.Arrays;
 public class AttachmentTypeDialogAdapter extends BaseAdapter<AttachmentType, AttachmentTypeDialogAdapter.AttachmentTypeViewHolder> {
     private final OnAttachmentTypeSelectedListener listener;
 
-    public static class AttachmentTypeViewHolder extends BaseAdapter.BaseViewHolder<AttachmentTypeDialogItemBinding> {
+    protected static class AttachmentTypeViewHolder extends BaseAdapter.BaseViewHolder<AttachmentTypeDialogItemBinding> {
 
         public AttachmentTypeViewHolder(@NonNull View view) {
             super(view);

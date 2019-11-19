@@ -20,7 +20,7 @@ import java.util.List;
 public class AccountDialogAdapter extends BaseAdapter<Account, AccountDialogAdapter.AccountViewHolder> {
     private List<Account> ignoredData;
 
-    public static class AccountViewHolder extends BaseAdapter.BaseViewHolder<AccountDialogItemBinding> {
+    protected static class AccountViewHolder extends BaseAdapter.BaseViewHolder<AccountDialogItemBinding> {
 
         public AccountViewHolder(View view) {
             super(view);

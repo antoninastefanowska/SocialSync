@@ -26,7 +26,7 @@ import java.util.TreeSet;
 public class ImageGalleryAdapter extends BaseAdapter<ImageAttachment, ImageGalleryAdapter.ImageViewHolder> {
     private int imageSize;
 
-    public static class ImageViewHolder extends BaseAdapter.BaseViewHolder<ImageGalleryItemBinding> {
+    protected static class ImageViewHolder extends BaseAdapter.BaseViewHolder<ImageGalleryItemBinding> {
         public final ImageView imageView;
 
         public ImageViewHolder(@NonNull View view) {

@@ -1,4 +1,4 @@
-package com.antonina.socialsynchro.common.gui.serialization;
+package com.antonina.socialsynchro.common.gui.other;
 
 import java.io.Serializable;
 import java.util.List;

@@ -79,14 +79,6 @@ public class TwitterPostContainer extends ChildPostContainer {
     }
 
     @Override
-    public String getTitle() {
-        return "";
-    }
-
-    @Override
-    public void setTitle(String title) { }
-
-    @Override
     public void setContent(String content) {
         if (content.length() > MAX_CONTENT_LENGTH) {
             unlock();
@@ -212,7 +204,7 @@ public class TwitterPostContainer extends ChildPostContainer {
     private void uploadAttachment(final Attachment attachment, final OnPublishedListener publishListener, final OnAttachmentUploadedListener attachmentListener) {
         String endpoint = TwitterUploadInitRequest.getRequestEndpoint();
         final RequestLimit requestLimit = getAccount().getRequestLimit(endpoint);
-        if (requestLimit.getRemaining() > 0) {
+        if (requestLimit == null || requestLimit.getRemaining() > 0) {
             attachment.setUploadProgress(0);
             attachment.setLoading(true);
             final long fileSize = attachment.getSizeBytes();
@@ -242,7 +234,8 @@ public class TwitterPostContainer extends ChildPostContainer {
                             attachmentListener.onError(attachment, response.getErrorString());
                             publishListener.onError(instance, "Initialization error: " + response.getErrorString());
                         }
-                        requestLimit.decrement();
+                        if (requestLimit != null)
+                            requestLimit.decrement();
                         asyncResponse.removeObserver(this);
                     }
                 }
@@ -256,7 +249,7 @@ public class TwitterPostContainer extends ChildPostContainer {
     private void uploadAppend(final Attachment attachment, final int chunkStep, final long chunkStart, final long chunkEnd, final OnPublishedListener publishListener, final OnAttachmentUploadedListener attachmentListener) {
         String endpoint = TwitterUploadAppendRequest.getRequestEndpoint();
         final RequestLimit requestLimit = getAccount().getRequestLimit(endpoint);
-        if (requestLimit.getRemaining() > 0) {
+        if (requestLimit == null || requestLimit.getRemaining() > 0) {
             TwitterUploadAppendRequest request = TwitterUploadAppendRequest.builder()
                     .accessToken(getAccount().getAccessToken())
                     .secretToken(getAccount().getSecretToken())
@@ -289,7 +282,8 @@ public class TwitterPostContainer extends ChildPostContainer {
                         attachmentListener.onError(attachment, response.getErrorString());
                         publishListener.onError(instance, response.getErrorString());
                     }
-                    requestLimit.decrement();
+                    if (requestLimit != null)
+                        requestLimit.decrement();
                     asyncResponse.removeObserver(this);
                 }
             });
@@ -302,7 +296,7 @@ public class TwitterPostContainer extends ChildPostContainer {
     private void uploadFinalize(final Attachment attachment, final OnPublishedListener publishListener, final OnAttachmentUploadedListener attachmentListener) {
         String endpoint = TwitterUploadAppendRequest.getRequestEndpoint();
         final RequestLimit requestLimit = getAccount().getRequestLimit(endpoint);
-        if (requestLimit.getRemaining() > 0) {
+        if (requestLimit == null || requestLimit.getRemaining() > 0) {
             TwitterUploadFinalizeRequest request = TwitterUploadFinalizeRequest.builder()
                     .accessToken(getAccount().getAccessToken())
                     .secretToken(getAccount().getSecretToken())
@@ -336,7 +330,8 @@ public class TwitterPostContainer extends ChildPostContainer {
                             attachmentListener.onError(attachment, response.getErrorString());
                             publishListener.onError(instance, response.getErrorString());
                         }
-                        requestLimit.decrement();
+                        if (requestLimit != null)
+                            requestLimit.decrement();
                         asyncResponse.removeObserver(this);
                     }
                 }
@@ -350,7 +345,7 @@ public class TwitterPostContainer extends ChildPostContainer {
     private void checkUploadStatus(final Attachment attachment, final OnPublishedListener publishListener, final OnAttachmentUploadedListener attachmentListener) {
         String endpoint = TwitterCreateContentRequest.getRequestEndpoint();
         final RequestLimit requestLimit = getAccount().getRequestLimit(endpoint);
-        if (requestLimit.getRemaining() > 0) {
+        if (requestLimit == null || requestLimit.getRemaining() > 0) {
             TwitterCheckUploadStatusRequest request = TwitterCheckUploadStatusRequest.builder()
                     .accessToken(getAccount().getAccessToken())
                     .secretToken(getAccount().getSecretToken())
@@ -394,7 +389,8 @@ public class TwitterPostContainer extends ChildPostContainer {
                             attachmentListener.onError(attachment, response.getErrorString());
                             publishListener.onError(instance, "Status check error: " + response.getErrorString());
                         }
-                        requestLimit.decrement();
+                        if (requestLimit != null)
+                            requestLimit.decrement();
                         asyncResponse.removeObserver(this);
                     }
                 }
@@ -464,7 +460,7 @@ public class TwitterPostContainer extends ChildPostContainer {
     public void synchronize(final OnSynchronizedListener listener) {
         String endpoint = TwitterGetContentRequest.getRequestEndpoint();
         RequestLimit requestLimit = getAccount().getRequestLimit(endpoint);
-        if (requestLimit.getRemaining() > 0) {
+        if (requestLimit == null || requestLimit.getRemaining() > 0) {
             setLoading(true);
             TwitterConfig twitterConfig = ApplicationConfig.getInstance().getTwitterConfig();
             TwitterAuthorizationStrategy authorization;

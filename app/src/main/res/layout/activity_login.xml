@@ -2,18 +2,23 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".services.twitter.gui.TwitterLoginActivity">
+    tools:context=".services.twitter.gui.LoginActivity">
+
+    <data>
+        <variable
+            name="service"
+            type="com.antonina.socialsynchro.common.content.services.Service" />
+    </data>
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorBackground" >
+        android:background="@{service.color}" >
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="@dimen/margin_standard"
-            android:background="@color/colorBackground">
+            android:layout_margin="@dimen/margin_standard">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -25,7 +30,8 @@
                     android:id="@+id/textview_signin_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/sign_in_status"
+                    android:text="@{service.name}"
+                    android:textStyle="bold"
                     android:layout_gravity="center"
                     style="@style/TextViewStyle" />
 
@@ -36,7 +42,7 @@
                     android:text="@string/sign_in"
                     android:layout_gravity="center"
                     android:onClick="buttonConnect_onClick"
-                    style="@style/ButtonStyle" />
+                    style="@style/AloneButtonStyle" />
 
                 <Button
                     android:id="@+id/button_confirm"
@@ -45,7 +51,7 @@
                     android:text="@string/confirm_signing_in"
                     android:layout_gravity="center"
                     android:onClick="buttonConfirm_onClick"
-                    style="@style/ButtonStyle" />
+                    style="@style/AloneButtonStyle" />
 
             </LinearLayout>
 

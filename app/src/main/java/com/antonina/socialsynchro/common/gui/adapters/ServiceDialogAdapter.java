@@ -18,7 +18,7 @@ import java.util.Arrays;
 public class ServiceDialogAdapter extends BaseAdapter<Service, ServiceDialogAdapter.ServiceViewHolder> {
     private final OnServiceSelectedListener listener;
 
-    public static class ServiceViewHolder extends BaseAdapter.BaseViewHolder<ServiceDialogItemBinding> {
+    protected static class ServiceViewHolder extends BaseAdapter.BaseViewHolder<ServiceDialogItemBinding> {
 
         public ServiceViewHolder(@NonNull View view) {
             super(view);

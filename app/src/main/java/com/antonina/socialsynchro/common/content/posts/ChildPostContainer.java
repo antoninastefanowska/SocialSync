@@ -143,6 +143,7 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     public void lock() {
         locked = true;
         post = null;
+        notifyListener();
     }
 
     public void unlock() {
@@ -154,6 +155,7 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
         for (Attachment attachment : parentPost.getAttachments()) {
             addAttachment(attachment);
         }
+        notifyListener();
         // TODO: kopia głęboka postu z parenta
     }
 

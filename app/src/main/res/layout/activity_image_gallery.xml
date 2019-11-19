@@ -12,18 +12,19 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/colorBackground">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical" >
+            android:orientation="vertical"
+            android:padding="@dimen/padding_standard">
 
             <HorizontalScrollView
                 android:id="@+id/horizontal_scrollview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/padding_small"
                 android:scrollbars="none">
 
                 <LinearLayout
@@ -44,6 +45,7 @@
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerview_images"
+                android:layout_marginTop="@dimen/margin_standard"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scrollbars="vertical"

@@ -1,9 +1,11 @@
 package com.antonina.socialsynchro.common.content.services;
 
 import android.databinding.Bindable;
-import android.support.v7.app.AppCompatActivity;
+import android.graphics.drawable.Drawable;
 
+import com.antonina.socialsynchro.common.content.accounts.LoginFlow;
 import com.antonina.socialsynchro.common.gui.GUIItem;
+import com.antonina.socialsynchro.common.gui.activities.LoginActivity;
 
 public abstract class Service extends GUIItem {
     public abstract ServiceID getID();
@@ -15,7 +17,13 @@ public abstract class Service extends GUIItem {
     public abstract String getLogoUrl();
 
     @Bindable
-    public abstract String getColorName();
+    public abstract int getColor();
 
-    public abstract Class<? extends AppCompatActivity> getLoginActivityClass();
+    @Bindable
+    public abstract int getFontColor();
+
+    @Bindable
+    public abstract Drawable getPanelBackground();
+
+    public abstract LoginFlow createLoginFlow(LoginActivity context);
 }

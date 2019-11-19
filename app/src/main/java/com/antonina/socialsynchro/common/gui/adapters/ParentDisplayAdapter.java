@@ -20,7 +20,8 @@ import java.util.List;
 @SuppressWarnings("WeakerAccess")
 public class ParentDisplayAdapter extends BaseAdapter<ParentPostContainer, ParentDisplayAdapter.ParentViewHolder> {
 
-    public static class ParentViewHolder extends BaseAdapter.BaseViewHolder<ParentDisplayItemBinding> {
+    protected static class ParentViewHolder extends BaseAdapter.BaseViewHolder<ParentDisplayItemBinding> {
+        public final AttachmentDisplayAdapter attachmentAdapter;
         public final ChildDisplayAdapter childAdapter;
 
         public ParentViewHolder(@NonNull View view, AppCompatActivity context) {
@@ -29,8 +30,15 @@ public class ParentDisplayAdapter extends BaseAdapter<ParentPostContainer, Paren
             RecyclerView childRecyclerView = view.findViewById(R.id.recyclerview_main_children);
             childRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
+            RecyclerView attachmentRecyclerView = view.findViewById(R.id.recyclerview_main_attachments);
+            attachmentRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+
             childAdapter = new ChildDisplayAdapter(context);
             binding.setChildAdapter(childAdapter);
+
+            attachmentAdapter = new AttachmentDisplayAdapter(context);
+            binding.setAttachmentAdapter(attachmentAdapter);
+
             binding.executePendingBindings();
         }
 
@@ -54,6 +62,7 @@ public class ParentDisplayAdapter extends BaseAdapter<ParentPostContainer, Paren
     protected void setItemBinding(ParentViewHolder viewHolder, ParentPostContainer item) {
         viewHolder.binding.setParent(item);
         viewHolder.childAdapter.setSource(item);
+        viewHolder.attachmentAdapter.setSource(item);
     }
 
     @Override

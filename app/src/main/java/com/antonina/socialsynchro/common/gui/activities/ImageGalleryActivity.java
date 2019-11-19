@@ -13,7 +13,7 @@ import com.antonina.socialsynchro.common.content.attachments.Attachment;
 import com.antonina.socialsynchro.common.content.attachments.ImageAttachment;
 import com.antonina.socialsynchro.databinding.ActivityImageGalleryBinding;
 import com.antonina.socialsynchro.common.gui.adapters.ImageGalleryAdapter;
-import com.antonina.socialsynchro.common.gui.serialization.SerializableList;
+import com.antonina.socialsynchro.common.gui.other.SerializableList;
 
 import java.util.ArrayList;
 import java.util.List;
