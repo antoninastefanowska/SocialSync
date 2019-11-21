@@ -8,15 +8,11 @@
     </data>
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/AloneButtonStyle">
+        style="@style/SingleButtonStyle">
 
         <ImageView
             android:id="@+id/imageview_image"
-            android:layout_width="@dimen/image_gallery_item_size"
-            android:layout_height="@dimen/image_gallery_item_size"
-            android:contentDescription="@string/gallery_image_content_description" />
+            style="@style/GalleryImageStyle"/>
 
     </LinearLayout>
 </layout>

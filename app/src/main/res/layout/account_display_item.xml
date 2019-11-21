@@ -10,36 +10,41 @@
 
     <FrameLayout
         android:id="@+id/layout_account_item_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_small">
+        style="@style/PanelFrameLayoutStyle">
 
-        <TextView
-            android:id="@+id/textview_account_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="@dimen/profile_picture_background_size"
-            android:text="@{account.name, default=Account}"
-            android:gravity="center_vertical"
-            android:textColor="@{account.service.fontColor}"
+        <LinearLayout
             android:background="@{account.service.panelBackground}"
-            android:textStyle="bold"
-            android:layout_marginTop="@dimen/no_margin"
-            style="@style/TextTitleStyle"/>
+            style="@style/AccountPanelLinearLayoutStyle">
+
+            <HorizontalScrollView
+                style="@style/PanelScrollViewStyle">
+
+                <LinearLayout
+                    style="@style/PanelScrollableLinearLayoutStyle">
+
+                    <TextView
+                        android:id="@+id/textview_account_name"
+                        android:text="@{account.name, default=Account}"
+                        android:textColor="@{account.service.fontColor}"
+                        style="@style/TitleTextViewStyle" />
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+        </LinearLayout>
 
         <include layout="@layout/layout_profile_picture" />
 
+        <include layout="@layout/layout_icon_picture" />
+
         <RelativeLayout
             android:id="@+id/loading_panel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:visibility="@{account.isLoading() ? View.VISIBLE : View.GONE}"
             style="@style/LoadingPanelStyle" >
 
             <ProgressBar
-                android:layout_width="@dimen/progress_bar_size_small"
-                android:layout_height="@dimen/progress_bar_size_small"
-                android:indeterminate="true" />
+                style="@style/ProgressBarStyle" />
 
         </RelativeLayout>
 

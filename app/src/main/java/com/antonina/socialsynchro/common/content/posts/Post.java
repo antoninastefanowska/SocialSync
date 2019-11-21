@@ -4,6 +4,8 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.support.annotation.Nullable;
 
+import com.antonina.socialsynchro.R;
+import com.antonina.socialsynchro.SocialSynchro;
 import com.antonina.socialsynchro.common.content.attachments.Attachment;
 import com.antonina.socialsynchro.common.database.IDatabaseEntity;
 import com.antonina.socialsynchro.common.database.repositories.AttachmentRepository;
@@ -48,7 +50,10 @@ public class Post extends GUIItem implements IPost, IDatabaseEntity {
 
     @Override
     public String getTitle() {
-        return title;
+        if (title.isEmpty())
+            return SocialSynchro.getInstance().getResources().getString(R.string.no_title);
+        else
+            return title;
     }
 
     @Override

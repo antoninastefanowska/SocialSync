@@ -1,7 +1,7 @@
 package com.antonina.socialsynchro.common.gui.activities;
 
 import android.Manifest;
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
@@ -12,7 +12,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -20,15 +19,14 @@ import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.common.content.accounts.Account;
 import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
 import com.antonina.socialsynchro.common.content.posts.ChildPostContainerFactory;
-import com.antonina.socialsynchro.common.content.posts.IPost;
 import com.antonina.socialsynchro.common.content.attachments.Attachment;
+import com.antonina.socialsynchro.common.content.posts.PostContainer;
+import com.antonina.socialsynchro.common.gui.adapters.PostEditAdapter;
 import com.antonina.socialsynchro.common.gui.listeners.OnAttachmentUploadedListener;
 import com.antonina.socialsynchro.common.gui.listeners.OnPublishedListener;
 import com.antonina.socialsynchro.common.content.posts.ParentPostContainer;
 import com.antonina.socialsynchro.common.content.attachments.AttachmentType;
 import com.antonina.socialsynchro.databinding.ActivityEditBinding;
-import com.antonina.socialsynchro.common.gui.adapters.AttachmentEditAdapter;
-import com.antonina.socialsynchro.common.gui.adapters.ChildEditAdapter;
 import com.antonina.socialsynchro.common.gui.dialogs.ChooseAccountDialog;
 import com.antonina.socialsynchro.common.gui.listeners.OnAccountsSelectedListener;
 import com.antonina.socialsynchro.common.gui.dialogs.ChooseAttachmentTypeDialog;
@@ -43,50 +41,33 @@ public class EditActivity extends AppCompatActivity {
     private final static int ADD_ATTACHMENTS = 0;
     private final static int REQUEST_STORAGE_ACCESS = 0;
 
-    private ParentPostContainer parent;
     private List<Account> selectedAccounts;
-    private ChildEditAdapter childAdapter;
-    private AttachmentEditAdapter parentAttachmentAdapter;
-    private IPost activePostContainer;
+
+    private PostEditAdapter postAdapter;
+    private PostEditAdapter.PostViewHolder activeViewHolder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
 
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey("activePostContainer"))
-                activePostContainer = (IPost)savedInstanceState.getSerializable("activePostContainer");
-        }
-
+        ParentPostContainer parent;
         if (getIntent().hasExtra("parent"))
             parent = (ParentPostContainer)getIntent().getSerializableExtra("parent");
         else
             parent = new ParentPostContainer();
 
         ActivityEditBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_edit);
-        binding.setParent(parent);
 
-        RecyclerView childRecyclerView = findViewById(R.id.recyclerview_children);
-        childRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        childAdapter = new ChildEditAdapter(this, parent);
+        RecyclerView postRecyclerView = findViewById(R.id.recyclerview_post);
+        postRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        postAdapter = new PostEditAdapter(this, parent, postRecyclerView);
 
-        RecyclerView parentAttachmentRecyclerView = findViewById(R.id.recyclerview_parent_attachments);
-        parentAttachmentRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        parentAttachmentAdapter = new AttachmentEditAdapter(this, parent);
-
-        binding.setChildAdapter(childAdapter);
-        binding.setAttachmentAdapter(parentAttachmentAdapter);
+        binding.setPostAdapter(postAdapter);
         binding.executePendingBindings();
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putSerializable("activePostContainer", activePostContainer);
-        super.onSaveInstanceState(outState);
-    }
-
-    public void buttonAddChild_onClick(View view) {
+    public void buttonAddChild_onClick() {
         ChooseAccountDialog dialog = new ChooseAccountDialog(this, new OnAccountsSelectedListener() {
             @Override
             public void onAccountsSelected(List<Account> accounts) {
@@ -94,41 +75,37 @@ public class EditActivity extends AppCompatActivity {
                 for (Account account : selectedAccounts) {
                     ChildPostContainerFactory factory = ChildPostContainerFactory.getInstance();
                     ChildPostContainer child = factory.createNew(account);
-                    childAdapter.addItem(child);
+                    postAdapter.addItem(child);
                 }
                 selectedAccounts = null;
             }
         });
 
         List<Account> usedAccounts = new ArrayList<>();
-        for (ChildPostContainer child : parent.getChildren())
+        for (ChildPostContainer child : postAdapter.getChildren())
             usedAccounts.add(child.getAccount());
 
         dialog.setIgnoredData(usedAccounts);
         dialog.show();
     }
 
-    public void buttonSave_onClick(View view) {
-        exitAndSave();
-    }
-
-    public void buttonPublish_onClick(View view) {
-        final Activity context = this;
+    public void buttonPublish_onClick(final PostContainer postContainer) {
+        final Context context = this;
         final View layout = findViewById(R.id.layout_main);
-        parent.publish(new OnPublishedListener() {
+        postContainer.publish(new OnPublishedListener() {
             @Override
             public void onPublished(ChildPostContainer publishedPost) {
-                childAdapter.updateItemView(publishedPost);
+                postAdapter.updateItemView(publishedPost);
                 Snackbar snackbar = Snackbar.make(layout, "Succesfully published: " + publishedPost.getExternalID(), Snackbar.LENGTH_LONG);
                 snackbar.show();
-                exitAndSave();
+                if (postContainer.isParent())
+                    exitAndSave((ParentPostContainer)postContainer);
             }
 
             @Override
             public void onError(ChildPostContainer post, String error) {
-                childAdapter.updateItemView(post);
+                postAdapter.updateItemView(post);
                 Snackbar snackbar = Snackbar.make(layout, "Failed to publish. Error: " + error, Snackbar.LENGTH_LONG);
-                Log.d("blad", error);
                 snackbar.show();
             }
         }, new OnAttachmentUploadedListener() {
@@ -156,18 +133,18 @@ public class EditActivity extends AppCompatActivity {
                 toast.show();
             }
         });
-        childAdapter.notifyDataSetChanged();
+        postAdapter.notifyDataSetChanged();
     }
 
-    private void exitAndSave() {
+    public void exitAndSave(ParentPostContainer parent) {
         Intent mainActivity = new Intent();
         mainActivity.putExtra("parent", parent);
         setResult(RESULT_OK, mainActivity);
         finish();
     }
 
-    public void buttonParentAddAttachment_onClick(View view) {
-        activePostContainer = parent;
+    public void buttonAddAttachment_onClick(PostEditAdapter.PostViewHolder viewHolder) {
+        activeViewHolder = viewHolder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
                 String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
@@ -200,17 +177,10 @@ public class EditActivity extends AppCompatActivity {
                     SerializableList<Attachment> serializableAttachments = (SerializableList<Attachment>)data.getSerializableExtra("attachments");
                     List<Attachment> attachments = serializableAttachments.getList();
 
-                    for (Attachment attachment : attachments) {
-                        if (activePostContainer == parent)
-                            parentAttachmentAdapter.addItem(attachment);
-                        else {
-                            // TODO
-                        }
-                    }
-                    if (activePostContainer != parent) {
-                        ChildPostContainer activeChild = (ChildPostContainer)activePostContainer;
-                        childAdapter.updateItemView(activeChild);
-                    }
+                    for (Attachment attachment : attachments)
+                        activeViewHolder.attachmentAdapter.addItem(attachment);
+
+                    postAdapter.notifyItemChanged(activeViewHolder.getAdapterPosition());
                     break;
             }
         }

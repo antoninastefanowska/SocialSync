@@ -6,135 +6,24 @@
 
     <data>
         <variable
-            name="parent"
-            type="com.antonina.socialsynchro.common.content.posts.ParentPostContainer" />
-        <variable
-            name="childAdapter"
-            type="com.antonina.socialsynchro.common.gui.adapters.ChildEditAdapter" />
-        <variable
-            name="attachmentAdapter"
-            type="com.antonina.socialsynchro.common.gui.adapters.AttachmentEditAdapter" />
+            name="postAdapter"
+            type="com.antonina.socialsynchro.common.gui.adapters.PostEditAdapter" />
     </data>
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/layout_main"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        style="@style/MainLayoutStyle" >
+        style="@style/MainConstraintLayoutStyle" >
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <LinearLayout
+            style="@style/MainLinearLayoutStyle"
+            tools:ignore="MissingConstraints">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/padding_big">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerview_post"
+                android:adapter="@{postAdapter}"
+                style="@style/RecyclerViewStyle"/>
 
-                <HorizontalScrollView
-                    android:id="@+id/horizontal_scrollview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="@dimen/margin_standard">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <Button
-                            android:id="@+id/button_add_child"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:onClick="buttonAddChild_onClick"
-                            android:text="@string/add_child"
-                            style="@style/ButtonStyle" />
-
-                        <Button
-                            android:id="@+id/button_parent_add_attachment"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:onClick="buttonParentAddAttachment_onClick"
-                            android:text="@string/add_attachment"
-                            style="@style/ButtonStyle" />
-
-                        <Button
-                            android:id="@+id/button_save"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:onClick="buttonSave_onClick"
-                            android:text="@string/save"
-                            style="@style/ButtonStyle" />
-
-                        <Button
-                            android:id="@+id/button_publish"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:onClick="buttonPublish_onClick"
-                            android:text="@string/publish"
-                            style="@style/ButtonStyle" />
-
-                        <Button
-                            android:id="@+id/button_unpublish_content"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/unpublish"
-                            style="@style/ButtonStyle" />
-
-                    </LinearLayout>
-
-                </HorizontalScrollView>
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <EditText
-                        android:id="@+id/edittext_parent_content"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@={parent.content}"
-                        tools:ignore="Autofill"
-                        style="@style/EditContentStyle" />
-
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
-
-                        <EditText
-                            android:id="@+id/edittext_parent_title"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="@={parent.title}"
-                            tools:ignore="Autofill"
-                            style="@style/EditTitleStyle" />
-
-                        <ImageView
-                            android:layout_width="@dimen/profile_picture_background_size"
-                            android:layout_height="@dimen/profile_picture_background_size"
-                            android:src="@drawable/background_avatar" />
-
-                    </FrameLayout>
-
-                </FrameLayout>
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recyclerview_parent_attachments"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:scrollbars="none"
-                    android:adapter="@{attachmentAdapter}" />
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recyclerview_children"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:scrollbars="none"
-                    android:adapter="@{childAdapter}" />
-
-            </LinearLayout>
-
-        </ScrollView>
+        </LinearLayout>
 
     </android.support.constraint.ConstraintLayout>
 

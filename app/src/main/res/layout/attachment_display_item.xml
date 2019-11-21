@@ -12,10 +12,8 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:text="@{attachment.file.getName(), default=Attachment}"
-            style="@style/TextAttachmentStyle" />
+            style="@style/AttachmentTextViewStyle" />
 
     </LinearLayout>
 </layout>

@@ -30,7 +30,7 @@ public class ParentPostContainer extends PostContainer {
     private int synchronizedChildren;
 
     public ParentPostContainer() {
-        post = new Post();
+        setPost(new Post());
         children = new ArrayList<>();
         deletedChildren = new ArrayList<>();
     }
@@ -193,7 +193,6 @@ public class ParentPostContainer extends PostContainer {
 
     public void addChild(ChildPostContainer child) {
         child.setParent(this);
-        child.lock();
         children.add(child);
         notifyListener();
     }
@@ -213,7 +212,7 @@ public class ParentPostContainer extends PostContainer {
 
         this.children = new ArrayList<>();
         this.deletedChildren = new ArrayList<>();
-        this.post = new Post(); //TODO: Tworzymy pusty obiekt zanim pobierzemy obiekt z bazy - zrobić to samo dla innych encji.
+        setPost(new Post()); //TODO: Tworzymy pusty obiekt zanim pobierzemy obiekt z bazy - zrobić to samo dla innych encji.
 
         final ParentPostContainer instance = this;
         final LiveData<Post> postLiveData = PostRepository.getInstance().getDataByID(parentPostContainerData.postID);
@@ -221,7 +220,7 @@ public class ParentPostContainer extends PostContainer {
             @Override
             public void onChanged(@Nullable Post post) {
                 if (post != null) {
-                    instance.post = post;
+                    instance.setPost(post);
                     notifyListener();
                     postLiveData.removeObserver(this);
                 }
@@ -285,5 +284,10 @@ public class ParentPostContainer extends PostContainer {
             if (child.isLocked())
                 child.notifyListener();
         }
+    }
+
+    @Override
+    public boolean isParent() {
+        return true;
     }
 }

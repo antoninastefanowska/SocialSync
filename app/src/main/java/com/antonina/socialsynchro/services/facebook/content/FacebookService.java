@@ -31,8 +31,13 @@ public class FacebookService extends Service {
     }
 
     @Override
-    public String getLogoUrl() {
-        return null;
+    public int getIconID() {
+        return R.drawable.facebook_icon;
+    }
+
+    @Override
+    public Drawable getBanner() {
+        return SocialSynchro.getInstance().getResources().getDrawable(R.drawable.facebook_banner);
     }
 
     @Override

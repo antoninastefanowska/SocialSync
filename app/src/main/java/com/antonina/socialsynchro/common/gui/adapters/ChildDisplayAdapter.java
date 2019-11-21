@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.antonina.socialsynchro.R;
@@ -19,12 +20,14 @@ public class ChildDisplayAdapter extends BaseAdapter<ChildPostContainer, ChildDi
 
     protected static class ChildViewHolder extends BaseAdapter.BaseViewHolder<ChildDisplayItemBinding> {
         public final AttachmentDisplayAdapter attachmentAdapter;
-        public final ImageView imageView;
+        public final ImageView profilePictureImageView;
+        public final ImageView serviceIconImageView;
 
         public ChildViewHolder(@NonNull View view, AppCompatActivity context) {
             super(view);
 
-            imageView = view.findViewById(R.id.imageview_profile_picture);
+            profilePictureImageView = view.findViewById(R.id.imageview_profile_picture);
+            serviceIconImageView = view.findViewById(R.id.imageview_icon_picture);
 
             RecyclerView attachmentRecyclerView = view.findViewById(R.id.recyclerview_child_attachments);
             attachmentRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
@@ -61,7 +64,8 @@ public class ChildDisplayAdapter extends BaseAdapter<ChildPostContainer, ChildDi
     protected void setItemBinding(ChildViewHolder viewHolder, ChildPostContainer item) {
         viewHolder.binding.setChild(item);
         viewHolder.attachmentAdapter.setSource(item);
-        loadPicture(viewHolder.imageView, imageSize, item.getAccount().getProfilePictureURL());
+        loadPictureByURL(viewHolder.profilePictureImageView, imageSize, item.getAccount().getProfilePictureURL());
+        loadPictureByID(viewHolder.serviceIconImageView, imageSize, item.getAccount().getService().getIconID());
     }
 
     @Override
@@ -69,9 +73,26 @@ public class ChildDisplayAdapter extends BaseAdapter<ChildPostContainer, ChildDi
         return new ChildViewHolder(view, context);
     }
 
+    @NonNull
+    @Override
+    public ChildViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int position) {
+        final ChildViewHolder viewHolder = super.onCreateViewHolder(parent, position);
+        viewHolder.profilePictureImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = viewHolder.getAdapterPosition();
+                ChildPostContainer item = getItem(position);
+                item.switchVisibility();
+            }
+        });
+        return viewHolder;
+    }
+
     @Override
     public void loadData() {
         items = parent.getChildren();
+        for (ChildPostContainer item : items)
+            item.hide();
         notifyDataSetChanged();
     }
 

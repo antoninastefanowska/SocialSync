@@ -12,6 +12,7 @@
     <color name="colorBackgroundDark">#0F3F68</color>
     <color name="colorAccent">#FEFFD5</color>
     <color name="colorBlack">#000000</color>
+    <color name="colorTransparent">#00000000</color>
 
     <color name="colorFacebook">#3A559F</color>
     <color name="colorFontFacebook">#FFFFFF</color>

@@ -51,6 +51,8 @@
     <string name="edit_content_hint">Content</string>
     <string name="edit_title_hint">Title</string>
 
+    <string name="no_title">[no title]</string>
+
     <string name="title_choose_accounts">Choose accounts</string>
     <string name="title_choose_attachment_type">Choose attachment type</string>
     <string name="title_choose_service">Choose service</string>

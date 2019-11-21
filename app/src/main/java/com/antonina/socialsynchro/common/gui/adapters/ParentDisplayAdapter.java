@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.common.content.posts.ParentPostContainer;
@@ -23,6 +24,7 @@ public class ParentDisplayAdapter extends BaseAdapter<ParentPostContainer, Paren
     protected static class ParentViewHolder extends BaseAdapter.BaseViewHolder<ParentDisplayItemBinding> {
         public final AttachmentDisplayAdapter attachmentAdapter;
         public final ChildDisplayAdapter childAdapter;
+        public final ImageView imageView;
 
         public ParentViewHolder(@NonNull View view, AppCompatActivity context) {
             super(view);
@@ -32,6 +34,8 @@ public class ParentDisplayAdapter extends BaseAdapter<ParentPostContainer, Paren
 
             RecyclerView attachmentRecyclerView = view.findViewById(R.id.recyclerview_main_attachments);
             attachmentRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+
+            imageView = view.findViewById(R.id.imageview_profile_picture);
 
             childAdapter = new ChildDisplayAdapter(context);
             binding.setChildAdapter(childAdapter);
@@ -73,8 +77,16 @@ public class ParentDisplayAdapter extends BaseAdapter<ParentPostContainer, Paren
     @NonNull
     @Override
     public ParentViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int position) {
-        ParentViewHolder viewHolder = super.onCreateViewHolder(parent, position);
+        final ParentViewHolder viewHolder = super.onCreateViewHolder(parent, position);
         setSelectable(viewHolder);
+        viewHolder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = viewHolder.getAdapterPosition();
+                ParentPostContainer item = getItem(position);
+                item.switchVisibility();
+            }
+        });
         return viewHolder;
     }
 
@@ -87,6 +99,8 @@ public class ParentDisplayAdapter extends BaseAdapter<ParentPostContainer, Paren
             public void onChanged(@Nullable List<ParentPostContainer> data) {
                 if (data != null) {
                     items = data;
+                    for (ParentPostContainer item : items)
+                        item.hide();
                     notifyDataSetChanged();
                     parentLiveData.removeObserver(this);
                 }

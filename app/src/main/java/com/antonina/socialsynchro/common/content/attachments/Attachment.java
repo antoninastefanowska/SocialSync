@@ -67,6 +67,7 @@ public abstract class Attachment extends GUIItem implements IDatabaseEntity, ISe
 
     public void setParentPost(Post parentPost) {
         this.parentPost = parentPost;
+        notifyListener();
     }
 
     public Attachment(IDatabaseRow data) {
@@ -165,5 +166,14 @@ public abstract class Attachment extends GUIItem implements IDatabaseEntity, ISe
 
     public void setUploadProgress(int uploadProgress) {
         this.uploadProgress = uploadProgress;
+    }
+
+    public Attachment createCopy() {
+        Attachment copy = AttachmentFactory.getInstance().create(attachmentType.getID());
+        copy.internalID = internalID;
+        copy.externalID = externalID;
+        copy.file = file;
+        copy.attachmentType = attachmentType;
+        return copy;
     }
 }

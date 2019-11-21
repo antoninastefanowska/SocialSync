@@ -2,6 +2,8 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+        <import
+            type="android.view.View" />
         <variable
             name="child"
             type="com.antonina.socialsynchro.common.content.posts.ChildPostContainer" />
@@ -16,31 +18,54 @@
         android:orientation="vertical">
 
         <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            style="@style/PanelFrameLayoutStyle">
 
-            <TextView
-                android:id="@+id/textview_child_content"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@{child.content}"
-                style="@style/TextContentStyle" />
+            <LinearLayout
+                android:visibility="@{child.isVisible() ? View.VISIBLE : View.GONE}"
+                style="@style/ChildContentLinearLayoutStyle">
+
+                <TextView
+                    android:id="@+id/textview_child_content"
+                    android:text="@{child.content, default=Content}"
+                    style="@style/ChildContentTextViewStyle" />
+
+            </LinearLayout>
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_height="wrap_content">
 
-                <TextView
-                    android:id="@+id/textview_child_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@{child.title}"
+                <LinearLayout
                     android:background="@{child.service.panelBackground}"
-                    android:textColor="@{child.service.fontColor}"
-                    style="@style/TextTitleStyle" />
+                    style="@style/ChildPanelLinearLayoutStyle">
+
+                    <HorizontalScrollView
+                        style="@style/PanelScrollViewStyle">
+
+                        <LinearLayout
+                            style="@style/PanelScrollableLinearLayoutStyle">
+
+                            <TextView
+                                android:id="@+id/textview_child_title"
+                                android:text="@{child.title, default=Title}"
+                                android:textColor="@{child.service.fontColor}"
+                                style="@style/TitleTextViewStyle" />
+
+                            <TextView
+                                android:text="@{child.account.name, default=Account}"
+                                android:textColor="@{child.service.fontColor}"
+                                android:visibility="@{child.isVisible() ? View.VISIBLE : View.GONE}"
+                                style="@style/AccountNameTextViewStyle"/>
+
+                        </LinearLayout>
+
+                    </HorizontalScrollView>
+
+                </LinearLayout>
 
                 <include layout="@layout/layout_profile_picture" />
+
+                <include layout="@layout/layout_icon_picture" />
 
             </FrameLayout>
 
@@ -48,11 +73,10 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerview_child_attachments"
-            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="vertical"
             android:adapter="@{attachmentAdapter}"
-            android:layout_marginTop="@dimen/margin_standard" />
+            android:visibility="@{child.isVisible() ? View.VISIBLE : View.GONE}"
+            style="@style/AttachmentsRecyclerViewStyle" />
 
     </LinearLayout>
 

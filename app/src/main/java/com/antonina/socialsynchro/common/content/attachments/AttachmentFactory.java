@@ -21,13 +21,26 @@ public class AttachmentFactory implements IDatabaseEntityFactory {
         AttachmentRow attachmentData = (AttachmentRow)data;
         AttachmentTypeID attachmentTypeID = AttachmentTypeID.values()[attachmentData.attachmentTypeID];
 
-        switch(attachmentTypeID) {
+        switch (attachmentTypeID) {
             case Image:
                 return new ImageAttachment(data);
             case Video:
                 return new VideoAttachment(data);
             case Audio:
                 return new AudioAttachment(data);
+            default:
+                return null;
+        }
+    }
+
+    public Attachment create(AttachmentTypeID typeID) {
+        switch (typeID) {
+            case Image:
+                return new ImageAttachment();
+            case Video:
+                return new VideoAttachment();
+            case Audio:
+                return new AudioAttachment();
             default:
                 return null;
         }

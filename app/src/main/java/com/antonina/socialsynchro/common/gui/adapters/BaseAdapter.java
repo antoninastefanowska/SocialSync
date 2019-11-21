@@ -171,13 +171,25 @@ public abstract class BaseAdapter<ItemType extends GUIItem, ViewHolderType exten
         selectedItems.clear();
     }
 
-    protected void loadPicture(ImageView imageView, int imageSize, String url) {
+    protected void loadPictureByURL(ImageView imageView, int imageSize, String url) {
         RequestOptions options = new RequestOptions()
                 .override(imageSize)
                 .fitCenter()
                 .transform(new MaskTransformation(context));
         Glide.with(context)
                 .load(url)
+                .apply(options)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(imageView);
+    }
+
+    protected void loadPictureByID(ImageView imageView, int imageSize, int id) {
+        RequestOptions options = new RequestOptions()
+                .override(imageSize)
+                .fitCenter()
+                .transform(new MaskTransformation(context));
+        Glide.with(context)
+                .load(id)
                 .apply(options)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(imageView);

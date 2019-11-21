@@ -11,30 +11,21 @@
     </data>
 
     <android.support.constraint.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/colorBackground">
+        style="@style/MainConstraintLayoutStyle">
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="@dimen/padding_standard">
+            style="@style/MainLinearLayoutStyle"
+            tools:ignore="MissingConstraints">
 
             <HorizontalScrollView
                 android:id="@+id/horizontal_scrollview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:scrollbars="none">
+                style="@style/ButtonsScrollViewStyle">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
+                    style="@style/ButtonsScrollableLinearLayoutStyle">
 
                     <Button
                         android:id="@+id/button_confirm"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
                         android:onClick="buttonConfirm_onClick"
                         android:text="@string/confirm"
                         style="@style/ButtonStyle" />
@@ -46,10 +37,8 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerview_images"
                 android:layout_marginTop="@dimen/margin_standard"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="vertical"
-                android:adapter="@{imageAdapter}" />
+                android:adapter="@{imageAdapter}"
+                style="@style/RecyclerViewStyle" />
 
         </LinearLayout>
 

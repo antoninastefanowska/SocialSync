@@ -13,12 +13,11 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@{service.color}" >
+        android:background="@{service.color}">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="@dimen/margin_standard">
+            android:layout_height="match_parent">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -26,32 +25,26 @@
                 android:layout_centerInParent="true"
                 android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/textview_signin_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{service.name}"
-                    android:textStyle="bold"
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/banner_height"
+                    android:layout_margin="@dimen/margin_large"
                     android:layout_gravity="center"
-                    style="@style/TextViewStyle" />
+                    android:src="@{service.banner}"/>
 
                 <Button
                     android:id="@+id/button_connect"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:text="@string/sign_in"
                     android:layout_gravity="center"
                     android:onClick="buttonConnect_onClick"
-                    style="@style/AloneButtonStyle" />
+                    style="@style/WideButtonStyle" />
 
                 <Button
                     android:id="@+id/button_confirm"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:text="@string/confirm_signing_in"
                     android:layout_gravity="center"
                     android:onClick="buttonConfirm_onClick"
-                    style="@style/AloneButtonStyle" />
+                    style="@style/WideButtonStyle" />
 
             </LinearLayout>
 

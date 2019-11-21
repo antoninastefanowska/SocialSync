@@ -12,11 +12,7 @@ import android.widget.ImageView;
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.common.content.accounts.Account;
 import com.antonina.socialsynchro.common.database.repositories.AccountRepository;
-import com.antonina.socialsynchro.common.gui.other.MaskTransformation;
 import com.antonina.socialsynchro.databinding.AccountDisplayItemBinding;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.bumptech.glide.request.RequestOptions;
 
 import java.util.List;
 
@@ -25,11 +21,13 @@ public class AccountDisplayAdapter extends BaseAdapter<Account, AccountDisplayAd
     private int imageSize;
 
     protected static class AccountViewHolder extends BaseAdapter.BaseViewHolder<AccountDisplayItemBinding> {
-        public final ImageView imageView;
+        public final ImageView profilePictureImageView;
+        public final ImageView serviceIconImageView;
 
         public AccountViewHolder(@NonNull View view) {
             super(view);
-            imageView = view.findViewById(R.id.imageview_profile_picture);
+            profilePictureImageView = view.findViewById(R.id.imageview_profile_picture);
+            serviceIconImageView = view.findViewById(R.id.imageview_icon_picture);
         }
 
         @Override
@@ -52,7 +50,8 @@ public class AccountDisplayAdapter extends BaseAdapter<Account, AccountDisplayAd
     @Override
     protected void setItemBinding(AccountViewHolder viewHolder, Account item) {
         viewHolder.binding.setAccount(item);
-        loadPicture(viewHolder.imageView, imageSize, item.getProfilePictureURL());
+        loadPictureByURL(viewHolder.profilePictureImageView, imageSize, item.getProfilePictureURL());
+        loadPictureByID(viewHolder.serviceIconImageView, imageSize, item.getService().getIconID());
     }
 
     @Override

@@ -6,8 +6,8 @@
         <import
             type="android.view.View" />
         <variable
-            name="child"
-            type="com.antonina.socialsynchro.common.content.posts.ChildPostContainer" />
+            name="parent"
+            type="com.antonina.socialsynchro.common.content.posts.ParentPostContainer" />
         <variable
             name="attachmentAdapter"
             type="com.antonina.socialsynchro.common.gui.adapters.AttachmentEditAdapter" />
@@ -20,20 +20,26 @@
 
         <HorizontalScrollView
             android:id="@+id/horizontal_scrollview"
-            android:visibility="@{child.isVisible() ? View.VISIBLE : View.GONE}"
-            style="@style/ButtonsScrollViewStyle" >
+            android:visibility="@{parent.isVisible() ? View.VISIBLE : View.GONE}"
+            style="@style/ButtonsScrollViewStyle">
 
             <LinearLayout
-                style="@style/ButtonsScrollableLinearLayoutStyle">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/button_add_child"
+                    android:text="@string/add_child"
+                    style="@style/ButtonStyle" />
+
+                <Button
+                    android:id="@+id/button_save"
+                    android:text="@string/save"
+                    style="@style/ButtonStyle" />
 
                 <Button
                     android:id="@+id/button_add_attachment"
                     android:text="@string/add_attachment"
-                    style="@style/ButtonStyle" />
-
-                <Button
-                    android:id="@+id/button_lock"
-                    android:text="@string/lock"
                     style="@style/ButtonStyle" />
 
                 <Button
@@ -54,13 +60,12 @@
             style="@style/PanelFrameLayoutStyle">
 
             <LinearLayout
-                android:visibility="@{child.isVisible() ? View.VISIBLE : View.GONE}"
+                android:visibility="@{parent.isVisible() ? View.VISIBLE : View.GONE}"
                 style="@style/ContentLinearLayoutStyle">
 
                 <EditText
                     android:id="@+id/edittext_child_content"
-                    android:text="@={child.content}"
-                    android:enabled="@{!child.isLocked()}"
+                    android:text="@={parent.content}"
                     tools:ignore="Autofill"
                     style="@style/ContentEditTextStyle" />
 
@@ -72,42 +77,35 @@
                 android:layout_height="wrap_content">
 
                 <LinearLayout
-                    android:background="@{child.service.panelBackground}"
-                    style="@style/ChildPanelLinearLayoutStyle">
+                    style="@style/PanelLinearLayoutStyle">
 
-                     <HorizontalScrollView
-                         style="@style/PanelScrollViewStyle">
+                    <HorizontalScrollView
+                        style="@style/PanelScrollViewStyle">
 
-                         <LinearLayout
-                             style="@style/PanelScrollableLinearLayoutStyle">
+                        <LinearLayout
+                            style="@style/PanelScrollableLinearLayoutStyle">
 
-                             <EditText
-                                 android:id="@+id/edittext_child_title"
-                                 android:enabled="@{!child.isLocked()}"
-                                 android:text="@={child.title}"
-                                 android:textColor="@{child.service.fontColor}"
-                                 tools:ignore="Autofill"
-                                 style="@style/TitleEditTextStyle" />
+                            <EditText
+                                android:id="@+id/edittext_child_title"
+                                android:text="@={parent.title}"
+                                tools:ignore="Autofill"
+                                style="@style/TitleEditTextStyle" />
 
-                             <TextView
-                                 android:text="@{child.account.name, default=Account}"
-                                 android:textColor="@{child.service.fontColor}"
-                                 android:visibility="@{child.isVisible() ? View.VISIBLE : View.GONE}"
-                                 style="@style/AccountNameTextViewStyle" />
+                        </LinearLayout>
 
-                         </LinearLayout>
-
-                     </HorizontalScrollView>
+                    </HorizontalScrollView>
 
                 </LinearLayout>
 
-                <include layout="@layout/layout_profile_picture" />
-
-                <include layout="@layout/layout_icon_picture" />
+                <ImageView
+                    android:id="@+id/imageview_profile_picture"
+                    android:layout_width="@dimen/profile_picture_background_size"
+                    android:layout_height="@dimen/profile_picture_background_size"
+                    android:src="@drawable/background_avatar" />
 
                 <RelativeLayout
                     android:id="@+id/loading_panel"
-                    android:visibility="@{child.isLoading() ? View.VISIBLE : View.GONE}"
+                    android:visibility="@{parent.isLoading() ? View.VISIBLE : View.GONE}"
                     style="@style/LoadingPanelStyle" >
 
                     <ProgressBar
@@ -121,7 +119,7 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerview_attachments"
-            android:visibility="@{child.isVisible() ? View.VISIBLE : View.GONE}"
+            android:visibility="@{parent.isVisible() ? View.VISIBLE : View.GONE}"
             android:adapter="@{attachmentAdapter}"
             style="@style/AttachmentsRecyclerViewStyle" />
 

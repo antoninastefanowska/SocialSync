@@ -10,13 +10,35 @@ import java.io.Serializable;
 public abstract class GUIItem extends BaseObservable implements Serializable {
     private transient boolean loading = false;
     private transient boolean selected = false;
+    private transient boolean visible = true;
     private transient OnUpdatedListener listener;
 
+    @Bindable
     public boolean isSelected() { return selected; }
 
     public void select() { selected = true; }
 
     public void unselect() { selected = false; }
+
+    public void show() {
+        visible = true;
+        notifyListener();
+    }
+
+    public void hide() {
+        visible = false;
+        notifyListener();
+    }
+
+    public void switchVisibility() {
+        visible = !visible;
+        notifyListener();
+    }
+
+    public void switchSelect() {
+        selected = !selected;
+        notifyListener();
+    }
 
     public void setListener(OnUpdatedListener listener) {
         this.listener = listener;
@@ -39,5 +61,10 @@ public abstract class GUIItem extends BaseObservable implements Serializable {
     @Bindable
     public boolean isLoading() {
         return loading;
+    }
+
+    @Bindable
+    public boolean isVisible() {
+        return visible;
     }
 }

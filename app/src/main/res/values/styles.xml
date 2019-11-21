@@ -21,13 +21,63 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="TextViewStyle">
-        <item name="android:textSize">@dimen/text_size_big</item>
-        <item name="android:layout_margin">@dimen/margin_standard</item>
-        <item name="android:textColor">@color/colorLight</item>
+    <style name="MainConstraintLayoutStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@drawable/background_main</item>
+        <item name="android:padding">@dimen/padding_standard</item>
+    </style>
+
+    <style name="MainLinearLayoutStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@drawable/background_main_border</item>
+        <item name="android:padding">@dimen/padding_standard</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="ButtonsScrollViewStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="ButtonsScrollableLinearLayoutStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">horizontal</item>
+    </style>
+
+    <style name="PanelScrollViewStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:fillViewport">true</item>|
+    </style>
+
+    <style name="PanelScrollableLinearLayoutStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+    </style>
+
+    <style name="PanelFrameLayoutStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginTop">@dimen/margin_standard</item>
+    </style>
+
+    <style name="RecyclerViewStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:scrollbars">vertical</item>
+    </style>
+
+    <style name="AttachmentsRecyclerViewStyle" parent="RecyclerViewStyle">
+        <item name="android:scrollbars">none</item>
     </style>
 
     <style name="ButtonStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:textSize">@dimen/text_size_standard</item>
         <item name="android:background">@drawable/background_button</item>
         <item name="android:textColor">@color/colorDark</item>
@@ -35,74 +85,143 @@
         <item name="android:layout_marginRight">@dimen/margin_standard</item>
     </style>
 
-    <style name="AloneButtonStyle" parent="ButtonStyle">
+    <style name="WideButtonStyle" parent="ButtonStyle">
+        <item name="android:background">@drawable/background_button_wide</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_marginRight">@dimen/no_margin</item>
+        <item name="android:layout_marginBottom">@dimen/margin_standard</item>
+        <item name="android:layout_marginTop">@dimen/margin_standard</item>
+    </style>
+
+    <style name="SingleButtonStyle" parent="ButtonStyle">
         <item name="android:layout_marginRight">@dimen/no_margin</item>
         <item name="android:layout_margin">@dimen/margin_standard</item>
     </style>
 
-    <style name="OperationButtonStyle" parent="ButtonStyle">
-        <item name="android:layout_marginTop">@dimen/no_margin</item>
-        <item name="android:layout_marginLeft">@dimen/no_margin</item>
-        <item name="android:layout_marginRight">@dimen/no_margin</item>
-    </style>
-
-    <style name="TextTitleStyle">
+    <style name="PanelLinearLayoutStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:background">@drawable/background_button</item>
         <item name="android:paddingTop">@dimen/padding_standard</item>
         <item name="android:paddingRight">@dimen/padding_standard</item>
         <item name="android:paddingBottom">@dimen/padding_standard</item>
-        <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/colorDark</item>
         <item name="android:layout_marginLeft">@dimen/profile_picture_offset_margin</item>
-        <item name="android:layout_marginTop">@dimen/margin_standard</item>
-        <item name="android:layout_marginBottom">@dimen/margin_standard</item>
-        <item name="android:layout_marginRight">@dimen/margin_standard</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:gravity">center_vertical</item>
         <item name="android:paddingLeft">@dimen/profile_picture_offset_padding</item>
+        <item name="android:orientation">vertical</item>
     </style>
 
-    <style name="EditTitleStyle" parent="TextTitleStyle">
+    <style name="ChildPanelLinearLayoutStyle" parent="PanelLinearLayoutStyle">
+        <item name="android:layout_marginRight">@dimen/profile_picture_offset_margin</item>
+        <item name="android:paddingRight">@dimen/profile_picture_offset_padding</item>
+    </style>
+
+    <style name="AccountPanelLinearLayoutStyle" parent="ChildPanelLinearLayoutStyle">
+        <item name="android:minHeight">@dimen/profile_picture_background_size</item>
+    </style>
+
+    <style name="TitleTextViewStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/text_size_standard</item>
+    </style>
+
+    <style name="AccountNameTextViewStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">italic</item>
+        <item name="android:textSize">@dimen/text_size_small</item>
+    </style>
+
+    <style name="TitleEditTextStyle" parent="TitleTextViewStyle">
         <item name="android:inputType">textPersonName</item>
         <item name="android:hint">@string/edit_title_hint</item>
+        <item name="android:background">@color/colorTransparent</item>
     </style>
 
-    <style name="TextContentStyle">
+    <style name="ContentLinearLayoutStyle" parent="TitleTextViewStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:minHeight">@dimen/edit_content_min_height</item>
         <item name="android:background">@color/colorLight</item>
+
         <item name="android:paddingLeft">@dimen/padding_standard</item>
-        <item name="android:paddingBottom">@dimen/padding_standard</item>
+        <item name="android:paddingTop">@dimen/profile_picture_offset_padding</item>
         <item name="android:paddingRight">@dimen/padding_standard</item>
+        <item name="android:paddingBottom">@dimen/padding_standard</item>
+
         <item name="android:layout_marginLeft">@dimen/profile_picture_offset_margin</item>
         <item name="android:layout_marginTop">@dimen/profile_picture_offset_margin</item>
-        <item name="android:paddingTop">@dimen/profile_picture_offset_padding</item>
-        <item name="android:layout_marginRight">@dimen/margin_big</item>
+        <item name="android:layout_marginRight">@dimen/margin_standard</item>
         <item name="android:layout_marginBottom">@dimen/margin_standard</item>
     </style>
 
-    <style name="EditContentStyle" parent="TextContentStyle">
+    <style name="ChildContentLinearLayoutStyle" parent="ContentLinearLayoutStyle">
+        <item name="android:layout_marginRight">@dimen/profile_picture_offset_margin</item>
+        <item name="android:paddingRight">@dimen/profile_picture_offset_padding</item>
+    </style>
+
+    <style name="ContentTextViewStyle" parent="TitleTextViewStyle">
+        <item name="android:layout_width">match_parent</item>
+    </style>
+
+    <style name="ChildContentTextViewStyle" parent="ContentTextViewStyle">
+        <item name="android:layout_marginRight">@dimen/profile_picture_offset_margin</item>
+        <item name="android:paddingRight">@dimen/profile_picture_offset_padding</item>
+    </style>
+
+    <style name="ContentEditTextStyle" parent="ContentTextViewStyle">
         <item name="android:gravity">top</item>
         <item name="android:inputType">textPersonName</item>
         <item name="android:hint">@string/edit_content_hint</item>
+        <item name="android:background">@color/colorTransparent</item>
     </style>
 
-    <style name="MainLayoutStyle">
-        <item name="android:background">@color/colorBackground</item>
+    <style name="ChildContentEditTextStyle" parent="ChildContentTextViewStyle">
+        <item name="android:gravity">top</item>
+        <item name="android:inputType">textPersonName</item>
+        <item name="android:hint">@string/edit_content_hint</item>
+        <item name="android:background">@color/colorTransparent</item>
     </style>
 
     <style name="LoadingPanelStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">@dimen/padding_small</item>
         <item name="android:gravity">center</item>
         <item name="android:layout_marginTop">@dimen/margin_small</item>
         <item name="android:layout_marginLeft">@dimen/margin_small</item>
     </style>
 
-    <style name="TextAttachmentStyle">
+    <style name="ProgressBarStyle">
+        <item name="android:layout_width">@dimen/progress_bar_size_small</item>
+        <item name="android:layout_height">@dimen/progress_bar_size_small</item>
+        <item name="android:indeterminate">true</item>
+    </style>
+
+    <style name="AttachmentTextViewStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:padding">@dimen/padding_small</item>
         <item name="android:background">@color/colorBackgroundDark</item>
         <item name="android:textColor">@color/colorAccent</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:layout_marginLeft">@dimen/margin_big</item>
-        <item name="android:layout_marginRight">@dimen/margin_big</item>
         <item name="android:layout_marginBottom">@dimen/margin_standard</item>
+    </style>
+
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/divider_height</item>
+        <item name="android:background">@color/colorSecondary</item>
+        <item name="android:layout_marginTop">@dimen/margin_standard</item>
+    </style>
+
+    <style name="GalleryImageStyle">
+        <item name="android:layout_width">@dimen/image_gallery_item_size</item>
+        <item name="android:layout_height">@dimen/image_gallery_item_size</item>
+        <item name="android:contentDescription">@string/gallery_image_content_description</item>
     </style>
 
 </resources>

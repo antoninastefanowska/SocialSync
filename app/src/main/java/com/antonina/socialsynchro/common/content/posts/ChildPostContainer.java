@@ -37,7 +37,7 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
 
     protected ChildPostContainer(Account account) {
         locked = true;
-        post = null;
+        removePost();
         setAccount(account);
     }
 
@@ -142,21 +142,25 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
 
     public void lock() {
         locked = true;
-        post = null;
+        removePost();
         notifyListener();
     }
 
     public void unlock() {
-        IPost parentPost = parent.getPost();
+        Post parentPost = parent.getPost();
         locked = false;
-        post = new Post();
+        setPost(new Post());
         setTitle(parentPost.getTitle());
         setContent(parentPost.getContent());
         for (Attachment attachment : parentPost.getAttachments()) {
-            addAttachment(attachment);
+            Attachment copy = attachment.createCopy();
+            addAttachment(copy);
         }
         notifyListener();
-        // TODO: kopia głęboka postu z parenta
+    }
+
+    private void removePost() {
+        post = null;
     }
 
     public Account getAccount() {
@@ -273,5 +277,10 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
 
     private void setLocked(boolean locked) {
         this.locked = locked;
+    }
+
+    @Override
+    public boolean isParent() {
+        return false;
     }
 }

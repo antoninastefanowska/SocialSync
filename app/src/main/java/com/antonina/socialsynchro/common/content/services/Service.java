@@ -13,8 +13,10 @@ public abstract class Service extends GUIItem {
     @Bindable
     public abstract String getName();
 
+    public abstract int getIconID();
+
     @Bindable
-    public abstract String getLogoUrl();
+    public abstract Drawable getBanner();
 
     @Bindable
     public abstract int getColor();

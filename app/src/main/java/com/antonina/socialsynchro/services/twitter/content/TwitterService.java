@@ -31,8 +31,13 @@ public class TwitterService extends Service {
     }
 
     @Override
-    public String getLogoUrl() {
-        return null;
+    public int getIconID() {
+        return R.drawable.twitter_icon;
+    }
+
+    @Override
+    public Drawable getBanner() {
+        return SocialSynchro.getInstance().getResources().getDrawable(R.drawable.twitter_banner);
     }
 
     @Override

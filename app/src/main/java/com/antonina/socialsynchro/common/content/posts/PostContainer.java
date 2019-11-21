@@ -34,4 +34,6 @@ public abstract class PostContainer extends GUIItem implements IPost, IDatabaseE
     protected void setPost(Post post) {
         this.post = post;
     }
+
+    public abstract boolean isParent();
 }

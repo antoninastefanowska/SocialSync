@@ -2,6 +2,7 @@ package com.antonina.socialsynchro;
 
 import android.app.Application;
 
+import com.antonina.socialsynchro.common.database.ApplicationDatabase;
 import com.antonina.socialsynchro.common.database.repositories.AccountRepository;
 import com.antonina.socialsynchro.common.database.repositories.AttachmentRepository;
 import com.antonina.socialsynchro.common.database.repositories.ChildPostContainerRepository;

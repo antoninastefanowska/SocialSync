@@ -6,6 +6,8 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
+import android.os.Build;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 
 import com.antonina.socialsynchro.common.database.daos.AccountDao;
@@ -25,9 +27,17 @@ import com.antonina.socialsynchro.common.database.rows.ChildPostContainerRow;
 import com.antonina.socialsynchro.common.database.rows.PostRow;
 import com.antonina.socialsynchro.services.twitter.database.rows.TwitterAccountInfoRow;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
+
 @Database(entities = {AccountRow.class, PostRow.class, AttachmentRow.class, ChildPostContainerRow.class, ParentPostContainerRow.class, RequestLimitRow.class, TwitterAccountInfoRow.class, FacebookAccountInfoRow.class}, version = 1, exportSchema = false)
 @TypeConverters(DateConverter.class)
 public abstract class ApplicationDatabase extends RoomDatabase {
+    private final static String DB_NAME = "SocialSynchro Database";
     private static volatile ApplicationDatabase instance;
 
     public abstract AccountDao accountDao();
@@ -44,7 +54,7 @@ public abstract class ApplicationDatabase extends RoomDatabase {
         if (instance == null) {
             synchronized (ApplicationDatabase.class) {
                 if (instance == null) {
-                    instance = Room.databaseBuilder(context.getApplicationContext(), ApplicationDatabase.class, "SocialSynchro Database").addCallback(new Callback() {
+                    instance = Room.databaseBuilder(context.getApplicationContext(), ApplicationDatabase.class, DB_NAME).addCallback(new Callback() {
                         @Override
                         public void onCreate(@NonNull SupportSQLiteDatabase db) {
                             super.onCreate(db);
@@ -54,5 +64,30 @@ public abstract class ApplicationDatabase extends RoomDatabase {
             }
         }
         return instance;
+    }
+
+    public static void export(final Context context) {
+        File sd = Environment.getExternalStorageDirectory();
+        String outputName = "export.db";
+        String path;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1)
+            path = context.getFilesDir().getAbsolutePath().replace("files", "databases") + File.separator;
+        else
+            path = context.getFilesDir().getPath() + context.getPackageName() + "/databases/";
+
+        File inputFile = new File(path, DB_NAME);
+        File outputFile = new File(sd, outputName);
+
+        if (inputFile.exists()) {
+            try {
+                FileChannel source = new FileInputStream(inputFile).getChannel();
+                FileChannel destination = new FileOutputStream(outputFile).getChannel();
+                destination.transferFrom(source, 0, source.size());
+                source.close();
+                destination.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
