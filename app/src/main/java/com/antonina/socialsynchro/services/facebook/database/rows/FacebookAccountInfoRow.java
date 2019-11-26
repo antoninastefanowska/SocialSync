@@ -23,11 +23,15 @@ public class FacebookAccountInfoRow implements IDatabaseRow {
     @ColumnInfo(name = "access_token")
     public String accessToken;
 
+    @ColumnInfo(name = "like_count")
+    public int likeCount;
+
     @Override
     public void createFromEntity(IDatabaseEntity entity) {
         FacebookAccount account = (FacebookAccount)entity;
         this.id = account.getInternalID();
         this.accessToken = SecurityUtils.encrypt(account.getAccessToken());
+        this.likeCount = account.getLikeCount();
     }
 
     @Override

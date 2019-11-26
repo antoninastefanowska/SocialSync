@@ -5,8 +5,8 @@ import com.antonina.socialsynchro.services.backend.authorization.BackendAuthoriz
 
 public abstract class BackendRequest extends BaseRequest {
 
-    protected BackendRequest(String authorizationHeader) {
-        super(authorizationHeader);
+    protected BackendRequest(String authorizationString) {
+        super(authorizationString);
     }
 
     protected static abstract class Builder extends BaseRequest.Builder {

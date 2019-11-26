@@ -3,8 +3,8 @@ package com.antonina.socialsynchro.services.twitter.rest.requests;
 import com.antonina.socialsynchro.services.twitter.rest.authorization.TwitterUserAuthorizationStrategy;
 
 public class TwitterGetLoginTokenRequest extends TwitterRequest {
-    private TwitterGetLoginTokenRequest(String authorizationHeader) {
-        super(authorizationHeader);
+    private TwitterGetLoginTokenRequest(String authorizationString) {
+        super(authorizationString);
     }
 
     public static Builder builder() {

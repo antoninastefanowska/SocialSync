@@ -126,7 +126,7 @@ public class TwitterClient extends BaseClient {
         @Override
         protected Call<ResponseBody> createCall() {
             TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
-            return twitterAPI.getLoginToken(request.getAuthorizationHeader());
+            return twitterAPI.getLoginToken(request.getAuthorizationString());
         }
 
         @Override
@@ -149,7 +149,7 @@ public class TwitterClient extends BaseClient {
         @Override
         protected Call<ResponseBody> createCall() {
             TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
-            return twitterAPI.getAccessToken(request.getVerifier(), request.getAuthorizationHeader());
+            return twitterAPI.getAccessToken(request.getVerifier(), request.getAuthorizationString());
         }
 
         @Override
@@ -167,7 +167,7 @@ public class TwitterClient extends BaseClient {
         @Override
         protected Call<TwitterGetBearerTokenResponse> createCall() {
             TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
-            return twitterAPI.getBearerToken(request.getGrantType(), request.getAuthorizationHeader());
+            return twitterAPI.getBearerToken(request.getGrantType(), request.getAuthorizationString());
         }
 
         @Override
@@ -195,7 +195,7 @@ public class TwitterClient extends BaseClient {
         @Override
         protected Call<TwitterUserResponse> createCall() {
             TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
-            return twitterAPI.verifyCredentials(request.getAuthorizationHeader());
+            return twitterAPI.verifyCredentials(request.getAuthorizationString());
         }
 
         @Override
@@ -223,7 +223,7 @@ public class TwitterClient extends BaseClient {
         @Override
         protected Call<TwitterUserResponse> createCall() {
             TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
-            return twitterAPI.getUser(request.getUserID(), request.getAuthorizationHeader());
+            return twitterAPI.getUser(request.getUserID(), request.getAuthorizationString());
         }
 
         @Override
@@ -251,7 +251,7 @@ public class TwitterClient extends BaseClient {
         @Override
         protected Call<TwitterContentResponse> createCall() {
             TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
-            return twitterAPI.createContent(request.getStatus(), request.getAuthorizationHeader());
+            return twitterAPI.createContent(request.getStatus(), request.getAuthorizationString());
         }
 
         @Override
@@ -279,7 +279,7 @@ public class TwitterClient extends BaseClient {
         @Override
         protected Call<TwitterContentResponse> createCall() {
             TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
-            return twitterAPI.createContentWithMedia(request.getStatus(), request.getMediaIDs(), request.getAuthorizationHeader());
+            return twitterAPI.createContentWithMedia(request.getStatus(), request.getMediaIDs(), request.getAuthorizationString());
         }
 
         @Override
@@ -307,7 +307,7 @@ public class TwitterClient extends BaseClient {
         @Override
         protected Call<TwitterContentResponse> createCall() {
             TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
-            return twitterAPI.removeContent(request.getID(), request.getAuthorizationHeader());
+            return twitterAPI.removeContent(request.getID(), request.getAuthorizationString());
         }
 
         @Override
@@ -335,7 +335,7 @@ public class TwitterClient extends BaseClient {
         @Override
         protected Call<TwitterContentResponse> createCall() {
             TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
-            return twitterAPI.getContent(request.getID(), request.getAuthorizationHeader());
+            return twitterAPI.getContent(request.getID(), request.getAuthorizationString());
         }
 
         @Override
@@ -363,7 +363,7 @@ public class TwitterClient extends BaseClient {
         @Override
         protected Call<TwitterUploadInitResponse> createCall() {
             TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
-            return twitterAPI.uploadInit(request.getCommand(), request.getTotalBytes(), request.getMediaType(), request.getAuthorizationHeader());
+            return twitterAPI.uploadInit(request.getCommand(), request.getTotalBytes(), request.getMediaType(), request.getAuthorizationString());
         }
 
         @Override
@@ -391,7 +391,7 @@ public class TwitterClient extends BaseClient {
         @Override
         protected Call<TwitterUploadAppendResponse> createCall() {
             TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
-            return twitterAPI.uploadAppend(request.getCommand(), request.getMediaID(), request.getSegmentIndex(), request.getMedia(), request.getAuthorizationHeader());
+            return twitterAPI.uploadAppend(request.getCommand(), request.getMediaID(), request.getSegmentIndex(), request.getMedia(), request.getAuthorizationString());
         }
 
         @Override
@@ -419,7 +419,7 @@ public class TwitterClient extends BaseClient {
         @Override
         protected Call<TwitterUploadFinalizeResponse> createCall() {
             TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
-            return twitterAPI.uploadFinalize(request.getCommand(), request.getMediaID(), request.getAuthorizationHeader());
+            return twitterAPI.uploadFinalize(request.getCommand(), request.getMediaID(), request.getAuthorizationString());
         }
 
         @Override
@@ -447,7 +447,7 @@ public class TwitterClient extends BaseClient {
         @Override
         protected Call<TwitterCheckUploadStatusResponse> createCall() {
             TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
-            return twitterAPI.checkUploadStatus(request.getCommand(), request.getMediaID(), request.getAuthorizationHeader());
+            return twitterAPI.checkUploadStatus(request.getCommand(), request.getMediaID(), request.getAuthorizationString());
         }
 
         @Override
@@ -475,7 +475,7 @@ public class TwitterClient extends BaseClient {
         @Override
         protected Call<TwitterGetRateLimitsResponse> createCall() {
             TwitterAPI twitterAPI = retrofit.create(TwitterAPI.class);
-            return twitterAPI.getRateLimits(request.getResources(), request.getAuthorizationHeader());
+            return twitterAPI.getRateLimits(request.getResources(), request.getAuthorizationString());
         }
 
         @Override

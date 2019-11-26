@@ -26,12 +26,16 @@ public class TwitterAccountInfoRow implements IDatabaseRow {
     @ColumnInfo(name = "secret_token")
     public String secretToken;
 
+    @ColumnInfo(name = "follower_count")
+    public int followerCount;
+
     @Override
     public void createFromEntity(IDatabaseEntity entity) {
         TwitterAccount account = (TwitterAccount)entity;
         this.id = account.getInternalID();
         this.accessToken = SecurityUtils.encrypt(account.getAccessToken());
         this.secretToken = SecurityUtils.encrypt(account.getSecretToken());
+        this.followerCount = account.getFollowerCount();
     }
 
     @Override

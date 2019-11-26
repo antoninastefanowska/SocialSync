@@ -12,6 +12,9 @@ public class FacebookPageResponse extends FacebookResponse {
     @SerializedName("access_token")
     private String accessToken;
 
+    @SerializedName("fan_count")
+    private int fanCount;
+
     public String getID() {
         return id;
     }
@@ -22,5 +25,9 @@ public class FacebookPageResponse extends FacebookResponse {
 
     public String getAccessToken() {
         return accessToken;
+    }
+
+    public int getFanCount() {
+        return fanCount;
     }
 }

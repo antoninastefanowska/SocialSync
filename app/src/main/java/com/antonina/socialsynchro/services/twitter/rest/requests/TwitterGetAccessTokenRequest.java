@@ -5,8 +5,8 @@ import com.antonina.socialsynchro.services.twitter.rest.authorization.TwitterUse
 public class TwitterGetAccessTokenRequest extends TwitterRequest {
     private final String verifier;
 
-    private TwitterGetAccessTokenRequest(String authorizationHeader, String verifier) {
-        super(authorizationHeader);
+    private TwitterGetAccessTokenRequest(String authorizationString, String verifier) {
+        super(authorizationString);
         this.verifier = percentEncode(verifier);
     }
 

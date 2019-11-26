@@ -5,8 +5,8 @@ import com.antonina.socialsynchro.services.twitter.rest.authorization.TwitterUse
 public class TwitterCreateContentRequest extends TwitterRequest {
     private final String status;
 
-    protected TwitterCreateContentRequest(String authorizationHeader, String status) {
-        super(authorizationHeader);
+    protected TwitterCreateContentRequest(String authorizationString, String status) {
+        super(authorizationString);
         this.status = percentEncode(status);
     }
 

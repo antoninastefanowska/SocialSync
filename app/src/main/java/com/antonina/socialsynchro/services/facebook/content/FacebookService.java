@@ -56,6 +56,11 @@ public class FacebookService extends Service {
     }
 
     @Override
+    public int getPanelBackgroundID() {
+        return R.drawable.background_facebook_panel;
+    }
+
+    @Override
     public LoginFlow createLoginFlow(LoginActivity context) {
         return new FacebookLoginFlow(context);
     }

@@ -59,7 +59,7 @@ public class BackendClient extends BaseClient {
         @Override
         protected Call<BackendGetTwitterVerifierResponse> createCall() {
             BackendAPI backendAPI = retrofit.create(BackendAPI.class);
-            return backendAPI.getTwitterVerifier(request.getLoginToken(), request.getAuthorizationHeader());
+            return backendAPI.getTwitterVerifier(request.getLoginToken(), request.getAuthorizationString());
         }
 
         @Override
@@ -87,7 +87,7 @@ public class BackendClient extends BaseClient {
         @Override
         protected Call<BackendGetFacebookTokenResponse> createCall() {
             BackendAPI backendAPI = retrofit.create(BackendAPI.class);
-            return backendAPI.getFacebookToken(request.getState(), request.getAuthorizationHeader());
+            return backendAPI.getFacebookToken(request.getState(), request.getAuthorizationString());
         }
 
         @Override
@@ -143,7 +143,7 @@ public class BackendClient extends BaseClient {
         @Override
         protected Call<BackendUpdateRequestCounterResponse> createCall() {
             BackendAPI backendAPI = retrofit.create(BackendAPI.class);
-            return backendAPI.updateRequestCounter(request.getEndpoint(), request.getServiceName(), request.getAuthorizationHeader());
+            return backendAPI.updateRequestCounter(request.getEndpoint(), request.getServiceName(), request.getAuthorizationString());
         }
 
         @Override

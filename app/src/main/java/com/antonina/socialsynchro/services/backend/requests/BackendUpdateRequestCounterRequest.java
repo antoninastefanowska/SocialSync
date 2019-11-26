@@ -4,8 +4,8 @@ public class BackendUpdateRequestCounterRequest extends BackendRequest {
     private final String endpoint;
     private final String serviceName;
 
-    private BackendUpdateRequestCounterRequest(String authorizationHeader, String endpoint, String serviceName) {
-        super(authorizationHeader);
+    private BackendUpdateRequestCounterRequest(String authorizationString, String endpoint, String serviceName) {
+        super(authorizationString);
         this.endpoint = endpoint;
         this.serviceName = serviceName;
     }

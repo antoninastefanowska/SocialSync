@@ -7,7 +7,8 @@ import android.support.annotation.Nullable;
 import com.antonina.socialsynchro.common.content.accounts.Account;
 import com.antonina.socialsynchro.common.content.services.ServiceID;
 import com.antonina.socialsynchro.common.content.services.Services;
-import com.antonina.socialsynchro.common.database.rows.AccountRow;
+import com.antonina.socialsynchro.common.content.statistics.AccountStatistic;
+import com.antonina.socialsynchro.common.content.statistics.StatisticsContainer;
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 import com.antonina.socialsynchro.common.gui.listeners.OnSynchronizedListener;
 import com.antonina.socialsynchro.common.rest.IResponse;
@@ -26,13 +27,17 @@ import java.util.Calendar;
 public class FacebookAccount extends Account {
     private String accessToken;
 
+    private int likeCount;
+
     public FacebookAccount(IDatabaseRow table) {
         createFromDatabaseRow(table);
         setService(Services.getService(ServiceID.Facebook));
+        likeCount = 0;
     }
 
     public FacebookAccount() {
         setService(Services.getService(ServiceID.Facebook));
+        likeCount = 0;
     }
 
     @Override
@@ -47,6 +52,7 @@ public class FacebookAccount extends Account {
             public void onChanged(@Nullable FacebookAccountInfoRow data) {
                 if (data != null) {
                     instance.setAccessToken(SecurityUtils.decrypt(data.accessToken));
+                    instance.setLikeCount(data.likeCount);
                     dataTable.removeObserver(this);
                 }
             }
@@ -59,6 +65,14 @@ public class FacebookAccount extends Account {
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
+    }
+
+    public int getLikeCount() {
+        return likeCount;
+    }
+
+    private void setLikeCount(int likeCount) {
+        this.likeCount = likeCount;
     }
 
     @Override
@@ -92,6 +106,7 @@ public class FacebookAccount extends Account {
         setAccessToken(facebookResponse.getAccessToken());
         setExternalID(facebookResponse.getID());
         setName(facebookResponse.getName());
+        setLikeCount(facebookResponse.getFanCount());
     }
 
     @Override
@@ -100,6 +115,9 @@ public class FacebookAccount extends Account {
         FacebookUserAuthorizationStrategy authorization = new FacebookUserAuthorizationStrategy(accessToken);
         FacebookGetPageRequest request = FacebookGetPageRequest.builder()
                 .pageID(getExternalID())
+                .addField("name")
+                .addField("fan_count")
+                .addField("access_token")
                 .authorizationStrategy(authorization)
                 .build();
         final FacebookAccount instance = this;
@@ -121,7 +139,7 @@ public class FacebookAccount extends Account {
         });
     }
 
-    public void loadPicture(final OnSynchronizedListener listener) {
+    private void loadPicture(final OnSynchronizedListener listener) {
         FacebookUserAuthorizationStrategy authorization = new FacebookUserAuthorizationStrategy(accessToken);
         FacebookGetPagePictureRequest request = FacebookGetPagePictureRequest.builder()
                 .pageID(getExternalID())
@@ -152,5 +170,10 @@ public class FacebookAccount extends Account {
     @Override
     public void synchronizeRequestLimits(OnSynchronizedListener listener) {
         //TODO
+    }
+
+    @Override
+    public AccountStatistic getStatistic() {
+        return new AccountStatistic("Likes", likeCount, getProfilePictureURL(), getName(), getService().getPanelBackgroundID());
     }
 }

@@ -7,8 +7,8 @@ public class TwitterUploadInitRequest extends TwitterRequest {
     private final String totalBytes;
     private final String mediaType;
 
-    private TwitterUploadInitRequest(String authorizationHeader, String totalBytes, String mediaType) {
-        super(authorizationHeader);
+    private TwitterUploadInitRequest(String authorizationString, String totalBytes, String mediaType) {
+        super(authorizationString);
         this.command = percentEncode("INIT");
         this.totalBytes = percentEncode(totalBytes);
         this.mediaType = percentEncode(mediaType);

@@ -6,8 +6,8 @@ import com.antonina.socialsynchro.services.twitter.rest.authorization.TwitterUse
 public class TwitterGetContentRequest extends TwitterRequest {
     private final String id;
 
-    private TwitterGetContentRequest(String authorizationHeader, String id) {
-        super(authorizationHeader);
+    private TwitterGetContentRequest(String authorizationString, String id) {
+        super(authorizationString);
         this.id = percentEncode(id);
     }
 

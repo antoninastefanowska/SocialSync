@@ -5,8 +5,8 @@ import com.antonina.socialsynchro.services.facebook.rest.authorization.FacebookU
 public class FacebookRemoveContentRequest extends FacebookRequest {
     private final String postID;
 
-    private FacebookRemoveContentRequest(String authorizationHeader, String postID) {
-        super(authorizationHeader);
+    private FacebookRemoveContentRequest(String authorizationString, String postID) {
+        super(authorizationString);
         this.postID = postID;
     }
 

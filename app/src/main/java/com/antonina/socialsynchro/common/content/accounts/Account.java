@@ -5,6 +5,7 @@ import android.arch.lifecycle.Observer;
 import android.databinding.Bindable;
 import android.support.annotation.Nullable;
 
+import com.antonina.socialsynchro.common.content.statistics.AccountStatistic;
 import com.antonina.socialsynchro.common.content.services.Service;
 import com.antonina.socialsynchro.common.database.IDatabaseEntity;
 import com.antonina.socialsynchro.common.database.repositories.AccountRepository;
@@ -174,4 +175,6 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
     public RequestLimit getRequestLimit(String endpoint) {
         return requestLimits.get(endpoint);
     }
+
+    public abstract AccountStatistic getStatistic();
 }

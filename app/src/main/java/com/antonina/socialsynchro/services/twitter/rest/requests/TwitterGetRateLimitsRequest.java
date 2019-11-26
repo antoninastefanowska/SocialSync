@@ -9,8 +9,8 @@ import java.util.List;
 public class TwitterGetRateLimitsRequest extends TwitterRequest {
     private final String resources;
 
-    private TwitterGetRateLimitsRequest(String authorizationHeader, String resources) {
-        super(authorizationHeader);
+    private TwitterGetRateLimitsRequest(String authorizationString, String resources) {
+        super(authorizationString);
         this.resources = percentEncode(resources);
     }
 

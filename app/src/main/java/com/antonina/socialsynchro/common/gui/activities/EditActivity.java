@@ -67,7 +67,7 @@ public class EditActivity extends AppCompatActivity {
         binding.executePendingBindings();
     }
 
-    public void buttonAddChild_onClick() {
+    public void addChild() {
         ChooseAccountDialog dialog = new ChooseAccountDialog(this, new OnAccountsSelectedListener() {
             @Override
             public void onAccountsSelected(List<Account> accounts) {
@@ -89,7 +89,7 @@ public class EditActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    public void buttonPublish_onClick(final PostContainer postContainer) {
+    public void publish(final PostContainer postContainer) {
         final Context context = this;
         final View layout = findViewById(R.id.layout_main);
         postContainer.publish(new OnPublishedListener() {
@@ -143,7 +143,7 @@ public class EditActivity extends AppCompatActivity {
         finish();
     }
 
-    public void buttonAddAttachment_onClick(PostEditAdapter.PostViewHolder viewHolder) {
+    public void addAttachment(PostEditAdapter.PostViewHolder viewHolder) {
         activeViewHolder = viewHolder;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {

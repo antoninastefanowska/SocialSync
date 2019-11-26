@@ -57,6 +57,12 @@
                         style="@style/ButtonStyle" />
 
                     <Button
+                        android:id="@+id/button_statistics"
+                        android:onClick="buttonStatistics_onClick"
+                        android:text="@string/statistics"
+                        style="@style/ButtonStyle" />
+
+                    <Button
                         android:id="@+id/button_check_limits"
                         android:onClick="buttonCheckLimits_onClick"
                         android:text="Check limits"

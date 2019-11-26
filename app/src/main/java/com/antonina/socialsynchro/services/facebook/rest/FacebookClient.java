@@ -6,7 +6,7 @@ import com.antonina.socialsynchro.common.rest.BaseClient;
 import com.antonina.socialsynchro.common.utils.ApplicationConfig;
 import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookCreateContentRequest;
 import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookCreateContentWithMediaRequest;
-import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookGetContentRequest;
+import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookPostRequest;
 import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookGetPagePictureRequest;
 import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookGetPageRequest;
 import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookGetUserPagesRequest;
@@ -15,12 +15,14 @@ import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookRemove
 import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookUpdateContentRequest;
 import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookUploadPhotoRequest;
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookContentResponse;
+import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookCountResponse;
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookIdentifierResponse;
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookGetPagePictureResponse;
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookGetUserPagesResponse;
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookInspectTokenResponse;
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookPageResponse;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 
 public class FacebookClient extends BaseClient {
@@ -66,7 +68,7 @@ public class FacebookClient extends BaseClient {
         return controller.start();
     }
 
-    public static LiveData<FacebookContentResponse> getContent(FacebookGetContentRequest request) {
+    public static LiveData<FacebookContentResponse> getContent(FacebookPostRequest request) {
         GetContentController controller = new GetContentController(request);
         return controller.start();
     }
@@ -83,6 +85,16 @@ public class FacebookClient extends BaseClient {
 
     public static LiveData<FacebookIdentifierResponse> uploadPhoto(FacebookUploadPhotoRequest request) {
         UploadPhotoController controller = new UploadPhotoController(request);
+        return controller.start();
+    }
+
+    public static LiveData<FacebookCountResponse> getPostReactions(FacebookPostRequest request) {
+        GetPostReactionsController controller = new GetPostReactionsController(request);
+        return controller.start();
+    }
+
+    public static LiveData<FacebookCountResponse> getPostComments(FacebookPostRequest request) {
+        GetPostCommentsController controller = new GetPostCommentsController(request);
         return controller.start();
     }
 
@@ -105,7 +117,7 @@ public class FacebookClient extends BaseClient {
         @Override
         protected Call<FacebookInspectTokenResponse> createCall() {
             FacebookAPI facebookAPI = retrofit.create(FacebookAPI.class);
-            return facebookAPI.inspectToken(request.getInputToken(), request.getAuthorizationHeader());
+            return facebookAPI.inspectToken(request.getInputToken(), request.getAuthorizationString());
         }
 
         @Override
@@ -133,7 +145,7 @@ public class FacebookClient extends BaseClient {
         @Override
         protected Call<FacebookGetUserPagesResponse> createCall() {
             FacebookAPI facebookAPI = retrofit.create(FacebookAPI.class);
-            return facebookAPI.getUserPages(request.getUserID(), request.getAuthorizationHeader());
+            return facebookAPI.getUserPages(request.getUserID(), request.getAuthorizationString());
         }
 
         @Override
@@ -161,7 +173,7 @@ public class FacebookClient extends BaseClient {
         @Override
         protected Call<FacebookPageResponse> createCall() {
             FacebookAPI facebookAPI = retrofit.create(FacebookAPI.class);
-            return facebookAPI.getPage(request.getPageID(), request.getAuthorizationHeader());
+            return facebookAPI.getPage(request.getPageID(), request.getFields(), request.getAuthorizationString());
         }
 
         @Override
@@ -189,7 +201,7 @@ public class FacebookClient extends BaseClient {
         @Override
         protected Call<FacebookGetPagePictureResponse> createCall() {
             FacebookAPI facebookAPI = retrofit.create(FacebookAPI.class);
-            return facebookAPI.getPagePicture(request.getPageID(), request.getRedirect(), request.getAuthorizationHeader());
+            return facebookAPI.getPagePicture(request.getPageID(), request.getRedirect(), request.getAuthorizationString());
         }
 
         @Override
@@ -217,7 +229,7 @@ public class FacebookClient extends BaseClient {
         @Override
         protected Call<FacebookIdentifierResponse> createCall() {
             FacebookAPI facebookAPI = retrofit.create(FacebookAPI.class);
-            return facebookAPI.createContent(request.getPageID(), request.getMessage(), request.getAuthorizationHeader());
+            return facebookAPI.createContent(request.getPageID(), request.getMessage(), request.getAuthorizationString());
         }
 
         @Override
@@ -245,7 +257,7 @@ public class FacebookClient extends BaseClient {
         @Override
         protected Call<FacebookIdentifierResponse> createCall() {
             FacebookAPI facebookAPI = retrofit.create(FacebookAPI.class);
-            return facebookAPI.createContentWithMedia(request.getPageID(), request.getMessage(), request.getMediaIDs(), request.getAuthorizationHeader());
+            return facebookAPI.createContentWithMedia(request.getPageID(), request.getMessage(), request.getMediaIDs(), request.getAuthorizationString());
         }
 
         @Override
@@ -254,9 +266,9 @@ public class FacebookClient extends BaseClient {
         }
     }
 
-    private static class GetContentController extends BaseController<FacebookGetContentRequest, FacebookContentResponse> {
+    private static class GetContentController extends BaseController<FacebookPostRequest, FacebookContentResponse> {
 
-        public GetContentController(FacebookGetContentRequest request) {
+        public GetContentController(FacebookPostRequest request) {
             super(request);
         }
 
@@ -273,7 +285,7 @@ public class FacebookClient extends BaseClient {
         @Override
         protected Call<FacebookContentResponse> createCall() {
             FacebookAPI facebookAPI = retrofit.create(FacebookAPI.class);
-            return facebookAPI.getContent(request.getPostID(), request.getAuthorizationHeader());
+            return facebookAPI.getContent(request.getPostID(), request.getAuthorizationString());
         }
 
         @Override
@@ -301,7 +313,7 @@ public class FacebookClient extends BaseClient {
         @Override
         protected Call<FacebookIdentifierResponse> createCall() {
             FacebookAPI facebookAPI = retrofit.create(FacebookAPI.class);
-            return facebookAPI.updateContent(request.getPostID(), request.getMessage(), request.getAuthorizationHeader());
+            return facebookAPI.updateContent(request.getPostID(), request.getMessage(), request.getAuthorizationString());
         }
 
         @Override
@@ -329,7 +341,7 @@ public class FacebookClient extends BaseClient {
         @Override
         protected Call<FacebookIdentifierResponse> createCall() {
             FacebookAPI facebookAPI = retrofit.create(FacebookAPI.class);
-            return facebookAPI.removeContent(request.getPostID(), request.getAuthorizationHeader());
+            return facebookAPI.removeContent(request.getPostID(), request.getAuthorizationString());
         }
 
         @Override
@@ -357,12 +369,68 @@ public class FacebookClient extends BaseClient {
         @Override
         protected Call<FacebookIdentifierResponse> createCall() {
             FacebookAPI facebookAPI = retrofit.create(FacebookAPI.class);
-            return facebookAPI.uploadPhoto(request.getPageID(), request.getPhoto(), request.getPublished(), request.getAuthorizationHeader());
+            return facebookAPI.uploadPhoto(request.getPageID(), request.getPhoto(), request.getPublished(), request.getAuthorizationString());
         }
 
         @Override
         protected Class<FacebookIdentifierResponse> getResponseClass() {
             return FacebookIdentifierResponse.class;
+        }
+    }
+
+    private static class GetPostReactionsController extends BaseController<FacebookPostRequest, FacebookCountResponse> {
+
+        public GetPostReactionsController(FacebookPostRequest request) {
+            super(request);
+        }
+
+        @Override
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+
+        @Override
+        protected FacebookCountResponse createResponse() {
+            return new FacebookCountResponse();
+        }
+
+        @Override
+        protected Call<FacebookCountResponse> createCall() {
+            FacebookAPI facebookAPI = retrofit.create(FacebookAPI.class);
+            return facebookAPI.getPostReactions(request.getPostID(), request.getAuthorizationString());
+        }
+
+        @Override
+        protected Class<FacebookCountResponse> getResponseClass() {
+            return FacebookCountResponse.class;
+        }
+    }
+
+    private static class GetPostCommentsController extends BaseController<FacebookPostRequest, FacebookCountResponse> {
+
+        public GetPostCommentsController(FacebookPostRequest request) {
+            super(request);
+        }
+
+        @Override
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+
+        @Override
+        protected FacebookCountResponse createResponse() {
+            return new FacebookCountResponse();
+        }
+
+        @Override
+        protected Call<FacebookCountResponse> createCall() {
+            FacebookAPI facebookAPI = retrofit.create(FacebookAPI.class);
+            return facebookAPI.getPostComments(request.getPostID(), request.getAuthorizationString());
+        }
+
+        @Override
+        protected Class<FacebookCountResponse> getResponseClass() {
+            return FacebookCountResponse.class;
         }
     }
 }

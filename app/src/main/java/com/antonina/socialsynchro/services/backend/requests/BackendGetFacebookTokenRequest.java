@@ -3,8 +3,8 @@ package com.antonina.socialsynchro.services.backend.requests;
 public class BackendGetFacebookTokenRequest extends BackendRequest {
     private final String state;
 
-    private BackendGetFacebookTokenRequest(String state, String authorizationHeader) {
-        super(authorizationHeader);
+    private BackendGetFacebookTokenRequest(String state, String authorizationString) {
+        super(authorizationString);
         this.state = state;
     }
 

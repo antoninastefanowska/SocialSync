@@ -8,8 +8,8 @@ public class FacebookUploadPhotoRequest extends FacebookRequest {
     private final String pageID;
     private final MultipartBody.Part photo;
 
-    private FacebookUploadPhotoRequest(String authorizationHeader, String pageID, MultipartBody.Part photo) {
-        super(authorizationHeader);
+    private FacebookUploadPhotoRequest(String authorizationString, String pageID, MultipartBody.Part photo) {
+        super(authorizationString);
         this.pageID = pageID;
         this.photo = photo;
     }

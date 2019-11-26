@@ -17,7 +17,7 @@ public class FacebookAccountInfoRepository extends BaseRepository<FacebookAccoun
 
     private FacebookAccountInfoRepository(Application application) {
         ApplicationDatabase db = ApplicationDatabase.getDatabase(application);
-        dao = db.facebookAccountInfoDao();
+        dao = db.facebookAccountDao();
     }
 
     public static FacebookAccountInfoRepository getInstance() {

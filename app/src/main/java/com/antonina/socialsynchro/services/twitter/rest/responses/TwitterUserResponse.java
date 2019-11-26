@@ -21,6 +21,9 @@ public class TwitterUserResponse extends TwitterResponse {
     @SerializedName("profile_image_url_https")
     private String profilePictureURL;
 
+    @SerializedName("followers_count")
+    private int followersCount;
+
     public String getID() { return id; }
 
     public String getName() { return name; }
@@ -32,4 +35,8 @@ public class TwitterUserResponse extends TwitterResponse {
     public String getDescription() { return description; }
 
     public String getProfilePictureURL() { return profilePictureURL; }
+
+    public int getFollowersCount() {
+        return followersCount;
+    }
 }

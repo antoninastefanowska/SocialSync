@@ -15,6 +15,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.antonina.socialsynchro.R;
+import com.antonina.socialsynchro.common.content.statistics.StatisticsContainer;
+import com.antonina.socialsynchro.common.gui.chart.AccountsBarChartHolder;
 import com.antonina.socialsynchro.common.gui.other.SerializableList;
 import com.antonina.socialsynchro.databinding.ActivityAccountsBinding;
 import com.antonina.socialsynchro.common.gui.adapters.AccountDisplayAdapter;
@@ -128,6 +130,18 @@ public class AccountsActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    public void buttonStatistics_onClick(View view) {
+        List<Account> accounts = adapter.getItems();
+        StatisticsContainer statisticsContainer = new StatisticsContainer();
+        for (Account account : accounts)
+            statisticsContainer.addStatistic(account.getStatistic());
+        AccountsBarChartHolder chartContainer = new AccountsBarChartHolder(statisticsContainer);
+
+        Intent statisticsActivity = new Intent(AccountsActivity.this, StatisticsActivity.class);
+        statisticsActivity.putExtra("chart_container", chartContainer);
+        startActivity(statisticsActivity);
     }
 
     @Override

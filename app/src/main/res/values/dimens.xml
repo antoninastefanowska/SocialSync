@@ -8,6 +8,7 @@
     <dimen name="margin_standard">10dp</dimen>
     <dimen name="margin_small">5dp</dimen>
     <dimen name="no_margin">0dp</dimen>
+    <dimen name="text_size_chart">5sp</dimen>
     <dimen name="text_size_small">10sp</dimen>
     <dimen name="text_size_standard">15sp</dimen>
     <dimen name="text_size_big">30sp</dimen>
@@ -21,6 +22,7 @@
     <dimen name="main_border">3dp</dimen>
     <dimen name="background_gradient_radius">350dp</dimen>
     <dimen name="edit_content_min_height">100dp</dimen>
-    <dimen name="divider_height">1dp</dimen>
+    <dimen name="divider_height">3dp</dimen>
     <dimen name="banner_height">150dp</dimen>
+    <dimen name="icon_caption_offset">10dp</dimen>
 </resources>

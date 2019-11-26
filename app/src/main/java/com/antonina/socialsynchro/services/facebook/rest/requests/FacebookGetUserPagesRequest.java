@@ -5,8 +5,8 @@ import com.antonina.socialsynchro.services.facebook.rest.authorization.FacebookA
 public class FacebookGetUserPagesRequest extends FacebookRequest {
     private final String userID;
 
-    private FacebookGetUserPagesRequest(String authorizationHeader, String userID) {
-        super(authorizationHeader);
+    private FacebookGetUserPagesRequest(String authorizationString, String userID) {
+        super(authorizationString);
         this.userID = userID;
     }
 

@@ -9,8 +9,8 @@ import java.net.URLEncoder;
 @SuppressWarnings({"WeakerAccess", "StringBufferReplaceableByString"})
 public abstract class TwitterRequest extends BaseRequest {
 
-    protected TwitterRequest(String authorizationHeader) {
-        super(authorizationHeader);
+    protected TwitterRequest(String authorizationString) {
+        super(authorizationString);
     }
 
     public static String percentEncode(String input) {

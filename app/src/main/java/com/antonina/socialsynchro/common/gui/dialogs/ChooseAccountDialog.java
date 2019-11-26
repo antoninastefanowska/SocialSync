@@ -48,6 +48,9 @@ public class ChooseAccountDialog extends Dialog {
             @Override
             public void onClick(View v) {
                 listener.onAccountsSelected(adapter.getSelectedItems());
+                for (Account account : adapter.getSelectedItems())
+                    account.unselect();
+                adapter.getSelectedItems().clear();
                 dismiss();
             }
         });
@@ -57,6 +60,9 @@ public class ChooseAccountDialog extends Dialog {
             @Override
             public void onClick(View v) {
                 cancel();
+                for (Account account : adapter.getSelectedItems())
+                    account.unselect();
+                adapter.getSelectedItems().clear();
                 dismiss();
             }
         });

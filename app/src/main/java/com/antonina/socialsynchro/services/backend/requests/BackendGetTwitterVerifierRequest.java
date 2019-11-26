@@ -3,8 +3,8 @@ package com.antonina.socialsynchro.services.backend.requests;
 public class BackendGetTwitterVerifierRequest extends BackendRequest {
     private final String loginToken;
 
-    private BackendGetTwitterVerifierRequest(String authorizationHeader, String loginToken) {
-        super(authorizationHeader);
+    private BackendGetTwitterVerifierRequest(String authorizationString, String loginToken) {
+        super(authorizationString);
         this.loginToken = loginToken;
     }
 

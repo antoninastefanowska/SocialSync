@@ -32,6 +32,8 @@ public class SecurityUtils {
     }
 
     public static String encrypt(String input) {
+        if (input.equals(""))
+            return "";
         String output = null;
         try {
             String stringKey = ApplicationConfig.getInstance().getKey("encryption_key");
@@ -60,6 +62,8 @@ public class SecurityUtils {
     }
 
     public static String decrypt(String input) {
+        if (input.equals(""))
+            return "";
         String output = null;
         try {
             String keyString = ApplicationConfig.getInstance().getKey("encryption_key");

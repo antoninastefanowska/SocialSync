@@ -5,8 +5,8 @@ import com.antonina.socialsynchro.services.twitter.rest.authorization.TwitterGet
 public class TwitterGetBearerTokenRequest extends TwitterRequest {
     private final String grantType;
 
-    private TwitterGetBearerTokenRequest(String authorizationHeader) {
-        super(authorizationHeader);
+    private TwitterGetBearerTokenRequest(String authorizationString) {
+        super(authorizationString);
         this.grantType = percentEncode("client_credentials");
     }
 

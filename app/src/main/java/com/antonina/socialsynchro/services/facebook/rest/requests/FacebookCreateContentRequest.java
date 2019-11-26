@@ -6,8 +6,8 @@ public class FacebookCreateContentRequest extends FacebookRequest {
     private final String pageID;
     private final String message;
 
-    protected FacebookCreateContentRequest(String authorizationHeader, String pageID, String message) {
-        super(authorizationHeader);
+    protected FacebookCreateContentRequest(String authorizationString, String pageID, String message) {
+        super(authorizationString);
         this.pageID = pageID;
         this.message = message;
     }

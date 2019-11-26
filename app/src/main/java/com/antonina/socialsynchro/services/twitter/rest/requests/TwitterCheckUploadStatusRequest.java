@@ -6,8 +6,8 @@ public class TwitterCheckUploadStatusRequest extends TwitterRequest {
     private final String command;
     private final String mediaID;
 
-    private TwitterCheckUploadStatusRequest(String authorizationHeader, String mediaID) {
-        super(authorizationHeader);
+    private TwitterCheckUploadStatusRequest(String authorizationString, String mediaID) {
+        super(authorizationString);
         this.command = percentEncode("STATUS");
         this.mediaID = percentEncode(mediaID);
     }

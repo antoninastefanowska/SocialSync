@@ -1,5 +1,7 @@
 package com.antonina.socialsynchro.common.content.posts;
 
+import com.antonina.socialsynchro.common.content.statistics.Statistic;
+import com.antonina.socialsynchro.common.content.statistics.StatisticsContainer;
 import com.antonina.socialsynchro.common.database.IDatabaseEntity;
 import com.antonina.socialsynchro.common.gui.GUIItem;
 import com.antonina.socialsynchro.common.gui.listeners.OnAttachmentUploadedListener;
@@ -36,4 +38,6 @@ public abstract class PostContainer extends GUIItem implements IPost, IDatabaseE
     }
 
     public abstract boolean isParent();
+
+    public abstract Statistic getStatistic();
 }

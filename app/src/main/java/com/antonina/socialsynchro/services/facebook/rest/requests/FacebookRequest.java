@@ -5,8 +5,8 @@ import com.antonina.socialsynchro.services.facebook.rest.authorization.FacebookA
 
 public abstract class FacebookRequest extends BaseRequest {
 
-    protected FacebookRequest(String authorizationHeader) {
-        super(authorizationHeader);
+    protected FacebookRequest(String authorizationString) {
+        super(authorizationString);
     }
 
     public static abstract class Builder extends BaseRequest.Builder {

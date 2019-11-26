@@ -55,14 +55,14 @@
 
             <LinearLayout
                 android:visibility="@{child.isVisible() ? View.VISIBLE : View.GONE}"
-                style="@style/ContentLinearLayoutStyle">
+                style="@style/ChildContentLinearLayoutStyle">
 
                 <EditText
                     android:id="@+id/edittext_child_content"
                     android:text="@={child.content}"
                     android:enabled="@{!child.isLocked()}"
                     tools:ignore="Autofill"
-                    style="@style/ContentEditTextStyle" />
+                    style="@style/ChildContentEditTextStyle" />
 
             </LinearLayout>
 

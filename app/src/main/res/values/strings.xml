@@ -43,6 +43,8 @@
     <string name="create_content">Create content</string>
     <string name="remove_content">Remove content</string>
     <string name="synchronize_content">Synchronize content</string>
+    <string name="statistics">Statistics</string>
+
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
 

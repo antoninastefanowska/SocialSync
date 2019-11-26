@@ -5,8 +5,8 @@ import com.antonina.socialsynchro.services.facebook.rest.authorization.FacebookA
 public class FacebookInspectTokenRequest extends FacebookRequest {
     private final String inputToken;
 
-    private FacebookInspectTokenRequest(String authorizationHeader, String inputToken) {
-        super(authorizationHeader);
+    private FacebookInspectTokenRequest(String authorizationString, String inputToken) {
+        super(authorizationString);
         this.inputToken = inputToken;
     }
 

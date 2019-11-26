@@ -3,23 +3,35 @@ package com.antonina.socialsynchro.services.facebook.content;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.antonina.socialsynchro.common.content.attachments.Attachment;
 import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
+import com.antonina.socialsynchro.common.content.statistics.ChildGroupStatistic;
+import com.antonina.socialsynchro.common.content.statistics.ChildStatistic;
+import com.antonina.socialsynchro.common.content.statistics.StatisticsContainer;
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 import com.antonina.socialsynchro.common.gui.listeners.OnAttachmentUploadedListener;
 import com.antonina.socialsynchro.common.gui.listeners.OnPublishedListener;
 import com.antonina.socialsynchro.common.gui.listeners.OnSynchronizedListener;
 import com.antonina.socialsynchro.common.gui.listeners.OnUnpublishedListener;
 import com.antonina.socialsynchro.common.rest.IResponse;
+import com.antonina.socialsynchro.common.rest.IServiceEntity;
+import com.antonina.socialsynchro.services.facebook.database.repositories.FacebookPostInfoRepository;
+import com.antonina.socialsynchro.services.facebook.database.rows.FacebookPostInfoRow;
 import com.antonina.socialsynchro.services.facebook.rest.FacebookClient;
+import com.antonina.socialsynchro.services.facebook.rest.authorization.FacebookUserAuthorizationStrategy;
 import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookCreateContentRequest;
 import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookCreateContentWithMediaRequest;
+import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookPostRequest;
 import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookRemoveContentRequest;
 import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookUploadPhotoRequest;
+import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookContentResponse;
+import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookCountResponse;
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookIdentifierResponse;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class FacebookPostContainer extends ChildPostContainer {
@@ -27,12 +39,42 @@ public class FacebookPostContainer extends ChildPostContainer {
 
     private int attachmentsPublished = 0;
 
+    private int reactionCount;
+    private int commentCount;
+
+    private boolean reactionCountLoaded = false;
+    private boolean commentCountLoaded = false;
+
     public FacebookPostContainer(FacebookAccount account) {
         super(account);
+        reactionCount = 0;
+        commentCount = 0;
     }
 
     public FacebookPostContainer(IDatabaseRow data) {
         super(data);
+        reactionCount = 0;
+        commentCount = 0;
+    }
+
+    @Override
+    public void createFromDatabaseRow(IDatabaseRow data) {
+        super.createFromDatabaseRow(data);
+
+        FacebookPostInfoRepository repository = FacebookPostInfoRepository.getInstance();
+        final FacebookPostContainer instance = this;
+        final LiveData<FacebookPostInfoRow> dataTable = repository.getDataTableByID(data.getID());
+        dataTable.observeForever(new Observer<FacebookPostInfoRow>() {
+            @Override
+            public void onChanged(@Nullable FacebookPostInfoRow data) {
+                if (data != null) {
+                    instance.setReactionCount(data.reactionCount);
+                    instance.setCommentCount(data.commentCount);
+                    notifyListener();
+                    dataTable.removeObserver(this);
+                }
+            }
+        });
     }
 
     @Override
@@ -47,6 +89,22 @@ public class FacebookPostContainer extends ChildPostContainer {
     @Override
     public FacebookAccount getAccount() {
         return (FacebookAccount)super.getAccount();
+    }
+
+    public int getReactionCount() {
+        return reactionCount;
+    }
+
+    private void setReactionCount(int reactionCount) {
+        this.reactionCount = reactionCount;
+    }
+
+    public int getCommentCount() {
+        return commentCount;
+    }
+
+    private void setCommentCount(int commentCount) {
+        this.commentCount = commentCount;
     }
 
     @Override
@@ -180,11 +238,101 @@ public class FacebookPostContainer extends ChildPostContainer {
 
     @Override
     public void createFromResponse(IResponse response) {
+        setSynchronizationDate(Calendar.getInstance().getTime());
         //TODO
     }
 
     @Override
-    public void synchronize(OnSynchronizedListener listener) {
-        //TODO
+    public void synchronize(final OnSynchronizedListener listener) {
+        setLoading(true);
+        FacebookUserAuthorizationStrategy authorization = new FacebookUserAuthorizationStrategy(getAccount().getAccessToken());
+        final FacebookPostRequest request = FacebookPostRequest.builder()
+                .postID(getExternalID())
+                .authorizationStrategy(authorization)
+                .build();
+        final FacebookPostContainer instance = this;
+        final LiveData<FacebookContentResponse> asyncResponse = FacebookClient.getContent(request);
+        asyncResponse.observeForever(new Observer<FacebookContentResponse>() {
+            @Override
+            public void onChanged(@Nullable FacebookContentResponse response) {
+                if (response != null) {
+                    if (response.getErrorString() == null) {
+                        createFromResponse(response);
+                        OnSynchronizedListener statisticsListener = new OnSynchronizedListener() {
+                            @Override
+                            public void onSynchronized(IServiceEntity entity) {
+                                if (reactionCountLoaded && commentCountLoaded) {
+                                    listener.onSynchronized(entity);
+                                    Log.d("statystyki", "FacebookPost: " + reactionCount + " " + commentCount);
+                                    setLoading(false);
+                                    reactionCountLoaded = false;
+                                    commentCountLoaded = false;
+                                }
+                            }
+
+                            @Override
+                            public void onError(IServiceEntity entity, String error) {
+                                listener.onError(entity, error);
+                                setLoading(false);
+                            }
+                        };
+                        loadReactions(statisticsListener, request);
+                        loadComments(statisticsListener, request);
+                    } else {
+                        setLoading(false);
+                        listener.onError(instance, response.getErrorString());
+                    }
+                    asyncResponse.removeObserver(this);
+                }
+            }
+        });
+    }
+
+    private void loadReactions(final OnSynchronizedListener listener, FacebookPostRequest request) {
+        final FacebookPostContainer instance = this;
+        final LiveData<FacebookCountResponse> asyncResponse = FacebookClient.getPostReactions(request);
+        asyncResponse.observeForever(new Observer<FacebookCountResponse>() {
+            @Override
+            public void onChanged(@Nullable FacebookCountResponse response) {
+                if (response != null) {
+                    if (response.getErrorString() == null) {
+                        setReactionCount(response.getTotalCount());
+                        reactionCountLoaded = true;
+                        listener.onSynchronized(instance);
+                    } else {
+                        listener.onError(instance, response.getErrorString());
+                    }
+                    asyncResponse.removeObserver(this);
+                }
+            }
+        });
+    }
+
+    private void loadComments(final OnSynchronizedListener listener, FacebookPostRequest request) {
+        final FacebookPostContainer instance = this;
+        final LiveData<FacebookCountResponse> asyncResponse = FacebookClient.getPostComments(request);
+        asyncResponse.observeForever(new Observer<FacebookCountResponse>() {
+            @Override
+            public void onChanged(@Nullable FacebookCountResponse response) {
+                if (response != null) {
+                    if (response.getErrorString() == null) {
+                        setCommentCount(response.getTotalCount());
+                        commentCountLoaded = true;
+                        listener.onSynchronized(instance);
+                    } else {
+                        listener.onError(instance, response.getErrorString());
+                    }
+                    asyncResponse.removeObserver(this);
+                }
+            }
+        });
+    }
+
+    @Override
+    public ChildGroupStatistic getStatistic() {
+        ChildGroupStatistic groupStatistic = new ChildGroupStatistic(getAccount().getProfilePictureURL(), getAccount().getName());
+        groupStatistic.addChildStatistic(new ChildStatistic("Reactions", reactionCount, getService().getPanelBackgroundID()));
+        groupStatistic.addChildStatistic(new ChildStatistic("Comments", commentCount, getService().getPanelBackgroundID()));
+        return groupStatistic;
     }
 }

@@ -143,6 +143,53 @@ public abstract class BaseClient {
         }
     }
 
+    protected abstract static class BaseStringController<RequestType extends BaseRequest> implements Callback<ResponseBody> {
+        protected final RequestType request;
+        protected final MutableLiveData<String> asyncResponse;
+        protected final Retrofit retrofit;
+
+        public BaseStringController(RequestType request) {
+            this.request = request;
+            this.asyncResponse = new MutableLiveData<>();
+            this.retrofit = new Retrofit.Builder().baseUrl(getBaseURL()).addConverterFactory(ScalarsConverterFactory.create()).build();
+        }
+
+        protected abstract String getBaseURL();
+
+        protected abstract Call<ResponseBody> createCall();
+
+        public LiveData<String> start() {
+            Call<ResponseBody> call = createCall();
+            call.enqueue(this);
+            return asyncResponse;
+        }
+
+        @Override
+        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            Log.d("statystyki", requestBodyToString(call.request().body()));
+            String stringResponse = "";
+            if (response.isSuccessful()) {
+                try {
+                    stringResponse = response.body().string();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    stringResponse = response.errorBody().string();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            asyncResponse.setValue(stringResponse);
+        }
+
+        @Override
+        public void onFailure(Call<ResponseBody> call, Throwable t) {
+            asyncResponse.setValue(t.getMessage());
+        }
+    }
+
     private static String requestBodyToString(RequestBody requestBody) {
         try {
             Buffer buffer = new Buffer();

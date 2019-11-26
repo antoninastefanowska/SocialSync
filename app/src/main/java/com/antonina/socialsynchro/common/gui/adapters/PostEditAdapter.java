@@ -160,7 +160,7 @@ public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.
             parentViewHolder.addChildButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    activity.buttonAddChild_onClick();
+                    activity.addChild();
                 }
             });
             parentViewHolder.saveButton.setOnClickListener(new View.OnClickListener() {
@@ -201,7 +201,7 @@ public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.
         viewHolder.addAttachmentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                activity.buttonAddAttachment_onClick(viewHolder);
+                activity.addAttachment(viewHolder);
             }
         });
         viewHolder.publishButton.setOnClickListener(new View.OnClickListener() {
@@ -209,7 +209,7 @@ public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.
             public void onClick(View v) {
                 int position = viewHolder.getAdapterPosition();
                 PostContainer item = getItem(position);
-                activity.buttonPublish_onClick(item);
+                activity.publish(item);
             }
         });
         return viewHolder;

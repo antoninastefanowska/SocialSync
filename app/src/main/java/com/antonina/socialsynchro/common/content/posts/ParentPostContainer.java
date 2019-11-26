@@ -5,6 +5,9 @@ import android.arch.lifecycle.Observer;
 import android.databinding.Bindable;
 import android.support.annotation.Nullable;
 
+import com.antonina.socialsynchro.common.content.statistics.ChildGroupStatistic;
+import com.antonina.socialsynchro.common.content.statistics.ParentStatistic;
+import com.antonina.socialsynchro.common.content.statistics.StatisticsContainer;
 import com.antonina.socialsynchro.common.content.attachments.Attachment;
 import com.antonina.socialsynchro.common.database.repositories.ChildPostContainerRepository;
 import com.antonina.socialsynchro.common.database.repositories.ParentPostContainerRepository;
@@ -289,5 +292,13 @@ public class ParentPostContainer extends PostContainer {
     @Override
     public boolean isParent() {
         return true;
+    }
+
+    @Override
+    public ParentStatistic getStatistic() {
+        ParentStatistic parentStatistic = new ParentStatistic();
+        for (ChildPostContainer child : children)
+            parentStatistic.addChildGroup(child.getStatistic());
+        return parentStatistic;
     }
 }

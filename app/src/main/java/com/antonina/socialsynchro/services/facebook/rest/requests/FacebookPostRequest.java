@@ -2,11 +2,11 @@ package com.antonina.socialsynchro.services.facebook.rest.requests;
 
 import com.antonina.socialsynchro.services.facebook.rest.authorization.FacebookAuthorizationStrategy;
 
-public class FacebookGetContentRequest extends FacebookRequest {
+public class FacebookPostRequest extends FacebookRequest {
     private final String postID;
 
-    private FacebookGetContentRequest(String authorizationHeader, String postID) {
-        super(authorizationHeader);
+    private FacebookPostRequest(String authorizationString, String postID) {
+        super(authorizationString);
         this.postID = postID;
     }
 
@@ -22,8 +22,8 @@ public class FacebookGetContentRequest extends FacebookRequest {
         private String postID;
 
         @Override
-        public FacebookGetContentRequest build() {
-            return new FacebookGetContentRequest(authorization.buildAuthorizationString(), postID);
+        public FacebookPostRequest build() {
+            return new FacebookPostRequest(authorization.buildAuthorizationString(), postID);
         }
 
         public Builder postID(String postID) {

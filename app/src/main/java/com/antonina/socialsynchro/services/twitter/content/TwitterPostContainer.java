@@ -3,7 +3,11 @@ package com.antonina.socialsynchro.services.twitter.content;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
+import com.antonina.socialsynchro.common.content.statistics.ChildGroupStatistic;
+import com.antonina.socialsynchro.common.content.statistics.ChildStatistic;
+import com.antonina.socialsynchro.common.content.statistics.StatisticsContainer;
 import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
 import com.antonina.socialsynchro.common.content.attachments.Attachment;
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
@@ -19,6 +23,8 @@ import com.antonina.socialsynchro.services.backend.BackendClient;
 import com.antonina.socialsynchro.services.backend.requests.BackendGetRateLimitsRequest;
 import com.antonina.socialsynchro.services.backend.requests.BackendUpdateRequestCounterRequest;
 import com.antonina.socialsynchro.services.backend.responses.BackendGetRateLimitsResponse;
+import com.antonina.socialsynchro.services.twitter.database.repositories.TwitterPostInfoRepository;
+import com.antonina.socialsynchro.services.twitter.database.rows.TwitterPostInfoRow;
 import com.antonina.socialsynchro.services.twitter.utils.TwitterConfig;
 import com.antonina.socialsynchro.services.twitter.rest.TwitterClient;
 import com.antonina.socialsynchro.services.twitter.rest.requests.TwitterCreateContentRequest;
@@ -65,12 +71,39 @@ public class TwitterPostContainer extends ChildPostContainer {
     private int gifNumber = 0;
     private int videoNumber = 0;
 
+    private int retweetCount;
+    private int favoriteCount;
+
     public TwitterPostContainer(IDatabaseRow data) {
         super(data);
+        retweetCount = 0;
+        favoriteCount = 0;
     }
 
     public TwitterPostContainer(TwitterAccount account) {
         super(account);
+        retweetCount = 0;
+        favoriteCount = 0;
+    }
+
+    @Override
+    public void createFromDatabaseRow(IDatabaseRow data) {
+        super.createFromDatabaseRow(data);
+
+        TwitterPostInfoRepository repository = TwitterPostInfoRepository.getInstance();
+        final TwitterPostContainer instance = this;
+        final LiveData<TwitterPostInfoRow> dataTable = repository.getDataTableByID(data.getID());
+        dataTable.observeForever(new Observer<TwitterPostInfoRow>() {
+            @Override
+            public void onChanged(@Nullable TwitterPostInfoRow data) {
+                if (data != null) {
+                    instance.setRetweetCount(data.retweetCount);
+                    instance.setFavoriteCount(data.favoriteCount);
+                    notifyListener();
+                    dataTable.removeObserver(this);
+                }
+            }
+        });
     }
 
     @Override
@@ -98,11 +131,29 @@ public class TwitterPostContainer extends ChildPostContainer {
         }
     }
 
+    public int getRetweetCount() {
+        return retweetCount;
+    }
+
+    private void setRetweetCount(int retweetCount) {
+        this.retweetCount = retweetCount;
+    }
+
+    public int getFavoriteCount() {
+        return favoriteCount;
+    }
+
+    private void setFavoriteCount(int favoriteCount) {
+        this.favoriteCount = favoriteCount;
+    }
+
     @Override
     public void createFromResponse(IResponse response) {
         TwitterContentResponse twitterResponse = (TwitterContentResponse)response;
         setSynchronizationDate(Calendar.getInstance().getTime());
-        //TODO: pobrać statystyki
+        setRetweetCount(twitterResponse.getRetweetCount());
+        setFavoriteCount(twitterResponse.getFavoriteCount());
+        Log.d("statystki", "TwitterPost: " + retweetCount + " " + favoriteCount);
     }
 
     @Override
@@ -487,10 +538,19 @@ public class TwitterPostContainer extends ChildPostContainer {
                             setLoading(false);
                             listener.onError(instance, response.getErrorString());
                         }
+                        asyncResponse.removeObserver(this);
                     }
                 }
             });
         } else
             listener.onError(this, ConvertUtils.requestLimitWaitMessage(requestLimit.getSecondsUntilReset()));
+    }
+
+    @Override
+    public ChildGroupStatistic getStatistic() {
+        ChildGroupStatistic groupStatistic = new ChildGroupStatistic(getAccount().getProfilePictureURL(), getAccount().getName());
+        groupStatistic.addChildStatistic(new ChildStatistic("Retweets", retweetCount, getService().getPanelBackgroundID()));
+        groupStatistic.addChildStatistic(new ChildStatistic("Favorites", favoriteCount, getService().getPanelBackgroundID()));
+        return groupStatistic;
     }
 }

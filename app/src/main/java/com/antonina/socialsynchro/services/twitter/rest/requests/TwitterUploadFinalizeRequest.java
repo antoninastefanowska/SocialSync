@@ -6,8 +6,8 @@ public class TwitterUploadFinalizeRequest extends TwitterRequest {
     private final String command;
     private final String mediaID;
 
-    private TwitterUploadFinalizeRequest(String authorizationHeader, String mediaID) {
-        super(authorizationHeader);
+    private TwitterUploadFinalizeRequest(String authorizationString, String mediaID) {
+        super(authorizationString);
         this.command = percentEncode("FINALIZE");
         this.mediaID = percentEncode(mediaID);
     }

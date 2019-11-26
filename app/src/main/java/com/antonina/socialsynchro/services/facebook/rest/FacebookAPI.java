@@ -1,6 +1,7 @@
 package com.antonina.socialsynchro.services.facebook.rest;
 
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookContentResponse;
+import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookCountResponse;
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookIdentifierResponse;
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookGetPagePictureResponse;
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookGetUserPagesResponse;
@@ -10,6 +11,7 @@ import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookPageR
 import java.util.HashMap;
 
 import okhttp3.MultipartBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
@@ -30,7 +32,7 @@ public interface FacebookAPI {
     Call<FacebookGetUserPagesResponse> getUserPages(@Path("user_id") String userID, @Query("access_token") String accessToken);
 
     @GET("/v5.0/{page_id}")
-    Call<FacebookPageResponse> getPage(@Path("page_id") String pageID, @Query("access_token") String accessToken);
+    Call<FacebookPageResponse> getPage(@Path("page_id") String pageID, @Query("fields") String fields, @Query("access_token") String accessToken);
 
     @GET("/v5.0/{page_id}/picture")
     Call<FacebookGetPagePictureResponse> getPagePicture(@Path("page_id") String pageID, @Query("redirect") boolean redirect, @Query("access_token") String accessToken);
@@ -56,4 +58,10 @@ public interface FacebookAPI {
     @Multipart
     @POST("/v5.0/{page_id}/photos")
     Call<FacebookIdentifierResponse> uploadPhoto(@Path("page_id") String pageID, @Part MultipartBody.Part photo, @Query("published") boolean published, @Query("access_token") String accessToken);
+
+    @GET("/v5.0/{post_id}/reactions")
+    Call<FacebookCountResponse> getPostReactions(@Path("post_id") String postID, @Query("access_token") String accessToken);
+
+    @GET("/v5.0/{post_id}/comments")
+    Call<FacebookCountResponse> getPostComments(@Path("post_id") String postID, @Query("access_token") String accessToken);
 }

@@ -6,8 +6,8 @@ import java.util.List;
 public class FacebookCreateContentWithMediaRequest extends FacebookCreateContentRequest {
     private final HashMap<String, String> mediaIDs;
 
-    private FacebookCreateContentWithMediaRequest(String authorizationHeader, String pageID, String message, HashMap<String, String> mediaIDs) {
-        super(authorizationHeader, pageID, message);
+    private FacebookCreateContentWithMediaRequest(String authorizationString, String pageID, String message, HashMap<String, String> mediaIDs) {
+        super(authorizationString, pageID, message);
         this.mediaIDs = mediaIDs;
     }
 

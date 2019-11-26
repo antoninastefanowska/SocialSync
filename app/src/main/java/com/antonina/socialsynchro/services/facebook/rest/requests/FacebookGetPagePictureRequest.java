@@ -5,8 +5,8 @@ import com.antonina.socialsynchro.services.facebook.rest.authorization.FacebookA
 public class FacebookGetPagePictureRequest extends FacebookRequest {
     private final String pageID;
 
-    private FacebookGetPagePictureRequest(String authorizationHeader, String pageID) {
-        super(authorizationHeader);
+    private FacebookGetPagePictureRequest(String authorizationString, String pageID) {
+        super(authorizationString);
         this.pageID = pageID;
     }
 

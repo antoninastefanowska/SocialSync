@@ -1,14 +1,14 @@
 package com.antonina.socialsynchro.common.rest;
 
 public abstract class BaseRequest {
-    private final String authorizationHeader;
+    private final String authorizationString;
 
-    protected BaseRequest(String authorizationHeader) {
-        this.authorizationHeader = authorizationHeader;
+    protected BaseRequest(String authorizationString) {
+        this.authorizationString = authorizationString;
     }
 
-    public String getAuthorizationHeader() {
-        return authorizationHeader;
+    public String getAuthorizationString() {
+        return authorizationString;
     }
 
     protected abstract static class Builder {

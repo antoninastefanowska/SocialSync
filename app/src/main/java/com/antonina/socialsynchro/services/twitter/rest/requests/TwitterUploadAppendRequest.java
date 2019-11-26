@@ -10,8 +10,8 @@ public class TwitterUploadAppendRequest extends TwitterRequest {
     private final String segmentIndex;
     private final RequestBody media;
 
-    private TwitterUploadAppendRequest(String authorizationHeader, String mediaID, String segmentIndex, RequestBody media) {
-        super(authorizationHeader);
+    private TwitterUploadAppendRequest(String authorizationString, String mediaID, String segmentIndex, RequestBody media) {
+        super(authorizationString);
         this.command = percentEncode("APPEND");
         this.mediaID = percentEncode(mediaID);
         this.segmentIndex = percentEncode(segmentIndex);

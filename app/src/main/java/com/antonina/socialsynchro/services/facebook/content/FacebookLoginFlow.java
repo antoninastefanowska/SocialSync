@@ -5,6 +5,7 @@ import android.arch.lifecycle.Observer;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.antonina.socialsynchro.R;
@@ -19,6 +20,7 @@ import com.antonina.socialsynchro.services.backend.requests.BackendGetFacebookTo
 import com.antonina.socialsynchro.services.backend.responses.BackendGetFacebookTokenResponse;
 import com.antonina.socialsynchro.services.facebook.rest.FacebookClient;
 import com.antonina.socialsynchro.services.facebook.rest.authorization.FacebookUserAuthorizationStrategy;
+import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookGetPageRequest;
 import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookGetUserPagesRequest;
 import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookInspectTokenRequest;
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookGetUserPagesResponse;
@@ -98,6 +100,8 @@ public class FacebookLoginFlow extends LoginFlow {
                 .userID(userID)
                 .authorizationStrategy(authorization)
                 .build();
+
+
         final LiveData<FacebookGetUserPagesResponse> asyncResponse = FacebookClient.getUserPages(request);
         asyncResponse.observe(context, new Observer<FacebookGetUserPagesResponse>() {
             @Override
@@ -106,6 +110,7 @@ public class FacebookLoginFlow extends LoginFlow {
                     if (response.getErrorString() == null) {
                         final int pageCount = response.getPages().size();
                         List<FacebookPageResponse> pageResponses = response.getPages();
+
                         OnSynchronizedListener listener = new OnSynchronizedListener() {
                             @Override
                             public void onSynchronized(IServiceEntity entity) {
@@ -124,10 +129,11 @@ public class FacebookLoginFlow extends LoginFlow {
                         for (FacebookPageResponse pageResponse : pageResponses) {
                             FacebookAccount account = new FacebookAccount();
                             account.createFromResponse(pageResponse);
-                            account.loadPicture(listener);
+                            account.synchronize(listener);
                             accounts.add(account);
                         }
                     }
+                    asyncResponse.removeObserver(this);
                 }
             }
         });

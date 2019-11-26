@@ -7,8 +7,8 @@ import java.util.List;
 public class TwitterCreateContentWithMediaRequest extends TwitterCreateContentRequest {
     private final String mediaIDs;
 
-    private TwitterCreateContentWithMediaRequest(String authorizationHeader, String status, String mediaIDs) {
-        super(authorizationHeader, status);
+    private TwitterCreateContentWithMediaRequest(String authorizationString, String status, String mediaIDs) {
+        super(authorizationString, status);
         this.mediaIDs = percentEncode(mediaIDs);
     }
 

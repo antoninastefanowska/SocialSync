@@ -27,5 +27,7 @@ public abstract class Service extends GUIItem {
     @Bindable
     public abstract Drawable getPanelBackground();
 
+    public abstract int getPanelBackgroundID();
+
     public abstract LoginFlow createLoginFlow(LoginActivity context);
 }

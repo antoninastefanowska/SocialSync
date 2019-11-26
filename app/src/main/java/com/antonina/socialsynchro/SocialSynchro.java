@@ -10,12 +10,15 @@ import com.antonina.socialsynchro.common.database.repositories.ParentPostContain
 import com.antonina.socialsynchro.common.database.repositories.PostRepository;
 import com.antonina.socialsynchro.common.database.repositories.RequestLimitRepository;
 import com.antonina.socialsynchro.services.facebook.database.repositories.FacebookAccountInfoRepository;
+import com.antonina.socialsynchro.services.facebook.database.repositories.FacebookPostInfoRepository;
 import com.antonina.socialsynchro.services.twitter.database.repositories.TwitterAccountInfoRepository;
 import com.antonina.socialsynchro.common.utils.ApplicationConfig;
+import com.antonina.socialsynchro.services.twitter.database.repositories.TwitterPostInfoRepository;
 
 public class SocialSynchro extends Application {
     private static Application instance;
 
+    @Override
     public void onCreate() {
         super.onCreate();
 
@@ -29,7 +32,10 @@ public class SocialSynchro extends Application {
         RequestLimitRepository.createInstance(this);
 
         TwitterAccountInfoRepository.createInstance(this);
+        TwitterPostInfoRepository.createInstance(this);
+
         FacebookAccountInfoRepository.createInstance(this);
+        FacebookPostInfoRepository.createInstance(this);
 
         instance = this;
     }

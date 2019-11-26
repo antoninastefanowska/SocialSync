@@ -1,14 +1,10 @@
 package com.antonina.socialsynchro.common.gui.activities;
 
-import android.Manifest;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.databinding.DataBindingUtil;
-import android.os.Build;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,7 +17,8 @@ import android.widget.Toast;
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
 import com.antonina.socialsynchro.common.content.posts.ParentPostContainer;
-import com.antonina.socialsynchro.common.database.ApplicationDatabase;
+import com.antonina.socialsynchro.common.content.statistics.StatisticsContainer;
+import com.antonina.socialsynchro.common.gui.chart.ParentBarChartHolder;
 import com.antonina.socialsynchro.common.gui.listeners.OnUnpublishedListener;
 import com.antonina.socialsynchro.databinding.ActivityMainBinding;
 import com.antonina.socialsynchro.common.gui.adapters.ParentDisplayAdapter;
@@ -52,8 +49,6 @@ public class MainActivity extends AppCompatActivity {
 
         binding.setParentAdapter(parentAdapter);
         binding.executePendingBindings();
-
-        //checkPermissions();
     }
 
     public void buttonAccounts_onClick(View view) {
@@ -91,25 +86,6 @@ public class MainActivity extends AppCompatActivity {
             parent.unpublish(listener);
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case ACCOUNTS:
-                    boolean accountsChanged = data.getBooleanExtra("accountsChanged", false);
-                    if (accountsChanged)
-                        parentAdapter.loadData();
-                    break;
-                case CREATE:
-                    ParentPostContainer parent = (ParentPostContainer)data.getSerializableExtra("parent");
-                    parentAdapter.addItem(parent);
-                    parent.saveInDatabase();
-                    break;
-            }
-        }
-    }
-
     public void buttonSynchronizeContent_onClick(View view) {
         List<ParentPostContainer> selectedParents = parentAdapter.getSelectedItems();
         final Context context = this;
@@ -129,6 +105,18 @@ public class MainActivity extends AppCompatActivity {
         for (ParentPostContainer parent : selectedParents) {
             parent.synchronize(listener);
         }
+    }
+
+    public void buttonStatistics_onClick(View view) {
+        List<ParentPostContainer> selectedParents = parentAdapter.getSelectedItems();
+        ParentPostContainer parent = selectedParents.get(0);
+        StatisticsContainer statisticsContainer = new StatisticsContainer();
+        statisticsContainer.addStatistic(parent.getStatistic());
+
+        ParentBarChartHolder chartContainer = new ParentBarChartHolder(statisticsContainer);
+        Intent statisticsActivity = new Intent(MainActivity.this, StatisticsActivity.class);
+        statisticsActivity.putExtra("chart_container", chartContainer);
+        startActivity(statisticsActivity);
     }
 
     public void buttonCheckLimits_onClick(View view) {
@@ -154,35 +142,22 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void checkPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-                String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                requestPermissions(permissions, 0);
-            }
-            else
-                exportDatabase();
-        }
-        else
-            exportDatabase();
-    }
-
-    private void exportDatabase() {
-        final Context context = this;
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                ApplicationDatabase.export(context);
-            }
-        });
-        thread.run();
-    }
-
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == 0) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                exportDatabase();
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case ACCOUNTS:
+                    boolean accountsChanged = data.getBooleanExtra("accountsChanged", false);
+                    if (accountsChanged)
+                        parentAdapter.loadData();
+                    break;
+                case CREATE:
+                    ParentPostContainer parent = (ParentPostContainer)data.getSerializableExtra("parent");
+                    parentAdapter.addItem(parent);
+                    parent.saveInDatabase();
+                    break;
+            }
         }
     }
 }

@@ -6,8 +6,8 @@ import com.antonina.socialsynchro.services.twitter.rest.authorization.TwitterUse
 public class TwitterGetUserRequest extends TwitterRequest {
     private final String userID;
 
-    protected TwitterGetUserRequest(String authorizationHeader, String userID) {
-        super(authorizationHeader);
+    protected TwitterGetUserRequest(String authorizationString, String userID) {
+        super(authorizationString);
         this.userID = percentEncode(userID);
     }
 

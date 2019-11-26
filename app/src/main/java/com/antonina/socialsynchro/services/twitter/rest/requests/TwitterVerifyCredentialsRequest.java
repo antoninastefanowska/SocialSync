@@ -3,8 +3,8 @@ package com.antonina.socialsynchro.services.twitter.rest.requests;
 import com.antonina.socialsynchro.services.twitter.rest.authorization.TwitterUserAuthorizationStrategy;
 
 public class TwitterVerifyCredentialsRequest extends TwitterRequest {
-    private TwitterVerifyCredentialsRequest(String authorizationHeader) {
-        super(authorizationHeader);
+    private TwitterVerifyCredentialsRequest(String authorizationString) {
+        super(authorizationString);
     }
 
     public static String getRequestEndpoint() {

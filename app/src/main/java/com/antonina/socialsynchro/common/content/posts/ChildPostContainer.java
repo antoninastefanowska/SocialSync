@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import com.antonina.socialsynchro.common.content.services.Service;
 import com.antonina.socialsynchro.common.content.accounts.Account;
 import com.antonina.socialsynchro.common.content.attachments.Attachment;
+import com.antonina.socialsynchro.common.content.statistics.ChildGroupStatistic;
 import com.antonina.socialsynchro.common.database.repositories.AccountRepository;
 import com.antonina.socialsynchro.common.database.repositories.ChildPostContainerRepository;
 import com.antonina.socialsynchro.common.database.repositories.PostRepository;
@@ -283,4 +284,7 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     public boolean isParent() {
         return false;
     }
+
+    @Override
+    public abstract ChildGroupStatistic getStatistic();
 }

@@ -6,8 +6,8 @@ public class FacebookUpdateContentRequest extends FacebookRequest {
     private final String postID;
     private final String message;
 
-    private FacebookUpdateContentRequest(String authorizationHeader, String postID, String message) {
-        super(authorizationHeader);
+    private FacebookUpdateContentRequest(String authorizationString, String postID, String message) {
+        super(authorizationString);
         this.postID = postID;
         this.message = message;
     }

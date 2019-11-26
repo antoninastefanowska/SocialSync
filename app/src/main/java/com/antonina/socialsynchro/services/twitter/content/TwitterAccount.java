@@ -3,7 +3,10 @@ package com.antonina.socialsynchro.services.twitter.content;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
+import com.antonina.socialsynchro.common.content.statistics.AccountStatistic;
+import com.antonina.socialsynchro.common.content.statistics.StatisticsContainer;
 import com.antonina.socialsynchro.common.content.accounts.Account;
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 import com.antonina.socialsynchro.common.rest.RequestLimit;
@@ -30,13 +33,17 @@ public class TwitterAccount extends Account {
     private String accessToken;
     private String secretToken;
 
+    private int followerCount;
+
     public TwitterAccount(IDatabaseRow table) {
         createFromDatabaseRow(table);
         setService(Services.getService(ServiceID.Twitter));
+        followerCount = 0;
     }
 
     public TwitterAccount() {
         setService(Services.getService(ServiceID.Twitter));
+        followerCount = 0;
     }
 
     @Override
@@ -52,6 +59,8 @@ public class TwitterAccount extends Account {
                 if (data != null) {
                     instance.setAccessToken(SecurityUtils.decrypt(data.accessToken));
                     instance.setSecretToken(SecurityUtils.decrypt(data.secretToken));
+                    instance.setFollowerCount(data.followerCount);
+                    notifyListener();
                     dataTable.removeObserver(this);
                 }
             }
@@ -65,6 +74,14 @@ public class TwitterAccount extends Account {
     public String getSecretToken() { return secretToken; }
 
     public void setSecretToken(String secretToken) { this.secretToken = secretToken; }
+
+    public int getFollowerCount() {
+        return followerCount;
+    }
+
+    private void setFollowerCount(int followerCount) {
+        this.followerCount = followerCount;
+    }
 
     @Override
     public void saveInDatabase() {
@@ -97,6 +114,8 @@ public class TwitterAccount extends Account {
         setExternalID(twitterResponse.getID());
         setName(twitterResponse.getName());
         setProfilePictureURL(twitterResponse.getProfilePictureURL());
+        setFollowerCount(twitterResponse.getFollowersCount());
+        Log.d("statystyki", "TwitterAccount: " + followerCount);
     }
 
     @Override
@@ -104,7 +123,7 @@ public class TwitterAccount extends Account {
         String endpoint = TwitterGetUserRequest.getRequestEndpoint();
         final RequestLimit requestLimit = getRequestLimit(endpoint);
 
-        if (requestLimits.isEmpty() || requestLimit.getRemaining() > 0) {
+        if (requestLimit == null || requestLimit.getRemaining() > 0) {
             setLoading(true);
             TwitterUserAuthorizationStrategy authorization = new TwitterUserAuthorizationStrategy(getAccessToken(), getSecretToken());
             TwitterGetUserRequest request = TwitterGetUserRequest.builder()
@@ -193,5 +212,10 @@ public class TwitterAccount extends Account {
         } else {
             listener.onError(this, ConvertUtils.requestLimitWaitMessage(requestLimit.getSecondsUntilReset()));
         }
+    }
+
+    @Override
+    public AccountStatistic getStatistic() {
+        return new AccountStatistic("Followers", followerCount, getProfilePictureURL(), getName(), getService().getPanelBackgroundID());
     }
 }
