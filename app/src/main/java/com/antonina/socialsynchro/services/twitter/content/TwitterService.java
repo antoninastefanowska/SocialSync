@@ -60,6 +60,11 @@ public class TwitterService extends Service {
     }
 
     @Override
+    public Drawable getBackground() {
+        return SocialSynchro.getInstance().getResources().getDrawable(R.drawable.background_twitter);
+    }
+
+    @Override
     public LoginFlow createLoginFlow(LoginActivity context) {
         return new TwitterLoginFlow(context);
     }

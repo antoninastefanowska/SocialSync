@@ -36,7 +36,7 @@ public class ImageGalleryActivity extends AppCompatActivity {
         binding.executePendingBindings();
     }
 
-    public void buttonConfirm_onClick(View view) {
+    public void confirm(View view) {
         List<ImageAttachment> images = imageAdapter.getSelectedItems();
         List<Attachment> attachments = new ArrayList<>();
         attachments.addAll(images);

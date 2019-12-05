@@ -8,45 +8,87 @@
             type="com.antonina.socialsynchro.common.content.accounts.Account" />
     </data>
 
-    <FrameLayout
-        android:id="@+id/layout_account_item_container"
-        style="@style/PanelFrameLayoutStyle">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:background="@{account.service.panelBackground}"
-            style="@style/AccountPanelLinearLayoutStyle">
+        <HorizontalScrollView
+            android:visibility="@{account.isVisible() ? View.VISIBLE : View.GONE}"
+            style="@style/ButtonsScrollViewStyle">
 
-            <HorizontalScrollView
-                style="@style/PanelScrollViewStyle">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-                <LinearLayout
-                    style="@style/PanelScrollableLinearLayoutStyle">
+                <com.antonina.socialsynchro.common.gui.other.StateButton
+                    android:id="@+id/button_synchronize"
+                    android:tooltipText="@string/synchronize"
+                    android:background="@drawable/icon_refresh"
+                    style="@style/IconButtonStyle" />
 
-                    <TextView
-                        android:id="@+id/textview_account_name"
-                        android:text="@{account.name, default=Account}"
-                        android:textColor="@{account.service.fontColor}"
-                        style="@style/TitleTextViewStyle" />
+                <com.antonina.socialsynchro.common.gui.other.StateButton
+                    android:id="@+id/button_remove"
+                    android:tooltipText="@string/remove"
+                    android:background="@drawable/icon_cross"
+                    style="@style/IconButtonStyle" />
 
-                </LinearLayout>
+            </LinearLayout>
 
-            </HorizontalScrollView>
+        </HorizontalScrollView>
 
-        </LinearLayout>
+        <FrameLayout
+            android:id="@+id/layout_account_item_container"
+            style="@style/PanelFrameLayoutStyle">
 
-        <include layout="@layout/layout_profile_picture" />
+            <LinearLayout
+                android:background="@{account.service.panelBackground}"
+                style="@style/AccountPanelLinearLayoutStyle">
 
-        <include layout="@layout/layout_icon_picture" />
+                <HorizontalScrollView
+                    style="@style/PanelScrollViewStyle">
 
-        <RelativeLayout
-            android:id="@+id/loading_panel"
-            android:visibility="@{account.isLoading() ? View.VISIBLE : View.GONE}"
-            style="@style/LoadingPanelStyle" >
+                    <LinearLayout
+                        style="@style/PanelScrollableLinearLayoutStyle">
 
-            <ProgressBar
-                style="@style/ProgressBarStyle" />
+                        <TextView
+                            android:id="@+id/textview_account_name"
+                            android:text="@{account.name, default=Account}"
+                            android:textColor="@{account.service.fontColor}"
+                            style="@style/TitleTextViewStyle" />
 
-        </RelativeLayout>
+                    </LinearLayout>
 
-    </FrameLayout>
+                </HorizontalScrollView>
+
+            </LinearLayout>
+
+            <include layout="@layout/layout_profile_picture" />
+
+            <FrameLayout
+                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_gravity="right">
+
+                <ImageView
+                    android:layout_width="@dimen/profile_picture_background_size"
+                    android:layout_height="@dimen/profile_picture_background_size"
+                    android:src="@drawable/background_avatar" />
+
+                <ImageView
+                    android:id="@+id/imageview_icon_picture"
+                    android:layout_width="@dimen/profile_picture_size"
+                    android:layout_height="@dimen/profile_picture_size"
+                    android:contentDescription="@string/profile_picture_content_description"
+                    android:layout_gravity="center" />
+
+                <ProgressBar
+                    android:visibility="@{account.loading ? View.VISIBLE : View.GONE}"
+                    style="@style/ProgressBarStyle" />
+
+            </FrameLayout>
+
+        </FrameLayout>
+
+    </LinearLayout>
+
 </layout>

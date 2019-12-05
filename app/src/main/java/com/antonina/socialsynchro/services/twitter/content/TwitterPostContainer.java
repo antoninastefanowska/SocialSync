@@ -7,7 +7,6 @@ import android.util.Log;
 
 import com.antonina.socialsynchro.common.content.statistics.ChildGroupStatistic;
 import com.antonina.socialsynchro.common.content.statistics.ChildStatistic;
-import com.antonina.socialsynchro.common.content.statistics.StatisticsContainer;
 import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
 import com.antonina.socialsynchro.common.content.attachments.Attachment;
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
@@ -99,7 +98,7 @@ public class TwitterPostContainer extends ChildPostContainer {
                 if (data != null) {
                     instance.setRetweetCount(data.retweetCount);
                     instance.setFavoriteCount(data.favoriteCount);
-                    notifyListener();
+                    notifyGUI();
                     dataTable.removeObserver(this);
                 }
             }
@@ -157,32 +156,61 @@ public class TwitterPostContainer extends ChildPostContainer {
     }
 
     @Override
+    public void saveInDatabase() {
+        super.saveInDatabase();
+        if (getInternalID() != null)
+            updateInDatabase();
+        else {
+            TwitterPostInfoRepository repository = TwitterPostInfoRepository.getInstance();
+            repository.insert(this);
+        }
+    }
+
+    @Override
+    public void updateInDatabase() {
+        TwitterPostInfoRepository repository = TwitterPostInfoRepository.getInstance();
+        repository.update(this);
+        super.updateInDatabase();
+    }
+
+    @Override
+    public void deleteFromDatabase() {
+        TwitterPostInfoRepository repository = TwitterPostInfoRepository.getInstance();
+        repository.delete(this);
+        super.deleteFromDatabase();
+    }
+
+    @Override
     public void publish(final OnPublishedListener publishListener, final OnAttachmentUploadedListener attachmentListener) {
-        setLoading(true);
-        String endpoint = TwitterCreateContentRequest.getRequestEndpoint();
-        BackendGetRateLimitsRequest request = BackendGetRateLimitsRequest.builder()
-                .endpoint(endpoint)
-                .serviceName(getService().getName())
-                .build();
-        final TwitterPostContainer instance = this;
-        final LiveData<BackendGetRateLimitsResponse> asyncResponse = BackendClient.getRateLimits(request);
-        asyncResponse.observeForever(new Observer<BackendGetRateLimitsResponse>() {
-            @Override
-            public void onChanged(@Nullable BackendGetRateLimitsResponse response) {
-                if (response != null) {
-                    if (response.getRemaining() > 0) {
-                        if (!getAttachments().isEmpty())
-                            for (Attachment attachment : getAttachments())
-                                uploadAttachment(attachment, publishListener, attachmentListener);
-                        else
-                            publishJustContent(publishListener);
-                    } else {
-                        publishListener.onError(instance, ConvertUtils.requestLimitWaitMessage(response.getRemaining()));
+        if (!isOnline()) {
+            setLoading(true);
+            notifyGUI();
+            String endpoint = TwitterCreateContentRequest.getRequestEndpoint();
+            BackendGetRateLimitsRequest request = BackendGetRateLimitsRequest.builder()
+                    .endpoint(endpoint)
+                    .serviceName(getService().getName())
+                    .build();
+            final TwitterPostContainer instance = this;
+            final LiveData<BackendGetRateLimitsResponse> asyncResponse = BackendClient.getRateLimits(request);
+            asyncResponse.observeForever(new Observer<BackendGetRateLimitsResponse>() {
+                @Override
+                public void onChanged(@Nullable BackendGetRateLimitsResponse response) {
+                    if (response != null) {
+                        if (response.getRemaining() > 0) {
+                            if (!getAttachments().isEmpty())
+                                for (Attachment attachment : getAttachments())
+                                    uploadAttachment(attachment, publishListener, attachmentListener);
+                            else
+                                publishJustContent(publishListener);
+                        } else {
+                            publishListener.onError(instance, ConvertUtils.requestLimitWaitMessage(response.getRemaining()));
+                        }
+                        notifyGUI();
+                        asyncResponse.removeObserver(this);
                     }
-                    asyncResponse.removeObserver(this);
                 }
-            }
-        });
+            });
+        }
     }
 
     private void publishJustContent(final OnPublishedListener publishListener) {
@@ -210,6 +238,7 @@ public class TwitterPostContainer extends ChildPostContainer {
                             .serviceName(getService().getName())
                             .build();
                     BackendClient.updateRequestCounter(request);
+                    notifyGUI();
                     asyncResponse.removeObserver(this);
                 }
             }
@@ -246,6 +275,7 @@ public class TwitterPostContainer extends ChildPostContainer {
                             .serviceName(getService().getName())
                             .build();
                     BackendClient.updateRequestCounter(request);
+                    notifyGUI();
                     asyncResponse.removeObserver(this);
                 }
             }
@@ -287,6 +317,7 @@ public class TwitterPostContainer extends ChildPostContainer {
                         }
                         if (requestLimit != null)
                             requestLimit.decrement();
+                        attachment.notifyGUI();
                         asyncResponse.removeObserver(this);
                     }
                 }
@@ -317,7 +348,6 @@ public class TwitterPostContainer extends ChildPostContainer {
                         long fileSize = attachment.getSizeBytes();
                         int progress = (int) ((double) (chunkEnd + 1) / fileSize * 100);
                         attachment.setUploadProgress(progress);
-                        attachment.notifyListener();
                         attachmentListener.onProgress(attachment);
                         long remaining = fileSize - chunkEnd - 1;
                         if (remaining > 0) {
@@ -335,6 +365,7 @@ public class TwitterPostContainer extends ChildPostContainer {
                     }
                     if (requestLimit != null)
                         requestLimit.decrement();
+                    attachment.notifyGUI();
                     asyncResponse.removeObserver(this);
                 }
             });
@@ -383,6 +414,7 @@ public class TwitterPostContainer extends ChildPostContainer {
                         }
                         if (requestLimit != null)
                             requestLimit.decrement();
+                        attachment.notifyGUI();
                         asyncResponse.removeObserver(this);
                     }
                 }
@@ -422,7 +454,7 @@ public class TwitterPostContainer extends ChildPostContainer {
                                     break;
                                 case "in_progress":
                                     attachment.setUploadProgress(info.getProgressPercent());
-                                    attachment.notifyListener();
+                                    attachment.notifyGUI();
                                     Timer timer = new Timer();
                                     TimerTask timerTask = new TimerTask() {
                                         @Override
@@ -442,6 +474,7 @@ public class TwitterPostContainer extends ChildPostContainer {
                         }
                         if (requestLimit != null)
                             requestLimit.decrement();
+                        attachment.notifyGUI();
                         asyncResponse.removeObserver(this);
                     }
                 }
@@ -452,6 +485,7 @@ public class TwitterPostContainer extends ChildPostContainer {
     private void finishAttachmentUpload(Attachment attachment, OnPublishedListener publishListener, OnAttachmentUploadedListener attachmentListener) {
         attachment.setUploadProgress(100);
         attachment.setLoading(false);
+        attachment.notifyGUI();
         attachmentListener.onFinished(attachment);
         attachmentsPublished++;
         if (attachmentsPublished >= getAttachments().size()) {
@@ -462,88 +496,95 @@ public class TwitterPostContainer extends ChildPostContainer {
 
     @Override
     public void unpublish(final OnUnpublishedListener listener) {
-        final String endpoint = TwitterRemoveContentRequest.getRequestEndpoint();
-        BackendGetRateLimitsRequest request = BackendGetRateLimitsRequest.builder()
-                .endpoint(endpoint)
-                .serviceName(getService().getName())
-                .build();
-        final TwitterPostContainer instance = this;
-        final LiveData<BackendGetRateLimitsResponse> asyncResponse = BackendClient.getRateLimits(request);
-        asyncResponse.observeForever(new Observer<BackendGetRateLimitsResponse>() {
-            @Override
-            public void onChanged(@Nullable BackendGetRateLimitsResponse response) {
-                if (response != null) {
-                    if (response.getRemaining() > 0) {
-                        TwitterRemoveContentRequest request = TwitterRemoveContentRequest.builder()
-                                .id(getExternalID())
-                                .accessToken(getAccount().getAccessToken())
-                                .secretToken(getAccount().getSecretToken())
-                                .build();
-                        final LiveData<TwitterContentResponse> asyncResponse = TwitterClient.removeContent(request);
-                        asyncResponse.observeForever(new Observer<TwitterContentResponse>() {
-                            @Override
-                            public void onChanged(@Nullable TwitterContentResponse response) {
-                                if (response != null) {
-                                    if (response.getErrorString() == null) {
-                                        if (response.getID().equals(getExternalID())) {
-                                            instance.setExternalID(null);
-                                            listener.onUnpublished(instance);
-                                        }
-                                    } else
-                                        listener.onError(instance, response.getErrorString());
-                                    BackendUpdateRequestCounterRequest request = BackendUpdateRequestCounterRequest.builder()
-                                            .endpoint(endpoint)
-                                            .serviceName(getService().getName())
-                                            .build();
-                                    BackendClient.updateRequestCounter(request);
-                                    asyncResponse.removeObserver(this);
+        if (isOnline()) {
+            final String endpoint = TwitterRemoveContentRequest.getRequestEndpoint();
+            BackendGetRateLimitsRequest request = BackendGetRateLimitsRequest.builder()
+                    .endpoint(endpoint)
+                    .serviceName(getService().getName())
+                    .build();
+            final TwitterPostContainer instance = this;
+            final LiveData<BackendGetRateLimitsResponse> asyncResponse = BackendClient.getRateLimits(request);
+            asyncResponse.observeForever(new Observer<BackendGetRateLimitsResponse>() {
+                @Override
+                public void onChanged(@Nullable BackendGetRateLimitsResponse response) {
+                    if (response != null) {
+                        if (response.getRemaining() > 0) {
+                            TwitterRemoveContentRequest request = TwitterRemoveContentRequest.builder()
+                                    .id(getExternalID())
+                                    .accessToken(getAccount().getAccessToken())
+                                    .secretToken(getAccount().getSecretToken())
+                                    .build();
+                            final LiveData<TwitterContentResponse> asyncResponse = TwitterClient.removeContent(request);
+                            asyncResponse.observeForever(new Observer<TwitterContentResponse>() {
+                                @Override
+                                public void onChanged(@Nullable TwitterContentResponse response) {
+                                    if (response != null) {
+                                        if (response.getErrorString() == null) {
+                                            if (response.getID().equals(getExternalID())) {
+                                                instance.setExternalID(null);
+                                                listener.onUnpublished(instance);
+                                            }
+                                        } else
+                                            listener.onError(instance, response.getErrorString());
+                                        BackendUpdateRequestCounterRequest request = BackendUpdateRequestCounterRequest.builder()
+                                                .endpoint(endpoint)
+                                                .serviceName(getService().getName())
+                                                .build();
+                                        BackendClient.updateRequestCounter(request);
+                                        asyncResponse.removeObserver(this);
+                                    }
                                 }
-                            }
-                        });
-                    } else
-                        listener.onError(instance, ConvertUtils.requestLimitWaitMessage(response.getRemaining()));
+                            });
+                            notifyGUI();
+                        } else
+                            listener.onError(instance, ConvertUtils.requestLimitWaitMessage(response.getRemaining()));
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     @Override
     public void synchronize(final OnSynchronizedListener listener) {
-        String endpoint = TwitterGetContentRequest.getRequestEndpoint();
-        RequestLimit requestLimit = getAccount().getRequestLimit(endpoint);
-        if (requestLimit == null || requestLimit.getRemaining() > 0) {
-            setLoading(true);
-            TwitterConfig twitterConfig = ApplicationConfig.getInstance().getTwitterConfig();
-            TwitterAuthorizationStrategy authorization;
-            if (twitterConfig.isApplicationAuthorizationEnabled())
-                authorization = new TwitterApplicationAuthorizationStrategy();
-            else
-                authorization = new TwitterUserAuthorizationStrategy(getAccount().getAccessToken(), getAccount().getSecretToken());
+        if (isOnline()) {
+            String endpoint = TwitterGetContentRequest.getRequestEndpoint();
+            RequestLimit requestLimit = getAccount().getRequestLimit(endpoint);
+            if (requestLimit == null || requestLimit.getRemaining() > 0) {
+                setLoading(true);
+                TwitterConfig twitterConfig = ApplicationConfig.getInstance().getTwitterConfig();
+                TwitterAuthorizationStrategy authorization;
+                if (twitterConfig.isApplicationAuthorizationEnabled())
+                    authorization = new TwitterApplicationAuthorizationStrategy();
+                else
+                    authorization = new TwitterUserAuthorizationStrategy(getAccount().getAccessToken(), getAccount().getSecretToken());
 
-            TwitterGetContentRequest request = TwitterGetContentRequest.builder()
-                    .id(getExternalID())
-                    .authorizationStrategy(authorization)
-                    .build();
-            final TwitterPostContainer instance = this;
-            final LiveData<TwitterContentResponse> asyncResponse = TwitterClient.getContent(request);
-            asyncResponse.observeForever(new Observer<TwitterContentResponse>() {
-                @Override
-                public void onChanged(@Nullable TwitterContentResponse response) {
-                    if (response != null) {
-                        if (response.getErrorString() == null) {
-                            createFromResponse(response);
-                            setLoading(false);
-                            listener.onSynchronized(instance);
-                        } else {
-                            setLoading(false);
-                            listener.onError(instance, response.getErrorString());
+                TwitterGetContentRequest request = TwitterGetContentRequest.builder()
+                        .id(getExternalID())
+                        .authorizationStrategy(authorization)
+                        .build();
+                final TwitterPostContainer instance = this;
+                final LiveData<TwitterContentResponse> asyncResponse = TwitterClient.getContent(request);
+                asyncResponse.observeForever(new Observer<TwitterContentResponse>() {
+                    @Override
+                    public void onChanged(@Nullable TwitterContentResponse response) {
+                        if (response != null) {
+                            if (response.getErrorString() == null) {
+                                createFromResponse(response);
+                                setLoading(false);
+                                saveInDatabase();
+                                listener.onSynchronized(instance);
+                            } else {
+                                setLoading(false);
+                                listener.onError(instance, response.getErrorString());
+                            }
+                            notifyGUI();
+                            asyncResponse.removeObserver(this);
                         }
-                        asyncResponse.removeObserver(this);
                     }
-                }
-            });
-        } else
-            listener.onError(this, ConvertUtils.requestLimitWaitMessage(requestLimit.getSecondsUntilReset()));
+                });
+            } else
+                listener.onError(this, ConvertUtils.requestLimitWaitMessage(requestLimit.getSecondsUntilReset()));
+        }
     }
 
     @Override
@@ -552,5 +593,13 @@ public class TwitterPostContainer extends ChildPostContainer {
         groupStatistic.addChildStatistic(new ChildStatistic("Retweets", retweetCount, getService().getPanelBackgroundID()));
         groupStatistic.addChildStatistic(new ChildStatistic("Favorites", favoriteCount, getService().getPanelBackgroundID()));
         return groupStatistic;
+    }
+
+    @Override
+    public String getURL() {
+        if (isOnline())
+            return "https://www.twitter.com/i/web/status/" + getExternalID();
+        else
+            return "";
     }
 }

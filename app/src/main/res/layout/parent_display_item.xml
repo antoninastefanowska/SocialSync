@@ -20,6 +20,54 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <HorizontalScrollView
+            android:visibility="@{parent.isVisible() ? View.VISIBLE : View.GONE}"
+            style="@style/ButtonsScrollViewStyle">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <com.antonina.socialsynchro.common.gui.other.StateButton
+                    android:id="@+id/button_edit"
+                    android:tooltipText="@string/edit"
+                    android:background="@drawable/icon_pencil"
+                    style="@style/IconButtonStyle" />
+
+                <com.antonina.socialsynchro.common.gui.other.StateButton
+                    android:id="@+id/button_synchronize"
+                    android:tooltipText="@string/synchronize"
+                    android:background="@drawable/icon_refresh"
+                    style="@style/IconButtonStyle" />
+
+                <com.antonina.socialsynchro.common.gui.other.StateButton
+                    android:id="@+id/button_statistics"
+                    android:tooltipText="@string/statistics"
+                    android:background="@drawable/icon_chart"
+                    style="@style/IconButtonStyle" />
+
+                <com.antonina.socialsynchro.common.gui.other.StateButton
+                    android:id="@+id/button_publish"
+                    android:tooltipText="@string/publish"
+                    android:background="@drawable/icon_publish"
+                    style="@style/IconButtonStyle" />
+
+                <com.antonina.socialsynchro.common.gui.other.StateButton
+                    android:id="@+id/button_unpublish"
+                    android:tooltipText="@string/unpublish"
+                    android:background="@drawable/icon_unpublish"
+                    style="@style/IconButtonStyle" />
+
+                <com.antonina.socialsynchro.common.gui.other.StateButton
+                    android:id="@+id/button_remove"
+                    android:tooltipText="@string/remove"
+                    android:background="@drawable/icon_cross"
+                    style="@style/IconButtonStyle" />
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+
         <FrameLayout
             style="@style/PanelFrameLayoutStyle">
 
@@ -50,7 +98,7 @@
 
                             <TextView
                                 android:id="@+id/textview_parent_title"
-                                android:text="@{parent.title, default=Title}"
+                                android:text="@{parent.title.isEmpty() ? @string/no_title : parent.title, default=Title}"
                                 style="@style/TitleTextViewStyle" />
 
                         </LinearLayout>
@@ -59,21 +107,21 @@
 
                 </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/imageview_profile_picture"
-                    android:layout_width="@dimen/profile_picture_background_size"
-                    android:layout_height="@dimen/profile_picture_background_size"
-                    android:src="@drawable/background_avatar" />
+                <FrameLayout
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_gravity="left">
 
-                <RelativeLayout
-                    android:id="@+id/loading_panel"
-                    android:visibility="@{parent.isLoading() ? View.VISIBLE : View.GONE}"
-                    style="@style/LoadingPanelStyle" >
+                    <ImageView
+                        android:id="@+id/imageview_profile_picture"
+                        android:layout_width="@dimen/profile_picture_background_size"
+                        android:layout_height="@dimen/profile_picture_background_size"
+                        android:src="@drawable/background_avatar" />
 
                     <ProgressBar
-                        style="@style/ProgressBarStyle"/>
+                        android:visibility="@{parent.loading ? View.VISIBLE : View.GONE}"
+                        style="@style/ProgressBarStyle" />
 
-                </RelativeLayout>
+                </FrameLayout>
 
             </FrameLayout>
 

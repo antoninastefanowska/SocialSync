@@ -95,16 +95,14 @@ public class EditActivity extends AppCompatActivity {
         postContainer.publish(new OnPublishedListener() {
             @Override
             public void onPublished(ChildPostContainer publishedPost) {
-                postAdapter.updateItemView(publishedPost);
                 Snackbar snackbar = Snackbar.make(layout, "Succesfully published: " + publishedPost.getExternalID(), Snackbar.LENGTH_LONG);
                 snackbar.show();
-                if (postContainer.isParent())
+                if (postContainer.isParent() && ((ParentPostContainer)postContainer).finishedPublishing())
                     exitAndSave((ParentPostContainer)postContainer);
             }
 
             @Override
             public void onError(ChildPostContainer post, String error) {
-                postAdapter.updateItemView(post);
                 Snackbar snackbar = Snackbar.make(layout, "Failed to publish. Error: " + error, Snackbar.LENGTH_LONG);
                 snackbar.show();
             }
@@ -133,7 +131,6 @@ public class EditActivity extends AppCompatActivity {
                 toast.show();
             }
         });
-        postAdapter.notifyDataSetChanged();
     }
 
     public void exitAndSave(ParentPostContainer parent) {

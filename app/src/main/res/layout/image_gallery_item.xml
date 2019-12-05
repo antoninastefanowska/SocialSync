@@ -2,17 +2,29 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
+        <import
+            type="android.view.View" />
         <variable
             name="image"
             type="com.antonina.socialsynchro.common.content.attachments.ImageAttachment" />
     </data>
 
     <LinearLayout
-        style="@style/SingleButtonStyle">
+        style="@style/GalleryItemBackgroundStyle">
 
-        <ImageView
-            android:id="@+id/imageview_image"
-            style="@style/GalleryImageStyle"/>
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/imageview_image"
+                style="@style/GalleryImageStyle"/>
+
+            <ImageView
+                android:visibility="@{image.selected ? View.VISIBLE : View.GONE}"
+                style="@style/CheckmarkStyle" />
+
+        </FrameLayout>
 
     </LinearLayout>
 </layout>

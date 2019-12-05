@@ -61,6 +61,11 @@ public class FacebookService extends Service {
     }
 
     @Override
+    public Drawable getBackground() {
+        return SocialSynchro.getInstance().getResources().getDrawable(R.drawable.background_facebook);
+    }
+
+    @Override
     public LoginFlow createLoginFlow(LoginActivity context) {
         return new FacebookLoginFlow(context);
     }

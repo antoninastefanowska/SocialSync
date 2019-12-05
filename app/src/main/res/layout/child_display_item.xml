@@ -17,6 +17,59 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <HorizontalScrollView
+            android:visibility="@{child.isVisible() ? View.VISIBLE : View.GONE}"
+            style="@style/ChildButtonsScrollViewStyle">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <com.antonina.socialsynchro.common.gui.other.StateButton
+                    android:id="@+id/button_synchronize"
+                    android:tooltipText="@string/synchronize"
+                    android:enabled="@{child.online}"
+                    android:background="@drawable/icon_refresh"
+                    style="@style/IconButtonStyle" />
+
+                <com.antonina.socialsynchro.common.gui.other.StateButton
+                    android:id="@+id/button_statistics"
+                    android:tooltipText="@string/statistics"
+                    android:enabled="@{child.online}"
+                    android:background="@drawable/icon_chart"
+                    style="@style/IconButtonStyle" />
+
+                <com.antonina.socialsynchro.common.gui.other.StateButton
+                    android:id="@+id/button_link"
+                    android:tooltipText="@string/link"
+                    android:enabled="@{child.online}"
+                    android:background="@drawable/icon_chain"
+                    style="@style/IconButtonStyle" />
+
+                <com.antonina.socialsynchro.common.gui.other.StateButton
+                    android:id="@+id/button_publish"
+                    android:tooltipText="@string/publish"
+                    android:enabled="@{!child.online}"
+                    android:background="@drawable/icon_publish"
+                    style="@style/IconButtonStyle" />
+
+                <com.antonina.socialsynchro.common.gui.other.StateButton
+                    android:id="@+id/button_unpublish"
+                    android:tooltipText="@string/unpublish"
+                    android:enabled="@{child.online}"
+                    android:background="@drawable/icon_unpublish"
+                    style="@style/IconButtonStyle" />
+
+                <com.antonina.socialsynchro.common.gui.other.StateButton
+                    android:id="@+id/button_remove"
+                    android:tooltipText="@string/remove"
+                    android:background="@drawable/icon_cross"
+                    style="@style/IconButtonStyle" />
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+
         <FrameLayout
             style="@style/PanelFrameLayoutStyle">
 
@@ -47,12 +100,12 @@
 
                             <TextView
                                 android:id="@+id/textview_child_title"
-                                android:text="@{child.title, default=Title}"
+                                android:text="@{child.title.isEmpty() ? @string/no_title : child.title, default=Title}"
                                 android:textColor="@{child.service.fontColor}"
                                 style="@style/TitleTextViewStyle" />
 
                             <TextView
-                                android:text="@{child.account.name, default=Account}"
+                                android:text="@{child.account.name + ` ` + (child.online ? @string/online : @string/offline), default=Account}"
                                 android:textColor="@{child.service.fontColor}"
                                 android:visibility="@{child.isVisible() ? View.VISIBLE : View.GONE}"
                                 style="@style/AccountNameTextViewStyle"/>
@@ -65,7 +118,27 @@
 
                 <include layout="@layout/layout_profile_picture" />
 
-                <include layout="@layout/layout_icon_picture" />
+                <FrameLayout
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_gravity="right">
+
+                    <ImageView
+                        android:layout_width="@dimen/profile_picture_background_size"
+                        android:layout_height="@dimen/profile_picture_background_size"
+                        android:src="@drawable/background_avatar" />
+
+                    <ImageView
+                        android:id="@+id/imageview_icon_picture"
+                        android:layout_width="@dimen/profile_picture_size"
+                        android:layout_height="@dimen/profile_picture_size"
+                        android:contentDescription="@string/profile_picture_content_description"
+                        android:layout_gravity="center" />
+
+                    <ProgressBar
+                        android:visibility="@{child.loading ? View.VISIBLE : View.GONE}"
+                        style="@style/ProgressBarStyle" />
+
+                </FrameLayout>
 
             </FrameLayout>
 

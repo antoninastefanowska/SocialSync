@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.antonina.socialsynchro.common.content.statistics.AccountStatistic;
-import com.antonina.socialsynchro.common.content.statistics.StatisticsContainer;
 import com.antonina.socialsynchro.common.content.accounts.Account;
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 import com.antonina.socialsynchro.common.rest.RequestLimit;
@@ -60,7 +59,7 @@ public class TwitterAccount extends Account {
                     instance.setAccessToken(SecurityUtils.decrypt(data.accessToken));
                     instance.setSecretToken(SecurityUtils.decrypt(data.secretToken));
                     instance.setFollowerCount(data.followerCount);
-                    notifyListener();
+                    notifyGUI();
                     dataTable.removeObserver(this);
                 }
             }
@@ -86,11 +85,15 @@ public class TwitterAccount extends Account {
     @Override
     public void saveInDatabase() {
         super.saveInDatabase();
-        TwitterAccountInfoRepository repository = TwitterAccountInfoRepository.getInstance();
-        if (!updated)
-            repository.insert(this);
-        else
+        if (getInternalID() != null)
             updateInDatabase();
+        else {
+            TwitterAccountInfoRepository repository = TwitterAccountInfoRepository.getInstance();
+            if (!updated)
+                repository.insert(this);
+            else
+                updateInDatabase();
+        }
     }
 
     @Override
@@ -149,6 +152,7 @@ public class TwitterAccount extends Account {
                         }
                         if (requestLimit != null)
                             requestLimit.decrement();
+                        notifyGUI();
                         asyncResponse.removeObserver(this);
                     }
                 }
@@ -217,5 +221,10 @@ public class TwitterAccount extends Account {
     @Override
     public AccountStatistic getStatistic() {
         return new AccountStatistic("Followers", followerCount, getProfilePictureURL(), getName(), getService().getPanelBackgroundID());
+    }
+
+    @Override
+    public String getURL() {
+        return "https://www.twitter.com/" + getExternalID();
     }
 }

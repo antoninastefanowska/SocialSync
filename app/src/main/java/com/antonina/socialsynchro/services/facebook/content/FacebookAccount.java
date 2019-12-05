@@ -78,11 +78,13 @@ public class FacebookAccount extends Account {
     @Override
     public void saveInDatabase() {
         super.saveInDatabase();
-        FacebookAccountInfoRepository repository = FacebookAccountInfoRepository.getInstance();
-        if (!updated)
-            repository.insert(this);
-        else
-            updateInDatabase();
+        if (getInternalID() != null) {
+            FacebookAccountInfoRepository repository = FacebookAccountInfoRepository.getInstance();
+            if (!updated)
+                repository.insert(this);
+            else
+                updateInDatabase();
+        }
     }
 
     @Override
@@ -175,5 +177,10 @@ public class FacebookAccount extends Account {
     @Override
     public AccountStatistic getStatistic() {
         return new AccountStatistic("Likes", likeCount, getProfilePictureURL(), getName(), getService().getPanelBackgroundID());
+    }
+
+    @Override
+    public String getURL() {
+        return "https://www.facebook.com/" + getExternalID();
     }
 }

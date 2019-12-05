@@ -13,14 +13,14 @@ public class StatisticsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_statistics);
 
-        BaseBarChartHolder chartContainer = null;
+        BaseBarChartHolder chartHolder = null;
 
-        if (getIntent().hasExtra("chart_container"))
-            chartContainer = (BaseBarChartHolder)getIntent().getSerializableExtra("chart_container");
+        if (getIntent().hasExtra("chart_holder"))
+            chartHolder = (BaseBarChartHolder)getIntent().getSerializableExtra("chart_holder");
 
 
         BarChart chart = findViewById(R.id.chart);
-        if (chartContainer != null)
-            chartContainer.createChart(chart, this);
+        if (chartHolder != null)
+            chartHolder.createChart(chart, this);
     }
 }

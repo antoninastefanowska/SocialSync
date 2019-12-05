@@ -26,6 +26,7 @@ public class ChildBarChartHolder extends BaseBarChartHolder {
         final List<ChildStatistic> statistics = groupStatistic.getChildStatistics();
         for (ChildStatistic childStatistic : statistics)
             childStatistic.loadBarBackground(context);
+        renderChart(statistics);
     }
 
     private void renderChart(final List<ChildStatistic> statistics) {

@@ -9,7 +9,6 @@ import com.antonina.socialsynchro.common.content.attachments.Attachment;
 import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
 import com.antonina.socialsynchro.common.content.statistics.ChildGroupStatistic;
 import com.antonina.socialsynchro.common.content.statistics.ChildStatistic;
-import com.antonina.socialsynchro.common.content.statistics.StatisticsContainer;
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 import com.antonina.socialsynchro.common.gui.listeners.OnAttachmentUploadedListener;
 import com.antonina.socialsynchro.common.gui.listeners.OnPublishedListener;
@@ -70,11 +69,36 @@ public class FacebookPostContainer extends ChildPostContainer {
                 if (data != null) {
                     instance.setReactionCount(data.reactionCount);
                     instance.setCommentCount(data.commentCount);
-                    notifyListener();
+                    notifyGUI();
                     dataTable.removeObserver(this);
                 }
             }
         });
+    }
+
+    @Override
+    public void saveInDatabase() {
+        super.saveInDatabase();
+        if (getInternalID() != null)
+            updateInDatabase();
+        else {
+            FacebookPostInfoRepository repository = FacebookPostInfoRepository.getInstance();
+            repository.insert(this);
+        }
+    }
+
+    @Override
+    public void updateInDatabase() {
+        FacebookPostInfoRepository repository = FacebookPostInfoRepository.getInstance();
+        repository.update(this);
+        super.updateInDatabase();
+    }
+
+    @Override
+    public void deleteFromDatabase() {
+        FacebookPostInfoRepository repository = FacebookPostInfoRepository.getInstance();
+        repository.delete(this);
+        super.deleteFromDatabase();
     }
 
     @Override
@@ -109,12 +133,15 @@ public class FacebookPostContainer extends ChildPostContainer {
 
     @Override
     public void publish(final OnPublishedListener publishListener, final OnAttachmentUploadedListener attachmentListener) {
-        setLoading(true);
-        if (!getAttachments().isEmpty())
-            for (Attachment attachment : getAttachments())
-                uploadAttachment(attachment, publishListener, attachmentListener);
-        else
-            publishJustContent(publishListener);
+        if (!isOnline()) {
+            setLoading(true);
+            notifyGUI();
+            if (!getAttachments().isEmpty())
+                for (Attachment attachment : getAttachments())
+                    uploadAttachment(attachment, publishListener, attachmentListener);
+            else
+                publishJustContent(publishListener);
+        }
     }
 
     private void publishJustContent(final OnPublishedListener publishListener) {
@@ -133,9 +160,9 @@ public class FacebookPostContainer extends ChildPostContainer {
                     if (response.getErrorString() == null) {
                         instance.setExternalID(response.getID());
                         publishListener.onPublished(instance);
-                    } else {
+                    } else
                         publishListener.onError(instance, response.getErrorString());
-                    }
+                    notifyGUI();
                     asyncResponse.removeObserver(this);
                 }
             }
@@ -166,6 +193,7 @@ public class FacebookPostContainer extends ChildPostContainer {
                     } else {
                         publishListener.onError(instance, response.getErrorString());
                     }
+                    notifyGUI();
                     asyncResponse.removeObserver(this);
                 }
             }
@@ -196,6 +224,7 @@ public class FacebookPostContainer extends ChildPostContainer {
                         attachmentListener.onError(attachment, response.getErrorString());
                     }
                     attachment.setLoading(false);
+                    attachment.notifyGUI();
                     asyncResponse.removeObserver(this);
                 }
             }
@@ -205,6 +234,7 @@ public class FacebookPostContainer extends ChildPostContainer {
     private void finishAttachmentUpload(Attachment attachment, OnPublishedListener publishListener, OnAttachmentUploadedListener attachmentListener) {
         attachment.setUploadProgress(100);
         attachment.setLoading(false);
+        attachment.notifyGUI();
         attachmentListener.onFinished(attachment);
         attachmentsPublished++;
         if (attachmentsPublished >= getAttachments().size()) {
@@ -215,25 +245,28 @@ public class FacebookPostContainer extends ChildPostContainer {
 
     @Override
     public void unpublish(final OnUnpublishedListener listener) {
-        FacebookRemoveContentRequest request = FacebookRemoveContentRequest.builder()
-                .postID(getExternalID())
-                .accessToken(getAccount().getAccessToken())
-                .build();
-        final FacebookPostContainer instance = this;
-        final LiveData<FacebookIdentifierResponse> asyncResponse = FacebookClient.removeContent(request);
-        asyncResponse.observeForever(new Observer<FacebookIdentifierResponse>() {
-            @Override
-            public void onChanged(@Nullable FacebookIdentifierResponse response) {
-                if (response != null) {
-                    if (response.getErrorString() == null) {
-                        instance.setExternalID(null);
-                        listener.onUnpublished(instance);
-                    } else
-                        listener.onError(instance, response.getErrorString());
-                    asyncResponse.removeObserver(this);
+        if (isOnline()) {
+            FacebookRemoveContentRequest request = FacebookRemoveContentRequest.builder()
+                    .postID(getExternalID())
+                    .accessToken(getAccount().getAccessToken())
+                    .build();
+            final FacebookPostContainer instance = this;
+            final LiveData<FacebookIdentifierResponse> asyncResponse = FacebookClient.removeContent(request);
+            asyncResponse.observeForever(new Observer<FacebookIdentifierResponse>() {
+                @Override
+                public void onChanged(@Nullable FacebookIdentifierResponse response) {
+                    if (response != null) {
+                        if (response.getErrorString() == null) {
+                            instance.setExternalID(null);
+                            listener.onUnpublished(instance);
+                        } else
+                            listener.onError(instance, response.getErrorString());
+                        notifyGUI();
+                        asyncResponse.removeObserver(this);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     @Override
@@ -244,48 +277,51 @@ public class FacebookPostContainer extends ChildPostContainer {
 
     @Override
     public void synchronize(final OnSynchronizedListener listener) {
-        setLoading(true);
-        FacebookUserAuthorizationStrategy authorization = new FacebookUserAuthorizationStrategy(getAccount().getAccessToken());
-        final FacebookPostRequest request = FacebookPostRequest.builder()
-                .postID(getExternalID())
-                .authorizationStrategy(authorization)
-                .build();
-        final FacebookPostContainer instance = this;
-        final LiveData<FacebookContentResponse> asyncResponse = FacebookClient.getContent(request);
-        asyncResponse.observeForever(new Observer<FacebookContentResponse>() {
-            @Override
-            public void onChanged(@Nullable FacebookContentResponse response) {
-                if (response != null) {
-                    if (response.getErrorString() == null) {
-                        createFromResponse(response);
-                        OnSynchronizedListener statisticsListener = new OnSynchronizedListener() {
-                            @Override
-                            public void onSynchronized(IServiceEntity entity) {
-                                if (reactionCountLoaded && commentCountLoaded) {
-                                    listener.onSynchronized(entity);
-                                    Log.d("statystyki", "FacebookPost: " + reactionCount + " " + commentCount);
-                                    setLoading(false);
-                                    reactionCountLoaded = false;
-                                    commentCountLoaded = false;
+        if (isOnline()) {
+            setLoading(true);
+            FacebookUserAuthorizationStrategy authorization = new FacebookUserAuthorizationStrategy(getAccount().getAccessToken());
+            final FacebookPostRequest request = FacebookPostRequest.builder()
+                    .postID(getExternalID())
+                    .authorizationStrategy(authorization)
+                    .build();
+            final FacebookPostContainer instance = this;
+            final LiveData<FacebookContentResponse> asyncResponse = FacebookClient.getContent(request);
+            asyncResponse.observeForever(new Observer<FacebookContentResponse>() {
+                @Override
+                public void onChanged(@Nullable FacebookContentResponse response) {
+                    if (response != null) {
+                        if (response.getErrorString() == null) {
+                            createFromResponse(response);
+                            OnSynchronizedListener statisticsListener = new OnSynchronizedListener() {
+                                @Override
+                                public void onSynchronized(IServiceEntity entity) {
+                                    if (reactionCountLoaded && commentCountLoaded) {
+                                        listener.onSynchronized(entity);
+                                        setLoading(false);
+                                        reactionCountLoaded = false;
+                                        commentCountLoaded = false;
+                                        saveInDatabase();
+                                    }
                                 }
-                            }
 
-                            @Override
-                            public void onError(IServiceEntity entity, String error) {
-                                listener.onError(entity, error);
-                                setLoading(false);
-                            }
-                        };
-                        loadReactions(statisticsListener, request);
-                        loadComments(statisticsListener, request);
-                    } else {
-                        setLoading(false);
-                        listener.onError(instance, response.getErrorString());
+                                @Override
+                                public void onError(IServiceEntity entity, String error) {
+                                    listener.onError(entity, error);
+                                    setLoading(false);
+                                }
+                            };
+                            loadReactions(statisticsListener, request);
+                            loadComments(statisticsListener, request);
+                        } else {
+                            setLoading(false);
+                            listener.onError(instance, response.getErrorString());
+                        }
+                        notifyGUI();
+                        asyncResponse.removeObserver(this);
                     }
-                    asyncResponse.removeObserver(this);
                 }
-            }
-        });
+            });
+        }
     }
 
     private void loadReactions(final OnSynchronizedListener listener, FacebookPostRequest request) {
@@ -334,5 +370,13 @@ public class FacebookPostContainer extends ChildPostContainer {
         groupStatistic.addChildStatistic(new ChildStatistic("Reactions", reactionCount, getService().getPanelBackgroundID()));
         groupStatistic.addChildStatistic(new ChildStatistic("Comments", commentCount, getService().getPanelBackgroundID()));
         return groupStatistic;
+    }
+
+    @Override
+    public String getURL() {
+        if (isOnline())
+            return "https://www.facebook.com/" + getExternalID();
+        else
+            return "";
     }
 }

@@ -104,7 +104,7 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     public void addAttachment(Attachment attachment) {
         if (!locked) {
             post.addAttachment(attachment);
-            notifyListener();
+            notifyGUI();
         }
     }
 
@@ -112,7 +112,7 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     public void removeAttachment(Attachment attachment) {
         if (!locked) {
             post.removeAttachment(attachment);
-            notifyListener();
+            notifyGUI();
         }
     }
 
@@ -144,7 +144,7 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     public void lock() {
         locked = true;
         removePost();
-        notifyListener();
+        notifyGUI();
     }
 
     public void unlock() {
@@ -157,7 +157,7 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
             Attachment copy = attachment.createCopy();
             addAttachment(copy);
         }
-        notifyListener();
+        notifyGUI();
     }
 
     private void removePost() {
@@ -180,6 +180,7 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     @Override
     public void setExternalID(String externalID) {
         this.externalID = externalID;
+        notifyGUI();
     }
 
     @Override
@@ -201,7 +202,7 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
 
     public void setParent(ParentPostContainer parent) {
         this.parent = parent;
-        notifyListener();
+        notifyGUI();
     }
 
     @Override
@@ -221,7 +222,7 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
                 public void onChanged(@Nullable Post post) {
                     if (post != null) {
                         instance.setPost(post);
-                        notifyListener();
+                        notifyGUI();
                         postLiveData.removeObserver(this);
                     }
                 }
@@ -233,7 +234,7 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
             public void onChanged(@Nullable Account account) {
                 if (account != null) {
                     instance.setAccount(account);
-                    notifyListener();
+                    notifyGUI();
                     accountLiveData.removeObserver(this);
                 }
             }
@@ -287,4 +288,11 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
 
     @Override
     public abstract ChildGroupStatistic getStatistic();
+
+    @Bindable
+    public boolean isOnline() {
+        return externalID != null && !externalID.isEmpty();
+    }
+
+    public abstract String getURL();
 }

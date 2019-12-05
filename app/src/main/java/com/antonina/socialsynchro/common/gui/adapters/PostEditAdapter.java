@@ -24,7 +24,7 @@ import java.util.List;
 
 public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.PostViewHolder> {
     private final int imageSize;
-    private final static int PARENT = 0, CHILD = 1;
+    private final static int PARENT = 0, CHILD = 1, NEW = 2;
     private ParentPostContainer parent;
     private EditActivity activity;
     private RecyclerView postRecyclerView;
@@ -53,10 +53,22 @@ public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.
             RecyclerView attachmentRecyclerView = view.findViewById(R.id.recyclerview_attachments);
             attachmentRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         }
+
+        public PostViewHolder(@NonNull View view) {
+            super(view);
+
+            attachmentAdapter = null;
+            profilePictureImageView = null;
+            addAttachmentButton = null;
+            publishButton = null;
+            unpublishButton = null;
+        }
     }
 
     public static class ChildViewHolder extends PostViewHolder<ChildEditItemBinding> {
         public final Button lockButton;
+        public final Button unlockButton;
+        public final Button removeButton;
         public final ImageView serviceIconImageView;
 
         public ChildViewHolder(@NonNull View view, AppCompatActivity context) {
@@ -65,6 +77,8 @@ public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.
 
             serviceIconImageView = view.findViewById(R.id.imageview_icon_picture);
             lockButton = view.findViewById(R.id.button_lock);
+            unlockButton = view.findViewById(R.id.button_unlock);
+            removeButton = view.findViewById(R.id.button_remove);
 
             binding.setAttachmentAdapter(attachmentAdapter);
             binding.executePendingBindings();
@@ -77,14 +91,12 @@ public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.
     }
 
     public static class ParentViewHolder extends PostViewHolder<ParentEditItemBinding> {
-        public final Button addChildButton;
         public final Button saveButton;
 
         public ParentViewHolder(@NonNull View view, AppCompatActivity context) {
             super(view, context);
             viewHolderType = PARENT;
 
-            addChildButton = view.findViewById(R.id.button_add_child);
             saveButton = view.findViewById(R.id.button_save);
 
             binding.setAttachmentAdapter(attachmentAdapter);
@@ -94,6 +106,22 @@ public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.
         @Override
         protected ParentEditItemBinding getBinding(View view) {
             return ParentEditItemBinding.bind(view);
+        }
+    }
+
+    public static class NewChildViewHolder extends PostViewHolder<ViewDataBinding> {
+        public final Button addNewButton;
+
+        public NewChildViewHolder(@NonNull View view) {
+            super(view);
+            viewHolderType = NEW;
+
+            addNewButton = view.findViewById(R.id.button_add_new);
+        }
+
+        @Override
+        protected ViewDataBinding getBinding(View view) {
+            return null;
         }
     }
 
@@ -123,14 +151,15 @@ public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.
         if (viewHolder.viewHolderType == PARENT) {
             ParentViewHolder parentViewHolder = (ParentViewHolder)viewHolder;
             parentViewHolder.binding.setParent((ParentPostContainer)item);
-        } else {
+            viewHolder.attachmentAdapter.setSource(item);
+        } else if (viewHolder.viewHolderType == CHILD) {
             ChildViewHolder childViewHolder = (ChildViewHolder)viewHolder;
             ChildPostContainer child = (ChildPostContainer)item;
             childViewHolder.binding.setChild(child);
             loadPictureByURL(viewHolder.profilePictureImageView, imageSize, child.getAccount().getProfilePictureURL());
             loadPictureByID(((ChildViewHolder)viewHolder).serviceIconImageView, imageSize, child.getAccount().getService().getIconID());
+            viewHolder.attachmentAdapter.setSource(item);
         }
-        viewHolder.attachmentAdapter.setSource(item);
     }
 
     @Override
@@ -142,6 +171,8 @@ public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.
     public int getItemViewType(int position) {
         if (position == 0)
             return PARENT;
+        else if (position == getItemCount() - 1)
+            return NEW;
         else
             return CHILD;
     }
@@ -154,64 +185,83 @@ public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.
         View view;
         final PostViewHolder viewHolder;
 
-        if (viewType == PARENT) {
-            view = inflater.inflate(R.layout.parent_edit_item, viewGroup, false);
-            ParentViewHolder parentViewHolder = new ParentViewHolder(view, this.context);
-            parentViewHolder.addChildButton.setOnClickListener(new View.OnClickListener() {
+        if (viewType == PARENT || viewType == CHILD) {
+            if (viewType == PARENT) {
+                view = inflater.inflate(R.layout.parent_edit_item, viewGroup, false);
+                ParentViewHolder parentViewHolder = new ParentViewHolder(view, this.context);
+                parentViewHolder.saveButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        activity.exitAndSave(parent);
+                    }
+                });
+
+                viewHolder = parentViewHolder;
+            } else {
+                view = inflater.inflate(R.layout.child_edit_item, viewGroup, false);
+                final ChildViewHolder childViewHolder = new ChildViewHolder(view, this.context);
+                childViewHolder.lockButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = childViewHolder.getAdapterPosition();
+                        ChildPostContainer item = (ChildPostContainer) getItem(position);
+                        item.lock();
+                    }
+                });
+                childViewHolder.unlockButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = childViewHolder.getAdapterPosition();
+                        ChildPostContainer item = (ChildPostContainer) getItem(position);
+                        item.unlock();
+                    }
+                });
+                childViewHolder.removeButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        int position = childViewHolder.getAdapterPosition();
+                        ChildPostContainer item = (ChildPostContainer) getItem(position);
+                        removeItem(item);
+                    }
+                });
+
+                viewHolder = childViewHolder;
+            }
+            viewHolder.profilePictureImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = viewHolder.getAdapterPosition();
+                    PostContainer item = getItem(position);
+                    item.switchVisibility();
+                    if (item.isParent())
+                        notifyItemChanged(position);
+                }
+            });
+            viewHolder.addAttachmentButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    activity.addAttachment(viewHolder);
+                }
+            });
+            viewHolder.publishButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = viewHolder.getAdapterPosition();
+                    PostContainer item = getItem(position);
+                    activity.publish(item);
+                }
+            });
+        } else {
+            view = inflater.inflate(R.layout.child_new_item, viewGroup, false);
+            NewChildViewHolder newChildViewHolder = new NewChildViewHolder(view);
+            newChildViewHolder.addNewButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     activity.addChild();
                 }
             });
-            parentViewHolder.saveButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    activity.exitAndSave(parent);
-                }
-            });
-
-            viewHolder = parentViewHolder;
-        } else {
-            view = inflater.inflate(R.layout.child_edit_item, viewGroup, false);
-            final ChildViewHolder childViewHolder = new ChildViewHolder(view, this.context);
-            childViewHolder.lockButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = childViewHolder.getAdapterPosition();
-                    ChildPostContainer item = (ChildPostContainer)getItem(position);
-                    if (item.isLocked())
-                        item.unlock();
-                    else
-                        item.lock();
-                }
-            });
-
-            viewHolder = childViewHolder;
+            viewHolder = newChildViewHolder;
         }
-        viewHolder.profilePictureImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = viewHolder.getAdapterPosition();
-                PostContainer item = getItem(position);
-                item.switchVisibility();
-                if (item.isParent())
-                    notifyItemChanged(position);
-            }
-        });
-        viewHolder.addAttachmentButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                activity.addAttachment(viewHolder);
-            }
-        });
-        viewHolder.publishButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = viewHolder.getAdapterPosition();
-                PostContainer item = getItem(position);
-                activity.publish(item);
-            }
-        });
         return viewHolder;
     }
 
@@ -226,6 +276,17 @@ public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.
         items.add(0, parent);
         items.addAll(parent.getChildren());
         notifyDataSetChanged();
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull PostViewHolder viewHolder, int position) {
+        if (viewHolder.viewHolderType != NEW)
+            super.onBindViewHolder(viewHolder, position);
+    }
+
+    @Override
+    public int getItemCount() {
+        return super.getItemCount() + 1;
     }
 
     public void addItem(ChildPostContainer item) {

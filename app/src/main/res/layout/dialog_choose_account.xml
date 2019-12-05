@@ -1,35 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    tools:context=".common.gui.dialogs.ChooseAccountDialog" >
+    tools:context=".common.gui.dialogs.ChooseAccountDialog"
+    style="@style/DialogContentLayoutStyle" >
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview_accounts_dialog"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scrollbars="vertical"
-        android:padding="@dimen/padding_standard" />
+        android:layout_marginBottom="@dimen/margin_standard"
+        style="@style/RecyclerViewStyle" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/button_cancel"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/cancel" />
+            android:layout_weight="1"
+            android:gravity="center">
 
-        <Button
-            android:id="@+id/button_ok"
+            <com.antonina.socialsynchro.common.gui.other.StateButton
+                android:id="@+id/button_cancel"
+                android:tooltipText="@string/cancel"
+                android:background="@drawable/icon_cross"
+                style="@style/IconButtonStyle" />
+
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ok" />
+            android:layout_weight="1"
+            android:gravity="center">
+
+            <com.antonina.socialsynchro.common.gui.other.StateButton
+                android:id="@+id/button_ok"
+                android:tooltipText="@string/ok"
+                android:layout_marginRight="@dimen/no_margin"
+                android:background="@drawable/icon_checkmark"
+                style="@style/IconButtonStyle" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

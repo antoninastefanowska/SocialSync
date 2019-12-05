@@ -2,6 +2,7 @@ package com.antonina.socialsynchro.common.gui.adapters;
 
 import android.content.Context;
 import android.databinding.ViewDataBinding;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,7 @@ import com.antonina.socialsynchro.common.gui.GUIItem;
 import com.antonina.socialsynchro.common.gui.listeners.OnUpdatedListener;
 import com.antonina.socialsynchro.common.gui.other.MaskTransformation;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 
@@ -188,6 +190,18 @@ public abstract class BaseAdapter<ItemType extends GUIItem, ViewHolderType exten
                 .override(imageSize)
                 .fitCenter()
                 .transform(new MaskTransformation(context));
+        Glide.with(context)
+                .load(id)
+                .apply(options)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(imageView);
+    }
+
+    protected void loadPictureByID(Transformation<Bitmap> transformation, ImageView imageView, int imageSize, int id) {
+        RequestOptions options = new RequestOptions()
+                .override(imageSize)
+                .fitCenter()
+                .transform(transformation);
         Glide.with(context)
                 .load(id)
                 .apply(options)

@@ -177,4 +177,6 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
     }
 
     public abstract AccountStatistic getStatistic();
+
+    public abstract String getURL();
 }

@@ -14,31 +14,37 @@
         style="@style/MainConstraintLayoutStyle">
 
         <LinearLayout
-            style="@style/MainLinearLayoutStyle"
-            tools:ignore="MissingConstraints">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
 
-            <HorizontalScrollView
-                android:id="@+id/horizontal_scrollview"
-                style="@style/ButtonsScrollViewStyle">
+            <FrameLayout
+                style="@style/NavigationLayoutStyle">
 
-                <LinearLayout
-                    style="@style/ButtonsScrollableLinearLayoutStyle">
+                <TextView
+                    android:text="@string/navigation_gallery"
+                    style="@style/NavigationTitleStyle" />
 
-                    <Button
-                        android:id="@+id/button_confirm"
-                        android:onClick="buttonConfirm_onClick"
-                        android:text="@string/confirm"
-                        style="@style/ButtonStyle" />
+                <com.antonina.socialsynchro.common.gui.other.StateButton
+                    android:id="@+id/button_confirm"
+                    android:onClick="confirm"
+                    android:tooltipText="@string/confirm"
+                    android:background="@drawable/icon_checkmark"
+                    style="@style/IconButtonStyle" />
 
-                </LinearLayout>
+            </FrameLayout>
 
-            </HorizontalScrollView>
+            <LinearLayout
+                style="@style/MainLinearLayoutStyle"
+                tools:ignore="MissingConstraints">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerview_images"
-                android:layout_marginTop="@dimen/margin_standard"
-                android:adapter="@{imageAdapter}"
-                style="@style/RecyclerViewStyle" />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerview_images"
+                    android:layout_marginTop="@dimen/margin_standard"
+                    android:adapter="@{imageAdapter}"
+                    style="@style/RecyclerViewStyle" />
+
+            </LinearLayout>
 
         </LinearLayout>
 

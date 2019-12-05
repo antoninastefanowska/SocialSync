@@ -31,19 +31,24 @@
     <string name="sign_in_status">Sign in status</string>
     <string name="sign_in">Sign in</string>
     <string name="confirm_signing_in">Confirm signing in</string>
+
     <string name="add_child">Add child</string>
     <string name="remove_child">Remove child</string>
     <string name="save">Save</string>
     <string name="publish">Publish</string>
     <string name="unpublish">Unpublish</string>
     <string name="lock">Lock</string>
+    <string name="unlock">Unlock</string>
     <string name="add_attachment">Add attachment</string>
     <string name="confirm">Confirm</string>
     <string name="accounts">Accounts</string>
-    <string name="create_content">Create content</string>
-    <string name="remove_content">Remove content</string>
-    <string name="synchronize_content">Synchronize content</string>
+    <string name="create">Create</string>
+    <string name="edit">Edit</string>
+    <string name="remove">Remove</string>
+    <string name="synchronize">Synchronize</string>
     <string name="statistics">Statistics</string>
+    <string name="link">Open link</string>
+    <string name="add_new">New...</string>
 
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>
@@ -54,9 +59,16 @@
     <string name="edit_title_hint">Title</string>
 
     <string name="no_title">[no title]</string>
+    <string name="online">(Online)</string>
+    <string name="offline">(Offline)</string>
 
     <string name="title_choose_accounts">Choose accounts</string>
     <string name="title_choose_attachment_type">Choose attachment type</string>
     <string name="title_choose_service">Choose service</string>
     <string name="title_activity_test">TestActivity</string>
+
+    <string name="navigation_posts">Posts</string>
+    <string name="navigation_accounts">Accounts</string>
+    <string name="navigation_edit">Edit</string>
+    <string name="navigation_gallery">Gallery</string>
 </resources>

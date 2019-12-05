@@ -56,6 +56,11 @@ public class AccountsActivity extends AppCompatActivity {
         binding.setAccountAdapter(adapter);
     }
 
+    public void showPosts(View view) {
+        finish();
+        overridePendingTransition(R.anim.slide_from_right, R.anim.slide_to_left);
+    }
+
     @Override
     public void finish() {
         Intent data = new Intent();
@@ -64,7 +69,7 @@ public class AccountsActivity extends AppCompatActivity {
         super.finish();
     }
 
-    public void buttonAddAccount_onClick(View view) {
+    public void addAccount() {
         ChooseServiceDialog dialog = new ChooseServiceDialog(this, new OnServiceSelectedListener() {
             @Override
             public void onServiceSelected(Service service) {
@@ -76,17 +81,14 @@ public class AccountsActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    public void buttonRemoveAccount_onClick(View view) {
-        for (Account account : adapter.getSelectedItems())
-            account.deleteFromDatabase();
-        adapter.removeSelected();
-        accountsChanged = true;
+    public void removeAccount(Account account) {
+        account.deleteFromDatabase();
+        adapter.removeItem(account);
     }
 
-    public void buttonSynchronizeAccount_onClick(View view) {
-        List<Account> selectedAccounts = adapter.getSelectedItems();
+    public void synchronizeAccount(Account account) {
         final Context context = this;
-        OnSynchronizedListener listener = new OnSynchronizedListener() {
+        account.synchronize(new OnSynchronizedListener() {
             @Override
             public void onSynchronized(IServiceEntity entity) {
                 Toast toast = Toast.makeText(context, getResources().getString(R.string.message_account_synchronization), Toast.LENGTH_LONG);
@@ -98,49 +100,18 @@ public class AccountsActivity extends AppCompatActivity {
                 Toast toast = Toast.makeText(context, getResources().getString(R.string.error_account_synchronization, error), Toast.LENGTH_LONG);
                 toast.show();
             }
-        };
-        for (Account account : selectedAccounts) {
-            account.synchronize(listener);
-        }
+        });
     }
 
-    public void buttonCheckLimits_onClick(View view) {
-        final TwitterAccount account = (TwitterAccount)adapter.getSelectedItem();
-        if (account != null) {
-            TwitterUserAuthorizationStrategy authorization = new TwitterUserAuthorizationStrategy(account.getAccessToken(), account.getSecretToken());
-            TwitterGetRateLimitsRequest request = TwitterGetRateLimitsRequest.builder()
-                    .addResource("users")
-                    .addResource("statuses")
-                    .addResource("application")
-                    .addResource("account")
-                    .addResource("media")
-                    .authorizationStrategy(authorization)
-                    .build();
-            LiveData<TwitterGetRateLimitsResponse> asyncResponse = TwitterClient.getRateLimits(request);
-            asyncResponse.observe(this, new Observer<TwitterGetRateLimitsResponse>() {
-                @Override
-                public void onChanged(@Nullable TwitterGetRateLimitsResponse response) {
-                    if (response != null) {
-                        if (response.getErrorString() == null) {
-                            Log.d("limity", "Pobrano limity dla konta: " + account.getName());
-                        } else {
-                            Log.d("limity", "Błąd pobierania limitów dla konta: " + account.getName());
-                        }
-                    }
-                }
-            });
-        }
-    }
-
-    public void buttonStatistics_onClick(View view) {
+    public void showStatistics(View view) {
         List<Account> accounts = adapter.getItems();
         StatisticsContainer statisticsContainer = new StatisticsContainer();
         for (Account account : accounts)
             statisticsContainer.addStatistic(account.getStatistic());
-        AccountsBarChartHolder chartContainer = new AccountsBarChartHolder(statisticsContainer);
+        AccountsBarChartHolder chartHolder = new AccountsBarChartHolder(statisticsContainer);
 
         Intent statisticsActivity = new Intent(AccountsActivity.this, StatisticsActivity.class);
-        statisticsActivity.putExtra("chart_container", chartContainer);
+        statisticsActivity.putExtra("chart_holder", chartHolder);
         startActivity(statisticsActivity);
     }
 

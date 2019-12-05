@@ -31,11 +31,11 @@ public class LoginActivity extends AppCompatActivity {
         binding.executePendingBindings();
     }
 
-    public void buttonConnect_onClick(View view) {
+    public void connect(View view) {
         loginFlow.signIn();
     }
 
-    public void buttonConfirm_onClick(View view) {
+    public void confirm(View view) {
         loginFlow.confirm();
     }
 

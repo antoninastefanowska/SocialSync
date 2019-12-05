@@ -27,30 +27,29 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
-                <Button
-                    android:id="@+id/button_add_child"
-                    android:text="@string/add_child"
-                    style="@style/ButtonStyle" />
-
-                <Button
+                <com.antonina.socialsynchro.common.gui.other.StateButton
                     android:id="@+id/button_save"
-                    android:text="@string/save"
-                    style="@style/ButtonStyle" />
+                    android:tooltipText="@string/save"
+                    android:background="@drawable/icon_floppydisc"
+                    style="@style/IconButtonStyle" />
 
-                <Button
+                <com.antonina.socialsynchro.common.gui.other.StateButton
                     android:id="@+id/button_add_attachment"
-                    android:text="@string/add_attachment"
-                    style="@style/ButtonStyle" />
+                    android:tooltipText="@string/add_attachment"
+                    android:background="@drawable/icon_clip"
+                    style="@style/IconButtonStyle" />
 
-                <Button
+                <com.antonina.socialsynchro.common.gui.other.StateButton
                     android:id="@+id/button_publish"
-                    android:text="@string/publish"
-                    style="@style/ButtonStyle" />
+                    android:tooltipText="@string/publish"
+                    android:background="@drawable/icon_publish"
+                    style="@style/IconButtonStyle" />
 
-                <Button
+                <com.antonina.socialsynchro.common.gui.other.StateButton
                     android:id="@+id/button_unpublish"
-                    android:text="@string/unpublish"
-                    style="@style/ButtonStyle" />
+                    android:tooltipText="@string/unpublish"
+                    android:background="@drawable/icon_unpublish"
+                    style="@style/IconButtonStyle" />
 
             </LinearLayout>
 
@@ -97,21 +96,21 @@
 
                 </LinearLayout>
 
-                <ImageView
-                    android:id="@+id/imageview_profile_picture"
-                    android:layout_width="@dimen/profile_picture_background_size"
-                    android:layout_height="@dimen/profile_picture_background_size"
-                    android:src="@drawable/background_avatar" />
+                <FrameLayout
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_gravity="left">
 
-                <RelativeLayout
-                    android:id="@+id/loading_panel"
-                    android:visibility="@{parent.isLoading() ? View.VISIBLE : View.GONE}"
-                    style="@style/LoadingPanelStyle" >
+                    <ImageView
+                        android:id="@+id/imageview_profile_picture"
+                        android:layout_width="@dimen/profile_picture_background_size"
+                        android:layout_height="@dimen/profile_picture_background_size"
+                        android:src="@drawable/background_avatar" />
 
                     <ProgressBar
-                        style="@style/ProgressBarStyle"/>
+                        android:visibility="@{parent.loading ? View.VISIBLE : View.GONE}"
+                        style="@style/ProgressBarStyle" />
 
-                </RelativeLayout>
+                </FrameLayout>
 
             </FrameLayout>
 

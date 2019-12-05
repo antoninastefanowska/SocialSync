@@ -9,17 +9,13 @@
 
     <LinearLayout
         android:id="@+id/layout_main"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="@dimen/padding_small" >
+        android:background="@{service.background}"
+        style="@style/ServiceItemLayoutStyle" >
 
-        <TextView
-            android:id="@+id/textview_service_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorBackground"
-            android:text="@{service.name}" />
+        <ImageView
+            android:src="@{service.banner}"
+            android:contentDescription="@{service.name}"
+            style="@style/ServiceItemBannerStyle" />
 
     </LinearLayout>
 

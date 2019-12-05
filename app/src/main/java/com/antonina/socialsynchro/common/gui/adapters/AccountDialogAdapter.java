@@ -7,11 +7,16 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.common.content.accounts.Account;
 import com.antonina.socialsynchro.common.database.repositories.AccountRepository;
+import com.antonina.socialsynchro.common.gui.other.MaskTransformation;
 import com.antonina.socialsynchro.databinding.AccountDialogItemBinding;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +24,15 @@ import java.util.List;
 @SuppressWarnings("WeakerAccess")
 public class AccountDialogAdapter extends BaseAdapter<Account, AccountDialogAdapter.AccountViewHolder> {
     private List<Account> ignoredData;
+    private int imageSize;
 
     protected static class AccountViewHolder extends BaseAdapter.BaseViewHolder<AccountDialogItemBinding> {
+        public final ImageView serviceIconImageView;
 
         public AccountViewHolder(View view) {
             super(view);
+
+            serviceIconImageView = view.findViewById(R.id.imageview_icon_picture);
         }
 
         @Override
@@ -35,6 +44,7 @@ public class AccountDialogAdapter extends BaseAdapter<Account, AccountDialogAdap
     public AccountDialogAdapter(AppCompatActivity context) {
         super(context);
         ignoredData = new ArrayList<>();
+        imageSize = context.getResources().getDimensionPixelSize(R.dimen.dialog_item_height);
         loadData();
     }
 
@@ -46,6 +56,14 @@ public class AccountDialogAdapter extends BaseAdapter<Account, AccountDialogAdap
     @Override
     protected void setItemBinding(AccountViewHolder viewHolder, Account item) {
         viewHolder.binding.setAccount(item);
+        RequestOptions options = new RequestOptions()
+                .override(imageSize)
+                .fitCenter();
+        Glide.with(context)
+                .load(item.getService().getIconID())
+                .apply(options)
+                .transition(DrawableTransitionOptions.withCrossFade())
+                .into(viewHolder.serviceIconImageView);
     }
 
     @Override

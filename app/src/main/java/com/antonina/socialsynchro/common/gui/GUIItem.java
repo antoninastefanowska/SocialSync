@@ -22,22 +22,22 @@ public abstract class GUIItem extends BaseObservable implements Serializable {
 
     public void show() {
         visible = true;
-        notifyListener();
+        notifyGUI();
     }
 
     public void hide() {
         visible = false;
-        notifyListener();
+        notifyGUI();
     }
 
     public void switchVisibility() {
         visible = !visible;
-        notifyListener();
+        notifyGUI();
     }
 
     public void switchSelect() {
         selected = !selected;
-        notifyListener();
+        notifyGUI();
     }
 
     public void setListener(OnUpdatedListener listener) {
@@ -48,14 +48,14 @@ public abstract class GUIItem extends BaseObservable implements Serializable {
         return listener;
     }
 
-    public void notifyListener() {
+    public void notifyGUI() {
         if (listener != null)
             listener.onUpdated(this);
     }
 
     public void setLoading(boolean loading) {
         this.loading = loading;
-        notifyListener();
+        notifyGUI();
     }
 
     @Bindable

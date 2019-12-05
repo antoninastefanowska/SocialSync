@@ -67,7 +67,7 @@ public abstract class Attachment extends GUIItem implements IDatabaseEntity, ISe
 
     public void setParentPost(Post parentPost) {
         this.parentPost = parentPost;
-        notifyListener();
+        notifyGUI();
     }
 
     public Attachment(IDatabaseRow data) {

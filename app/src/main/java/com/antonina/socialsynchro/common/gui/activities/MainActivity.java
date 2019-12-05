@@ -1,40 +1,39 @@
 package com.antonina.socialsynchro.common.gui.activities;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.support.annotation.Nullable;
+import android.net.Uri;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.antonina.socialsynchro.R;
+import com.antonina.socialsynchro.common.content.attachments.Attachment;
 import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
 import com.antonina.socialsynchro.common.content.posts.ParentPostContainer;
+import com.antonina.socialsynchro.common.content.posts.PostContainer;
 import com.antonina.socialsynchro.common.content.statistics.StatisticsContainer;
+import com.antonina.socialsynchro.common.gui.chart.ChildBarChartHolder;
 import com.antonina.socialsynchro.common.gui.chart.ParentBarChartHolder;
+import com.antonina.socialsynchro.common.gui.listeners.OnAttachmentUploadedListener;
+import com.antonina.socialsynchro.common.gui.listeners.OnPublishedListener;
 import com.antonina.socialsynchro.common.gui.listeners.OnUnpublishedListener;
+import com.antonina.socialsynchro.common.gui.other.DynamicResource;
 import com.antonina.socialsynchro.databinding.ActivityMainBinding;
 import com.antonina.socialsynchro.common.gui.adapters.ParentDisplayAdapter;
 import com.antonina.socialsynchro.common.gui.listeners.OnSynchronizedListener;
 import com.antonina.socialsynchro.common.rest.IServiceEntity;
-import com.antonina.socialsynchro.services.twitter.rest.TwitterClient;
-import com.antonina.socialsynchro.services.twitter.rest.requests.TwitterGetRateLimitsRequest;
-import com.antonina.socialsynchro.services.twitter.rest.authorization.TwitterApplicationAuthorizationStrategy;
-import com.antonina.socialsynchro.services.twitter.rest.responses.TwitterGetRateLimitsResponse;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-    private final static int ACCOUNTS = 0, CREATE = 1;
+    private final static int ACCOUNTS = 0, CREATE = 1, EDIT = 2;
 
     private ParentDisplayAdapter parentAdapter;
+    private ParentPostContainer editParent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,45 +50,33 @@ public class MainActivity extends AppCompatActivity {
         binding.executePendingBindings();
     }
 
-    public void buttonAccounts_onClick(View view) {
-        Intent accountsActivity = new Intent(MainActivity.this, AccountsActivity.class);
-        startActivityForResult(accountsActivity, ACCOUNTS);
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        DynamicResource.free();
     }
 
-    public void buttonCreateContent_onClick(View view) {
+    public void showAccounts(View view) {
+        Intent accountsActivity = new Intent(MainActivity.this, AccountsActivity.class);
+        startActivityForResult(accountsActivity, ACCOUNTS);
+        overridePendingTransition(R.anim.slide_from_left, R.anim.slide_to_right);
+    }
+
+    public void createNew() {
         Intent editActivity = new Intent(MainActivity.this, EditActivity.class);
         startActivityForResult(editActivity, CREATE);
     }
 
-    public void buttonRemoveContent_onClick(View view) {
-        for (ParentPostContainer parent : parentAdapter.getSelectedItems())
-            parent.deleteFromDatabase();
-        parentAdapter.removeSelected();
+    public void editParent(ParentPostContainer parent) {
+        Intent editActivity = new Intent(MainActivity.this, EditActivity.class);
+        editActivity.putExtra("parent", parent);
+        editParent = parent;
+        startActivityForResult(editActivity, EDIT);
     }
 
-    public void buttonUnpublishContent_onClick(View view) {
+    public void synchronizePost(PostContainer postContainer) {
         final Context context = this;
-        OnUnpublishedListener listener = new OnUnpublishedListener() {
-            @Override
-            public void onUnpublished(ChildPostContainer unpublishedPost) {
-                Toast toast = Toast.makeText(context, getResources().getString(R.string.message_content_unpublish), Toast.LENGTH_LONG);
-                toast.show();
-            }
-
-            @Override
-            public void onError(ChildPostContainer post, String error) {
-                Toast toast = Toast.makeText(context, getResources().getString(R.string.error_content_unpublish, error), Toast.LENGTH_LONG);
-                toast.show();
-            }
-        };
-        for (ParentPostContainer parent : parentAdapter.getSelectedItems())
-            parent.unpublish(listener);
-    }
-
-    public void buttonSynchronizeContent_onClick(View view) {
-        List<ParentPostContainer> selectedParents = parentAdapter.getSelectedItems();
-        final Context context = this;
-        OnSynchronizedListener listener = new OnSynchronizedListener() {
+        postContainer.synchronize(new OnSynchronizedListener() {
             @Override
             public void onSynchronized(IServiceEntity entity) {
                 Toast toast = Toast.makeText(context, getResources().getString(R.string.message_content_synchronization), Toast.LENGTH_LONG);
@@ -101,45 +88,96 @@ public class MainActivity extends AppCompatActivity {
                 Toast toast = Toast.makeText(context, getResources().getString(R.string.error_content_synchronization, error), Toast.LENGTH_LONG);
                 toast.show();
             }
-        };
-        for (ParentPostContainer parent : selectedParents) {
-            parent.synchronize(listener);
-        }
+        });
     }
 
-    public void buttonStatistics_onClick(View view) {
-        List<ParentPostContainer> selectedParents = parentAdapter.getSelectedItems();
-        ParentPostContainer parent = selectedParents.get(0);
+    public void showParentStatistics(ParentPostContainer parent) {
         StatisticsContainer statisticsContainer = new StatisticsContainer();
         statisticsContainer.addStatistic(parent.getStatistic());
 
-        ParentBarChartHolder chartContainer = new ParentBarChartHolder(statisticsContainer);
+        ParentBarChartHolder chartHolder = new ParentBarChartHolder(statisticsContainer);
         Intent statisticsActivity = new Intent(MainActivity.this, StatisticsActivity.class);
-        statisticsActivity.putExtra("chart_container", chartContainer);
+        statisticsActivity.putExtra("chart_holder", chartHolder);
         startActivity(statisticsActivity);
     }
 
-    public void buttonCheckLimits_onClick(View view) {
-        TwitterApplicationAuthorizationStrategy authorization = new TwitterApplicationAuthorizationStrategy();
-        TwitterGetRateLimitsRequest request = TwitterGetRateLimitsRequest.builder()
-                .addResource("users")
-                .addResource("statuses")
-                .addResource("application")
-                .authorizationStrategy(authorization)
-                .build();
-        LiveData<TwitterGetRateLimitsResponse> asyncResponse = TwitterClient.getRateLimits(request);
-        asyncResponse.observe(this, new Observer<TwitterGetRateLimitsResponse>() {
+    public void showChildStatistics(ChildPostContainer child) {
+        StatisticsContainer statisticsContainer = new StatisticsContainer();
+        statisticsContainer.addStatistic(child.getStatistic());
+
+        ChildBarChartHolder chartHolder = new ChildBarChartHolder(statisticsContainer);
+        Intent statisticsActivity = new Intent(MainActivity.this, StatisticsActivity.class);
+        statisticsActivity.putExtra("chart_holder", chartHolder);
+        startActivity(statisticsActivity);
+    }
+
+    public void openChildLink(ChildPostContainer child) {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(child.getURL()));
+        startActivity(browserIntent);
+    }
+
+    public void publishPost(PostContainer post) {
+        final Context context = this;
+        final View layout = findViewById(R.id.layout_main);
+        post.publish(new OnPublishedListener() {
             @Override
-            public void onChanged(@Nullable TwitterGetRateLimitsResponse response) {
-                if (response != null) {
-                    if (response.getErrorString() == null) {
-                        Log.d("limity", "Pobrano limity dla aplikacji.");
-                    } else {
-                        Log.d("limity", "Błąd pobierania limitów dla aplikacji.");
-                    }
-                }
+            public void onPublished(ChildPostContainer publishedPost) {
+                Snackbar snackbar = Snackbar.make(layout, "Succesfully published: " + publishedPost.getExternalID(), Snackbar.LENGTH_LONG);
+                snackbar.show();
+            }
+
+            @Override
+            public void onError(ChildPostContainer post, String error) {
+                Snackbar snackbar = Snackbar.make(layout, "Failed to publish. Error: " + error, Snackbar.LENGTH_LONG);
+                snackbar.show();
+            }
+        }, new OnAttachmentUploadedListener() {
+            @Override
+            public void onInitialized(Attachment attachment) {
+                Toast toast = Toast.makeText(context, "Attachment initialized: " + attachment.getFile().getName(), Toast.LENGTH_LONG);
+                toast.show();
+            }
+
+            @Override
+            public void onProgress(Attachment attachment) {
+                Toast toast = Toast.makeText(context, "Attachment upload progress: " + attachment.getUploadProgress() + "%", Toast.LENGTH_LONG);
+                toast.show();
+            }
+
+            @Override
+            public void onFinished(Attachment attachment) {
+                Toast toast = Toast.makeText(context, "Attachment upload finished: " + attachment.getExternalID(), Toast.LENGTH_LONG);
+                toast.show();
+            }
+
+            @Override
+            public void onError(Attachment attachment, String error) {
+                Toast toast = Toast.makeText(context, "Attachment upload failed: " + attachment.getFile().getName(), Toast.LENGTH_LONG);
+                toast.show();
             }
         });
+    }
+
+    public void unpublishPost(PostContainer postContainer) {
+        final Context context = this;
+        postContainer.unpublish(new OnUnpublishedListener() {
+            @Override
+            public void onUnpublished(ChildPostContainer unpublishedPost) {
+                Toast toast = Toast.makeText(context, getResources().getString(R.string.message_content_unpublish), Toast.LENGTH_LONG);
+                toast.show();
+            }
+
+            @Override
+            public void onError(ChildPostContainer post, String error) {
+                Toast toast = Toast.makeText(context, getResources().getString(R.string.error_content_unpublish, error), Toast.LENGTH_LONG);
+                toast.show();
+            }
+        });
+    }
+
+    public void removePost(PostContainer postContainer) {
+        //TODO: Wyświetlić ostrzeżenie.
+        postContainer.deleteFromDatabase();
     }
 
     @Override
@@ -147,16 +185,25 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
-                case ACCOUNTS:
+                case ACCOUNTS: {
                     boolean accountsChanged = data.getBooleanExtra("accountsChanged", false);
                     if (accountsChanged)
                         parentAdapter.loadData();
                     break;
-                case CREATE:
-                    ParentPostContainer parent = (ParentPostContainer)data.getSerializableExtra("parent");
+                }
+                case CREATE: {
+                    ParentPostContainer parent = (ParentPostContainer) data.getSerializableExtra("parent");
                     parentAdapter.addItem(parent);
                     parent.saveInDatabase();
                     break;
+                }
+                case EDIT: {
+                    ParentPostContainer parent = (ParentPostContainer) data.getSerializableExtra("parent");
+                    parentAdapter.editItem(editParent, parent);
+                    parent.updateInDatabase();
+                    editParent = null;
+                    break;
+                }
             }
         }
     }

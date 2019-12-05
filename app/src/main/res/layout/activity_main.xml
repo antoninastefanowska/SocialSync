@@ -15,67 +15,34 @@
         style="@style/MainConstraintLayoutStyle">
 
         <LinearLayout
-            android:id="@+id/linear_layout_main"
-            style="@style/MainLinearLayoutStyle"
-            tools:ignore="MissingConstraints">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <HorizontalScrollView
-                android:id="@+id/horizontal_scrollview"
-                style="@style/ButtonsScrollViewStyle">
+            <FrameLayout
+                style="@style/NavigationLayoutStyle">
 
-                <LinearLayout
-                    style="@style/ButtonsScrollableLinearLayoutStyle">
+                <TextView
+                    android:text="@string/navigation_posts"
+                    style="@style/NavigationTitleStyle" />
 
-                    <Button
-                        android:id="@+id/button_accounts"
-                        android:onClick="buttonAccounts_onClick"
-                        android:text="@string/accounts"
-                        style="@style/ButtonStyle" />
+                <com.antonina.socialsynchro.common.gui.other.StateButton
+                    android:background="@drawable/arrow_left"
+                    android:onClick="showAccounts"
+                    style="@style/NavigationButtonLeft" />
 
-                    <Button
-                        android:id="@+id/button_create_content"
-                        android:onClick="buttonCreateContent_onClick"
-                        android:text="@string/create_content"
-                        style="@style/ButtonStyle" />
+            </FrameLayout>
 
-                    <Button
-                        android:id="@+id/button_remove_content"
-                        android:onClick="buttonRemoveContent_onClick"
-                        android:text="@string/remove_content"
-                        style="@style/ButtonStyle" />
+            <LinearLayout
+                android:id="@+id/linear_layout_main"
+                style="@style/MainLinearLayoutStyle">
 
-                    <Button
-                        android:id="@+id/button_synchronize_content"
-                        android:onClick="buttonSynchronizeContent_onClick"
-                        android:text="@string/synchronize_content"
-                        style="@style/ButtonStyle" />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerview_parents"
+                    android:adapter="@{parentAdapter}"
+                    style="@style/RecyclerViewStyle" />
 
-                    <Button
-                        android:id="@+id/button_unpublish_content"
-                        android:onClick="buttonUnpublishContent_onClick"
-                        android:text="@string/unpublish"
-                        style="@style/ButtonStyle" />
-
-                    <Button
-                        android:id="@+id/button_statistics"
-                        android:onClick="buttonStatistics_onClick"
-                        android:text="@string/statistics"
-                        style="@style/ButtonStyle" />
-
-                    <Button
-                        android:id="@+id/button_check_limits"
-                        android:onClick="buttonCheckLimits_onClick"
-                        android:text="Check limits"
-                        style="@style/ButtonStyle" />
-
-                </LinearLayout>
-
-            </HorizontalScrollView>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerview_parents"
-                android:adapter="@{parentAdapter}"
-                style="@style/RecyclerViewStyle" />
+            </LinearLayout>
 
         </LinearLayout>
 

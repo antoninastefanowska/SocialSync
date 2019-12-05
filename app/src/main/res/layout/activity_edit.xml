@@ -15,13 +15,29 @@
         style="@style/MainConstraintLayoutStyle" >
 
         <LinearLayout
-            style="@style/MainLinearLayoutStyle"
-            tools:ignore="MissingConstraints">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recyclerview_post"
-                android:adapter="@{postAdapter}"
-                style="@style/RecyclerViewStyle"/>
+            <FrameLayout
+                style="@style/NavigationLayoutStyle">
+
+                <TextView
+                    android:text="@string/navigation_edit"
+                    style="@style/NavigationTitleStyle" />
+
+            </FrameLayout>
+
+            <LinearLayout
+                style="@style/MainLinearLayoutStyle"
+                tools:ignore="MissingConstraints">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerview_post"
+                    android:adapter="@{postAdapter}"
+                    style="@style/RecyclerViewStyle"/>
+
+            </LinearLayout>
 
         </LinearLayout>
 
