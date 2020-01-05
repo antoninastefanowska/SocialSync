@@ -7,11 +7,13 @@ import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookGetPa
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookGetUserPagesResponse;
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookInspectTokenResponse;
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookPageResponse;
+import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookUploadVideoFinishResponse;
+import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookUploadVideoStartResponse;
+import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookUploadVideoTransferResponse;
 
 import java.util.HashMap;
 
 import okhttp3.MultipartBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.DELETE;
 import retrofit2.http.Field;
@@ -58,6 +60,18 @@ public interface FacebookAPI {
     @Multipart
     @POST("/v5.0/{page_id}/photos")
     Call<FacebookIdentifierResponse> uploadPhoto(@Path("page_id") String pageID, @Part MultipartBody.Part photo, @Query("published") boolean published, @Query("access_token") String accessToken);
+
+    @FormUrlEncoded
+    @POST("/v5.0/{page_id}/videos")
+    Call<FacebookUploadVideoStartResponse> uploadVideoStart(@Path("page_id") String pageID, @Field("upload_phase") String uploadPhase, @Field("file_size") long fileSize, @Query("access_token") String accessToken);
+
+    @Multipart
+    @POST("/v5.0/{page_id}/videos")
+    Call<FacebookUploadVideoTransferResponse> uploadVideoTransfer(@Path("page_id") String pageID, @Query("upload_phase") String uploadPhase, @Query("upload_session_id") String uploadSessionID, @Query("start_offset") long startOffset, @Part MultipartBody.Part fileChunk, @Query("access_token") String accessToken);
+
+    @FormUrlEncoded
+    @POST("/v5.0/{page_id}/videos")
+    Call<FacebookUploadVideoFinishResponse> uploadVideoFinish(@Path("page_id") String pageID, @Field("upload_phase") String uploadPhase, @Field("upload_session_id") String uploadSessionID, @Field("title") String title, @Field("description") String description, @Query("access_token") String accessToken);
 
     @GET("/v5.0/{post_id}/reactions")
     Call<FacebookCountResponse> getPostReactions(@Path("post_id") String postID, @Query("access_token") String accessToken);

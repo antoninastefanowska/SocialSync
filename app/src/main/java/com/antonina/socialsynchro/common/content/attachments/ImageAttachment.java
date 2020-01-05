@@ -6,8 +6,6 @@ import java.io.File;
 
 @SuppressWarnings("WeakerAccess")
 public class ImageAttachment extends Attachment {
-    private int height, width;
-
     public ImageAttachment(IDatabaseRow data) {
         super(data);
         setAttachmentType(AttachmentTypes.getAttachmentType(AttachmentTypeID.Image));
@@ -20,13 +18,5 @@ public class ImageAttachment extends Attachment {
 
     public ImageAttachment() {
         setAttachmentType(AttachmentTypes.getAttachmentType(AttachmentTypeID.Image));
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public int getWidth() {
-        return width;
     }
 }

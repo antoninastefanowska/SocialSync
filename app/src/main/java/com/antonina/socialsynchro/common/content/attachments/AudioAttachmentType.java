@@ -15,7 +15,7 @@ public class AudioAttachmentType extends AttachmentType {
 
     @Override
     public AttachmentTypeID getID() {
-        return AttachmentTypeID.Audio;
+        return null;
     }
 
     @Override

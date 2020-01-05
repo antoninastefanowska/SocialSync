@@ -145,6 +145,11 @@ public abstract class Attachment extends GUIItem implements IDatabaseEntity, ISe
         return RequestBody.create(MediaType.parse(getMIMEType()), getFileChunk(chunkStart, chunkEnd));
     }
 
+    public MultipartBody.Part getChunkPart(long chunkStart, long chunkEnd) {
+        RequestBody requestBody = RequestBody.create(MediaType.parse(getMIMEType()), getFileChunk(chunkStart, chunkEnd));
+        return MultipartBody.Part.createFormData("video_file_chunk", file.getName(), requestBody);
+    }
+
     public MultipartBody.Part getPart() {
         RequestBody requestBody = RequestBody.create(MediaType.parse(getMIMEType()), file);
         return MultipartBody.Part.createFormData("source", file.getName(), requestBody);

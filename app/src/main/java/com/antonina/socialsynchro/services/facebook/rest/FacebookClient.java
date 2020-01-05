@@ -14,6 +14,9 @@ import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookInspec
 import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookRemoveContentRequest;
 import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookUpdateContentRequest;
 import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookUploadPhotoRequest;
+import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookUploadVideoFinishRequest;
+import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookUploadVideoStartRequest;
+import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookUploadVideoTransferRequest;
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookContentResponse;
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookCountResponse;
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookIdentifierResponse;
@@ -21,6 +24,9 @@ import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookGetPa
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookGetUserPagesResponse;
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookInspectTokenResponse;
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookPageResponse;
+import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookUploadVideoFinishResponse;
+import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookUploadVideoStartResponse;
+import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookUploadVideoTransferResponse;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -85,6 +91,21 @@ public class FacebookClient extends BaseClient {
 
     public static LiveData<FacebookIdentifierResponse> uploadPhoto(FacebookUploadPhotoRequest request) {
         UploadPhotoController controller = new UploadPhotoController(request);
+        return controller.start();
+    }
+
+    public static LiveData<FacebookUploadVideoStartResponse> uploadVideoStart(FacebookUploadVideoStartRequest request) {
+        UploadVideoStartController controller = new UploadVideoStartController(request);
+        return controller.start();
+    }
+
+    public static LiveData<FacebookUploadVideoTransferResponse> uploadVideoTransfer(FacebookUploadVideoTransferRequest request) {
+        UploadVideoTransferController controller = new UploadVideoTransferController(request);
+        return controller.start();
+    }
+
+    public static LiveData<FacebookUploadVideoFinishResponse> uploadVideoFinish(FacebookUploadVideoFinishRequest request) {
+        UploadVideoFinishController controller = new UploadVideoFinishController(request);
         return controller.start();
     }
 
@@ -375,6 +396,90 @@ public class FacebookClient extends BaseClient {
         @Override
         protected Class<FacebookIdentifierResponse> getResponseClass() {
             return FacebookIdentifierResponse.class;
+        }
+    }
+
+    private static class UploadVideoStartController extends BaseController<FacebookUploadVideoStartRequest, FacebookUploadVideoStartResponse> {
+
+        public UploadVideoStartController(FacebookUploadVideoStartRequest request) {
+            super(request);
+        }
+
+        @Override
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+
+        @Override
+        protected FacebookUploadVideoStartResponse createResponse() {
+            return new FacebookUploadVideoStartResponse();
+        }
+
+        @Override
+        protected Call<FacebookUploadVideoStartResponse> createCall() {
+            FacebookAPI facebookAPI = retrofit.create(FacebookAPI.class);
+            return facebookAPI.uploadVideoStart(request.getPageID(), request.getUploadPhase(), request.getFileSize(), request.getAuthorizationString());
+        }
+
+        @Override
+        protected Class<FacebookUploadVideoStartResponse> getResponseClass() {
+            return FacebookUploadVideoStartResponse.class;
+        }
+    }
+
+    private static class UploadVideoTransferController extends BaseController<FacebookUploadVideoTransferRequest, FacebookUploadVideoTransferResponse> {
+
+        public UploadVideoTransferController(FacebookUploadVideoTransferRequest request) {
+            super(request);
+        }
+
+        @Override
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+
+        @Override
+        protected FacebookUploadVideoTransferResponse createResponse() {
+            return new FacebookUploadVideoTransferResponse();
+        }
+
+        @Override
+        protected Call<FacebookUploadVideoTransferResponse> createCall() {
+            FacebookAPI facebookAPI = retrofit.create(FacebookAPI.class);
+            return facebookAPI.uploadVideoTransfer(request.getPageID(), request.getUploadPhase(), request.getUploadSessionID(), request.getStartOffset(), request.getFileChunk(), request.getAuthorizationString());
+        }
+
+        @Override
+        protected Class<FacebookUploadVideoTransferResponse> getResponseClass() {
+            return FacebookUploadVideoTransferResponse.class;
+        }
+    }
+
+    private static class UploadVideoFinishController extends BaseController<FacebookUploadVideoFinishRequest, FacebookUploadVideoFinishResponse> {
+
+        public UploadVideoFinishController(FacebookUploadVideoFinishRequest request) {
+            super(request);
+        }
+
+        @Override
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+
+        @Override
+        protected FacebookUploadVideoFinishResponse createResponse() {
+            return new FacebookUploadVideoFinishResponse();
+        }
+
+        @Override
+        protected Call<FacebookUploadVideoFinishResponse> createCall() {
+            FacebookAPI facebookAPI = retrofit.create(FacebookAPI.class);
+            return facebookAPI.uploadVideoFinish(request.getPageID(), request.getUploadPhase(), request.getUploadSessionID(), request.getTitle(), request.getDescription(), request.getAuthorizationString());
+        }
+
+        @Override
+        protected Class<FacebookUploadVideoFinishResponse> getResponseClass() {
+            return FacebookUploadVideoFinishResponse.class;
         }
     }
 

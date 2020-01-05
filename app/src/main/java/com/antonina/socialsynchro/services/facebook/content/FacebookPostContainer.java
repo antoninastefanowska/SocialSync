@@ -25,9 +25,15 @@ import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookCreate
 import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookPostRequest;
 import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookRemoveContentRequest;
 import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookUploadPhotoRequest;
+import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookUploadVideoFinishRequest;
+import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookUploadVideoStartRequest;
+import com.antonina.socialsynchro.services.facebook.rest.requests.FacebookUploadVideoTransferRequest;
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookContentResponse;
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookCountResponse;
 import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookIdentifierResponse;
+import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookUploadVideoFinishResponse;
+import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookUploadVideoStartResponse;
+import com.antonina.socialsynchro.services.facebook.rest.responses.FacebookUploadVideoTransferResponse;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -137,8 +143,16 @@ public class FacebookPostContainer extends ChildPostContainer {
             setLoading(true);
             notifyGUI();
             if (!getAttachments().isEmpty())
-                for (Attachment attachment : getAttachments())
-                    uploadAttachment(attachment, publishListener, attachmentListener);
+                for (Attachment attachment : getAttachments()) {
+                    switch (attachment.getAttachmentType().getID()) {
+                        case Image:
+                            uploadPhoto(attachment, publishListener, attachmentListener);
+                            break;
+                        case Video:
+                            uploadVideoStart(attachment, publishListener, attachmentListener);
+                            break;
+                    }
+                }
             else
                 publishJustContent(publishListener);
         }
@@ -169,7 +183,7 @@ public class FacebookPostContainer extends ChildPostContainer {
         });
     }
 
-    private void publishWithAttachments(final OnPublishedListener publishListener) {
+    private void publishWithPhotos(final OnPublishedListener publishListener) {
         List<String> mediaIDs = new ArrayList<>();
         for (Attachment attachment : getAttachments())
             mediaIDs.add(attachment.getExternalID());
@@ -200,7 +214,7 @@ public class FacebookPostContainer extends ChildPostContainer {
         });
     }
 
-    private void uploadAttachment(final Attachment attachment, final OnPublishedListener publishListener, final OnAttachmentUploadedListener attachmentListener) {
+    private void uploadPhoto(final Attachment attachment, final OnPublishedListener publishListener, final OnAttachmentUploadedListener attachmentListener) {
         attachment.setUploadProgress(0);
         attachment.setLoading(true);
         FacebookUploadPhotoRequest request = FacebookUploadPhotoRequest.builder()
@@ -216,7 +230,7 @@ public class FacebookPostContainer extends ChildPostContainer {
                 if (response != null) {
                     if (response.getErrorString() == null) {
                         attachment.setExternalID(response.getID());
-                        finishAttachmentUpload(attachment, publishListener, attachmentListener);
+                        finishPhotoUpload(attachment, publishListener, attachmentListener);
                     } else {
                         attachment.setLoading(false);
                         setLoading(false);
@@ -231,16 +245,120 @@ public class FacebookPostContainer extends ChildPostContainer {
         });
     }
 
-    private void finishAttachmentUpload(Attachment attachment, OnPublishedListener publishListener, OnAttachmentUploadedListener attachmentListener) {
+    private void finishPhotoUpload(Attachment attachment, OnPublishedListener publishListener, OnAttachmentUploadedListener attachmentListener) {
         attachment.setUploadProgress(100);
         attachment.setLoading(false);
         attachment.notifyGUI();
         attachmentListener.onFinished(attachment);
         attachmentsPublished++;
         if (attachmentsPublished >= getAttachments().size()) {
-            publishWithAttachments(publishListener);
+            publishWithPhotos(publishListener);
             attachmentsPublished = 0;
         }
+    }
+
+    private void uploadVideoStart(final Attachment attachment, final OnPublishedListener publishListener, final OnAttachmentUploadedListener attachmentListener) {
+        attachment.setUploadProgress(0);
+        attachment.setLoading(true);
+        FacebookUploadVideoStartRequest request = FacebookUploadVideoStartRequest.builder()
+                .accessToken(getAccount().getAccessToken())
+                .pageID(getAccount().getExternalID())
+                .fileSize(attachment.getSizeBytes())
+                .build();
+        final FacebookPostContainer instance = this;
+        final LiveData<FacebookUploadVideoStartResponse> asyncResponse = FacebookClient.uploadVideoStart(request);
+        asyncResponse.observeForever(new Observer<FacebookUploadVideoStartResponse>() {
+            @Override
+            public void onChanged(@Nullable FacebookUploadVideoStartResponse response) {
+                if (response != null) {
+                    if (response.getErrorString() == null) {
+                        String uploadSessionID = response.getSessionID();
+                        long startOffset = response.getStartOffset();
+                        long endOffset = response.getEndOffset();
+                        setExternalID(response.getVideoID());
+                        uploadVideoTransfer(attachment, uploadSessionID, startOffset, endOffset, publishListener, attachmentListener);
+                    } else {
+                        setLoading(false);
+                        attachment.setLoading(false);
+                        attachmentListener.onError(attachment, response.getErrorString());
+                        publishListener.onError(instance, "Initialization error: " + response.getErrorString());
+                    }
+                    attachment.notifyGUI();
+                    asyncResponse.removeObserver(this);
+                }
+            }
+        });
+    }
+
+    private void uploadVideoTransfer(final Attachment attachment, final String uploadSessionID, final long startOffset, final long endOffset, final OnPublishedListener publishListener, final OnAttachmentUploadedListener attachmentListener) {
+        FacebookUploadVideoTransferRequest request = FacebookUploadVideoTransferRequest.builder()
+                .accessToken(getAccount().getAccessToken())
+                .pageID(getAccount().getExternalID())
+                .uploadSessionID(uploadSessionID)
+                .startOffset(startOffset)
+                .fileChunk(attachment.getChunkPart(startOffset, endOffset))
+                .build();
+        final FacebookPostContainer instance = this;
+        final LiveData<FacebookUploadVideoTransferResponse> asyncResponse = FacebookClient.uploadVideoTransfer(request);
+        asyncResponse.observeForever(new Observer<FacebookUploadVideoTransferResponse>() {
+            @Override
+            public void onChanged(@Nullable FacebookUploadVideoTransferResponse response) {
+                if (response != null) {
+                    if (response.getErrorString() == null) {
+                        long fileSize = attachment.getSizeBytes();
+                        long nextStartOffset = response.getStartOffset();
+                        long nextEndOffset = response.getEndOffset();
+                        if (nextEndOffset == fileSize)
+                            nextEndOffset--;
+                        int progress = (int)((double)(endOffset + 1) / fileSize * 100);
+                        attachment.setUploadProgress(progress);
+                        attachmentListener.onProgress(attachment);
+                        if (nextStartOffset < nextEndOffset)
+                            uploadVideoTransfer(attachment, uploadSessionID, nextStartOffset, nextEndOffset, publishListener, attachmentListener);
+                        else
+                            uploadVideoFinish(attachment, uploadSessionID, publishListener, attachmentListener);
+                    } else {
+                        setLoading(false);
+                        attachment.setLoading(false);
+                        setExternalID(null);
+                        attachmentListener.onError(attachment, response.getErrorString());
+                        publishListener.onError(instance, response.getErrorString());
+                    }
+                    asyncResponse.removeObserver(this);
+                }
+            }
+        });
+    }
+
+    private void uploadVideoFinish(final Attachment attachment, final String uploadSessionID, final OnPublishedListener publishListener, final OnAttachmentUploadedListener attachmentListener) {
+        FacebookUploadVideoFinishRequest request = FacebookUploadVideoFinishRequest.builder()
+                .accessToken(getAccount().getAccessToken())
+                .pageID(getAccount().getExternalID())
+                .uploadSessionID(uploadSessionID)
+                .title(getTitle())
+                .description(getContent())
+                .build();
+        final FacebookPostContainer instance = this;
+        final LiveData<FacebookUploadVideoFinishResponse> asyncResponse = FacebookClient.uploadVideoFinish(request);
+        asyncResponse.observeForever(new Observer<FacebookUploadVideoFinishResponse>() {
+            @Override
+            public void onChanged(@Nullable FacebookUploadVideoFinishResponse response) {
+                if (response != null) {
+                    if (response.getErrorString() == null) {
+                        attachment.setUploadProgress(100);
+                        attachmentListener.onFinished(attachment);
+                        publishListener.onPublished(instance);
+                    } else {
+                        setExternalID(null);
+                        attachmentListener.onError(attachment, response.getErrorString());
+                        publishListener.onError(instance, response.getErrorString());
+                    }
+                    setLoading(false);
+                    attachment.setLoading(false);
+                    asyncResponse.removeObserver(this);
+                }
+            }
+        });
     }
 
     @Override

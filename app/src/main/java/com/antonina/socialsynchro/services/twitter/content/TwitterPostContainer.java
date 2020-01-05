@@ -312,6 +312,7 @@ public class TwitterPostContainer extends ChildPostContainer {
                             uploadAppend(attachment, chunkStep, chunkStart, chunkEnd, publishListener, attachmentListener);
                         } else {
                             setLoading(false);
+                            attachment.setLoading(false);
                             attachmentListener.onError(attachment, response.getErrorString());
                             publishListener.onError(instance, "Initialization error: " + response.getErrorString());
                         }

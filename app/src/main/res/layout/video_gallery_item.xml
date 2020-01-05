@@ -5,8 +5,8 @@
         <import
             type="android.view.View" />
         <variable
-            name="image"
-            type="com.antonina.socialsynchro.common.content.attachments.ImageAttachment" />
+            name="video"
+            type="com.antonina.socialsynchro.common.content.attachments.VideoAttachment" />
     </data>
 
     <LinearLayout
@@ -17,11 +17,11 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/imageview_image"
+                android:id="@+id/imageview_video"
                 style="@style/GalleryImageStyle"/>
 
             <ImageView
-                android:visibility="@{image.selected ? View.VISIBLE : View.GONE}"
+                android:visibility="@{video.selected ? View.VISIBLE : View.GONE}"
                 style="@style/CheckmarkStyle" />
 
         </FrameLayout>

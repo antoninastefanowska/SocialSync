@@ -9,17 +9,15 @@
 
     <LinearLayout
         android:id="@+id/layout_main"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="@dimen/padding_small" >
+        style="@style/ServiceItemLayoutStyle">
 
         <TextView
             android:id="@+id/textview_attachment_type_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textStyle="bold"
             android:textColor="@color/colorBackground"
-            android:text="@{attachmentType.name}" />
+            android:text="@{attachmentType.name, default=Attachment}" />
 
     </LinearLayout>
 

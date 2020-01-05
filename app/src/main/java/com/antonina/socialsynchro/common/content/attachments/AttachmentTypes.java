@@ -10,7 +10,6 @@ public class AttachmentTypes {
     private static void init() {
         attachments[AttachmentTypeID.Image.ordinal()] = ImageAttachmentType.getInstance();
         attachments[AttachmentTypeID.Video.ordinal()] = VideoAttachmentType.getInstance();
-        attachments[AttachmentTypeID.Audio.ordinal()] = AudioAttachmentType.getInstance();
         initialized = true;
     }
 

@@ -1,17 +1,18 @@
 package com.antonina.socialsynchro.common.content.attachments;
 
+import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
+import android.provider.MediaStore;
+
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 
 import java.io.File;
 
 @SuppressWarnings("WeakerAccess")
 public class VideoAttachment extends Attachment {
-    private int height, width, lengthSeconds;
-
     public VideoAttachment(IDatabaseRow data) {
         super(data);
         setAttachmentType(AttachmentTypes.getAttachmentType(AttachmentTypeID.Video));
-        // TODO: Wydobyć pozostałe informacje z pliku - dotyczy też pozostałych załączników
     }
 
     public VideoAttachment(File file) {
@@ -23,11 +24,7 @@ public class VideoAttachment extends Attachment {
         setAttachmentType(AttachmentTypes.getAttachmentType(AttachmentTypeID.Video));
     }
 
-    public int getHeight() { return height; }
-
-    public int getWidth() { return width; }
-
-    public int getLengthSeconds() {
-        return lengthSeconds;
+    public Bitmap getThumbnail() {
+        return ThumbnailUtils.createVideoThumbnail(getFile().getPath(), MediaStore.Video.Thumbnails.MICRO_KIND);
     }
 }

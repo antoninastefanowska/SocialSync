@@ -26,8 +26,6 @@ public class AttachmentFactory implements IDatabaseEntityFactory {
                 return new ImageAttachment(data);
             case Video:
                 return new VideoAttachment(data);
-            case Audio:
-                return new AudioAttachment(data);
             default:
                 return null;
         }
@@ -39,8 +37,6 @@ public class AttachmentFactory implements IDatabaseEntityFactory {
                 return new ImageAttachment();
             case Video:
                 return new VideoAttachment();
-            case Audio:
-                return new AudioAttachment();
             default:
                 return null;
         }

@@ -2,6 +2,8 @@ package com.antonina.socialsynchro.common.content.attachments;
 
 import android.support.v7.app.AppCompatActivity;
 
+import com.antonina.socialsynchro.common.gui.activities.VideoGalleryActivity;
+
 public class VideoAttachmentType extends AttachmentType {
     private static VideoAttachmentType instance;
 
@@ -30,6 +32,6 @@ public class VideoAttachmentType extends AttachmentType {
 
     @Override
     public Class<? extends AppCompatActivity> getGalleryActivityClass() {
-        return null;
+        return VideoGalleryActivity.class;
     }
 }
