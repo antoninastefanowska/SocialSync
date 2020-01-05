@@ -112,14 +112,7 @@ public class ChildDisplayAdapter extends BaseAdapter<ChildPostContainer, ChildDi
     @Override
     public ChildViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int position) {
         final ChildViewHolder viewHolder = super.onCreateViewHolder(parent, position);
-        viewHolder.profilePictureImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = viewHolder.getAdapterPosition();
-                ChildPostContainer item = getItem(position);
-                item.switchVisibility();
-            }
-        });
+        setHideable(viewHolder);
         viewHolder.synchronizeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

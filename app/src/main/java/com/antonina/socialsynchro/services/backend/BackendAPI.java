@@ -1,5 +1,6 @@
 package com.antonina.socialsynchro.services.backend;
 
+import com.antonina.socialsynchro.services.backend.responses.BackendGetDeviantArtCodeResponse;
 import com.antonina.socialsynchro.services.backend.responses.BackendGetFacebookTokenResponse;
 import com.antonina.socialsynchro.services.backend.responses.BackendGetRateLimitsResponse;
 import com.antonina.socialsynchro.services.backend.responses.BackendGetTwitterVerifierResponse;
@@ -19,6 +20,9 @@ public interface BackendAPI {
 
     @GET("get_facebook_token")
     Call<BackendGetFacebookTokenResponse> getFacebookToken(@Query("state") String state, @Header("Authorization") String authorization);
+
+    @GET("get_deviantart_code")
+    Call<BackendGetDeviantArtCodeResponse> getDeviantArtCode(@Query("state") String state, @Header("Authorization") String authorization);
 
     @GET("get_rate_limits")
     Call<BackendGetRateLimitsResponse> getRateLimits(@Query("endpoint") String endpoint, @Query("service_name") String serviceName);

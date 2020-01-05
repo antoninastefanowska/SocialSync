@@ -3,10 +3,12 @@ package com.antonina.socialsynchro.services.backend;
 import android.arch.lifecycle.LiveData;
 
 import com.antonina.socialsynchro.common.rest.BaseClient;
+import com.antonina.socialsynchro.services.backend.requests.BackendGetDeviantArtCodeRequest;
 import com.antonina.socialsynchro.services.backend.requests.BackendGetFacebookTokenRequest;
 import com.antonina.socialsynchro.services.backend.requests.BackendGetRateLimitsRequest;
 import com.antonina.socialsynchro.services.backend.requests.BackendGetTwitterVerifierRequest;
 import com.antonina.socialsynchro.services.backend.requests.BackendUpdateRequestCounterRequest;
+import com.antonina.socialsynchro.services.backend.responses.BackendGetDeviantArtCodeResponse;
 import com.antonina.socialsynchro.services.backend.responses.BackendGetFacebookTokenResponse;
 import com.antonina.socialsynchro.services.backend.responses.BackendGetRateLimitsResponse;
 import com.antonina.socialsynchro.services.backend.responses.BackendGetTwitterVerifierResponse;
@@ -27,6 +29,11 @@ public class BackendClient extends BaseClient {
 
     public static LiveData<BackendGetFacebookTokenResponse> getFacebookToken(BackendGetFacebookTokenRequest request) {
         GetFacebookTokenController controller = new GetFacebookTokenController(request);
+        return controller.start();
+    }
+
+    public static LiveData<BackendGetDeviantArtCodeResponse> getDeviantArtCode(BackendGetDeviantArtCodeRequest request) {
+        GetDeviantArtCodeController controller = new GetDeviantArtCodeController(request);
         return controller.start();
     }
 
@@ -93,6 +100,34 @@ public class BackendClient extends BaseClient {
         @Override
         protected Class<BackendGetFacebookTokenResponse> getResponseClass() {
             return BackendGetFacebookTokenResponse.class;
+        }
+    }
+
+    private static class GetDeviantArtCodeController extends BaseController<BackendGetDeviantArtCodeRequest, BackendGetDeviantArtCodeResponse> {
+
+        public GetDeviantArtCodeController(BackendGetDeviantArtCodeRequest request) {
+            super(request);
+        }
+
+        @Override
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+
+        @Override
+        protected BackendGetDeviantArtCodeResponse createResponse() {
+            return new BackendGetDeviantArtCodeResponse();
+        }
+
+        @Override
+        protected Call<BackendGetDeviantArtCodeResponse> createCall() {
+            BackendAPI backendAPI = retrofit.create(BackendAPI.class);
+            return backendAPI.getDeviantArtCode(request.getState(), request.getAuthorizationString());
+        }
+
+        @Override
+        protected Class<BackendGetDeviantArtCodeResponse> getResponseClass() {
+            return BackendGetDeviantArtCodeResponse.class;
         }
     }
 

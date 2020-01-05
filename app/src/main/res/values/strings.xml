@@ -10,6 +10,7 @@
     <string name="error_login_token">Could not retrieve login token. Error: %s</string>
     <string name="error_twitter_verifier">Could not retrieve Twitter verifier. Error: %s</string>
     <string name="error_facebook_token">Could not retrieve Facebook token. Error: %s</string>
+    <string name="error_deviantart_code">Could not retrieve DeviantArt code. Error: %s</string>
     <string name="error_access_token">Could not retrieve access token. Error: %s</string>
     <string name="error_account_info">Could not retrieve account info. Error: %s</string>
     <string name="error_account_exists">Account already exists.</string>

@@ -100,8 +100,6 @@ public class FacebookLoginFlow extends LoginFlow {
                 .userID(userID)
                 .authorizationStrategy(authorization)
                 .build();
-
-
         final LiveData<FacebookGetUserPagesResponse> asyncResponse = FacebookClient.getUserPages(request);
         asyncResponse.observe(context, new Observer<FacebookGetUserPagesResponse>() {
             @Override

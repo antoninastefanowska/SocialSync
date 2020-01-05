@@ -189,6 +189,7 @@ public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.
             if (viewType == PARENT) {
                 view = inflater.inflate(R.layout.parent_edit_item, viewGroup, false);
                 ParentViewHolder parentViewHolder = new ParentViewHolder(view, this.context);
+                setHideableWithNotification(parentViewHolder);
                 parentViewHolder.saveButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -200,6 +201,7 @@ public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.
             } else {
                 view = inflater.inflate(R.layout.child_edit_item, viewGroup, false);
                 final ChildViewHolder childViewHolder = new ChildViewHolder(view, this.context);
+                setHideable(childViewHolder);
                 childViewHolder.lockButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -224,19 +226,9 @@ public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.
                         removeItem(item);
                     }
                 });
-
                 viewHolder = childViewHolder;
             }
-            viewHolder.profilePictureImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = viewHolder.getAdapterPosition();
-                    PostContainer item = getItem(position);
-                    item.switchVisibility();
-                    if (item.isParent())
-                        notifyItemChanged(position);
-                }
-            });
+
             viewHolder.addAttachmentButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -248,7 +240,15 @@ public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.
                 public void onClick(View v) {
                     int position = viewHolder.getAdapterPosition();
                     PostContainer item = getItem(position);
-                    activity.publish(item);
+                    activity.publishPost(item);
+                }
+            });
+            viewHolder.unpublishButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = viewHolder.getAdapterPosition();
+                    PostContainer item = getItem(position);
+                    activity.unpublishPost(item);
                 }
             });
         } else {

@@ -26,6 +26,7 @@ import com.antonina.socialsynchro.common.gui.listeners.OnAttachmentUploadedListe
 import com.antonina.socialsynchro.common.gui.listeners.OnPublishedListener;
 import com.antonina.socialsynchro.common.content.posts.ParentPostContainer;
 import com.antonina.socialsynchro.common.content.attachments.AttachmentType;
+import com.antonina.socialsynchro.common.gui.listeners.OnUnpublishedListener;
 import com.antonina.socialsynchro.databinding.ActivityEditBinding;
 import com.antonina.socialsynchro.common.gui.dialogs.ChooseAccountDialog;
 import com.antonina.socialsynchro.common.gui.listeners.OnAccountsSelectedListener;
@@ -89,7 +90,7 @@ public class EditActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    public void publish(final PostContainer postContainer) {
+    public void publishPost(final PostContainer postContainer) {
         final Context context = this;
         final View layout = findViewById(R.id.layout_main);
         postContainer.publish(new OnPublishedListener() {
@@ -103,8 +104,8 @@ public class EditActivity extends AppCompatActivity {
 
             @Override
             public void onError(ChildPostContainer post, String error) {
-                Snackbar snackbar = Snackbar.make(layout, "Failed to publish. Error: " + error, Snackbar.LENGTH_LONG);
-                snackbar.show();
+                Toast toast = Toast.makeText(context, "Failed to publish. Error: " + error, Toast.LENGTH_LONG);
+                toast.show();
             }
         }, new OnAttachmentUploadedListener() {
             @Override
@@ -129,6 +130,24 @@ public class EditActivity extends AppCompatActivity {
             public void onError(Attachment attachment, String error) {
                 Toast toast = Toast.makeText(context, "Attachment upload failed: " + attachment.getFile().getName(), Toast.LENGTH_LONG);
                 toast.show();
+            }
+        });
+    }
+
+    public void unpublishPost(final PostContainer postContainer) {
+        final Context context = this;
+        final View layout = findViewById(R.id.layout_main);
+        postContainer.unpublish(new OnUnpublishedListener() {
+            @Override
+            public void onUnpublished(ChildPostContainer unpublishedPost) {
+                Snackbar snackbar = Snackbar.make(layout, "Succesfully unpublished.", Snackbar.LENGTH_LONG);
+                snackbar.show();
+            }
+
+            @Override
+            public void onError(ChildPostContainer post, String error) {
+                Snackbar snackbar = Snackbar.make(layout, "Failed to publish. Error: " + error, Snackbar.LENGTH_LONG);
+                snackbar.show();
             }
         });
     }

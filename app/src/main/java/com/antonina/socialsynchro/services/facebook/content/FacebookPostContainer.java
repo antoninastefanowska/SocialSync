@@ -78,10 +78,10 @@ public class FacebookPostContainer extends ChildPostContainer {
 
     @Override
     public void saveInDatabase() {
-        super.saveInDatabase();
         if (getInternalID() != null)
             updateInDatabase();
         else {
+            super.saveInDatabase();
             FacebookPostInfoRepository repository = FacebookPostInfoRepository.getInstance();
             repository.insert(this);
         }
@@ -246,6 +246,7 @@ public class FacebookPostContainer extends ChildPostContainer {
     @Override
     public void unpublish(final OnUnpublishedListener listener) {
         if (isOnline()) {
+            setLoading(true);
             FacebookRemoveContentRequest request = FacebookRemoveContentRequest.builder()
                     .postID(getExternalID())
                     .accessToken(getAccount().getAccessToken())
@@ -261,7 +262,7 @@ public class FacebookPostContainer extends ChildPostContainer {
                             listener.onUnpublished(instance);
                         } else
                             listener.onError(instance, response.getErrorString());
-                        notifyGUI();
+                        setLoading(false);
                         asyncResponse.removeObserver(this);
                     }
                 }

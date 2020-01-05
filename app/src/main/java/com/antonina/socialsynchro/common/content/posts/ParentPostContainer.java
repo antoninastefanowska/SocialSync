@@ -119,17 +119,15 @@ public class ParentPostContainer extends PostContainer {
     public void publish(final OnPublishedListener publishListener, OnAttachmentUploadedListener attachmentListener) {
         publishedChildren = 0;
         setLoading(true);
-        notifyGUI();
         OnPublishedListener parentListener = new OnPublishedListener() {
             @Override
             public void onPublished(ChildPostContainer publishedPost) {
                 publishedChildren++;
-                publishListener.onPublished(publishedPost);
                 if (finishedPublishing()) {
                     setLoading(false);
                     saveInDatabase();
-                    notifyGUI();
                 }
+                publishListener.onPublished(publishedPost);
             }
 
             @Override
@@ -156,7 +154,6 @@ public class ParentPostContainer extends PostContainer {
     public void synchronize(final OnSynchronizedListener listener) {
         synchronizedChildren = 0;
         setLoading(true);
-        notifyGUI();
         OnSynchronizedListener parentListener = new OnSynchronizedListener() {
             @Override
             public void onSynchronized(IServiceEntity entity) {
@@ -164,7 +161,6 @@ public class ParentPostContainer extends PostContainer {
                 listener.onSynchronized(entity);
                 if (synchronizedChildren >= children.size()) {
                     setLoading(false);
-                    notifyGUI();
                     saveInDatabase();
                 }
             }
@@ -173,7 +169,6 @@ public class ParentPostContainer extends PostContainer {
             public void onError(IServiceEntity entity, String error) {
                 setLoading(false);
                 listener.onError(entity, error);
-                notifyGUI();
             }
         };
         for (ChildPostContainer child : children)

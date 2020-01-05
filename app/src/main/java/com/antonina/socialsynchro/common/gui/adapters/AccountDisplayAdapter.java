@@ -121,14 +121,7 @@ public class AccountDisplayAdapter extends BaseAdapter<Account, AccountDisplayAd
             view = inflater.inflate(R.layout.account_display_item, viewGroup, false);
             final AccountViewHolder accountViewHolder = new AccountViewHolder(view);
 
-            accountViewHolder.profilePictureImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = accountViewHolder.getAdapterPosition();
-                    Account item = getItem(position);
-                    item.switchVisibility();
-                }
-            });
+            setHideable(accountViewHolder);
             accountViewHolder.synchronizeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

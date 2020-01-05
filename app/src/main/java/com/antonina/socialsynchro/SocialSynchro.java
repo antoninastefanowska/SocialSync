@@ -9,6 +9,8 @@ import com.antonina.socialsynchro.common.database.repositories.ChildPostContaine
 import com.antonina.socialsynchro.common.database.repositories.ParentPostContainerRepository;
 import com.antonina.socialsynchro.common.database.repositories.PostRepository;
 import com.antonina.socialsynchro.common.database.repositories.RequestLimitRepository;
+import com.antonina.socialsynchro.services.deviantart.database.repositories.DeviantArtAccountInfoRepository;
+import com.antonina.socialsynchro.services.deviantart.database.repositories.DeviantArtPostInfoRepository;
 import com.antonina.socialsynchro.services.facebook.database.repositories.FacebookAccountInfoRepository;
 import com.antonina.socialsynchro.services.facebook.database.repositories.FacebookPostInfoRepository;
 import com.antonina.socialsynchro.services.twitter.database.repositories.TwitterAccountInfoRepository;
@@ -36,6 +38,9 @@ public class SocialSynchro extends Application {
 
         FacebookAccountInfoRepository.createInstance(this);
         FacebookPostInfoRepository.createInstance(this);
+
+        DeviantArtAccountInfoRepository.createInstance(this);
+        DeviantArtPostInfoRepository.createInstance(this);
 
         instance = this;
     }

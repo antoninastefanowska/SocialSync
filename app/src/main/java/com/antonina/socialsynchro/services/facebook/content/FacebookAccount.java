@@ -77,8 +77,10 @@ public class FacebookAccount extends Account {
 
     @Override
     public void saveInDatabase() {
-        super.saveInDatabase();
+        if (getInternalID() != null)
+            updateInDatabase();
         if (getInternalID() != null) {
+            super.saveInDatabase();
             FacebookAccountInfoRepository repository = FacebookAccountInfoRepository.getInstance();
             if (!updated)
                 repository.insert(this);

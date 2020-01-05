@@ -131,7 +131,7 @@ public class TwitterLoginFlow extends LoginFlow {
                     .secretToken(account.getSecretToken())
                     .build();
             final LiveData<TwitterUserResponse> asyncResponse = TwitterClient.verifyCredentials(request);
-            asyncResponse.observeForever(new Observer<TwitterUserResponse>() {
+            asyncResponse.observe(context, new Observer<TwitterUserResponse>() {
                 @Override
                 public void onChanged(@Nullable TwitterUserResponse response) {
                     if (response != null) {

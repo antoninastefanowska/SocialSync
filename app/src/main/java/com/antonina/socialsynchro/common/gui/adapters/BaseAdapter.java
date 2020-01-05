@@ -98,6 +98,31 @@ public abstract class BaseAdapter<ItemType extends GUIItem, ViewHolderType exten
         });
     }
 
+    protected void setHideable(final BaseViewHolder viewHolder) {
+        viewHolder.itemView.setFocusable(true);
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = viewHolder.getAdapterPosition();
+                ItemType item = getItem(position);
+                item.switchVisibility();
+            }
+        });
+    }
+
+    protected void setHideableWithNotification(final BaseViewHolder viewHolder) {
+        viewHolder.itemView.setFocusable(true);
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = viewHolder.getAdapterPosition();
+                ItemType item = getItem(position);
+                item.switchVisibility();
+                notifyItemChanged(position);
+            }
+        });
+    }
+
     public ItemType getItem(int position) {
         return items.get(position);
     }

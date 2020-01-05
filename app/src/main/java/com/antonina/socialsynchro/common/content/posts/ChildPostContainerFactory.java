@@ -5,6 +5,8 @@ import com.antonina.socialsynchro.common.content.accounts.Account;
 import com.antonina.socialsynchro.common.database.IDatabaseEntityFactory;
 import com.antonina.socialsynchro.common.database.rows.ChildPostContainerRow;
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
+import com.antonina.socialsynchro.services.deviantart.content.DeviantArtAccount;
+import com.antonina.socialsynchro.services.deviantart.content.DeviantArtPostContainer;
 import com.antonina.socialsynchro.services.facebook.content.FacebookAccount;
 import com.antonina.socialsynchro.services.facebook.content.FacebookPostContainer;
 import com.antonina.socialsynchro.services.twitter.content.TwitterAccount;
@@ -29,6 +31,8 @@ public class ChildPostContainerFactory implements IDatabaseEntityFactory {
                 return new TwitterPostContainer(data);
             case Facebook:
                 return new FacebookPostContainer(data);
+            case DeviantArt:
+                return new DeviantArtPostContainer(data);
             default:
                 return null;
         }
@@ -44,6 +48,9 @@ public class ChildPostContainerFactory implements IDatabaseEntityFactory {
             case Facebook:
                 FacebookAccount facebookAccount = (FacebookAccount)account;
                 return new FacebookPostContainer(facebookAccount);
+            case DeviantArt:
+                DeviantArtAccount deviantArtAccount = (DeviantArtAccount)account;
+                return new DeviantArtPostContainer(deviantArtAccount);
             default:
                 return null;
         }

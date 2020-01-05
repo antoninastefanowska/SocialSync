@@ -19,4 +19,7 @@
 
     <color name="colorTwitter">#00ACED</color>
     <color name="colorFontTwitter">#FFFFFF</color>
+
+    <color name="colorDeviantArt">#475C4D</color>
+    <color name="colorFontDeviantArt">#95A899</color>
 </resources>

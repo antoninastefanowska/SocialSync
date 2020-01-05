@@ -59,7 +59,6 @@ public class TwitterAccount extends Account {
                     instance.setAccessToken(SecurityUtils.decrypt(data.accessToken));
                     instance.setSecretToken(SecurityUtils.decrypt(data.secretToken));
                     instance.setFollowerCount(data.followerCount);
-                    notifyGUI();
                     dataTable.removeObserver(this);
                 }
             }
@@ -84,10 +83,10 @@ public class TwitterAccount extends Account {
 
     @Override
     public void saveInDatabase() {
-        super.saveInDatabase();
         if (getInternalID() != null)
             updateInDatabase();
-        else {
+        else  {
+            super.saveInDatabase();
             TwitterAccountInfoRepository repository = TwitterAccountInfoRepository.getInstance();
             if (!updated)
                 repository.insert(this);
@@ -118,7 +117,6 @@ public class TwitterAccount extends Account {
         setName(twitterResponse.getName());
         setProfilePictureURL(twitterResponse.getProfilePictureURL());
         setFollowerCount(twitterResponse.getFollowersCount());
-        Log.d("statystyki", "TwitterAccount: " + followerCount);
     }
 
     @Override

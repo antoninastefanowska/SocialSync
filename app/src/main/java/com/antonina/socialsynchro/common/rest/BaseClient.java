@@ -57,13 +57,14 @@ public abstract class BaseClient {
 
         public LiveData<ResponseType> start() {
             Call<ResponseType> call = createCall();
+            //Log.d("deviantart", call.request().url().toString());
             call.enqueue(this);
             return asyncResponse;
         }
 
         @Override
         public void onResponse(Call<ResponseType> call, Response<ResponseType> response) {
-            Log.d("blad", requestBodyToString(call.request().body()));
+            //Log.d("blad", requestBodyToString(call.request().body()));
             if (response.isSuccessful())
                 asyncResponse.setValue(response.body());
             else {

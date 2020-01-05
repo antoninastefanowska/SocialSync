@@ -143,14 +143,7 @@ public class ParentDisplayAdapter extends BaseAdapter<ParentPostContainer, Paren
             view = inflater.inflate(R.layout.parent_display_item, viewGroup, false);
             final ParentViewHolder parentViewHolder = new ParentViewHolder(view, this.context);
 
-            parentViewHolder.imageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = parentViewHolder.getAdapterPosition();
-                    ParentPostContainer item = getItem(position);
-                    item.switchVisibility();
-                }
-            });
+            setHideable(parentViewHolder);
             parentViewHolder.editButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

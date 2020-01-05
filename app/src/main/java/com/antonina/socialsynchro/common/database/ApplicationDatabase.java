@@ -1,6 +1,5 @@
 package com.antonina.socialsynchro.common.database;
 
-import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
@@ -8,7 +7,6 @@ import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
-import android.support.annotation.NonNull;
 
 import com.antonina.socialsynchro.common.database.daos.AccountDao;
 import com.antonina.socialsynchro.common.database.daos.AttachmentDao;
@@ -19,6 +17,10 @@ import com.antonina.socialsynchro.common.database.daos.RequestLimitDao;
 import com.antonina.socialsynchro.common.database.rows.AttachmentRow;
 import com.antonina.socialsynchro.common.database.rows.ParentPostContainerRow;
 import com.antonina.socialsynchro.common.database.rows.RequestLimitRow;
+import com.antonina.socialsynchro.services.deviantart.database.daos.DeviantArtAccountInfoDao;
+import com.antonina.socialsynchro.services.deviantart.database.daos.DeviantArtPostInfoDao;
+import com.antonina.socialsynchro.services.deviantart.database.rows.DeviantArtAccountInfoRow;
+import com.antonina.socialsynchro.services.deviantart.database.rows.DeviantArtPostInfoRow;
 import com.antonina.socialsynchro.services.facebook.database.daos.FacebookAccountInfoDao;
 import com.antonina.socialsynchro.services.facebook.database.daos.FacebookPostInfoDao;
 import com.antonina.socialsynchro.services.facebook.database.rows.FacebookAccountInfoRow;
@@ -33,7 +35,6 @@ import com.antonina.socialsynchro.services.twitter.database.rows.TwitterPostInfo
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
@@ -48,7 +49,9 @@ import java.nio.channels.FileChannel;
         TwitterAccountInfoRow.class,
         TwitterPostInfoRow.class,
         FacebookAccountInfoRow.class,
-        FacebookPostInfoRow.class}, version = 1, exportSchema = false)
+        FacebookPostInfoRow.class,
+        DeviantArtAccountInfoRow.class,
+        DeviantArtPostInfoRow.class}, version = 1, exportSchema = false)
 @TypeConverters(DateConverter.class)
 public abstract class ApplicationDatabase extends RoomDatabase {
     private final static String DB_NAME = "socialsynchro";
@@ -66,6 +69,9 @@ public abstract class ApplicationDatabase extends RoomDatabase {
 
     public abstract FacebookAccountInfoDao facebookAccountDao();
     public abstract FacebookPostInfoDao facebookPostDao();
+
+    public abstract DeviantArtAccountInfoDao deviantArtAccountDao();
+    public abstract DeviantArtPostInfoDao deviantArtPostDao();
 
     public static ApplicationDatabase getDatabase(final Context context) {
         if (instance == null) {

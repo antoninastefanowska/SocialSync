@@ -157,10 +157,10 @@ public class TwitterPostContainer extends ChildPostContainer {
 
     @Override
     public void saveInDatabase() {
-        super.saveInDatabase();
         if (getInternalID() != null)
             updateInDatabase();
         else {
+            super.saveInDatabase();
             TwitterPostInfoRepository repository = TwitterPostInfoRepository.getInstance();
             repository.insert(this);
         }
@@ -548,7 +548,7 @@ public class TwitterPostContainer extends ChildPostContainer {
     public void synchronize(final OnSynchronizedListener listener) {
         if (isOnline()) {
             String endpoint = TwitterGetContentRequest.getRequestEndpoint();
-            RequestLimit requestLimit = getAccount().getRequestLimit(endpoint);
+            final RequestLimit requestLimit = getAccount().getRequestLimit(endpoint);
             if (requestLimit == null || requestLimit.getRemaining() > 0) {
                 setLoading(true);
                 TwitterConfig twitterConfig = ApplicationConfig.getInstance().getTwitterConfig();
@@ -577,6 +577,8 @@ public class TwitterPostContainer extends ChildPostContainer {
                                 setLoading(false);
                                 listener.onError(instance, response.getErrorString());
                             }
+                            if (requestLimit != null)
+                                requestLimit.decrement();
                             notifyGUI();
                             asyncResponse.removeObserver(this);
                         }

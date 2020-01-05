@@ -23,7 +23,6 @@ public class BackendAuthorizationStrategy extends BaseAuthorizationStrategy {
         String signature;
 
         try {
-            byte[] rawHashInput = hashInput.getBytes("UTF-8");
             Mac mac = Mac.getInstance("HmacSHA1");
             SecretKeySpec key = new SecretKeySpec(consumerSecretKey.getBytes("UTF-8"), "HmacSHA1");
             mac.init(key);
