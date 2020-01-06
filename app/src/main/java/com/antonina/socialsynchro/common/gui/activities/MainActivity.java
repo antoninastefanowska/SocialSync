@@ -176,7 +176,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void removePost(PostContainer postContainer) {
-        //TODO: Wyświetlić ostrzeżenie.
         postContainer.deleteFromDatabase();
     }
 

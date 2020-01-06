@@ -172,11 +172,6 @@ public class FacebookAccount extends Account {
     }
 
     @Override
-    public void synchronizeRequestLimits(OnSynchronizedListener listener) {
-        //TODO
-    }
-
-    @Override
     public AccountStatistic getStatistic() {
         return new AccountStatistic("Likes", likeCount, getProfilePictureURL(), getName(), getService().getPanelBackgroundID());
     }

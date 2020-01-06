@@ -30,7 +30,7 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
     private Long internalID;
     private String externalID;
     private String name;
-    private String profilePictureURL; // TODO: Zrobić placeholder.
+    private String profilePictureURL;
     private Service service;
     private Date connectingDate;
     private Date synchronizationDate;
@@ -164,8 +164,6 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
     protected void setSynchronizationDate(Date synchronizationDate) {
         this.synchronizationDate = synchronizationDate;
     }
-
-    public abstract void synchronizeRequestLimits(OnSynchronizedListener listener);
 
     protected void addRequestLimit(RequestLimit requestLimit) {
         requestLimit.setAccount(this);

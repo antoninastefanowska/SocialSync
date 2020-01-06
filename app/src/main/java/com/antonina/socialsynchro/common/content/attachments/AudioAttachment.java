@@ -16,4 +16,8 @@ public class AudioAttachment extends Attachment {
 
     public AudioAttachment() {
     }
+
+    @Override
+    protected void extractMetadata() {
+    }
 }

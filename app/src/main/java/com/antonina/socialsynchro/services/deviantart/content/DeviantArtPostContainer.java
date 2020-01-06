@@ -33,6 +33,11 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
 public class DeviantArtPostContainer extends ChildPostContainer {
+    private static final int MAX_CONTENT_LENGTH = 65535;
+    private static final int MAX_TITLE_LENGTH = 50;
+    private static final long MAX_IMAGE_SIZE_BYTES = 31457280;
+    private static final int MAX_IMAGE_NUMBER = 1;
+
     private String stashID;
     private String url;
 
@@ -204,7 +209,6 @@ public class DeviantArtPostContainer extends ChildPostContainer {
                     if (response.getErrorString() == null) {
                         instance.setExternalID(response.getDeviationID());
                         instance.setURL(response.getURL());
-                        Log.d("deviantart", response.getDeviationID());
                         publishListener.onPublished(instance);
                     } else {
                         publishListener.onError(instance, response.getErrorString());
@@ -337,6 +341,61 @@ public class DeviantArtPostContainer extends ChildPostContainer {
     @Override
     public String getURL() {
         return url;
+    }
+
+    @Override
+    protected boolean validateTitle(String title) {
+        return title.length() <= getMaxTitleLength();
+    }
+
+    @Override
+    protected boolean validateContent(String content) {
+        return content.length() <= getMaxContentLength();
+    }
+
+    @Override
+    protected boolean validateAttachment(Attachment attachment) {
+        switch (attachment.getAttachmentType().getID()) {
+            case Image:
+                if (getParent().getAttachments().size() <= MAX_IMAGE_NUMBER) {
+                    if (attachment.getSizeBytes() > MAX_IMAGE_SIZE_BYTES)
+                        return false;
+                    else
+                        return true;
+                } else
+                    return false;
+            case Video:
+                return false;
+        }
+        return false;
+    }
+
+    @Override
+    protected boolean preValidateAttachment(Attachment attachment) {
+        switch (attachment.getAttachmentType().getID()) {
+            case Image:
+                if (getAttachments().isEmpty()) {
+                    if (attachment.getSizeBytes() > MAX_IMAGE_SIZE_BYTES)
+                        return false;
+                    else
+                        return true;
+                } else
+                    return false;
+            case Video:
+                return false;
+        }
+
+        return false;
+    }
+
+    @Override
+    protected int getMaxTitleLength() {
+        return MAX_TITLE_LENGTH;
+    }
+
+    @Override
+    protected int getMaxContentLength() {
+        return MAX_CONTENT_LENGTH;
     }
 
     private void setURL(String url) {

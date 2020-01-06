@@ -5,6 +5,9 @@ import android.arch.lifecycle.Observer;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.antonina.socialsynchro.common.content.attachments.AttachmentTypeID;
+import com.antonina.socialsynchro.common.content.attachments.ImageAttachment;
+import com.antonina.socialsynchro.common.content.attachments.VideoAttachment;
 import com.antonina.socialsynchro.common.content.statistics.ChildGroupStatistic;
 import com.antonina.socialsynchro.common.content.statistics.ChildStatistic;
 import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
@@ -52,23 +55,20 @@ import java.util.TimerTask;
 public class TwitterPostContainer extends ChildPostContainer {
     private static final int FILE_CHUNK_SIZE_BYTES = 2097152;
     private static final int MAX_CONTENT_LENGTH = 140;
-    private static final int MAX_IMAGE_SIZE_MB = 5;
-    private static final int MAX_GIF_SIZE_MB = 15;
+    private static final long MAX_IMAGE_SIZE_BYTES = 5242880;
+    private static final long MAX_GIF_SIZE_BYTES = 15728640;
     private static final int MAX_GIF_WIDTH = 1280;
     private static final int MAX_GIF_HEIGHT = 1080;
     private static final int MAX_GIF_FRAME_NUMBER = 350;
     private static final int MAX_GIF_PIXEL_NUMBER = 300000000;
-    private static final int MAX_VIDEO_SIZE_MB = 512;
-    private static final int MAX_VIDEO_DURATION_SEC = 140;
-    private static final int MIN_VIDEO_DURATION_SEC = 1;
+    private static final long MAX_VIDEO_SIZE_BYTES = 536870912;
+    private static final int MAX_VIDEO_DURATION_MILLISECONDS = 140000;
+    private static final int MIN_VIDEO_DURATION_MILLISECONDS = 500;
     private static final int MAX_IMAGE_NUMBER = 4;
     private static final int MAX_GIF_NUMBER = 1;
     private static final int MAX_VIDEO_NUMBER = 1;
 
     private int attachmentsPublished = 0;
-    private int imageNumber = 0;
-    private int gifNumber = 0;
-    private int videoNumber = 0;
 
     private int retweetCount;
     private int favoriteCount;
@@ -110,26 +110,6 @@ public class TwitterPostContainer extends ChildPostContainer {
         return (TwitterAccount)super.getAccount();
     }
 
-    @Override
-    public void setContent(String content) {
-        if (content.length() > MAX_CONTENT_LENGTH) {
-            unlock();
-            content = content.substring(0, content.length() - 3) + "...";
-        }
-        super.setContent(content);
-    }
-
-    @Override
-    public void lock() {
-        String content = parent.getContent();
-        super.lock();
-        if (content.length() > MAX_CONTENT_LENGTH) {
-            unlock();
-            content = content.substring(0, content.length() - 3) + "...";
-            super.setContent(content);
-        }
-    }
-
     public int getRetweetCount() {
         return retweetCount;
     }
@@ -152,8 +132,7 @@ public class TwitterPostContainer extends ChildPostContainer {
         setSynchronizationDate(Calendar.getInstance().getTime());
         setRetweetCount(twitterResponse.getRetweetCount());
         setFavoriteCount(twitterResponse.getFavoriteCount());
-        Log.d("statystki", "TwitterPost: " + retweetCount + " " + favoriteCount);
-    }
+   }
 
     @Override
     public void saveInDatabase() {
@@ -604,5 +583,117 @@ public class TwitterPostContainer extends ChildPostContainer {
             return "https://www.twitter.com/i/web/status/" + getExternalID();
         else
             return "";
+    }
+
+    @Override
+    protected boolean validateTitle(String title) {
+        return true;
+    }
+
+    @Override
+    protected boolean validateContent(String content) {
+        return content.length() <= getMaxContentLength();
+    }
+
+    @Override
+    protected boolean validateAttachment(Attachment attachment) {
+        switch (attachment.getAttachmentType().getID()) {
+            case Image:
+                ImageAttachment image = (ImageAttachment)attachment;
+                if (image.isGIF()) {
+                    if (getAttachments().size() <= MAX_GIF_NUMBER) {
+                        if (image.getSizeBytes() > MAX_GIF_SIZE_BYTES ||
+                            image.getHeight() > MAX_GIF_HEIGHT ||
+                            image.getWidth() > MAX_GIF_WIDTH ||
+                            image.getFrameCount() > MAX_GIF_FRAME_NUMBER ||
+                            image.getPixelCount() > MAX_GIF_PIXEL_NUMBER)
+                            return false;
+                        else
+                            return true;
+                    } else
+                        return false;
+                }
+                else {
+                    if (getAttachments().size() <= MAX_GIF_NUMBER ||
+                        (!getAttachments().isEmpty() &&
+                         getAttachments().get(0).getAttachmentType().getID() == AttachmentTypeID.Image &&
+                         !getAttachments().get(0).getFileExtension().equals(".gif") &&
+                         getAttachments().size() <= MAX_IMAGE_NUMBER)) {
+                        if (image.getSizeBytes() > MAX_IMAGE_SIZE_BYTES)
+                            return false;
+                        else
+                            return true;
+                    } else
+                        return false;
+                }
+            case Video:
+                if (getAttachments().size() <= MAX_VIDEO_NUMBER) {
+                    VideoAttachment video = (VideoAttachment)attachment;
+                    if (video.getSizeBytes() > MAX_VIDEO_SIZE_BYTES ||
+                        video.getDurationMilliseconds() > MAX_VIDEO_DURATION_MILLISECONDS ||
+                        video.getDurationMilliseconds() < MIN_VIDEO_DURATION_MILLISECONDS)
+                        return false;
+                    else
+                        return true;
+                } else
+                    return false;
+        }
+        return false;
+    }
+
+    @Override
+    protected boolean preValidateAttachment(Attachment attachment) {
+        switch (attachment.getAttachmentType().getID()) {
+            case Image:
+                ImageAttachment image = (ImageAttachment)attachment;
+                if (image.isGIF()) {
+                    if (getAttachments().isEmpty()) {
+                        if (image.getSizeBytes() > MAX_GIF_SIZE_BYTES ||
+                                image.getHeight() > MAX_GIF_HEIGHT ||
+                                image.getWidth() > MAX_GIF_WIDTH ||
+                                image.getFrameCount() > MAX_GIF_FRAME_NUMBER ||
+                                image.getPixelCount() > MAX_GIF_PIXEL_NUMBER)
+                            return false;
+                        else
+                            return true;
+                    } else
+                        return false;
+                }
+                else {
+                    if (getAttachments().isEmpty() ||
+                            (!getAttachments().isEmpty() &&
+                             getAttachments().get(0).getAttachmentType().getID() == AttachmentTypeID.Image &&
+                             !getAttachments().get(0).getFileExtension().equals(".gif") &&
+                             getAttachments().size() < MAX_IMAGE_NUMBER)) {
+                        if (image.getSizeBytes() > MAX_IMAGE_SIZE_BYTES)
+                            return false;
+                        else
+                            return true;
+                    } else
+                        return false;
+                }
+            case Video:
+                if (getAttachments().isEmpty()) {
+                    VideoAttachment video = (VideoAttachment)attachment;
+                    if (video.getSizeBytes() > MAX_VIDEO_SIZE_BYTES ||
+                            video.getDurationMilliseconds() > MAX_VIDEO_DURATION_MILLISECONDS ||
+                            video.getDurationMilliseconds() < MIN_VIDEO_DURATION_MILLISECONDS)
+                        return false;
+                    else
+                        return true;
+                } else
+                    return false;
+        }
+        return false;
+    }
+
+    @Override
+    protected int getMaxTitleLength() {
+        return 0;
+    }
+
+    @Override
+    protected int getMaxContentLength() {
+        return MAX_CONTENT_LENGTH;
     }
 }

@@ -32,7 +32,6 @@ public class TwitterPostInfoRow implements IDatabaseRow {
         this.id = post.getInternalID();
         this.retweetCount = post.getRetweetCount();
         this.favoriteCount = post.getFavoriteCount();
-        Log.d("baza", "Saving, favorites: " + favoriteCount);
     }
 
     @Override

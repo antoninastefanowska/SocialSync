@@ -159,6 +159,7 @@ public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.
             loadPictureByURL(viewHolder.profilePictureImageView, imageSize, child.getAccount().getProfilePictureURL());
             loadPictureByID(((ChildViewHolder)viewHolder).serviceIconImageView, imageSize, child.getAccount().getService().getIconID());
             viewHolder.attachmentAdapter.setSource(item);
+            viewHolder.attachmentAdapter.setLocked(child.isLocked());
         }
     }
 
@@ -215,7 +216,7 @@ public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.
                     public void onClick(View v) {
                         int position = childViewHolder.getAdapterPosition();
                         ChildPostContainer item = (ChildPostContainer) getItem(position);
-                        item.unlock();
+                        item.unlock(true);
                     }
                 });
                 childViewHolder.removeButton.setOnClickListener(new View.OnClickListener() {

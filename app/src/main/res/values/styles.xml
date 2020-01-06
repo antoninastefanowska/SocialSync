@@ -17,6 +17,7 @@
         <item name="android:windowNoTitle">false</item>
         <item name="android:windowTitleBackgroundStyle">@style/DialogTitleLayoutStyle</item>
         <item name="android:windowBackground">@color/colorTransparent</item>
+        <item name="android:textColor">@color/colorBackground</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
@@ -60,13 +61,13 @@
     </style>
 
     <style name="PanelScrollViewStyle">
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:fillViewport">true</item>|
     </style>
 
     <style name="PanelScrollableLinearLayoutStyle">
-        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:orientation">vertical</item>
     </style>
@@ -110,6 +111,11 @@
         <item name="android:layout_width">@dimen/button_icon_size</item>
         <item name="android:layout_height">@dimen/button_icon_size</item>
         <item name="android:layout_marginRight">@dimen/margin_standard</item>
+    </style>
+
+    <style name="SmallIconButtonStyle" parent="IconButtonStyle">
+        <item name="android:layout_width">@dimen/button_icon_size_small</item>
+        <item name="android:layout_height">@dimen/button_icon_size_small</item>
     </style>
 
     <style name="SingleButtonStyle" parent="ButtonStyle">
@@ -235,7 +241,8 @@
         <item name="android:background">@color/colorBackgroundDark</item>
         <item name="android:textColor">@color/colorAccent</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:layout_marginBottom">@dimen/margin_standard</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_margin">@dimen/margin_small</item>
     </style>
 
     <style name="Divider">

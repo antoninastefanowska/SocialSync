@@ -58,7 +58,6 @@ public class AttachmentRepository extends BaseRepository<AttachmentRow, Attachme
     @Override
     protected List<Attachment> sortList(List<Attachment> list) {
         return list;
-        // TODO:
     }
 
     public LiveData<List<Attachment>> getDataByPost(Post post) {

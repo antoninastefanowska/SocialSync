@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.antonina.socialsynchro.common.content.attachments.Attachment;
+import com.antonina.socialsynchro.common.content.attachments.AttachmentTypeID;
+import com.antonina.socialsynchro.common.content.attachments.VideoAttachment;
 import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
 import com.antonina.socialsynchro.common.content.statistics.ChildGroupStatistic;
 import com.antonina.socialsynchro.common.content.statistics.ChildStatistic;
@@ -41,6 +43,11 @@ import java.util.List;
 
 public class FacebookPostContainer extends ChildPostContainer {
     private static final int MAX_CONTENT_LENGTH = 63206;
+    private static final long MAX_VIDEO_SIZE_BYTES = 10737418240L;
+    private static final long MAX_VIDEO_DURATION_MILLISECONDS = 14400000;
+    private static final int MAX_VIDEO_NUMBER = 1;
+    private static final double MIN_VIDEO_ASPECT_RATIO = 0.5625;
+    private static final double MAX_VIDEO_ASPECT_RATIO = 1.7778;
 
     private int attachmentsPublished = 0;
 
@@ -105,15 +112,6 @@ public class FacebookPostContainer extends ChildPostContainer {
         FacebookPostInfoRepository repository = FacebookPostInfoRepository.getInstance();
         repository.delete(this);
         super.deleteFromDatabase();
-    }
-
-    @Override
-    public void setContent(String content) {
-        if (content.length() > MAX_CONTENT_LENGTH) {
-            unlock();
-            content = content.substring(0, content.length() - 3) + "...";
-        }
-        super.setContent(content);
     }
 
     @Override
@@ -391,7 +389,6 @@ public class FacebookPostContainer extends ChildPostContainer {
     @Override
     public void createFromResponse(IResponse response) {
         setSynchronizationDate(Calendar.getInstance().getTime());
-        //TODO
     }
 
     @Override
@@ -497,5 +494,75 @@ public class FacebookPostContainer extends ChildPostContainer {
             return "https://www.facebook.com/" + getExternalID();
         else
             return "";
+    }
+
+    @Override
+    protected boolean validateTitle(String title) {
+        return true;
+    }
+
+    @Override
+    protected boolean validateContent(String content) {
+        return content.length() <= getMaxContentLength();
+    }
+
+    @Override
+    protected boolean validateAttachment(Attachment attachment) {
+        switch (attachment.getAttachmentType().getID()) {
+            case Image:
+                if (getAttachments().size() <= MAX_VIDEO_NUMBER)
+                    return true;
+                else {
+                    return getAttachments().get(0).getAttachmentType().getID() != AttachmentTypeID.Video;
+                }
+            case Video:
+                if (getAttachments().size() <= MAX_VIDEO_NUMBER) {
+                    VideoAttachment video = (VideoAttachment)attachment;
+                    if (video.getSizeBytes() > MAX_VIDEO_SIZE_BYTES ||
+                        video.getDurationMilliseconds() > MAX_VIDEO_DURATION_MILLISECONDS ||
+                        video.getAspectRatio() < MIN_VIDEO_ASPECT_RATIO ||
+                        video.getAspectRatio() > MAX_VIDEO_ASPECT_RATIO)
+                        return false;
+                    else
+                        return true;
+                } else
+                    return false;
+        }
+        return false;
+    }
+
+    @Override
+    protected boolean preValidateAttachment(Attachment attachment) {
+        switch (attachment.getAttachmentType().getID()) {
+            case Image:
+                if (getAttachments().isEmpty())
+                    return true;
+                else {
+                    return getAttachments().get(0).getAttachmentType().getID() != AttachmentTypeID.Video;
+                }
+            case Video:
+                if (getAttachments().isEmpty()) {
+                    VideoAttachment video = (VideoAttachment)attachment;
+                    if (video.getSizeBytes() > MAX_VIDEO_SIZE_BYTES ||
+                            video.getDurationMilliseconds() > MAX_VIDEO_DURATION_MILLISECONDS ||
+                            video.getAspectRatio() < MIN_VIDEO_ASPECT_RATIO ||
+                            video.getAspectRatio() > MAX_VIDEO_ASPECT_RATIO)
+                        return false;
+                    else
+                        return true;
+                } else
+                    return false;
+        }
+        return false;
+    }
+
+    @Override
+    protected int getMaxTitleLength() {
+        return 0;
+    }
+
+    @Override
+    protected int getMaxContentLength() {
+        return MAX_CONTENT_LENGTH;
     }
 }

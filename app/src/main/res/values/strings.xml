@@ -9,6 +9,7 @@
     <string name="error_storage_permissions">Could not access storage - permission denied.</string>
     <string name="error_login_token">Could not retrieve login token. Error: %s</string>
     <string name="error_twitter_verifier">Could not retrieve Twitter verifier. Error: %s</string>
+    <string name="error_twitter_token">Could not retrieve Twitter token. Error: %s</string>
     <string name="error_facebook_token">Could not retrieve Facebook token. Error: %s</string>
     <string name="error_deviantart_code">Could not retrieve DeviantArt code. Error: %s</string>
     <string name="error_access_token">Could not retrieve access token. Error: %s</string>
@@ -25,6 +26,10 @@
     <string name="error_content_unpublish">Failed to unpublish content. Error: %s</string>
 
     <string name="error_request_limit_exceeded">Unable to process request - limit exceeded. Please wait %s and try again.</string>
+
+    <string name="warning_unlocked">Validation rule for %s service has been violated. %s account\'s child post has been unlocked."</string>
+    <string name="warning_facebook_app_review">Application is still under Facebook app review process. Because of this, Facebook operations might not work properly yet.</string>
+    <string name="warning_title">Warning</string>
 
     <string name="add_account">Add account</string>
     <string name="remove_account">Remove account</string>

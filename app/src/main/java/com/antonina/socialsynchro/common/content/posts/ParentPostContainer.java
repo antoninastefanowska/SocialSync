@@ -104,6 +104,10 @@ public class ParentPostContainer extends PostContainer {
     @Override
     public void addAttachment(Attachment attachment) {
         post.addAttachment(attachment);
+        for (ChildPostContainer child : getChildren()) {
+            if (!child.validateAttachment(attachment))
+                child.unlock(false);
+        }
         notifyGUI();
         notifyGUIChildren();
     }
@@ -223,7 +227,7 @@ public class ParentPostContainer extends PostContainer {
 
         this.children = new ArrayList<>();
         this.deletedChildren = new ArrayList<>();
-        setPost(new Post()); //TODO: Tworzymy pusty obiekt zanim pobierzemy obiekt z bazy - zrobić to samo dla innych encji.
+        setPost(new Post());
 
         final ParentPostContainer instance = this;
         final LiveData<Post> postLiveData = PostRepository.getInstance().getDataByID(parentPostContainerData.postID);

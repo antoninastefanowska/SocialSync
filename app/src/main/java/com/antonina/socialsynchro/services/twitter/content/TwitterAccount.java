@@ -161,7 +161,6 @@ public class TwitterAccount extends Account {
         }
     }
 
-    @Override
     public void synchronizeRequestLimits(final OnSynchronizedListener listener) {
         String endpoint = TwitterGetRateLimitsRequest.getRequestEndpoint();
         final RequestLimit requestLimit = requestLimits.get(endpoint);

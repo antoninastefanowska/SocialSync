@@ -134,11 +134,6 @@ public class DeviantArtAccount extends Account {
     }
 
     @Override
-    public void synchronizeRequestLimits(OnSynchronizedListener listener) {
-        //TODO
-    }
-
-    @Override
     public AccountStatistic getStatistic() {
         return new AccountStatistic("Watchers", watcherCount, getProfilePictureURL(), getName(), getService().getPanelBackgroundID());
     }

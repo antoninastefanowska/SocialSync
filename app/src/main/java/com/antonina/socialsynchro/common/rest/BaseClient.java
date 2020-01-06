@@ -57,7 +57,6 @@ public abstract class BaseClient {
 
         public LiveData<ResponseType> start() {
             Call<ResponseType> call = createCall();
-            //Log.d("deviantart", call.request().url().toString());
             call.enqueue(this);
             return asyncResponse;
         }
@@ -167,7 +166,6 @@ public abstract class BaseClient {
 
         @Override
         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-            Log.d("statystyki", requestBodyToString(call.request().body()));
             String stringResponse = "";
             if (response.isSuccessful()) {
                 try {

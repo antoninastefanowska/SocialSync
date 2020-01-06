@@ -14,6 +14,7 @@ import com.antonina.socialsynchro.common.gui.activities.LoginActivity;
 import com.antonina.socialsynchro.common.gui.listeners.OnSynchronizedListener;
 import com.antonina.socialsynchro.common.rest.IServiceEntity;
 import com.antonina.socialsynchro.common.rest.RequestLimit;
+import com.antonina.socialsynchro.common.utils.ConvertUtils;
 import com.antonina.socialsynchro.services.backend.BackendClient;
 import com.antonina.socialsynchro.services.backend.requests.BackendGetTwitterVerifierRequest;
 import com.antonina.socialsynchro.services.backend.responses.BackendGetTwitterVerifierResponse;
@@ -109,7 +110,8 @@ public class TwitterLoginFlow extends LoginFlow {
                             }
                             @Override
                             public void onError(IServiceEntity entity, String error) {
-                                //TODO
+                                Toast toast = Toast.makeText(context, context.getResources().getString(R.string.error_twitter_token), Toast.LENGTH_LONG);
+                                toast.show();
                             }
                         });
                     } else {
@@ -147,7 +149,7 @@ public class TwitterLoginFlow extends LoginFlow {
                 }
             });
         } else {
-            //TODO
+            ConvertUtils.requestLimitWaitMessage(requestLimit.getSecondsUntilReset());
         }
     }
 

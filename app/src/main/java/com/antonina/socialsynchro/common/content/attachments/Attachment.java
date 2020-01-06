@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.URLConnection;
+import java.nio.file.Files;
 import java.util.Date;
 
 import okhttp3.MediaType;
@@ -37,6 +38,7 @@ public abstract class Attachment extends GUIItem implements IDatabaseEntity, ISe
 
     public Attachment(File file) {
         this.file = file;
+        extractMetadata();
     }
 
     @Override
@@ -72,6 +74,7 @@ public abstract class Attachment extends GUIItem implements IDatabaseEntity, ISe
 
     public Attachment(IDatabaseRow data) {
         createFromDatabaseRow(data);
+        extractMetadata();
     }
 
     @Override
@@ -84,9 +87,7 @@ public abstract class Attachment extends GUIItem implements IDatabaseEntity, ISe
     }
 
     @Override
-    public void createFromResponse(IResponse response) {
-        // TODO
-    }
+    public void createFromResponse(IResponse response) { }
 
     @Override
     public void saveInDatabase() {
@@ -141,6 +142,19 @@ public abstract class Attachment extends GUIItem implements IDatabaseEntity, ISe
         return output;
     }
 
+    public byte[] getBytes() {
+        byte[] output = null;
+        try {
+            RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
+            output = new byte[(int)file.length()];
+            randomAccessFile.readFully(output);
+            randomAccessFile.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return output;
+    }
+
     public RequestBody getChunkRequestBody(long chunkStart, long chunkEnd) {
         return RequestBody.create(MediaType.parse(getMIMEType()), getFileChunk(chunkStart, chunkEnd));
     }
@@ -181,4 +195,6 @@ public abstract class Attachment extends GUIItem implements IDatabaseEntity, ISe
         copy.attachmentType = attachmentType;
         return copy;
     }
+
+    protected abstract void extractMetadata();
 }

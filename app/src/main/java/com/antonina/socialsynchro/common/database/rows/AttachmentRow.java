@@ -39,9 +39,6 @@ public class AttachmentRow implements IDatabaseRow {
         this.filepath = attachment.getFile().getAbsolutePath();
         this.externalID = attachment.getExternalID();
         this.attachmentTypeID = attachment.getAttachmentType().getID().ordinal();
-        if (attachment.getParentPost().getInternalID() == null) {
-            Log.d("blad", "tu jestem");
-        }
         this.postID = attachment.getParentPost().getInternalID();
     }
 

@@ -22,10 +22,12 @@ import com.antonina.socialsynchro.common.content.posts.ChildPostContainerFactory
 import com.antonina.socialsynchro.common.content.attachments.Attachment;
 import com.antonina.socialsynchro.common.content.posts.PostContainer;
 import com.antonina.socialsynchro.common.gui.adapters.PostEditAdapter;
+import com.antonina.socialsynchro.common.gui.dialogs.WarningDialog;
 import com.antonina.socialsynchro.common.gui.listeners.OnAttachmentUploadedListener;
 import com.antonina.socialsynchro.common.gui.listeners.OnPublishedListener;
 import com.antonina.socialsynchro.common.content.posts.ParentPostContainer;
 import com.antonina.socialsynchro.common.content.attachments.AttachmentType;
+import com.antonina.socialsynchro.common.gui.listeners.OnUnlockedListener;
 import com.antonina.socialsynchro.common.gui.listeners.OnUnpublishedListener;
 import com.antonina.socialsynchro.databinding.ActivityEditBinding;
 import com.antonina.socialsynchro.common.gui.dialogs.ChooseAccountDialog;
@@ -47,6 +49,8 @@ public class EditActivity extends AppCompatActivity {
     private PostEditAdapter postAdapter;
     private PostEditAdapter.PostViewHolder activeViewHolder;
 
+    private OnUnlockedListener unlockedListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -66,6 +70,15 @@ public class EditActivity extends AppCompatActivity {
 
         binding.setPostAdapter(postAdapter);
         binding.executePendingBindings();
+
+        final AppCompatActivity context = this;
+        unlockedListener = new OnUnlockedListener() {
+            @Override
+            public void onUnlocked(ChildPostContainer unlocked) {
+                WarningDialog warningDialog = new WarningDialog(context, getResources().getString(R.string.warning_unlocked, unlocked.getService().getName(), unlocked.getAccount().getName()));
+                warningDialog.show();
+            }
+        };
     }
 
     public void addChild() {
@@ -76,6 +89,7 @@ public class EditActivity extends AppCompatActivity {
                 for (Account account : selectedAccounts) {
                     ChildPostContainerFactory factory = ChildPostContainerFactory.getInstance();
                     ChildPostContainer child = factory.createNew(account);
+                    child.setUnlockedListener(unlockedListener);
                     postAdapter.addItem(child);
                 }
                 selectedAccounts = null;

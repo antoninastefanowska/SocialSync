@@ -16,6 +16,7 @@ import com.antonina.socialsynchro.common.database.rows.ChildPostContainerRow;
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 import com.antonina.socialsynchro.common.gui.listeners.OnAttachmentUploadedListener;
 import com.antonina.socialsynchro.common.gui.listeners.OnPublishedListener;
+import com.antonina.socialsynchro.common.gui.listeners.OnUnlockedListener;
 import com.antonina.socialsynchro.common.gui.listeners.OnUnpublishedListener;
 import com.antonina.socialsynchro.common.rest.IServiceEntity;
 
@@ -30,11 +31,11 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
 
     protected ParentPostContainer parent;
 
-    // TODO: dla każdej funkcji modyfikującej sprawdzić ograniczenia
-
     protected ChildPostContainer(IDatabaseRow data) {
         createFromDatabaseRow(data);
     }
+
+    private transient OnUnlockedListener unlockedListener;
 
     protected ChildPostContainer(Account account) {
         locked = true;
@@ -54,6 +55,10 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     @Bindable
     @Override
     public void setTitle(String title) {
+        if (!validateTitle(title)) {
+            unlock(false);
+            title = trimText(title, getMaxTitleLength());
+        }
         if (!locked)
             post.setTitle(title);
     }
@@ -70,6 +75,10 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     @Bindable
     @Override
     public void setContent(String content) {
+        if (!validateContent(content)) {
+            unlock(false);
+            content = trimText(content, getMaxContentLength());
+        }
         if (!locked)
             post.setContent(content);
     }
@@ -102,10 +111,13 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
 
     @Override
     public void addAttachment(Attachment attachment) {
-        if (!locked) {
-            post.addAttachment(attachment);
-            notifyGUI();
-        }
+        if (preValidateAttachment(attachment)) {
+            if (!locked) {
+                post.addAttachment(attachment);
+                notifyGUI();
+            }
+        } else
+            unlock(false);
     }
 
     @Override
@@ -118,8 +130,11 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
 
     @Override
     public void setAttachments(List<Attachment> attachments) {
-        if (!locked)
-            post.setAttachments(attachments);
+        if (validateAttachments(attachments)) {
+            if (!locked)
+                post.setAttachments(attachments);
+        } else
+            unlock(false);
     }
 
     @Override
@@ -142,22 +157,28 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     }
 
     public void lock() {
-        locked = true;
-        removePost();
-        notifyGUI();
+        if (!locked && validateParent()) {
+            locked = true;
+            removePost();
+            notifyGUI();
+        }
     }
 
-    public void unlock() {
-        Post parentPost = parent.getPost();
-        locked = false;
-        setPost(new Post());
-        setTitle(parentPost.getTitle());
-        setContent(parentPost.getContent());
-        for (Attachment attachment : parentPost.getAttachments()) {
-            Attachment copy = attachment.createCopy();
-            addAttachment(copy);
+    public void unlock(boolean isManual) {
+        if (locked) {
+            Post parentPost = parent.getPost();
+            locked = false;
+            setPost(new Post());
+            setTitle(parentPost.getTitle());
+            setContent(parentPost.getContent());
+            for (Attachment attachment : parentPost.getAttachments()) {
+                Attachment copy = attachment.createCopy();
+                addAttachment(copy);
+            }
+            if (unlockedListener != null && !isManual)
+                unlockedListener.onUnlocked(this);
+            notifyGUI();
         }
-        notifyGUI();
     }
 
     private void removePost() {
@@ -202,6 +223,8 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
 
     public void setParent(ParentPostContainer parent) {
         this.parent = parent;
+        if (!validateParent())
+            unlock(false);
         notifyGUI();
     }
 
@@ -295,4 +318,39 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     }
 
     public abstract String getURL();
+
+    protected abstract boolean validateTitle(String title);
+
+    protected abstract boolean validateContent(String content);
+
+    private boolean validateAttachments(List<Attachment> attachments) {
+        for (Attachment attachment : attachments) {
+            if (!validateAttachment(attachment))
+                return false;
+        }
+        return true;
+    }
+
+    protected abstract boolean validateAttachment(Attachment attachment);
+
+    protected abstract boolean preValidateAttachment(Attachment attachment);
+
+    private boolean validateParent() {
+        if (getParent() != null)
+            return validateTitle(getParent().getTitle()) & validateContent(getParent().getContent()) & validateAttachments(getParent().getAttachments());
+        else
+            return true;
+    }
+
+    protected String trimText(String text, int size) {
+        return text.substring(0, size - 3) + "...";
+    }
+
+    protected abstract int getMaxTitleLength();
+
+    protected abstract int getMaxContentLength();
+
+    public void setUnlockedListener(OnUnlockedListener unlockedListener) {
+        this.unlockedListener = unlockedListener;
+    }
 }

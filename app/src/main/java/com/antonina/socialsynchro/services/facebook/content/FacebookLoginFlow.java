@@ -12,6 +12,7 @@ import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.common.content.accounts.Account;
 import com.antonina.socialsynchro.common.content.accounts.LoginFlow;
 import com.antonina.socialsynchro.common.gui.activities.LoginActivity;
+import com.antonina.socialsynchro.common.gui.dialogs.WarningDialog;
 import com.antonina.socialsynchro.common.gui.listeners.OnSynchronizedListener;
 import com.antonina.socialsynchro.common.rest.IServiceEntity;
 import com.antonina.socialsynchro.common.utils.GenerateUtils;
@@ -42,6 +43,8 @@ public class FacebookLoginFlow extends LoginFlow {
         super(context);
         accounts = new ArrayList<>();
         loadedCount = 0;
+        WarningDialog warningDialog = new WarningDialog(context, context.getResources().getString(R.string.warning_facebook_app_review));
+        warningDialog.show();
     }
 
     @Override
