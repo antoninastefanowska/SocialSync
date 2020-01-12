@@ -150,11 +150,6 @@ public class ParentPostContainer extends PostContainer {
     }
 
     @Override
-    public boolean isPublished() {
-        return false;
-    }
-
-    @Override
     public void synchronize(final OnSynchronizedListener listener) {
         synchronizedChildren = 0;
         setLoading(true);

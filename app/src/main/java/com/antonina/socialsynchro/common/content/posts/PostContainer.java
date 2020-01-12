@@ -20,8 +20,6 @@ public abstract class PostContainer extends GUIItem implements IPost, IDatabaseE
 
     public abstract void unpublish(OnUnpublishedListener listener);
 
-    public abstract boolean isPublished();
-
     public abstract void synchronize(OnSynchronizedListener listener);
 
     @Override

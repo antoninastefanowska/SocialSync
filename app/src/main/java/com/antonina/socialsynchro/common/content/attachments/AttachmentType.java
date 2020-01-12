@@ -12,7 +12,7 @@ public abstract class AttachmentType extends GUIItem {
     public abstract String getName();
 
     @Bindable
-    public abstract String getIconURL();
+    public abstract int getIconID();
 
     public abstract Class<? extends AppCompatActivity> getGalleryActivityClass();
 }

@@ -14,7 +14,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".common.gui.activities.VideoGalleryActivity"></activity>
+        <activity android:name=".common.gui.activities.VideoGalleryActivity" />
         <activity android:name=".common.gui.activities.LoginActivity" />
         <activity android:name=".common.gui.activities.ImageGalleryActivity" />
         <activity android:name=".common.gui.activities.StatisticsActivity" />

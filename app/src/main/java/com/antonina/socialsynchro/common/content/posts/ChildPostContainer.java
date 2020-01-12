@@ -295,11 +295,6 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
         internalID = null;
     }
 
-    @Override
-    public boolean isPublished() {
-        return (externalID != null);
-    }
-
     private void setLocked(boolean locked) {
         this.locked = locked;
     }
@@ -342,7 +337,7 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
             return true;
     }
 
-    protected String trimText(String text, int size) {
+    private String trimText(String text, int size) {
         return text.substring(0, size - 3) + "...";
     }
 

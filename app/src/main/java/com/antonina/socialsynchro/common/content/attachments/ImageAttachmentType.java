@@ -26,7 +26,7 @@ public class ImageAttachmentType extends AttachmentType {
     }
 
     @Override
-    public String getIconURL() {
+    public int getIconID() {
         return null;
     }
 

@@ -8,7 +8,6 @@ import com.antonina.socialsynchro.common.content.accounts.Account;
 import com.antonina.socialsynchro.common.content.services.ServiceID;
 import com.antonina.socialsynchro.common.content.services.Services;
 import com.antonina.socialsynchro.common.content.statistics.AccountStatistic;
-import com.antonina.socialsynchro.common.content.statistics.StatisticsContainer;
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 import com.antonina.socialsynchro.common.gui.listeners.OnSynchronizedListener;
 import com.antonina.socialsynchro.common.rest.IResponse;
