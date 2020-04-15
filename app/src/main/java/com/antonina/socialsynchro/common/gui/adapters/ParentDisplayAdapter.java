@@ -211,7 +211,7 @@ public class ParentDisplayAdapter extends BaseAdapter<ParentPostContainer, Paren
     @Override
     public void loadData() {
         ParentPostContainerRepository repository = ParentPostContainerRepository.getInstance();
-        final LiveData<List<ParentPostContainer>> parentLiveData = repository.getAllDataList();
+        final LiveData<List<ParentPostContainer>> parentLiveData = repository.getAllData();
         parentLiveData.observe(context, new Observer<List<ParentPostContainer>>() {
             @Override
             public void onChanged(@Nullable List<ParentPostContainer> data) {

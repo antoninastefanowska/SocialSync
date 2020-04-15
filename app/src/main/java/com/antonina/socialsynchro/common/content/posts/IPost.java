@@ -13,8 +13,14 @@ public interface IPost extends Serializable {
     void setContent(String content);
     Date getCreationDate();
     Date getModificationDate();
+
     List<Attachment> getAttachments();
     void setAttachments(List<Attachment> attachments);
     void addAttachment(Attachment attachment);
     void removeAttachment(Attachment attachment);
+
+    List<Tag> getTags();
+    void setTags(List<Tag> tags);
+    void addTag(Tag tag);
+    void removeTag(Tag tag);
 }

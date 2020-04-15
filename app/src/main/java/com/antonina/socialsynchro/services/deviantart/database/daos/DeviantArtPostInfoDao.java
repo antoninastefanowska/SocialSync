@@ -24,11 +24,14 @@ public interface DeviantArtPostInfoDao extends BaseDao<DeviantArtPostInfoRow> {
     LiveData<DeviantArtPostInfoRow> getDataByID(long deviantartPostID);
 
     @Insert
-    long insert(DeviantArtPostInfoRow postData);
+    long insert(DeviantArtPostInfoRow postRow);
 
     @Update
-    void update(DeviantArtPostInfoRow postData);
+    void update(DeviantArtPostInfoRow postRow);
 
     @Delete
-    void delete(DeviantArtPostInfoRow postData);
+    void delete(DeviantArtPostInfoRow postRow);
+
+    @Delete
+    void deleteMany(List<DeviantArtPostInfoRow> postRows);
 }

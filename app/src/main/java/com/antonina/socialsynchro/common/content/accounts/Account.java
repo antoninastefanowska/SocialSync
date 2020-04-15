@@ -13,7 +13,6 @@ import com.antonina.socialsynchro.common.database.repositories.RequestLimitRepos
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 import com.antonina.socialsynchro.common.database.rows.AccountRow;
 import com.antonina.socialsynchro.common.gui.GUIItem;
-import com.antonina.socialsynchro.common.gui.listeners.OnSynchronizedListener;
 import com.antonina.socialsynchro.common.rest.IServiceEntity;
 import com.antonina.socialsynchro.common.rest.RequestLimit;
 
@@ -58,7 +57,7 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
         requestLimits = new TreeMap<>();
 
         RequestLimitRepository requestLimitRepository = RequestLimitRepository.getInstance();
-        final LiveData<List<RequestLimit>> requestLimitsLiveData = requestLimitRepository.getIDsByAccount(this);
+        final LiveData<List<RequestLimit>> requestLimitsLiveData = requestLimitRepository.getDataByAccount(this);
         requestLimitsLiveData.observeForever(new Observer<List<RequestLimit>>() {
             @Override
             public void onChanged(@Nullable List<RequestLimit> requestLimits) {

@@ -49,7 +49,7 @@ public class DeviantArtAccount extends Account {
         super.createFromDatabaseRow(data);
 
         DeviantArtAccountInfoRepository repository = DeviantArtAccountInfoRepository.getInstance();
-        final LiveData<DeviantArtAccountInfoRow> dataTable = repository.getDataTableByID(data.getID());
+        final LiveData<DeviantArtAccountInfoRow> dataTable = repository.getDataRowByID(data.getID());
         dataTable.observeForever(new Observer<DeviantArtAccountInfoRow>() {
             @Override
             public void onChanged(@Nullable DeviantArtAccountInfoRow data) {

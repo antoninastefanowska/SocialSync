@@ -3,7 +3,6 @@ package com.antonina.socialsynchro.services.twitter.content;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.antonina.socialsynchro.common.content.statistics.AccountStatistic;
 import com.antonina.socialsynchro.common.content.accounts.Account;
@@ -51,7 +50,7 @@ public class TwitterAccount extends Account {
 
         TwitterAccountInfoRepository repository = TwitterAccountInfoRepository.getInstance();
         final TwitterAccount instance = this;
-        final LiveData<TwitterAccountInfoRow> dataTable = repository.getDataTableByID(data.getID());
+        final LiveData<TwitterAccountInfoRow> dataTable = repository.getDataRowByID(data.getID());
         dataTable.observeForever(new Observer<TwitterAccountInfoRow>() {
             @Override
             public void onChanged(@Nullable TwitterAccountInfoRow data) {

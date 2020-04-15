@@ -22,18 +22,29 @@ public interface RequestLimitDao extends BaseDao<RequestLimitRow> {
     @Query("SELECT COUNT(*) FROM request_limit")
     int count();
 
+    @Query("SELECT * FROM request_limit WHERE account_id = :accountID")
+    LiveData<List<RequestLimitRow>> getDataByAccount(long accountID);
+
+    @Query("SELECT * FROM request_limit WHERE service_id = :serviceID AND account_id IS NULL")
+    LiveData<List<RequestLimitRow>> getDataForApplicationByService(int serviceID);
+
+    //TODO: Do usunięcia
     @Query("SELECT id FROM request_limit WHERE account_id = :accountID")
     LiveData<List<Long>> getIDsByAccount(long accountID);
 
+    //TODO: Do usunięcia
     @Query("SELECT id FROM request_limit WHERE service_id = :serviceID AND account_id IS NULL")
     LiveData<List<Long>> getIDsForApplicationByService(int serviceID);
 
     @Insert
-    long insert(RequestLimitRow dataTable);
-
-    @Delete
-    void delete(RequestLimitRow dataTable);
+    long insert(RequestLimitRow requestLimitRow);
 
     @Update
-    void update(RequestLimitRow dataTable);
+    void update(RequestLimitRow requestLimitRow);
+
+    @Delete
+    void delete(RequestLimitRow requestLimitRow);
+
+    @Delete
+    void deleteMany(List<RequestLimitRow> requestLimitRows);
 }

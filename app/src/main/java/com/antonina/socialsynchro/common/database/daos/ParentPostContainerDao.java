@@ -13,7 +13,7 @@ import java.util.List;
 
 @Dao
 public interface ParentPostContainerDao extends BaseDao<ParentPostContainerRow> {
-    @Query("SELECT * FROM parent_post_container")
+    @Query("SELECT parent.* FROM parent_post_container parent JOIN post ON parent.post_id = post.id ORDER BY post.creation_date DESC")
     LiveData<List<ParentPostContainerRow>> getAllData();
 
     @Query("SELECT * FROM parent_post_container WHERE id = :id")
@@ -23,13 +23,14 @@ public interface ParentPostContainerDao extends BaseDao<ParentPostContainerRow> 
     int count();
 
     @Insert
-    long insert(ParentPostContainerRow parentPostContainerData);
+    long insert(ParentPostContainerRow parentPostContainerRow);
 
     @Update
-    void update(ParentPostContainerRow parentPostContainerData);
+    void update(ParentPostContainerRow parentPostContainerRow);
 
     @Delete
-    void delete(ParentPostContainerRow parentPostContainerData);
+    void delete(ParentPostContainerRow parentPostContainerRow);
 
-
+    @Delete
+    void deleteMany(List<ParentPostContainerRow> parentPostContainerRows);
 }

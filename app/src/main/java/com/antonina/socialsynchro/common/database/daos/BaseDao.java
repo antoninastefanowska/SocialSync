@@ -11,7 +11,8 @@ public interface BaseDao<DataRowType extends IDatabaseRow> {
     LiveData<List<DataRowType>> getAllData();
     LiveData<DataRowType> getDataByID(long id);
     int count();
-    long insert(DataRowType dataTable);
-    void delete(DataRowType dataTable);
-    void update(DataRowType dataTable);
+    long insert(DataRowType dataRow);
+    void update(DataRowType dataRows);
+    void delete(DataRowType dataRow);
+    void deleteMany(List<DataRowType> dataRows);
 }

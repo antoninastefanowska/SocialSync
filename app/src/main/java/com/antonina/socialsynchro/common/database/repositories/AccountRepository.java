@@ -8,28 +8,22 @@ import android.os.AsyncTask;
 import android.util.Pair;
 
 import com.antonina.socialsynchro.common.content.accounts.Account;
-import com.antonina.socialsynchro.common.content.accounts.AccountFactory;
+import com.antonina.socialsynchro.common.content.services.Service;
+import com.antonina.socialsynchro.common.content.services.Services;
 import com.antonina.socialsynchro.common.database.ApplicationDatabase;
 import com.antonina.socialsynchro.common.database.daos.AccountDao;
 import com.antonina.socialsynchro.common.database.rows.AccountRow;
-import com.antonina.socialsynchro.common.content.services.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
-@SuppressWarnings("WeakerAccess")
 public class AccountRepository extends BaseRepository<AccountRow, Account> {
     private static AccountRepository instance;
 
     private AccountRepository(Application application) {
         ApplicationDatabase db = ApplicationDatabase.getDatabase(application);
         dao = db.accountDao();
-        loadAllData();
     }
 
     public static AccountRepository getInstance() {
@@ -41,107 +35,74 @@ public class AccountRepository extends BaseRepository<AccountRow, Account> {
     }
 
     @Override
-    protected Map<Long, Account> convertToEntities(List<AccountRow> input) {
-        Map<Long, Account> output = new TreeMap<>();
-        for (AccountRow accountData : input) {
-            Account account = AccountFactory.getInstance().createFromDatabaseRow(accountData);
-            output.put(account.getInternalID(), account);
-        }
-        return output;
+    protected Account convertToEntity(AccountRow dataRow) {
+        Service service = Services.getService(dataRow.serviceID);
+        return service.createAccount(dataRow);
     }
 
     @Override
-    protected AccountRow convertToRow(Account entity) {
-        AccountRow data = new AccountRow();
-        data.createFromEntity(entity);
-        return data;
-    }
-
-    @Override
-    protected List<Account> sortList(List<Account> list) {
-        Collections.sort(list, new Comparator<Account>() {
-            @Override
-            public int compare(Account o1, Account o2) {
-                return compareDates(o1.getConnectingDate(), o2.getConnectingDate());
-            }
-        });
-        return list;
+    protected AccountRow convertToDataRow(Account entity) {
+        AccountRow dataRow = new AccountRow();
+        dataRow.createFromEntity(entity);
+        return dataRow;
     }
 
     public LiveData<List<Account>> getDataByService(Service service) {
-        int serviceID = service.getID().ordinal();
-        LiveData<List<Account>> result = null;
-
         try {
+            int serviceID = service.getID().ordinal();
             AccountDao accountDao = (AccountDao)dao;
-            LiveData<List<Long>> IDs = new GetIDByServiceAsyncTask(accountDao).execute(serviceID).get();
-            FilterSource<Account> filterSource = new FilterSource<>(IDs, getAllData());
-
-            result = Transformations.map(filterSource, new Function<Pair<List<Long>, Map<Long, Account>>, List<Account>>() {
+            GetDataByServiceAsyncTask asyncTask = new GetDataByServiceAsyncTask(accountDao);
+            LiveData<List<AccountRow>> dataRows = asyncTask.execute(serviceID).get();
+            LiveData<List<Account>> entities = Transformations.map(dataRows, new Function<List<AccountRow>, List<Account>>() {
                 @Override
-                public List<Account> apply(Pair<List<Long>, Map<Long, Account>> input) {
+                public List<Account> apply(List<AccountRow> input) {
                     List<Account> output = new ArrayList<>();
-                    for (Long id : input.first)
-                        output.add(input.second.get(id));
-                    return sortList(output);
+                    for (AccountRow dataRow : input)
+                        output.add(convertToEntity(dataRow));
+                    return output;
                 }
             });
+            return entities;
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
+            return null;
         }
-        return result;
     }
 
     public long getIDByExternalIDAndService(String externalID, Service service) {
-        long result = -1;
-        int serviceID = service.getID().ordinal();
-
         try {
+            int serviceID = service.getID().ordinal();
             AccountDao accountDao = (AccountDao)dao;
-            result = new GetIDByExternalIDAsyncTask(accountDao).execute(new Pair<>(externalID, serviceID)).get();
+            GetIDByExternalIDAsyncTask asyncTask = new GetIDByExternalIDAsyncTask(accountDao);
+            return asyncTask.execute(new Pair<>(externalID, serviceID)).get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
+            return -1;
         }
-        return result;
     }
 
     public boolean accountExists(String externalID, Service service) {
-        boolean result = false;
-        int serviceID = service.getID().ordinal();
-
         try {
+            int serviceID = service.getID().ordinal();
             AccountDao accountDao = (AccountDao)dao;
-            result = new AccountExistsAsyncTask(accountDao).execute(new Pair<>(externalID, serviceID)).get();
+            AccountExistsAsyncTask asyncTask = new AccountExistsAsyncTask(accountDao);
+            return asyncTask.execute(new Pair<>(externalID, serviceID)).get();
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
+            return false;
         }
-        return result;
     }
 
-    @Override
-    public void update(Account account) {
-        super.update(account);
-        ChildPostContainerRepository childRepository = ChildPostContainerRepository.getInstance();
-        childRepository.loadAllData();
-    }
+    private static class GetDataByServiceAsyncTask extends AsyncTask<Integer, Void, LiveData<List<AccountRow>>> {
+        private AccountDao accountDao;
 
-    @Override
-    public void delete(Account account) {
-        super.delete(account);
-        ChildPostContainerRepository childRepository = ChildPostContainerRepository.getInstance();
-        childRepository.loadAllData();
-    }
-
-    private static class GetIDByServiceAsyncTask extends AsyncTask<Integer, Void, LiveData<List<Long>>> {
-        private final AccountDao accountDao;
-
-        public GetIDByServiceAsyncTask(AccountDao dao) {
-            accountDao = dao;
+        public GetDataByServiceAsyncTask(AccountDao dao) {
+            this.accountDao = dao;
         }
 
         @Override
-        protected LiveData<List<Long>> doInBackground(Integer... params) {
-            return accountDao.getIDsByService(params[0]);
+        protected LiveData<List<AccountRow>> doInBackground(Integer... params) {
+            return accountDao.getDataByService(params[0]);
         }
     }
 

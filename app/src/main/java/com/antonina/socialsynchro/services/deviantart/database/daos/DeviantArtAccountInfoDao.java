@@ -24,11 +24,14 @@ public interface DeviantArtAccountInfoDao extends BaseDao<DeviantArtAccountInfoR
     LiveData<DeviantArtAccountInfoRow> getDataByID(long deviantartAccountID);
 
     @Insert
-    long insert(DeviantArtAccountInfoRow accountData);
+    long insert(DeviantArtAccountInfoRow accountRow);
 
     @Update
-    void update(DeviantArtAccountInfoRow accountData);
+    void update(DeviantArtAccountInfoRow accountRow);
 
     @Delete
-    void delete(DeviantArtAccountInfoRow accountData);
+    void delete(DeviantArtAccountInfoRow accountRow);
+
+    @Delete
+    void deleteMany(List<DeviantArtAccountInfoRow> accountRows);
 }

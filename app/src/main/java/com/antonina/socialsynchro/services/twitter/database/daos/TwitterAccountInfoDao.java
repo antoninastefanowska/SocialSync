@@ -24,11 +24,14 @@ public interface TwitterAccountInfoDao extends BaseDao<TwitterAccountInfoRow> {
     LiveData<TwitterAccountInfoRow> getDataByID(long twitterAccountID);
 
     @Insert
-    long insert(TwitterAccountInfoRow accountData);
+    long insert(TwitterAccountInfoRow accountRow);
 
     @Update
-    void update(TwitterAccountInfoRow accountData);
+    void update(TwitterAccountInfoRow accountRow);
 
     @Delete
-    void delete(TwitterAccountInfoRow accountData);
+    void delete(TwitterAccountInfoRow accountRow);
+
+    @Delete
+    void deleteMany(List<TwitterAccountInfoRow> accountInfoRows);
 }

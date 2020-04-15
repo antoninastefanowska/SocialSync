@@ -3,7 +3,6 @@ package com.antonina.socialsynchro.services.twitter.content;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.antonina.socialsynchro.common.content.attachments.AttachmentTypeID;
 import com.antonina.socialsynchro.common.content.attachments.ImageAttachment;
@@ -91,7 +90,7 @@ public class TwitterPostContainer extends ChildPostContainer {
 
         TwitterPostInfoRepository repository = TwitterPostInfoRepository.getInstance();
         final TwitterPostContainer instance = this;
-        final LiveData<TwitterPostInfoRow> dataTable = repository.getDataTableByID(data.getID());
+        final LiveData<TwitterPostInfoRow> dataTable = repository.getDataRowByID(data.getID());
         dataTable.observeForever(new Observer<TwitterPostInfoRow>() {
             @Override
             public void onChanged(@Nullable TwitterPostInfoRow data) {
@@ -477,6 +476,7 @@ public class TwitterPostContainer extends ChildPostContainer {
     @Override
     public void unpublish(final OnUnpublishedListener listener) {
         if (isOnline()) {
+            setLoading(true);
             final String endpoint = TwitterRemoveContentRequest.getRequestEndpoint();
             BackendGetRateLimitsRequest request = BackendGetRateLimitsRequest.builder()
                     .endpoint(endpoint)
@@ -511,6 +511,7 @@ public class TwitterPostContainer extends ChildPostContainer {
                                                 .serviceName(getService().getName())
                                                 .build();
                                         BackendClient.updateRequestCounter(request);
+                                        setLoading(false);
                                         asyncResponse.removeObserver(this);
                                     }
                                 }

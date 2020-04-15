@@ -2,6 +2,8 @@ package com.antonina.socialsynchro.common.content.attachments;
 
 import android.support.v7.app.AppCompatActivity;
 
+import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
+
 public class AudioAttachmentType extends AttachmentType {
     private static AudioAttachmentType instance;
 
@@ -25,7 +27,17 @@ public class AudioAttachmentType extends AttachmentType {
 
     @Override
     public int getIconID() {
-        return null;
+        return -1;
+    }
+
+    @Override
+    public Attachment createAttachment(IDatabaseRow data) {
+        return new AudioAttachment(data);
+    }
+
+    @Override
+    public Attachment createNewAttachment() {
+        return new AudioAttachment();
     }
 
     @Override

@@ -226,7 +226,7 @@ public class DeviantArtPostContainer extends ChildPostContainer {
 
         DeviantArtPostInfoRepository repository = DeviantArtPostInfoRepository.getInstance();
         final DeviantArtPostContainer instance = this;
-        final LiveData<DeviantArtPostInfoRow> dataTable = repository.getDataTableByID(data.getID());
+        final LiveData<DeviantArtPostInfoRow> dataTable = repository.getDataRowByID(data.getID());
         dataTable.observeForever(new Observer<DeviantArtPostInfoRow>() {
             @Override
             public void onChanged(@Nullable DeviantArtPostInfoRow data) {

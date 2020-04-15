@@ -104,7 +104,7 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     @Override
     public List<Attachment> getAttachments() {
         if (locked)
-            return parent.getPost().getAttachments();
+            return parent.getAttachments();
         else
             return post.getAttachments();
     }
@@ -135,6 +135,32 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
                 post.setAttachments(attachments);
         } else
             unlock(false);
+    }
+
+    @Override
+    public List<Tag> getTags() {
+        if (locked)
+            return parent.getTags();
+        else
+            return post.getTags();
+    }
+
+    @Override
+    public void setTags(List<Tag> tags) {
+        if (!locked)
+            post.setTags(tags);
+    }
+
+    @Override
+    public void addTag(Tag tag) {
+        if (!locked)
+            post.addTag(tag);
+    }
+
+    @Override
+    public void removeTag(Tag tag) {
+        if (!locked)
+            post.removeTag(tag);
     }
 
     @Override
@@ -201,6 +227,8 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     @Override
     public void setExternalID(String externalID) {
         this.externalID = externalID;
+        if (internalID != null)
+            saveInDatabase();
         notifyGUI();
     }
 
@@ -232,7 +260,7 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     public void createFromDatabaseRow(IDatabaseRow data) {
         ChildPostContainerRow childPostContainerData = (ChildPostContainerRow)data;
         this.setInternalID(childPostContainerData.getID());
-        this.setExternalID(childPostContainerData.externalID);
+        this.externalID = childPostContainerData.externalID;
         this.setLocked(childPostContainerData.locked);
         this.setSynchronizationDate(childPostContainerData.synchronizationDate);
 

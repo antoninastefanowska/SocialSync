@@ -45,7 +45,7 @@ public class FacebookAccount extends Account {
 
         FacebookAccountInfoRepository repository = FacebookAccountInfoRepository.getInstance();
         final FacebookAccount instance = this;
-        final LiveData<FacebookAccountInfoRow> dataTable = repository.getDataTableByID(data.getID());
+        final LiveData<FacebookAccountInfoRow> dataTable = repository.getDataRowByID(data.getID());
         dataTable.observeForever(new Observer<FacebookAccountInfoRow>() {
             @Override
             public void onChanged(@Nullable FacebookAccountInfoRow data) {

@@ -105,6 +105,7 @@ public class ParentPostContainer extends PostContainer {
     public void addAttachment(Attachment attachment) {
         post.addAttachment(attachment);
         for (ChildPostContainer child : getChildren()) {
+            //TODO: Usunąć automatyczne odblokowywanie
             if (!child.validateAttachment(attachment))
                 child.unlock(false);
         }
@@ -115,6 +116,32 @@ public class ParentPostContainer extends PostContainer {
     @Override
     public void removeAttachment(Attachment attachment) {
         post.removeAttachment(attachment);
+        notifyGUI();
+        notifyGUIChildren();
+    }
+
+    @Override
+    public List<Tag> getTags() {
+        return post.getTags();
+    }
+
+    @Override
+    public void setTags(List<Tag> tags) {
+        post.setTags(tags);
+        notifyGUI();
+        notifyGUIChildren();
+    }
+
+    @Override
+    public void addTag(Tag tag) {
+        post.addTag(tag);
+        notifyGUI();
+        notifyGUIChildren();
+    }
+
+    @Override
+    public void removeTag(Tag tag) {
+        post.removeTag(tag);
         notifyGUI();
         notifyGUIChildren();
     }

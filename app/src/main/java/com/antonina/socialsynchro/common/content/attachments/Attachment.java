@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.net.URLConnection;
-import java.nio.file.Files;
 import java.util.Date;
 
 import okhttp3.MediaType;
@@ -188,7 +187,7 @@ public abstract class Attachment extends GUIItem implements IDatabaseEntity, ISe
     }
 
     public Attachment createCopy() {
-        Attachment copy = AttachmentFactory.getInstance().create(attachmentType.getID());
+        Attachment copy = attachmentType.createNewAttachment();
         copy.internalID = internalID;
         copy.externalID = externalID;
         copy.file = file;

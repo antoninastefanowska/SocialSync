@@ -13,7 +13,7 @@ import java.util.List;
 
 @Dao
 public interface AccountDao extends BaseDao<AccountRow> {
-    @Query("SELECT * FROM account")
+    @Query("SELECT * FROM account ORDER BY connecting_date DESC")
     LiveData<List<AccountRow>> getAllData();
 
     @Query("SELECT COUNT(*) FROM account")
@@ -22,6 +22,10 @@ public interface AccountDao extends BaseDao<AccountRow> {
     @Query("SELECT * FROM account WHERE id = :accountID")
     LiveData<AccountRow> getDataByID(long accountID);
 
+    @Query("SELECT * FROM account WHERE service_id = :serviceID ORDER BY connecting_date DESC")
+    LiveData<List<AccountRow>> getDataByService(int serviceID);
+
+    //TODO: do usunięcia
     @Query("SELECT id FROM account WHERE service_id = :serviceID")
     LiveData<List<Long>> getIDsByService(int serviceID);
 
@@ -32,11 +36,14 @@ public interface AccountDao extends BaseDao<AccountRow> {
     boolean accountExists(String externalID, int serviceID);
 
     @Insert
-    long insert(AccountRow accountData);
+    long insert(AccountRow accountRow);
 
     @Update
-    void update(AccountRow accountData);
+    void update(AccountRow accountRow);
 
     @Delete
-    void delete(AccountRow accountData);
+    void delete(AccountRow accountRow);
+
+    @Delete
+    void deleteMany(List<AccountRow> accountRows);
 }

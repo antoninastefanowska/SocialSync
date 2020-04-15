@@ -1,16 +1,11 @@
 package com.antonina.socialsynchro.services.deviantart.database.repositories;
 
 import android.app.Application;
-import android.arch.lifecycle.LiveData;
 
 import com.antonina.socialsynchro.common.database.ApplicationDatabase;
 import com.antonina.socialsynchro.common.database.repositories.BaseRepository;
 import com.antonina.socialsynchro.services.deviantart.content.DeviantArtAccount;
 import com.antonina.socialsynchro.services.deviantart.database.rows.DeviantArtAccountInfoRow;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 public class DeviantArtAccountInfoRepository extends BaseRepository<DeviantArtAccountInfoRow, DeviantArtAccount> {
     private static DeviantArtAccountInfoRepository instance;
@@ -29,30 +24,14 @@ public class DeviantArtAccountInfoRepository extends BaseRepository<DeviantArtAc
     }
 
     @Override
-    protected Map<Long, DeviantArtAccount> convertToEntities(List<DeviantArtAccountInfoRow> input) {
+    protected DeviantArtAccount convertToEntity(DeviantArtAccountInfoRow dataRow) {
         return null;
     }
 
     @Override
-    protected DeviantArtAccountInfoRow convertToRow(DeviantArtAccount entity) {
-        DeviantArtAccountInfoRow data = new DeviantArtAccountInfoRow();
-        data.createFromEntity(entity);
-        return data;
-    }
-
-    @Override
-    protected List<DeviantArtAccount> sortList(List<DeviantArtAccount> list) {
-        return list;
-    }
-
-    public LiveData<DeviantArtAccountInfoRow> getDataTableByID(long id) {
-        LiveData<DeviantArtAccountInfoRow> result = null;
-        try {
-            GetDataByIDAsyncTask<DeviantArtAccountInfoRow> asyncTask = new GetDataByIDAsyncTask<>(dao);
-            result = asyncTask.execute(id).get();
-        } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
-        }
-        return result;
+    protected DeviantArtAccountInfoRow convertToDataRow(DeviantArtAccount entity) {
+        DeviantArtAccountInfoRow dataRow = new DeviantArtAccountInfoRow();
+        dataRow.createFromEntity(entity);
+        return dataRow;
     }
 }

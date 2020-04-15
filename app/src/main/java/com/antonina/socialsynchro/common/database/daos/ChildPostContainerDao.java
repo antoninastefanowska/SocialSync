@@ -19,6 +19,10 @@ public interface ChildPostContainerDao extends BaseDao<ChildPostContainerRow> {
     @Query("SELECT * FROM child_post_container WHERE id = :id")
     LiveData<ChildPostContainerRow> getDataByID(long id);
 
+    @Query("SELECT * FROM child_post_container WHERE parent_id = :parentID")
+    LiveData<List<ChildPostContainerRow>> getDataByParent(long parentID);
+
+    //TODO: Do usunięcia
     @Query("SELECT id FROM child_post_container WHERE parent_id = :parentID")
     LiveData<List<Long>> getIDsByParent(long parentID);
 
@@ -26,11 +30,14 @@ public interface ChildPostContainerDao extends BaseDao<ChildPostContainerRow> {
     int count();
 
     @Insert
-    long insert(ChildPostContainerRow childPostContainerData);
+    long insert(ChildPostContainerRow childPostContainerRow);
 
     @Update
-    void update(ChildPostContainerRow childPostContainerData);
+    void update(ChildPostContainerRow childPostContainerRow);
 
     @Delete
-    void delete(ChildPostContainerRow childPostContainerData);
+    void delete(ChildPostContainerRow childPostContainerRow);
+
+    @Delete
+    void deleteMany(List<ChildPostContainerRow> childPostContainerRows);
 }

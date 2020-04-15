@@ -5,7 +5,6 @@ import android.arch.core.util.Function;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 import android.os.AsyncTask;
-import android.util.Pair;
 
 import com.antonina.socialsynchro.common.content.accounts.Account;
 import com.antonina.socialsynchro.common.content.services.Service;
@@ -16,8 +15,6 @@ import com.antonina.socialsynchro.common.rest.RequestLimit;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.ExecutionException;
 
 public class RequestLimitRepository extends BaseRepository<RequestLimitRow, RequestLimit> {
@@ -26,7 +23,6 @@ public class RequestLimitRepository extends BaseRepository<RequestLimitRow, Requ
     private RequestLimitRepository(Application application) {
         ApplicationDatabase db = ApplicationDatabase.getDatabase(application);
         dao = db.requestLimitDao();
-        loadAllData();
     }
 
     public static RequestLimitRepository getInstance() {
@@ -38,96 +34,84 @@ public class RequestLimitRepository extends BaseRepository<RequestLimitRow, Requ
     }
 
     @Override
-    protected Map<Long, RequestLimit> convertToEntities(List<RequestLimitRow> input) {
-        Map<Long, RequestLimit> output = new TreeMap<>();
-        for (RequestLimitRow requestLimitData : input) {
-            RequestLimit requestLimit = new RequestLimit(requestLimitData);
-            output.put(requestLimit.getInternalID(), requestLimit);
-        }
-        return output;
+    protected RequestLimit convertToEntity(RequestLimitRow dataRow) {
+        return new RequestLimit(dataRow);
     }
 
     @Override
-    protected RequestLimitRow convertToRow(RequestLimit entity) {
-        RequestLimitRow data = new RequestLimitRow();
-        data.createFromEntity(entity);
-        return data;
+    protected RequestLimitRow convertToDataRow(RequestLimit entity) {
+        RequestLimitRow dataRow = new RequestLimitRow();
+        dataRow.createFromEntity(entity);
+        return dataRow;
     }
 
-    @Override
-    protected List<RequestLimit> sortList(List<RequestLimit> list) {
-        return list;
-    }
-
-    public LiveData<List<RequestLimit>> getIDsByAccount(Account account) {
-        long accountID = account.getInternalID();
-        LiveData<List<RequestLimit>> result = null;
+    public LiveData<List<RequestLimit>> getDataByAccount(Account account) {
         try {
+            long accountID = account.getInternalID();
             RequestLimitDao requestLimitDao = (RequestLimitDao)dao;
-            LiveData<List<Long>> IDs = new GetIDsByAccount(requestLimitDao).execute(accountID).get();
-            FilterSource<RequestLimit> filterSource = new FilterSource<>(IDs, getAllData());
-
-            result = Transformations.map(filterSource, new Function<Pair<List<Long>, Map<Long, RequestLimit>>, List<RequestLimit>>() {
+            GetDataByAccountAsyncTask asyncTask = new GetDataByAccountAsyncTask(requestLimitDao);
+            LiveData<List<RequestLimitRow>> dataRows = asyncTask.execute(accountID).get();
+            LiveData<List<RequestLimit>> entities = Transformations.map(dataRows, new Function<List<RequestLimitRow>, List<RequestLimit>>() {
                 @Override
-                public List<RequestLimit> apply(Pair<List<Long>, Map<Long, RequestLimit>> input) {
+                public List<RequestLimit> apply(List<RequestLimitRow> input) {
                     List<RequestLimit> output = new ArrayList<>();
-                    for (Long id : input.first)
-                        output.add(input.second.get(id));
-                    return sortList(output);
+                    for (RequestLimitRow dataRow : input)
+                        output.add(convertToEntity(dataRow));
+                    return output;
                 }
             });
+            return entities;
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
+            return null;
         }
-        return result;
     }
 
-    public LiveData<List<RequestLimit>> getIDsForApplicationByService(Service service) {
-        int serviceID = service.getID().ordinal();
-        LiveData<List<RequestLimit>> result = null;
+    public LiveData<List<RequestLimit>> getDataForApplicationByService(Service service) {
         try {
+            int serviceID = service.getID().ordinal();
             RequestLimitDao requestLimitDao = (RequestLimitDao)dao;
-            LiveData<List<Long>> IDs = new GetIDsForApplicationByService(requestLimitDao).execute(serviceID).get();
-            FilterSource<RequestLimit> filterSource = new FilterSource<>(IDs, getAllData());
-
-            result = Transformations.map(filterSource, new Function<Pair<List<Long>, Map<Long, RequestLimit>>, List<RequestLimit>>() {
+            GetDataForApplicationByServiceAsyncTask asyncTask = new GetDataForApplicationByServiceAsyncTask(requestLimitDao);
+            LiveData<List<RequestLimitRow>> dataRows = asyncTask.execute(serviceID).get();
+            LiveData<List<RequestLimit>> entities = Transformations.map(dataRows, new Function<List<RequestLimitRow>, List<RequestLimit>>() {
                 @Override
-                public List<RequestLimit> apply(Pair<List<Long>, Map<Long, RequestLimit>> input) {
+                public List<RequestLimit> apply(List<RequestLimitRow> input) {
                     List<RequestLimit> output = new ArrayList<>();
-                    for (Long id : input.first)
-                        output.add(input.second.get(id));
-                    return sortList(output);
+                    for (RequestLimitRow dataRow : input)
+                        output.add(convertToEntity(dataRow));
+                    return output;
                 }
             });
+            return entities;
         } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
+            return null;
         }
-        return result;
     }
 
-    private static class GetIDsByAccount extends AsyncTask<Long, Void, LiveData<List<Long>>> {
+    private static class GetDataByAccountAsyncTask extends AsyncTask<Long, Void, LiveData<List<RequestLimitRow>>> {
         private RequestLimitDao dao;
 
-        public GetIDsByAccount(RequestLimitDao dao) {
-            this.dao = dao;
+        public GetDataByAccountAsyncTask(RequestLimitDao requestLimitDao) {
+            this.dao = requestLimitDao;
         }
 
         @Override
-        protected LiveData<List<Long>> doInBackground(Long... params) {
-            return dao.getIDsByAccount(params[0]);
+        protected LiveData<List<RequestLimitRow>> doInBackground(Long... params) {
+            return dao.getDataByAccount(params[0]);
         }
     }
 
-    private static class GetIDsForApplicationByService extends AsyncTask<Integer, Void, LiveData<List<Long>>> {
+    private static class GetDataForApplicationByServiceAsyncTask extends AsyncTask<Integer, Void, LiveData<List<RequestLimitRow>>> {
         private RequestLimitDao dao;
 
-        public GetIDsForApplicationByService(RequestLimitDao dao) {
-            this.dao = dao;
+        public GetDataForApplicationByServiceAsyncTask(RequestLimitDao requestLimitDao) {
+            this.dao = requestLimitDao;
         }
 
         @Override
-        protected LiveData<List<Long>> doInBackground(Integer... params) {
-            return dao.getIDsForApplicationByService(params[0]);
+        protected LiveData<List<RequestLimitRow>> doInBackground(Integer... params) {
+            return dao.getDataForApplicationByService(params[0]);
         }
     }
 }

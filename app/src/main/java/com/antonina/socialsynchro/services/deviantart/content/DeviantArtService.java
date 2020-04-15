@@ -4,9 +4,12 @@ import android.graphics.drawable.Drawable;
 
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.SocialSynchro;
+import com.antonina.socialsynchro.common.content.accounts.Account;
 import com.antonina.socialsynchro.common.content.accounts.LoginFlow;
+import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
 import com.antonina.socialsynchro.common.content.services.Service;
 import com.antonina.socialsynchro.common.content.services.ServiceID;
+import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 import com.antonina.socialsynchro.common.gui.activities.LoginActivity;
 
 public class DeviantArtService extends Service {
@@ -63,6 +66,21 @@ public class DeviantArtService extends Service {
     @Override
     public Drawable getBackground() {
         return SocialSynchro.getInstance().getResources().getDrawable(R.drawable.background_deviantart);
+    }
+
+    @Override
+    public Account createAccount(IDatabaseRow data) {
+        return new DeviantArtAccount(data);
+    }
+
+    @Override
+    public ChildPostContainer createPostContainer(IDatabaseRow data) {
+        return new DeviantArtPostContainer(data);
+    }
+
+    @Override
+    public ChildPostContainer createNewPostContainer(Account account) {
+        return new DeviantArtPostContainer((DeviantArtAccount)account);
     }
 
     @Override

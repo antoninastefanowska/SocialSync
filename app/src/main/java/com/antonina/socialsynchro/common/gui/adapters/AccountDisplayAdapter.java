@@ -156,7 +156,7 @@ public class AccountDisplayAdapter extends BaseAdapter<Account, AccountDisplayAd
     @Override
     public void loadData() {
         AccountRepository repository = AccountRepository.getInstance();
-        final LiveData<List<Account>> accountLiveData = repository.getAllDataList();
+        final LiveData<List<Account>> accountLiveData = repository.getAllData();
         accountLiveData.observe(context, new Observer<List<Account>>() {
             @Override
             public void onChanged(@Nullable List<Account> data) {

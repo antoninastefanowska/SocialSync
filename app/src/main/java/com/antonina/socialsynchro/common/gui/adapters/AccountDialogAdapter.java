@@ -12,7 +12,6 @@ import android.widget.ImageView;
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.common.content.accounts.Account;
 import com.antonina.socialsynchro.common.database.repositories.AccountRepository;
-import com.antonina.socialsynchro.common.gui.other.MaskTransformation;
 import com.antonina.socialsynchro.databinding.AccountDialogItemBinding;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
@@ -82,7 +81,7 @@ public class AccountDialogAdapter extends BaseAdapter<Account, AccountDialogAdap
     @Override
     public void loadData() {
         AccountRepository repository = AccountRepository.getInstance();
-        final LiveData<List<Account>> accountLiveData = repository.getAllDataList();
+        final LiveData<List<Account>> accountLiveData = repository.getAllData();
         accountLiveData.observe(context, new Observer<List<Account>>() {
             @Override
             public void onChanged(@Nullable List<Account> data) {

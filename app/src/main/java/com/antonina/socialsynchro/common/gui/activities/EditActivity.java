@@ -18,9 +18,9 @@ import android.widget.Toast;
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.common.content.accounts.Account;
 import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
-import com.antonina.socialsynchro.common.content.posts.ChildPostContainerFactory;
 import com.antonina.socialsynchro.common.content.attachments.Attachment;
 import com.antonina.socialsynchro.common.content.posts.PostContainer;
+import com.antonina.socialsynchro.common.content.services.Service;
 import com.antonina.socialsynchro.common.gui.adapters.PostEditAdapter;
 import com.antonina.socialsynchro.common.gui.dialogs.WarningDialog;
 import com.antonina.socialsynchro.common.gui.listeners.OnAttachmentUploadedListener;
@@ -87,8 +87,8 @@ public class EditActivity extends AppCompatActivity {
             public void onAccountsSelected(List<Account> accounts) {
                 selectedAccounts = accounts;
                 for (Account account : selectedAccounts) {
-                    ChildPostContainerFactory factory = ChildPostContainerFactory.getInstance();
-                    ChildPostContainer child = factory.createNew(account);
+                    Service service = account.getService();
+                    ChildPostContainer child = service.createNewPostContainer(account);
                     child.setUnlockedListener(unlockedListener);
                     postAdapter.addItem(child);
                 }

@@ -24,11 +24,14 @@ public interface FacebookAccountInfoDao extends BaseDao<FacebookAccountInfoRow> 
     LiveData<FacebookAccountInfoRow> getDataByID(long facebookAccountID);
 
     @Insert
-    long insert(FacebookAccountInfoRow accountData);
+    long insert(FacebookAccountInfoRow accountRow);
 
     @Update
-    void update(FacebookAccountInfoRow accountData);
+    void update(FacebookAccountInfoRow accountRow);
 
     @Delete
-    void delete(FacebookAccountInfoRow accountData);
+    void delete(FacebookAccountInfoRow accountRow);
+
+    @Delete
+    void deleteMany(List<FacebookAccountInfoRow> accountRows);
 }

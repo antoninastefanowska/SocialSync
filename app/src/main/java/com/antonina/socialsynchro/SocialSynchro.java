@@ -2,7 +2,6 @@ package com.antonina.socialsynchro;
 
 import android.app.Application;
 
-import com.antonina.socialsynchro.common.database.ApplicationDatabase;
 import com.antonina.socialsynchro.common.database.repositories.AccountRepository;
 import com.antonina.socialsynchro.common.database.repositories.AttachmentRepository;
 import com.antonina.socialsynchro.common.database.repositories.ChildPostContainerRepository;
@@ -14,8 +13,8 @@ import com.antonina.socialsynchro.services.deviantart.database.repositories.Devi
 import com.antonina.socialsynchro.services.facebook.database.repositories.FacebookAccountInfoRepository;
 import com.antonina.socialsynchro.services.facebook.database.repositories.FacebookPostInfoRepository;
 import com.antonina.socialsynchro.services.twitter.database.repositories.TwitterAccountInfoRepository;
-import com.antonina.socialsynchro.common.utils.ApplicationConfig;
 import com.antonina.socialsynchro.services.twitter.database.repositories.TwitterPostInfoRepository;
+import com.antonina.socialsynchro.common.utils.ApplicationConfig;
 
 public class SocialSynchro extends Application {
     private static Application instance;

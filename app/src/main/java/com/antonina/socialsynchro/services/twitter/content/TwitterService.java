@@ -4,7 +4,10 @@ import android.graphics.drawable.Drawable;
 
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.SocialSynchro;
+import com.antonina.socialsynchro.common.content.accounts.Account;
 import com.antonina.socialsynchro.common.content.accounts.LoginFlow;
+import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
+import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 import com.antonina.socialsynchro.common.gui.activities.LoginActivity;
 import com.antonina.socialsynchro.common.content.services.Service;
 import com.antonina.socialsynchro.common.content.services.ServiceID;
@@ -62,6 +65,21 @@ public class TwitterService extends Service {
     @Override
     public Drawable getBackground() {
         return SocialSynchro.getInstance().getResources().getDrawable(R.drawable.background_twitter);
+    }
+
+    @Override
+    public Account createAccount(IDatabaseRow data) {
+        return new TwitterAccount(data);
+    }
+
+    @Override
+    public ChildPostContainer createPostContainer(IDatabaseRow data) {
+        return new TwitterPostContainer(data);
+    }
+
+    @Override
+    public ChildPostContainer createNewPostContainer(Account account) {
+        return new TwitterPostContainer((TwitterAccount)account);
     }
 
     @Override

@@ -1,7 +1,5 @@
 package com.antonina.socialsynchro.common.rest;
 
-import android.util.Log;
-
 import com.antonina.socialsynchro.common.content.accounts.Account;
 import com.antonina.socialsynchro.common.content.services.Service;
 import com.antonina.socialsynchro.common.content.services.Services;

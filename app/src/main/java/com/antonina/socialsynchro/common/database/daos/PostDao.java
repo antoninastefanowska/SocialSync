@@ -23,11 +23,14 @@ public interface PostDao extends BaseDao<PostRow> {
     int count();
 
     @Insert
-    long insert(PostRow postData);
+    long insert(PostRow postRow);
 
     @Update
-    void update(PostRow postData);
+    void update(PostRow postRow);
 
     @Delete
-    void delete(PostRow postData);
+    void delete(PostRow postRow);
+
+    @Delete
+    void deleteMany(List<PostRow> postRows);
 }

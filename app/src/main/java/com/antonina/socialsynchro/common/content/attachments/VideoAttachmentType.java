@@ -2,6 +2,7 @@ package com.antonina.socialsynchro.common.content.attachments;
 
 import android.support.v7.app.AppCompatActivity;
 
+import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 import com.antonina.socialsynchro.common.gui.activities.VideoGalleryActivity;
 
 public class VideoAttachmentType extends AttachmentType {
@@ -27,7 +28,17 @@ public class VideoAttachmentType extends AttachmentType {
 
     @Override
     public int getIconID() {
-        return null;
+        return -1;
+    }
+
+    @Override
+    public Attachment createAttachment(IDatabaseRow data) {
+        return new VideoAttachment(data);
+    }
+
+    @Override
+    public Attachment createNewAttachment() {
+        return new VideoAttachment();
     }
 
     @Override

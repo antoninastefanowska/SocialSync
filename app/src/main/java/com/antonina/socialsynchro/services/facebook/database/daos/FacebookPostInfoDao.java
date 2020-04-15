@@ -24,11 +24,14 @@ public interface FacebookPostInfoDao extends BaseDao<FacebookPostInfoRow> {
     LiveData<FacebookPostInfoRow> getDataByID(long facebookPostID);
 
     @Insert
-    long insert(FacebookPostInfoRow postData);
+    long insert(FacebookPostInfoRow postRow);
 
     @Update
-    void update(FacebookPostInfoRow postData);
+    void update(FacebookPostInfoRow postRow);
 
     @Delete
-    void delete(FacebookPostInfoRow postData);
+    void delete(FacebookPostInfoRow postRow);
+
+    @Delete
+    void deleteMany(List<FacebookPostInfoRow> postRows);
 }

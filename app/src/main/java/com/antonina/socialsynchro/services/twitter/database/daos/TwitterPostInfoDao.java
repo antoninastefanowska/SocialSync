@@ -24,11 +24,14 @@ public interface TwitterPostInfoDao extends BaseDao<TwitterPostInfoRow> {
     LiveData<TwitterPostInfoRow> getDataByID(long twitterPostID);
 
     @Insert
-    long insert(TwitterPostInfoRow postData);
+    long insert(TwitterPostInfoRow postRow);
 
     @Update
-    void update(TwitterPostInfoRow postData);
+    void update(TwitterPostInfoRow postRow);
 
     @Delete
-    void delete(TwitterPostInfoRow postData);
+    void delete(TwitterPostInfoRow postRow);
+
+    @Delete
+    void deleteMany(List<TwitterPostInfoRow> postRows);
 }

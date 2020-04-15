@@ -3,7 +3,6 @@ package com.antonina.socialsynchro.services.facebook.content;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.antonina.socialsynchro.common.content.attachments.Attachment;
 import com.antonina.socialsynchro.common.content.attachments.AttachmentTypeID;
@@ -75,7 +74,7 @@ public class FacebookPostContainer extends ChildPostContainer {
 
         FacebookPostInfoRepository repository = FacebookPostInfoRepository.getInstance();
         final FacebookPostContainer instance = this;
-        final LiveData<FacebookPostInfoRow> dataTable = repository.getDataTableByID(data.getID());
+        final LiveData<FacebookPostInfoRow> dataTable = repository.getDataRowByID(data.getID());
         dataTable.observeForever(new Observer<FacebookPostInfoRow>() {
             @Override
             public void onChanged(@Nullable FacebookPostInfoRow data) {

@@ -24,8 +24,12 @@ public class Post extends GUIItem implements IPost, IDatabaseEntity {
     private Date modificationDate;
     private String title;
     private String content;
+
     private List<Attachment> attachments;
     private List<Attachment> deletedAttachments;
+
+    private List<Tag> tags;
+    private List<Tag> deletedTags;
 
     public Post() {
         title = "";
@@ -94,6 +98,32 @@ public class Post extends GUIItem implements IPost, IDatabaseEntity {
     }
 
     @Override
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    @Override
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
+    }
+
+    @Override
+    public void addTag(Tag tag) {
+        tags.add(tag);
+        notifyGUI();
+    }
+
+    @Override
+    public void removeTag(Tag tag) {
+        if (tags.isEmpty())
+            return;
+        tags.remove(tag);
+        if (tag.getInternalID() != null)
+            deletedTags.add(tag);
+        notifyGUI();
+    }
+
+    @Override
     public void createFromDatabaseRow(IDatabaseRow data) {
         PostRow postData = (PostRow)data;
         this.internalID = postData.getID();
@@ -104,6 +134,7 @@ public class Post extends GUIItem implements IPost, IDatabaseEntity {
 
         this.attachments = new ArrayList<>();
         this.deletedAttachments = new ArrayList<>();
+        this.tags = new ArrayList();
 
         final Post instance = this;
         final LiveData<List<Attachment>> attachmentsLiveData = AttachmentRepository.getInstance().getDataByPost(this);
