@@ -25,10 +25,6 @@ public interface AccountDao extends BaseDao<AccountRow> {
     @Query("SELECT * FROM account WHERE service_id = :serviceID ORDER BY connecting_date DESC")
     LiveData<List<AccountRow>> getDataByService(int serviceID);
 
-    //TODO: do usunięcia
-    @Query("SELECT id FROM account WHERE service_id = :serviceID")
-    LiveData<List<Long>> getIDsByService(int serviceID);
-
     @Query("SELECT id FROM account WHERE external_id = :externalID AND service_id = :serviceID")
     long getIDByExternalIDAndService(String externalID, int serviceID);
 

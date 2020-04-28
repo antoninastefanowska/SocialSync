@@ -25,6 +25,7 @@ import com.antonina.socialsynchro.services.backend.requests.BackendGetRateLimits
 import com.antonina.socialsynchro.services.backend.requests.BackendUpdateRequestCounterRequest;
 import com.antonina.socialsynchro.services.backend.responses.BackendGetRateLimitsResponse;
 import com.antonina.socialsynchro.services.twitter.database.repositories.TwitterPostInfoRepository;
+import com.antonina.socialsynchro.services.twitter.database.repositories.TwitterPostOptionsRepository;
 import com.antonina.socialsynchro.services.twitter.database.rows.TwitterPostInfoRow;
 import com.antonina.socialsynchro.services.twitter.utils.TwitterConfig;
 import com.antonina.socialsynchro.services.twitter.rest.TwitterClient;
@@ -74,8 +75,6 @@ public class TwitterPostContainer extends ChildPostContainer {
 
     public TwitterPostContainer(IDatabaseRow data) {
         super(data);
-        retweetCount = 0;
-        favoriteCount = 0;
     }
 
     public TwitterPostContainer(TwitterAccount account) {
@@ -100,6 +99,16 @@ public class TwitterPostContainer extends ChildPostContainer {
                     notifyGUI();
                     dataTable.removeObserver(this);
                 }
+            }
+        });
+        TwitterPostOptionsRepository optionsRepository = TwitterPostOptionsRepository.getInstance();
+        final LiveData<TwitterPostOptions> liveDataOptions = optionsRepository.getDataByID(data.getID());
+        liveDataOptions.observeForever(new Observer<TwitterPostOptions>() {
+            @Override
+            public void onChanged(@Nullable TwitterPostOptions options) {
+                setOptions(options);
+                notifyGUI();
+                liveDataOptions.removeObserver(this);
             }
         });
     }

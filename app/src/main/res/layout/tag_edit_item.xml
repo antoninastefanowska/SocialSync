@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="tag"
+            type="com.antonina.socialsynchro.common.content.posts.Tag" />
+        <variable
+            name="locked"
+            type="boolean" />
+    </data>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginRight="@dimen/margin_small"
+        android:layout_marginBottom="@dimen/margin_small">
+
+        <TextView
+            android:text="@{tag.value, default=Tag}"
+            style="@style/TagTextViewStyle" />
+
+        <FrameLayout
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical">
+
+            <ImageView
+                android:src="@drawable/background_avatar"
+                style="@style/TagHashBackground" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/hash_char"
+                android:textSize="@dimen/tag_hash_font_size"
+                android:textStyle="bold"
+                android:id="@+id/imageview_icon_picture"
+                android:contentDescription="@string/profile_picture_content_description" />
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="end">
+
+            <com.antonina.socialsynchro.common.gui.other.StateButton
+                android:id="@+id/button_remove"
+                style="@style/TagButtonIcon"
+                android:layout_gravity="center_vertical"
+                android:background="@drawable/icon_cross_small"
+                android:enabled="@{!locked}"
+                android:tooltipText="@string/remove" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</layout>

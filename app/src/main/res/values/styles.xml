@@ -186,14 +186,11 @@
         <item name="android:paddingRight">@dimen/padding_standard</item>
         <item name="android:paddingBottom">@dimen/padding_standard</item>
 
-        <item name="android:layout_marginLeft">@dimen/profile_picture_offset_margin</item>
         <item name="android:layout_marginTop">@dimen/profile_picture_offset_margin</item>
-        <item name="android:layout_marginRight">@dimen/margin_standard</item>
         <item name="android:layout_marginBottom">@dimen/margin_standard</item>
     </style>
 
     <style name="ChildContentLinearLayoutStyle" parent="ContentLinearLayoutStyle">
-        <item name="android:layout_marginRight">@dimen/profile_picture_offset_margin</item>
     </style>
 
     <style name="ContentTextViewStyle" parent="TitleTextViewStyle">
@@ -208,6 +205,13 @@
         <item name="android:hint">@string/edit_content_hint</item>
         <item name="android:background">@color/colorTransparent</item>
         <item name="android:scrollHorizontally">false</item>
+    </style>
+
+    <style name="TagEditTextStyle" parent="ContentEditTextStyle">
+        <item name="android:scrollHorizontally">true</item>
+        <item name="android:background">@drawable/background_content</item>
+        <item name="android:padding">@dimen/padding_small</item>
+        <item name="android:layout_marginTop">@dimen/margin_small</item>
     </style>
 
     <style name="ChildContentEditTextStyle" parent="ChildContentTextViewStyle">
@@ -243,6 +247,22 @@
         <item name="android:textStyle">bold</item>
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:layout_margin">@dimen/margin_small</item>
+    </style>
+
+    <style name="TagTextViewStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingTop">@dimen/padding_tiny</item>
+        <item name="android:paddingBottom">@dimen/padding_tiny</item>
+        <item name="android:paddingRight">@dimen/button_icon_size_small</item>
+        <item name="android:paddingLeft">@dimen/tag_hash_background_offset_padding</item>
+        <item name="android:background">@drawable/background_tag</item>
+        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:textSize">@dimen/tag_font_size</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_marginRight">@dimen/button_icon_size_small_offset_margin</item>
+        <item name="android:layout_marginLeft">@dimen/tag_hash_background_offset_margin</item>
     </style>
 
     <style name="Divider">
@@ -334,5 +354,15 @@
         <item name="android:layout_gravity">center</item>
         <item name="android:src">@drawable/icon_checkmark</item>
         <item name="android:alpha">0.5</item>
+    </style>
+
+    <style name="TagHashBackground">
+        <item name="android:layout_width">@dimen/tag_hash_background_size</item>
+        <item name="android:layout_height">@dimen/tag_hash_background_size</item>
+    </style>
+
+    <style name="TagButtonIcon">
+        <item name="android:layout_width">@dimen/button_icon_size_small</item>
+        <item name="android:layout_height">@dimen/button_icon_size_small</item>
     </style>
 </resources>

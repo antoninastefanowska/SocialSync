@@ -169,13 +169,17 @@ public abstract class Attachment extends GUIItem implements IDatabaseEntity, ISe
     }
 
     @Override
-    public Service getService() { return null; }
+    public Service getService() {
+        return null;
+    }
 
     @Override
     public void synchronize(OnSynchronizedListener listener) { }
 
     @Override
-    public Date getSynchronizationDate() { return null; }
+    public Date getSynchronizationDate() {
+        return null;
+    }
 
     @Bindable
     public int getUploadProgress() {

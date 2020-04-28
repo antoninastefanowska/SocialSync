@@ -2,6 +2,7 @@ package com.antonina.socialsynchro.common.gui.adapters;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -11,7 +12,7 @@ import android.widget.ImageView;
 
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.common.content.accounts.Account;
-import com.antonina.socialsynchro.common.database.repositories.AccountRepository;
+import com.antonina.socialsynchro.common.database.viewmodels.AccountViewModel;
 import com.antonina.socialsynchro.databinding.AccountDialogItemBinding;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
@@ -24,6 +25,7 @@ import java.util.List;
 public class AccountDialogAdapter extends BaseAdapter<Account, AccountDialogAdapter.AccountViewHolder> {
     private List<Account> ignoredData;
     private int imageSize;
+    private AccountViewModel accountViewModel;
 
     protected static class AccountViewHolder extends BaseAdapter.BaseViewHolder<AccountDialogItemBinding> {
         public final ImageView serviceIconImageView;
@@ -44,6 +46,7 @@ public class AccountDialogAdapter extends BaseAdapter<Account, AccountDialogAdap
         super(context);
         ignoredData = new ArrayList<>();
         imageSize = context.getResources().getDimensionPixelSize(R.dimen.dialog_item_height);
+        accountViewModel = ViewModelProviders.of(context).get(AccountViewModel.class);
         loadData();
     }
 
@@ -80,8 +83,7 @@ public class AccountDialogAdapter extends BaseAdapter<Account, AccountDialogAdap
 
     @Override
     public void loadData() {
-        AccountRepository repository = AccountRepository.getInstance();
-        final LiveData<List<Account>> accountLiveData = repository.getAllData();
+        final LiveData<List<Account>> accountLiveData = accountViewModel.getCurrentData();
         accountLiveData.observe(context, new Observer<List<Account>>() {
             @Override
             public void onChanged(@Nullable List<Account> data) {

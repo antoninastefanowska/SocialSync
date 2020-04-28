@@ -2,6 +2,7 @@ package com.antonina.socialsynchro.common.gui.adapters;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.databinding.ViewDataBinding;
 import android.support.annotation.NonNull;
@@ -15,7 +16,7 @@ import android.widget.ImageView;
 
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.common.content.accounts.Account;
-import com.antonina.socialsynchro.common.database.repositories.AccountRepository;
+import com.antonina.socialsynchro.common.database.viewmodels.AccountViewModel;
 import com.antonina.socialsynchro.common.gui.activities.AccountsActivity;
 import com.antonina.socialsynchro.databinding.AccountDisplayItemBinding;
 
@@ -26,6 +27,7 @@ public class AccountDisplayAdapter extends BaseAdapter<Account, AccountDisplayAd
     private static final int ACCOUNT = 0, NEW = 1;
     private int imageSize;
     private AccountsActivity activity;
+    private AccountViewModel accountViewModel;
 
     protected abstract static class BaseAccountViewHolder<ItemBindingType extends ViewDataBinding> extends BaseAdapter.BaseViewHolder<ItemBindingType> {
         public int viewHolderType;
@@ -78,6 +80,7 @@ public class AccountDisplayAdapter extends BaseAdapter<Account, AccountDisplayAd
         super(context);
         activity = (AccountsActivity)context;
         imageSize = getPictureSize();
+        accountViewModel = ViewModelProviders.of(activity).get(AccountViewModel.class);
         loadData();
     }
 
@@ -155,8 +158,7 @@ public class AccountDisplayAdapter extends BaseAdapter<Account, AccountDisplayAd
 
     @Override
     public void loadData() {
-        AccountRepository repository = AccountRepository.getInstance();
-        final LiveData<List<Account>> accountLiveData = repository.getAllData();
+        final LiveData<List<Account>> accountLiveData = accountViewModel.getCurrentData();
         accountLiveData.observe(context, new Observer<List<Account>>() {
             @Override
             public void onChanged(@Nullable List<Account> data) {
@@ -165,7 +167,6 @@ public class AccountDisplayAdapter extends BaseAdapter<Account, AccountDisplayAd
                     for (Account item : items)
                         item.hide();
                     notifyDataSetChanged();
-                    accountLiveData.removeObserver(this);
                 }
             }
         });

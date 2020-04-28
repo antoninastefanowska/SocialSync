@@ -1,9 +1,6 @@
 package com.antonina.socialsynchro.common.content.attachments;
 
 import android.graphics.BitmapFactory;
-import android.graphics.ImageDecoder;
-import android.media.ImageReader;
-import android.support.v4.util.Pair;
 
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 import com.bumptech.glide.gifdecoder.GifHeader;

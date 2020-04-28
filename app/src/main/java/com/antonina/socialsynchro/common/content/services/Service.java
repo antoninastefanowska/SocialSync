@@ -42,4 +42,6 @@ public abstract class Service extends GUIItem {
     public abstract ChildPostContainer createNewPostContainer(Account account);
 
     public abstract LoginFlow createLoginFlow(LoginActivity context);
+
+    public abstract boolean isOptionsEnabled();
 }

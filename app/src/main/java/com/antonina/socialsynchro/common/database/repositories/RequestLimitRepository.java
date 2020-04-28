@@ -62,7 +62,7 @@ public class RequestLimitRepository extends BaseRepository<RequestLimitRow, Requ
             });
             return entities;
         } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+            handleException(e);
             return null;
         }
     }
@@ -84,7 +84,7 @@ public class RequestLimitRepository extends BaseRepository<RequestLimitRow, Requ
             });
             return entities;
         } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+            handleException(e);
             return null;
         }
     }

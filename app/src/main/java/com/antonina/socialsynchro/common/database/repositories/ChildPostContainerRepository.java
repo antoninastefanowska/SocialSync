@@ -64,7 +64,7 @@ public class ChildPostContainerRepository extends BaseRepository<ChildPostContai
             });
             return entities;
         } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+            handleException(e);
             return null;
         }
     }

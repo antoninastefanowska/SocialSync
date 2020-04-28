@@ -19,10 +19,6 @@ public interface AttachmentDao extends BaseDao<AttachmentRow> {
     @Query("SELECT * FROM attachment WHERE id = :attachmentID")
     LiveData<AttachmentRow> getDataByID(long attachmentID);
 
-    //TODO: Do usunięcia
-    @Query("SELECT id FROM attachment WHERE post_id = :postID")
-    LiveData<List<Long>> getIDsByPost(long postID);
-
     @Query("SELECT * FROM attachment WHERE post_id = :postID")
     LiveData<List<AttachmentRow>> getDataByPost(long postID);
 

@@ -23,7 +23,7 @@
     <string name="error_content_synchronization">Content synchronization failed. Error: %s</string>
 
     <string name="message_content_unpublish">Content unpublished successfully.</string>
-    <string name="error_content_unpublish">Failed to unpublish content. Error: %s</string>
+    <string name="error_content_unpublish">Failed to unpublish value. Error: %s</string>
 
     <string name="error_request_limit_exceeded">Unable to process request - limit exceeded. Please wait %s and try again.</string>
 
@@ -77,4 +77,7 @@
     <string name="navigation_accounts">Accounts</string>
     <string name="navigation_edit">Edit</string>
     <string name="navigation_gallery">Gallery</string>
+
+    <string name="hash_char">#</string>
+    <string name="add_tags">Add tags</string>
 </resources>

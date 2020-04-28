@@ -87,4 +87,9 @@ public class DeviantArtService extends Service {
     public LoginFlow createLoginFlow(LoginActivity context) {
         return new DeviantArtLoginFlow(context);
     }
+
+    @Override
+    public boolean isOptionsEnabled() {
+        return true;
+    }
 }

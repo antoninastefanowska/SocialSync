@@ -11,6 +11,9 @@
         <variable
             name="attachmentAdapter"
             type="com.antonina.socialsynchro.common.gui.adapters.AttachmentEditAdapter" />
+        <variable
+            name="tagAdapter"
+            type="com.antonina.socialsynchro.common.gui.adapters.TagEditAdapter" />
     </data>
 
     <LinearLayout
@@ -115,6 +118,41 @@
             </FrameLayout>
 
         </FrameLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recyclerview_tags"
+            android:visibility="@{parent.isVisible() ? View.VISIBLE : View.GONE}"
+            android:adapter="@{tagAdapter}"
+            style="@style/AttachmentsRecyclerViewStyle" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/edittext_tags"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/add_tags"
+                style="@style/TagEditTextStyle"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/margin_small">
+
+                <com.antonina.socialsynchro.common.gui.other.StateButton
+                    android:id="@+id/button_add_tags"
+                    style="@style/TagButtonIcon"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/icon_plus"
+                    android:tooltipText="@string/remove" />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerview_attachments"

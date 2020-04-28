@@ -28,14 +28,6 @@ public interface RequestLimitDao extends BaseDao<RequestLimitRow> {
     @Query("SELECT * FROM request_limit WHERE service_id = :serviceID AND account_id IS NULL")
     LiveData<List<RequestLimitRow>> getDataForApplicationByService(int serviceID);
 
-    //TODO: Do usunięcia
-    @Query("SELECT id FROM request_limit WHERE account_id = :accountID")
-    LiveData<List<Long>> getIDsByAccount(long accountID);
-
-    //TODO: Do usunięcia
-    @Query("SELECT id FROM request_limit WHERE service_id = :serviceID AND account_id IS NULL")
-    LiveData<List<Long>> getIDsForApplicationByService(int serviceID);
-
     @Insert
     long insert(RequestLimitRow requestLimitRow);
 

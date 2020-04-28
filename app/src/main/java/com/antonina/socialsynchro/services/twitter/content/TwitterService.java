@@ -86,4 +86,9 @@ public class TwitterService extends Service {
     public LoginFlow createLoginFlow(LoginActivity context) {
         return new TwitterLoginFlow(context);
     }
+
+    @Override
+    public boolean isOptionsEnabled() {
+        return true;
+    }
 }

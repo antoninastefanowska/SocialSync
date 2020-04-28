@@ -2,6 +2,7 @@ package com.antonina.socialsynchro.common.gui.adapters;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.databinding.ViewDataBinding;
 import android.support.annotation.NonNull;
@@ -17,7 +18,7 @@ import android.widget.ImageView;
 
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.common.content.posts.ParentPostContainer;
-import com.antonina.socialsynchro.common.database.repositories.ParentPostContainerRepository;
+import com.antonina.socialsynchro.common.database.viewmodels.ParentPostContainerViewModel;
 import com.antonina.socialsynchro.common.gui.activities.MainActivity;
 import com.antonina.socialsynchro.databinding.ParentDisplayItemBinding;
 
@@ -27,6 +28,7 @@ import java.util.List;
 public class ParentDisplayAdapter extends BaseAdapter<ParentPostContainer, ParentDisplayAdapter.BaseParentViewHolder> {
     private final static int PARENT = 0, NEW = 1;
     private MainActivity activity;
+    private ParentPostContainerViewModel parentViewModel;
 
     protected abstract static class BaseParentViewHolder<ItemBindingType extends ViewDataBinding> extends BaseAdapter.BaseViewHolder<ItemBindingType> {
         public int viewHolderType;
@@ -100,6 +102,7 @@ public class ParentDisplayAdapter extends BaseAdapter<ParentPostContainer, Paren
     public ParentDisplayAdapter(AppCompatActivity context) {
         super(context);
         activity = (MainActivity)context;
+        parentViewModel = ViewModelProviders.of(activity).get(ParentPostContainerViewModel.class);
         loadData();
     }
 
@@ -210,8 +213,7 @@ public class ParentDisplayAdapter extends BaseAdapter<ParentPostContainer, Paren
 
     @Override
     public void loadData() {
-        ParentPostContainerRepository repository = ParentPostContainerRepository.getInstance();
-        final LiveData<List<ParentPostContainer>> parentLiveData = repository.getAllData();
+        final LiveData<List<ParentPostContainer>> parentLiveData = parentViewModel.getCurrentData();
         parentLiveData.observe(context, new Observer<List<ParentPostContainer>>() {
             @Override
             public void onChanged(@Nullable List<ParentPostContainer> data) {
@@ -220,7 +222,6 @@ public class ParentDisplayAdapter extends BaseAdapter<ParentPostContainer, Paren
                     for (ParentPostContainer item : items)
                         item.hide();
                     notifyDataSetChanged();
-                    parentLiveData.removeObserver(this);
                 }
             }
         });

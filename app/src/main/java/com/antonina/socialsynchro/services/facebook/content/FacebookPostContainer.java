@@ -53,6 +53,7 @@ public class FacebookPostContainer extends ChildPostContainer {
     private int reactionCount;
     private int commentCount;
 
+    //TODO: Utworzyć obiekt z flagami
     private boolean reactionCountLoaded = false;
     private boolean commentCountLoaded = false;
 
@@ -64,8 +65,6 @@ public class FacebookPostContainer extends ChildPostContainer {
 
     public FacebookPostContainer(IDatabaseRow data) {
         super(data);
-        reactionCount = 0;
-        commentCount = 0;
     }
 
     @Override

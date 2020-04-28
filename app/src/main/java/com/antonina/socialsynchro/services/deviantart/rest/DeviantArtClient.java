@@ -5,7 +5,10 @@ import android.arch.lifecycle.LiveData;
 import com.antonina.socialsynchro.common.rest.BaseClient;
 import com.antonina.socialsynchro.common.utils.ApplicationConfig;
 import com.antonina.socialsynchro.services.deviantart.rest.requests.DeviantArtGetAccessTokenRequest;
+import com.antonina.socialsynchro.services.deviantart.rest.requests.DeviantArtGetCategoryTreeRequest;
 import com.antonina.socialsynchro.services.deviantart.rest.requests.DeviantArtGetDeviationRequest;
+import com.antonina.socialsynchro.services.deviantart.rest.requests.DeviantArtGetGalleriesRequest;
+import com.antonina.socialsynchro.services.deviantart.rest.requests.DeviantArtGetUserdataRequest;
 import com.antonina.socialsynchro.services.deviantart.rest.requests.DeviantArtRefreshTokenRequest;
 import com.antonina.socialsynchro.services.deviantart.rest.requests.DeviantArtStashDeleteRequest;
 import com.antonina.socialsynchro.services.deviantart.rest.requests.DeviantArtStashPublishRequest;
@@ -13,6 +16,9 @@ import com.antonina.socialsynchro.services.deviantart.rest.requests.DeviantArtSt
 import com.antonina.socialsynchro.services.deviantart.rest.requests.DeviantArtWhoAmIRequest;
 import com.antonina.socialsynchro.services.deviantart.rest.responses.DeviantArtAccessTokenResponse;
 import com.antonina.socialsynchro.services.deviantart.rest.responses.DeviantArtDeviationResponse;
+import com.antonina.socialsynchro.services.deviantart.rest.responses.DeviantArtGetCategoryTreeResponse;
+import com.antonina.socialsynchro.services.deviantart.rest.responses.DeviantArtGetGalleriesResponse;
+import com.antonina.socialsynchro.services.deviantart.rest.responses.DeviantArtGetUserdataResponse;
 import com.antonina.socialsynchro.services.deviantart.rest.responses.DeviantArtResultResponse;
 import com.antonina.socialsynchro.services.deviantart.rest.responses.DeviantArtStashPublishResponse;
 import com.antonina.socialsynchro.services.deviantart.rest.responses.DeviantArtStashSubmitResponse;
@@ -69,6 +75,21 @@ public class DeviantArtClient extends BaseClient {
 
     public static LiveData<DeviantArtDeviationResponse> getDeviation(DeviantArtGetDeviationRequest request) {
         GetDeviationController controller = new GetDeviationController(request);
+        return controller.start();
+    }
+
+    public static LiveData<DeviantArtGetGalleriesResponse> getGalleries(DeviantArtGetGalleriesRequest request) {
+        GetGalleriesController controller = new GetGalleriesController(request);
+        return controller.start();
+    }
+
+    public static LiveData<DeviantArtGetUserdataResponse> getUserdata(DeviantArtGetUserdataRequest request) {
+        GetUserdataController controller = new GetUserdataController(request);
+        return controller.start();
+    }
+
+    public static LiveData<DeviantArtGetCategoryTreeResponse> getCategoryTree(DeviantArtGetCategoryTreeRequest request) {
+        GetCategoryTreeController controller = new GetCategoryTreeController(request);
         return controller.start();
     }
 
@@ -153,6 +174,90 @@ public class DeviantArtClient extends BaseClient {
         @Override
         protected Class<DeviantArtUserResponse> getResponseClass() {
             return DeviantArtUserResponse.class;
+        }
+    }
+
+    private static class GetGalleriesController extends BaseController<DeviantArtGetGalleriesRequest, DeviantArtGetGalleriesResponse> {
+
+        public GetGalleriesController(DeviantArtGetGalleriesRequest request) {
+            super(request);
+        }
+
+        @Override
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+
+        @Override
+        protected DeviantArtGetGalleriesResponse createResponse() {
+            return new DeviantArtGetGalleriesResponse();
+        }
+
+        @Override
+        protected Call<DeviantArtGetGalleriesResponse> createCall() {
+            DeviantArtAPI deviantArtAPI = retrofit.create(DeviantArtAPI.class);
+            return deviantArtAPI.getGalleries(request.getLimit(), request.getOffset(), request.getAuthorizationString());
+        }
+
+        @Override
+        protected Class<DeviantArtGetGalleriesResponse> getResponseClass() {
+            return DeviantArtGetGalleriesResponse.class;
+        }
+    }
+
+    private static class GetUserdataController extends BaseController<DeviantArtGetUserdataRequest, DeviantArtGetUserdataResponse> {
+
+        public GetUserdataController(DeviantArtGetUserdataRequest request) {
+            super(request);
+        }
+
+        @Override
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+
+        @Override
+        protected DeviantArtGetUserdataResponse createResponse() {
+            return new DeviantArtGetUserdataResponse();
+        }
+
+        @Override
+        protected Call<DeviantArtGetUserdataResponse> createCall() {
+            DeviantArtAPI deviantArtAPI = retrofit.create(DeviantArtAPI.class);
+            return deviantArtAPI.getUserdata(request.getAuthorizationString());
+        }
+
+        @Override
+        protected Class<DeviantArtGetUserdataResponse> getResponseClass() {
+            return DeviantArtGetUserdataResponse.class;
+        }
+    }
+
+    private static class GetCategoryTreeController extends BaseController<DeviantArtGetCategoryTreeRequest, DeviantArtGetCategoryTreeResponse> {
+
+        public GetCategoryTreeController(DeviantArtGetCategoryTreeRequest request) {
+            super(request);
+        }
+
+        @Override
+        protected String getBaseURL() {
+            return BASE_URL;
+        }
+
+        @Override
+        protected DeviantArtGetCategoryTreeResponse createResponse() {
+            return new DeviantArtGetCategoryTreeResponse();
+        }
+
+        @Override
+        protected Call<DeviantArtGetCategoryTreeResponse> createCall() {
+            DeviantArtAPI deviantArtAPI = retrofit.create(DeviantArtAPI.class);
+            return deviantArtAPI.getCategoryTree(request.getCatpath(), request.getAuthorizationString());
+        }
+
+        @Override
+        protected Class<DeviantArtGetCategoryTreeResponse> getResponseClass() {
+            return DeviantArtGetCategoryTreeResponse.class;
         }
     }
 

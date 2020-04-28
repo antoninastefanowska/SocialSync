@@ -87,4 +87,9 @@ public class FacebookService extends Service {
     public LoginFlow createLoginFlow(LoginActivity context) {
         return new FacebookLoginFlow(context);
     }
+
+    @Override
+    public boolean isOptionsEnabled() {
+        return false;
+    }
 }

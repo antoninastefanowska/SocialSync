@@ -14,13 +14,22 @@ import com.antonina.socialsynchro.common.database.daos.ChildPostContainerDao;
 import com.antonina.socialsynchro.common.database.daos.ParentPostContainerDao;
 import com.antonina.socialsynchro.common.database.daos.PostDao;
 import com.antonina.socialsynchro.common.database.daos.RequestLimitDao;
+import com.antonina.socialsynchro.common.database.daos.TagDao;
+import com.antonina.socialsynchro.common.database.migrations.Migrations;
 import com.antonina.socialsynchro.common.database.rows.AttachmentRow;
 import com.antonina.socialsynchro.common.database.rows.ParentPostContainerRow;
 import com.antonina.socialsynchro.common.database.rows.RequestLimitRow;
+import com.antonina.socialsynchro.common.database.rows.TagRow;
 import com.antonina.socialsynchro.services.deviantart.database.daos.DeviantArtAccountInfoDao;
+import com.antonina.socialsynchro.services.deviantart.database.daos.DeviantArtCategoryDao;
+import com.antonina.socialsynchro.services.deviantart.database.daos.DeviantArtGalleryDao;
 import com.antonina.socialsynchro.services.deviantart.database.daos.DeviantArtPostInfoDao;
+import com.antonina.socialsynchro.services.deviantart.database.daos.DeviantArtPostOptionsDao;
 import com.antonina.socialsynchro.services.deviantart.database.rows.DeviantArtAccountInfoRow;
+import com.antonina.socialsynchro.services.deviantart.database.rows.DeviantArtCategoryRow;
+import com.antonina.socialsynchro.services.deviantart.database.rows.DeviantArtGalleryRow;
 import com.antonina.socialsynchro.services.deviantart.database.rows.DeviantArtPostInfoRow;
+import com.antonina.socialsynchro.services.deviantart.database.rows.DeviantArtPostOptionsRow;
 import com.antonina.socialsynchro.services.facebook.database.daos.FacebookAccountInfoDao;
 import com.antonina.socialsynchro.services.facebook.database.daos.FacebookPostInfoDao;
 import com.antonina.socialsynchro.services.facebook.database.rows.FacebookAccountInfoRow;
@@ -30,8 +39,10 @@ import com.antonina.socialsynchro.common.database.rows.AccountRow;
 import com.antonina.socialsynchro.common.database.rows.ChildPostContainerRow;
 import com.antonina.socialsynchro.common.database.rows.PostRow;
 import com.antonina.socialsynchro.services.twitter.database.daos.TwitterPostInfoDao;
+import com.antonina.socialsynchro.services.twitter.database.daos.TwitterPostOptionsDao;
 import com.antonina.socialsynchro.services.twitter.database.rows.TwitterAccountInfoRow;
 import com.antonina.socialsynchro.services.twitter.database.rows.TwitterPostInfoRow;
+import com.antonina.socialsynchro.services.twitter.database.rows.TwitterPostOptionsRow;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -46,12 +57,17 @@ import java.nio.channels.FileChannel;
         ChildPostContainerRow.class,
         ParentPostContainerRow.class,
         RequestLimitRow.class,
+        TagRow.class,
         TwitterAccountInfoRow.class,
         TwitterPostInfoRow.class,
+        TwitterPostOptionsRow.class,
         FacebookAccountInfoRow.class,
         FacebookPostInfoRow.class,
         DeviantArtAccountInfoRow.class,
-        DeviantArtPostInfoRow.class}, version = 1, exportSchema = false)
+        DeviantArtPostInfoRow.class,
+        DeviantArtGalleryRow.class,
+        DeviantArtCategoryRow.class,
+        DeviantArtPostOptionsRow.class}, version = 2, exportSchema = false)
 @TypeConverters(DateConverter.class)
 public abstract class ApplicationDatabase extends RoomDatabase {
     private final static String DB_NAME = "socialsynchro";
@@ -63,21 +79,28 @@ public abstract class ApplicationDatabase extends RoomDatabase {
     public abstract ChildPostContainerDao childPostContainerDao();
     public abstract ParentPostContainerDao parentPostContainerDao();
     public abstract RequestLimitDao requestLimitDao();
+    public abstract TagDao tagDao();
 
     public abstract TwitterAccountInfoDao twitterAccountDao();
     public abstract TwitterPostInfoDao twitterPostDao();
+    public abstract TwitterPostOptionsDao twitterPostOptionsDao();
 
     public abstract FacebookAccountInfoDao facebookAccountDao();
     public abstract FacebookPostInfoDao facebookPostDao();
 
     public abstract DeviantArtAccountInfoDao deviantArtAccountDao();
     public abstract DeviantArtPostInfoDao deviantArtPostDao();
+    public abstract DeviantArtGalleryDao deviantArtGalleryDao();
+    public abstract DeviantArtCategoryDao deviantArtCategoryDao();
+    public abstract DeviantArtPostOptionsDao deviantArtPostOptionsDao();
 
     public static ApplicationDatabase getDatabase(final Context context) {
         if (instance == null) {
             synchronized (ApplicationDatabase.class) {
                 if (instance == null) {
-                    instance = Room.databaseBuilder(context.getApplicationContext(), ApplicationDatabase.class, DB_NAME).build();
+                    instance = Room.databaseBuilder(context.getApplicationContext(), ApplicationDatabase.class, DB_NAME)
+                            .addMigrations(Migrations.MIGRATION_1_2)
+                            .build();
                 }
             }
         }

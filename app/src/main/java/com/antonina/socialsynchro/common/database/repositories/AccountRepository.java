@@ -64,7 +64,7 @@ public class AccountRepository extends BaseRepository<AccountRow, Account> {
             });
             return entities;
         } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+            handleException(e);
             return null;
         }
     }
@@ -76,7 +76,7 @@ public class AccountRepository extends BaseRepository<AccountRow, Account> {
             GetIDByExternalIDAsyncTask asyncTask = new GetIDByExternalIDAsyncTask(accountDao);
             return asyncTask.execute(new Pair<>(externalID, serviceID)).get();
         } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+            handleException(e);
             return -1;
         }
     }
@@ -88,7 +88,7 @@ public class AccountRepository extends BaseRepository<AccountRow, Account> {
             AccountExistsAsyncTask asyncTask = new AccountExistsAsyncTask(accountDao);
             return asyncTask.execute(new Pair<>(externalID, serviceID)).get();
         } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+            handleException(e);
             return false;
         }
     }

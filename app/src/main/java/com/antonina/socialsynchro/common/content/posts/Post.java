@@ -8,6 +8,7 @@ import com.antonina.socialsynchro.common.content.attachments.Attachment;
 import com.antonina.socialsynchro.common.database.IDatabaseEntity;
 import com.antonina.socialsynchro.common.database.repositories.AttachmentRepository;
 import com.antonina.socialsynchro.common.database.repositories.PostRepository;
+import com.antonina.socialsynchro.common.database.repositories.TagRepository;
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 import com.antonina.socialsynchro.common.database.rows.PostRow;
 import com.antonina.socialsynchro.common.gui.GUIItem;
@@ -36,6 +37,8 @@ public class Post extends GUIItem implements IPost, IDatabaseEntity {
         content = "";
         attachments = new ArrayList<>();
         deletedAttachments = new ArrayList<>();
+        tags = new ArrayList<>();
+        deletedTags = new ArrayList<>();
     }
 
     public Post(IDatabaseRow data) { createFromDatabaseRow(data); }
@@ -109,6 +112,7 @@ public class Post extends GUIItem implements IPost, IDatabaseEntity {
 
     @Override
     public void addTag(Tag tag) {
+        tag.setParentPost(this);
         tags.add(tag);
         notifyGUI();
     }
@@ -134,7 +138,8 @@ public class Post extends GUIItem implements IPost, IDatabaseEntity {
 
         this.attachments = new ArrayList<>();
         this.deletedAttachments = new ArrayList<>();
-        this.tags = new ArrayList();
+        this.tags = new ArrayList<>();
+        this.deletedTags = new ArrayList<>();
 
         final Post instance = this;
         final LiveData<List<Attachment>> attachmentsLiveData = AttachmentRepository.getInstance().getDataByPost(this);
@@ -146,6 +151,18 @@ public class Post extends GUIItem implements IPost, IDatabaseEntity {
                         if (attachment != null)
                             instance.addAttachment(attachment);
                     attachmentsLiveData.removeObserver(this);
+                }
+            }
+        });
+        final LiveData<List<Tag>> tagsLiveData = TagRepository.getInstance().getDataByPost(this);
+        tagsLiveData.observeForever(new Observer<List<Tag>>() {
+            @Override
+            public void onChanged(@Nullable List<Tag> tags) {
+                if (tags != null) {
+                    for (Tag tag : tags)
+                        if (tag != null)
+                            instance.addTag(tag);
+                    tagsLiveData.removeObserver(this);
                 }
             }
         });
@@ -165,6 +182,8 @@ public class Post extends GUIItem implements IPost, IDatabaseEntity {
             internalID = repository.insert(this);
             for (Attachment attachment : attachments)
                 attachment.saveInDatabase();
+            for (Tag tag : tags)
+                tag.saveInDatabase();
         }
     }
 
@@ -176,11 +195,16 @@ public class Post extends GUIItem implements IPost, IDatabaseEntity {
 
         for (Attachment deletedAttachment : deletedAttachments)
             deletedAttachment.deleteFromDatabase();
+        for (Tag deletedTag : deletedTags)
+            deletedTag.deleteFromDatabase();
 
         deletedAttachments.clear();
+        deletedTags.clear();
 
         for (Attachment attachment : attachments)
             attachment.saveInDatabase();
+        for (Tag tag : tags)
+            tag.saveInDatabase();
     }
 
     @Override
@@ -189,6 +213,8 @@ public class Post extends GUIItem implements IPost, IDatabaseEntity {
             return;
         for (Attachment attachment : attachments)
             attachment.deleteFromDatabase();
+        for (Tag tag : tags)
+            tag.deleteFromDatabase();
         PostRepository repository = PostRepository.getInstance();
         repository.delete(this);
         internalID = null;

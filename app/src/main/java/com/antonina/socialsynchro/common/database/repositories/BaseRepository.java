@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import com.antonina.socialsynchro.common.database.IDatabaseEntity;
 import com.antonina.socialsynchro.common.database.daos.BaseDao;
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
+import com.antonina.socialsynchro.common.gui.listeners.OnDatabaseErrorListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,10 +16,21 @@ import java.util.concurrent.ExecutionException;
 
 public abstract class BaseRepository<DataRowType extends IDatabaseRow, EntityType extends IDatabaseEntity> {
     protected BaseDao<DataRowType> dao;
+    private OnDatabaseErrorListener errorListener;
 
     protected abstract EntityType convertToEntity(DataRowType dataRow);
 
     protected abstract DataRowType convertToDataRow(EntityType entity);
+
+    public void setErrorListener(OnDatabaseErrorListener errorListener) {
+        this.errorListener = errorListener;
+    }
+
+    protected void handleException(Exception e) {
+        e.printStackTrace();
+        if (errorListener != null)
+            errorListener.onError(this, e.getMessage());
+    }
 
     public LiveData<List<EntityType>> getAllData() {
         try {
@@ -35,9 +47,8 @@ public abstract class BaseRepository<DataRowType extends IDatabaseRow, EntityTyp
             });
             return entities;
         } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+            handleException(e);
             return null;
-            //TODO: Pokazać powiadomienie o błędzie.
         }
     }
 
@@ -57,7 +68,7 @@ public abstract class BaseRepository<DataRowType extends IDatabaseRow, EntityTyp
             GetDataByIDAsyncTask<DataRowType> asyncTask = new GetDataByIDAsyncTask<>(dao);
             return asyncTask.execute(id).get();
         } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+            handleException(e);
             return null;
         }
     }
@@ -68,7 +79,7 @@ public abstract class BaseRepository<DataRowType extends IDatabaseRow, EntityTyp
             int result = asyncTask.execute().get();
             return result;
         } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+            handleException(e);
             return 0;
         }
     }
@@ -79,7 +90,7 @@ public abstract class BaseRepository<DataRowType extends IDatabaseRow, EntityTyp
             InsertAsyncTask<DataRowType> asyncTask = new InsertAsyncTask<>(dao);
             return asyncTask.execute(dataRow).get();
         } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+            handleException(e);
             return null;
         }
     }

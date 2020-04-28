@@ -36,14 +36,14 @@ public class AttachmentEditAdapter extends BaseAdapter<Attachment, AttachmentEdi
     public AttachmentEditAdapter(AppCompatActivity context) {
         super(context);
         locked = false;
-        items = new ArrayList();
+        items = new ArrayList<>();
     }
 
     public AttachmentEditAdapter(AppCompatActivity context, IPost postContainer) {
         super(context);
         this.postContainer = postContainer;
         locked = false;
-        items = new ArrayList();
+        items = new ArrayList<>();
         loadData();
     }
 
@@ -95,6 +95,7 @@ public class AttachmentEditAdapter extends BaseAdapter<Attachment, AttachmentEdi
         this.locked = locked;
     }
 
+    @NonNull
     @Override
     public AttachmentViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         final AttachmentViewHolder viewHolder = super.onCreateViewHolder(viewGroup, viewType);

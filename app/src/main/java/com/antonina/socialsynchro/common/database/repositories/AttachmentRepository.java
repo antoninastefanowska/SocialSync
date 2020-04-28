@@ -64,7 +64,7 @@ public class AttachmentRepository extends BaseRepository<AttachmentRow, Attachme
             });
             return entities;
         } catch (ExecutionException | InterruptedException e) {
-            e.printStackTrace();
+            handleException(e);
             return null;
         }
     }

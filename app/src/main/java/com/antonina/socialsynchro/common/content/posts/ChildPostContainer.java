@@ -28,6 +28,7 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     private boolean locked;
     private Date synchronizationDate;
     private Account account;
+    private PostOptions options;
 
     protected ParentPostContainer parent;
 
@@ -256,6 +257,16 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
         notifyGUI();
     }
 
+    @Bindable
+    public PostOptions getOptions() {
+        return options;
+    }
+
+    protected void setOptions(PostOptions options) {
+        options.setParentPost(this);
+        this.options = options;
+    }
+
     @Override
     public void createFromDatabaseRow(IDatabaseRow data) {
         ChildPostContainerRow childPostContainerData = (ChildPostContainerRow)data;
@@ -301,6 +312,7 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
                 post.saveInDatabase();
             ChildPostContainerRepository repository = ChildPostContainerRepository.getInstance();
             internalID = repository.insert(this);
+            options.saveInDatabase();
         }
     }
 
@@ -310,12 +322,14 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
             post.saveInDatabase();
         ChildPostContainerRepository repository = ChildPostContainerRepository.getInstance();
         repository.update(this);
+        options.updateInDatabase();
     }
 
     @Override
     public void deleteFromDatabase() {
         if (internalID == null)
             return;
+        options.deleteFromDatabase();
         ChildPostContainerRepository repository = ChildPostContainerRepository.getInstance();
         repository.delete(this);
         if (!locked)

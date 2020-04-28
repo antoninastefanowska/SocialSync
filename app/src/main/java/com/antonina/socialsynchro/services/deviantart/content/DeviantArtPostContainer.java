@@ -3,7 +3,6 @@ package com.antonina.socialsynchro.services.deviantart.content;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.antonina.socialsynchro.common.content.attachments.Attachment;
 import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
@@ -17,6 +16,7 @@ import com.antonina.socialsynchro.common.gui.listeners.OnUnpublishedListener;
 import com.antonina.socialsynchro.common.rest.IResponse;
 import com.antonina.socialsynchro.common.rest.IServiceEntity;
 import com.antonina.socialsynchro.services.deviantart.database.repositories.DeviantArtPostInfoRepository;
+import com.antonina.socialsynchro.services.deviantart.database.repositories.DeviantArtPostOptionsRepository;
 import com.antonina.socialsynchro.services.deviantart.database.rows.DeviantArtPostInfoRow;
 import com.antonina.socialsynchro.services.deviantart.rest.DeviantArtClient;
 import com.antonina.socialsynchro.services.deviantart.rest.requests.DeviantArtGetDeviationRequest;
@@ -46,14 +46,13 @@ public class DeviantArtPostContainer extends ChildPostContainer {
 
     public DeviantArtPostContainer(DeviantArtAccount account) {
         super(account);
+        setOptions(new DeviantArtPostOptions());
         faveCount = 0;
         commentCount = 0;
     }
 
     public DeviantArtPostContainer(IDatabaseRow data) {
         super(data);
-        faveCount = 0;
-        commentCount = 0;
     }
 
     @Override
@@ -240,6 +239,16 @@ public class DeviantArtPostContainer extends ChildPostContainer {
                 }
             }
         });
+        DeviantArtPostOptionsRepository optionsRepository = DeviantArtPostOptionsRepository.getInstance();
+        final LiveData<DeviantArtPostOptions> liveDataOptions = optionsRepository.getDataByID(data.getID());
+        liveDataOptions.observeForever(new Observer<DeviantArtPostOptions>() {
+            @Override
+            public void onChanged(@Nullable DeviantArtPostOptions options) {
+                setOptions(options);
+                notifyGUI();
+                liveDataOptions.removeObserver(this);
+            }
+        });
     }
 
     @Override
@@ -301,7 +310,6 @@ public class DeviantArtPostContainer extends ChildPostContainer {
                             .accessToken(getAccount().getAccessToken())
                             .deviationID(getExternalID())
                             .build();
-                    Log.d("deviantart", getExternalID());
                     final LiveData<DeviantArtDeviationResponse> asyncResponse = DeviantArtClient.getDeviation(request);
                     asyncResponse.observeForever(new Observer<DeviantArtDeviationResponse>() {
                         @Override

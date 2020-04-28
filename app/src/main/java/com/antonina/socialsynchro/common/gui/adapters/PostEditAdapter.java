@@ -10,15 +10,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
 import com.antonina.socialsynchro.common.content.posts.ParentPostContainer;
 import com.antonina.socialsynchro.common.content.posts.PostContainer;
+import com.antonina.socialsynchro.common.content.posts.Tag;
 import com.antonina.socialsynchro.common.gui.activities.EditActivity;
 import com.antonina.socialsynchro.databinding.ChildEditItemBinding;
 import com.antonina.socialsynchro.databinding.ParentEditItemBinding;
+import com.google.android.flexbox.FlexDirection;
+import com.google.android.flexbox.FlexboxLayoutManager;
+import com.google.android.flexbox.JustifyContent;
 
 import java.util.List;
 
@@ -33,11 +38,15 @@ public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.
         public int viewHolderType;
 
         public final AttachmentEditAdapter attachmentAdapter;
+        public final TagEditAdapter tagAdapter;
         public final ImageView profilePictureImageView;
 
         public final Button addAttachmentButton;
+        public final Button addTagsButton;
         public final Button publishButton;
         public final Button unpublishButton;
+
+        public final EditText tagsEditText;
 
         public PostViewHolder(@NonNull View view, AppCompatActivity context) {
             super(view);
@@ -45,23 +54,35 @@ public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.
             profilePictureImageView = view.findViewById(R.id.imageview_profile_picture);
 
             addAttachmentButton = view.findViewById(R.id.button_add_attachment);
+            addTagsButton = view.findViewById(R.id.button_add_tags);
             publishButton = view.findViewById(R.id.button_publish);
             unpublishButton = view.findViewById(R.id.button_unpublish);
+            tagsEditText = view.findViewById(R.id.edittext_tags);
 
             attachmentAdapter = new AttachmentEditAdapter(context);
+            tagAdapter = new TagEditAdapter(context);
 
             RecyclerView attachmentRecyclerView = view.findViewById(R.id.recyclerview_attachments);
             attachmentRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+
+            RecyclerView tagRecyclerView = view.findViewById(R.id.recyclerview_tags);
+            FlexboxLayoutManager layoutManager = new FlexboxLayoutManager(view.getContext());
+            layoutManager.setFlexDirection(FlexDirection.ROW);
+            layoutManager.setJustifyContent(JustifyContent.FLEX_START);
+            tagRecyclerView.setLayoutManager(layoutManager);
         }
 
         public PostViewHolder(@NonNull View view) {
             super(view);
 
             attachmentAdapter = null;
+            tagAdapter = null;
             profilePictureImageView = null;
             addAttachmentButton = null;
+            addTagsButton = null;
             publishButton = null;
             unpublishButton = null;
+            tagsEditText = null;
         }
     }
 
@@ -81,6 +102,7 @@ public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.
             removeButton = view.findViewById(R.id.button_remove);
 
             binding.setAttachmentAdapter(attachmentAdapter);
+            binding.setTagAdapter(tagAdapter);
             binding.executePendingBindings();
         }
 
@@ -100,6 +122,7 @@ public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.
             saveButton = view.findViewById(R.id.button_save);
 
             binding.setAttachmentAdapter(attachmentAdapter);
+            binding.setTagAdapter(tagAdapter);
             binding.executePendingBindings();
         }
 
@@ -152,6 +175,7 @@ public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.
             ParentViewHolder parentViewHolder = (ParentViewHolder)viewHolder;
             parentViewHolder.binding.setParent((ParentPostContainer)item);
             viewHolder.attachmentAdapter.setSource(item);
+            viewHolder.tagAdapter.setSource(item);
         } else if (viewHolder.viewHolderType == CHILD) {
             ChildViewHolder childViewHolder = (ChildViewHolder)viewHolder;
             ChildPostContainer child = (ChildPostContainer)item;
@@ -159,7 +183,9 @@ public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.
             loadPictureByURL(viewHolder.profilePictureImageView, imageSize, child.getAccount().getProfilePictureURL());
             loadPictureByID(((ChildViewHolder)viewHolder).serviceIconImageView, imageSize, child.getAccount().getService().getIconID());
             viewHolder.attachmentAdapter.setSource(item);
+            viewHolder.tagAdapter.setSource(item);
             viewHolder.attachmentAdapter.setLocked(child.isLocked());
+            viewHolder.tagAdapter.setLocked(child.isLocked());
         }
     }
 
@@ -234,6 +260,20 @@ public class PostEditAdapter extends BaseAdapter<PostContainer, PostEditAdapter.
                 @Override
                 public void onClick(View v) {
                     activity.addAttachment(viewHolder);
+                }
+            });
+            viewHolder.addTagsButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    String text = viewHolder.tagsEditText.getText().toString();
+                    String[] tagStrings = text.split(" ");
+                    for (String tagString : tagStrings) {
+                        if (!tagString.isEmpty()) {
+                            Tag tag = new Tag(tagString);
+                            viewHolder.tagAdapter.addItem(tag);
+                        }
+                    }
+                    viewHolder.tagsEditText.getText().clear();
                 }
             });
             viewHolder.publishButton.setOnClickListener(new View.OnClickListener() {
