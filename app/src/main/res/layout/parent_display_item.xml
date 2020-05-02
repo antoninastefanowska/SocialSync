@@ -20,53 +20,11 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <HorizontalScrollView
-            android:visibility="@{parent.isVisible() ? View.VISIBLE : View.GONE}"
-            style="@style/ButtonsScrollViewStyle">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <com.antonina.socialsynchro.common.gui.other.StateButton
-                    android:id="@+id/button_edit"
-                    android:tooltipText="@string/edit"
-                    android:background="@drawable/icon_pencil"
-                    style="@style/IconButtonStyle" />
-
-                <com.antonina.socialsynchro.common.gui.other.StateButton
-                    android:id="@+id/button_synchronize"
-                    android:tooltipText="@string/synchronize"
-                    android:background="@drawable/icon_refresh"
-                    style="@style/IconButtonStyle" />
-
-                <com.antonina.socialsynchro.common.gui.other.StateButton
-                    android:id="@+id/button_statistics"
-                    android:tooltipText="@string/statistics"
-                    android:background="@drawable/icon_chart"
-                    style="@style/IconButtonStyle" />
-
-                <com.antonina.socialsynchro.common.gui.other.StateButton
-                    android:id="@+id/button_publish"
-                    android:tooltipText="@string/publish"
-                    android:background="@drawable/icon_publish"
-                    style="@style/IconButtonStyle" />
-
-                <com.antonina.socialsynchro.common.gui.other.StateButton
-                    android:id="@+id/button_unpublish"
-                    android:tooltipText="@string/unpublish"
-                    android:background="@drawable/icon_unpublish"
-                    style="@style/IconButtonStyle" />
-
-                <com.antonina.socialsynchro.common.gui.other.StateButton
-                    android:id="@+id/button_remove"
-                    android:tooltipText="@string/remove"
-                    android:background="@drawable/icon_cross"
-                    style="@style/IconButtonStyle" />
-
-            </LinearLayout>
-
-        </HorizontalScrollView>
+        <com.gtomato.android.ui.widget.CarouselView
+            android:id="@+id/operation_menu"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_icon_size"
+            android:visibility="@{parent.isVisible() ? View.VISIBLE : View.GONE}"/>
 
         <FrameLayout
             style="@style/PanelFrameLayoutStyle">

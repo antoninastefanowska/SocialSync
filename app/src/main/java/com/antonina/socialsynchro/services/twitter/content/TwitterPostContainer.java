@@ -215,6 +215,7 @@ public class TwitterPostContainer extends ChildPostContainer {
                     setLoading(false);
                     if (response.getErrorString() == null) {
                         instance.setExternalID(response.getID());
+                        instance.saveInDatabase();
                         publishListener.onPublished(instance);
                     } else {
                         publishListener.onError(instance, response.getErrorString());
@@ -252,6 +253,7 @@ public class TwitterPostContainer extends ChildPostContainer {
                     setLoading(false);
                     if (response.getErrorString() == null) {
                         instance.setExternalID(response.getID());
+                        instance.saveInDatabase();
                         publishListener.onPublished(instance);
                     } else {
                         publishListener.onError(instance, response.getErrorString());
@@ -290,6 +292,7 @@ public class TwitterPostContainer extends ChildPostContainer {
                     if (response != null) {
                         if (response.getErrorString() == null) {
                             attachment.setExternalID(response.getMediaID());
+                            attachment.saveInDatabase();
                             attachmentListener.onInitialized(attachment);
 
                             long chunkStart = 0;
@@ -348,6 +351,7 @@ public class TwitterPostContainer extends ChildPostContainer {
                     } else {
                         setLoading(false);
                         attachment.setExternalID(null);
+                        attachment.saveInDatabase();
                         attachmentListener.onError(attachment, response.getErrorString());
                         publishListener.onError(instance, response.getErrorString());
                     }
@@ -380,6 +384,7 @@ public class TwitterPostContainer extends ChildPostContainer {
                     if (response != null) {
                         if (response.getErrorString() == null) {
                             attachment.setExternalID(response.getMediaID());
+                            attachment.saveInDatabase();
                             TwitterUploadFinalizeResponse.ProcessingInfo info = response.getProcessingInfo();
                             if (info == null)
                                 finishAttachmentUpload(attachment, publishListener, attachmentListener);
@@ -397,6 +402,7 @@ public class TwitterPostContainer extends ChildPostContainer {
                         } else {
                             setLoading(false);
                             attachment.setExternalID(null);
+                            attachment.saveInDatabase();
                             attachmentListener.onError(attachment, response.getErrorString());
                             publishListener.onError(instance, response.getErrorString());
                         }
@@ -437,6 +443,7 @@ public class TwitterPostContainer extends ChildPostContainer {
                                 case "failed":
                                     attachment.setLoading(false);
                                     attachment.setExternalID(null);
+                                    attachment.saveInDatabase();
                                     attachmentListener.onError(attachment, info.getErrorString());
                                     publishListener.onError(instance, info.getErrorString());
                                     break;
@@ -457,6 +464,7 @@ public class TwitterPostContainer extends ChildPostContainer {
                         } else {
                             setLoading(false);
                             attachment.setExternalID(null);
+                            attachment.saveInDatabase();
                             attachmentListener.onError(attachment, response.getErrorString());
                             publishListener.onError(instance, "Status check error: " + response.getErrorString());
                         }
@@ -511,6 +519,7 @@ public class TwitterPostContainer extends ChildPostContainer {
                                         if (response.getErrorString() == null) {
                                             if (response.getID().equals(getExternalID())) {
                                                 instance.setExternalID(null);
+                                                instance.saveInDatabase();
                                                 listener.onUnpublished(instance);
                                             }
                                         } else

@@ -208,6 +208,7 @@ public class DeviantArtPostContainer extends ChildPostContainer {
                     if (response.getErrorString() == null) {
                         instance.setExternalID(response.getDeviationID());
                         instance.setURL(response.getURL());
+                        instance.saveInDatabase();
                         publishListener.onPublished(instance);
                     } else {
                         publishListener.onError(instance, response.getErrorString());
@@ -270,6 +271,7 @@ public class DeviantArtPostContainer extends ChildPostContainer {
                             if (response != null) {
                                 if (response.getErrorString() == null) {
                                     instance.setExternalID(null);
+                                    instance.saveInDatabase();
                                     listener.onUnpublished(instance);
                                 } else
                                     listener.onError(instance, response.getErrorString());

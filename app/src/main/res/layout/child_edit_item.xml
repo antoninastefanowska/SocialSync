@@ -21,58 +21,11 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <HorizontalScrollView
-            android:id="@+id/horizontal_scrollview"
-            android:visibility="@{child.isVisible() ? View.VISIBLE : View.GONE}"
-            style="@style/ChildButtonsScrollViewStyle" >
-
-            <LinearLayout
-                style="@style/ButtonsScrollableLinearLayoutStyle">
-
-                <com.antonina.socialsynchro.common.gui.other.StateButton
-                    android:id="@+id/button_add_attachment"
-                    android:tooltipText="@string/add_attachment"
-                    android:background="@drawable/icon_clip"
-                    android:enabled="@{!child.locked}"
-                    style="@style/IconButtonStyle" />
-
-                <com.antonina.socialsynchro.common.gui.other.StateButton
-                    android:id="@+id/button_lock"
-                    android:tooltipText="@string/lock"
-                    android:background="@drawable/icon_lock"
-                    android:enabled="@{!child.locked}"
-                    style="@style/IconButtonStyle" />
-
-                <com.antonina.socialsynchro.common.gui.other.StateButton
-                    android:id="@+id/button_unlock"
-                    android:tooltipText="@string/lock"
-                    android:background="@drawable/icon_lock_open"
-                    android:enabled="@{child.locked}"
-                    style="@style/IconButtonStyle" />
-
-                <com.antonina.socialsynchro.common.gui.other.StateButton
-                    android:id="@+id/button_publish"
-                    android:tooltipText="@string/publish"
-                    android:background="@drawable/icon_publish"
-                    android:enabled="@{!child.online}"
-                    style="@style/IconButtonStyle" />
-
-                <com.antonina.socialsynchro.common.gui.other.StateButton
-                    android:id="@+id/button_unpublish"
-                    android:tooltipText="@string/unpublish"
-                    android:background="@drawable/icon_unpublish"
-                    android:enabled="@{child.online}"
-                    style="@style/IconButtonStyle" />
-
-                <com.antonina.socialsynchro.common.gui.other.StateButton
-                    android:id="@+id/button_remove"
-                    android:tooltipText="@string/remove"
-                    android:background="@drawable/icon_cross"
-                    style="@style/IconButtonStyle" />
-
-            </LinearLayout>
-
-        </HorizontalScrollView>
+        <com.gtomato.android.ui.widget.CarouselView
+            android:id="@+id/operation_menu"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_icon_size"
+            android:visibility="@{child.isVisible() ? View.VISIBLE : View.GONE}"/>
 
         <FrameLayout
             style="@style/PanelFrameLayoutStyle">
@@ -196,9 +149,9 @@
                     android:id="@+id/button_add_tags"
                     style="@style/TagButtonIcon"
                     android:layout_gravity="center_vertical"
-                    android:background="@drawable/icon_plus"
+                    android:background="@drawable/icon_plus_small"
                     android:enabled="@{!child.locked}"
-                    android:tooltipText="@string/remove" />
+                    android:tooltipText="@string/add_tags" />
 
             </LinearLayout>
 

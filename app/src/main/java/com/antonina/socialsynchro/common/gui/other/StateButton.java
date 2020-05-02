@@ -3,6 +3,7 @@ package com.antonina.socialsynchro.common.gui.other;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.DrawableRes;
 import android.support.v7.widget.AppCompatButton;
@@ -15,25 +16,30 @@ public class StateButton extends AppCompatButton {
     public StateButton(Context context, AttributeSet attrs) {
         super(context, attrs);
         int backgroundID = attrs.getAttributeResourceValue(XMLNS, "background", -1);
-        dynamicBackground = DynamicResource.getDynamicResource(backgroundID, context);
+        try {
+            dynamicBackground = DynamicResource.getDynamicResource(backgroundID, context);
+        } catch (Resources.NotFoundException e) { }
     }
 
     @Override
     public void setBackgroundResource(@DrawableRes int resId) {
         super.setBackgroundResource(resId);
         dynamicBackground = DynamicResource.getDynamicResource(resId, getContext());
+        setBackgroundDrawable(pickBackground());
     }
 
     @Override
     public void setPressed(boolean pressed) {
         super.setPressed(pressed);
-        setBackgroundDrawable(pickBackground());
+        if (dynamicBackground != null)
+            setBackgroundDrawable(pickBackground());
     }
 
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        setBackgroundDrawable(pickBackground());
+        if (dynamicBackground != null)
+            setBackgroundDrawable(pickBackground());
     }
 
     private Drawable pickBackground() {

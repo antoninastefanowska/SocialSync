@@ -57,8 +57,10 @@ public class EditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_edit);
 
         ParentPostContainer parent;
-        if (getIntent().hasExtra("parent"))
-            parent = (ParentPostContainer)getIntent().getSerializableExtra("parent");
+        if (getIntent().hasExtra("parent")) {
+            parent = (ParentPostContainer) getIntent().getSerializableExtra("parent");
+            parent.show();
+        }
         else
             parent = new ParentPostContainer();
 

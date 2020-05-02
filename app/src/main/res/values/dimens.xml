@@ -39,4 +39,6 @@
     <dimen name="tag_hash_background_offset_padding">17dp</dimen>
     <dimen name="tag_hash_font_size">22sp</dimen>
     <dimen name="tag_font_size">15sp</dimen>
+    <dimen name="operation_label_font_size">8sp</dimen>
+    <dimen name="button_width">60dp</dimen>
 </resources>

@@ -169,6 +169,7 @@ public class FacebookPostContainer extends ChildPostContainer {
                     setLoading(false);
                     if (response.getErrorString() == null) {
                         instance.setExternalID(response.getID());
+                        instance.saveInDatabase();
                         publishListener.onPublished(instance);
                     } else
                         publishListener.onError(instance, response.getErrorString());
@@ -199,6 +200,7 @@ public class FacebookPostContainer extends ChildPostContainer {
                     setLoading(false);
                     if (response.getErrorString() == null) {
                         instance.setExternalID(response.getID());
+                        instance.saveInDatabase();
                         publishListener.onPublished(instance);
                     } else {
                         publishListener.onError(instance, response.getErrorString());
@@ -226,6 +228,7 @@ public class FacebookPostContainer extends ChildPostContainer {
                 if (response != null) {
                     if (response.getErrorString() == null) {
                         attachment.setExternalID(response.getID());
+                        attachment.saveInDatabase();
                         finishPhotoUpload(attachment, publishListener, attachmentListener);
                     } else {
                         attachment.setLoading(false);
@@ -272,6 +275,7 @@ public class FacebookPostContainer extends ChildPostContainer {
                         long startOffset = response.getStartOffset();
                         long endOffset = response.getEndOffset();
                         setExternalID(response.getVideoID());
+                        saveInDatabase();
                         uploadVideoTransfer(attachment, uploadSessionID, startOffset, endOffset, publishListener, attachmentListener);
                     } else {
                         setLoading(false);
@@ -317,6 +321,7 @@ public class FacebookPostContainer extends ChildPostContainer {
                         setLoading(false);
                         attachment.setLoading(false);
                         setExternalID(null);
+                        saveInDatabase();
                         attachmentListener.onError(attachment, response.getErrorString());
                         publishListener.onError(instance, response.getErrorString());
                     }
@@ -346,6 +351,7 @@ public class FacebookPostContainer extends ChildPostContainer {
                         publishListener.onPublished(instance);
                     } else {
                         setExternalID(null);
+                        saveInDatabase();
                         attachmentListener.onError(attachment, response.getErrorString());
                         publishListener.onError(instance, response.getErrorString());
                     }
@@ -373,6 +379,7 @@ public class FacebookPostContainer extends ChildPostContainer {
                     if (response != null) {
                         if (response.getErrorString() == null) {
                             instance.setExternalID(null);
+                            instance.saveInDatabase();
                             listener.onUnpublished(instance);
                         } else
                             listener.onError(instance, response.getErrorString());

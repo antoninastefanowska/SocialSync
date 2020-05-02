@@ -42,7 +42,7 @@
                     android:id="@+id/button_add_new"
                     android:layout_height="@dimen/button_icon_size_small"
                     android:layout_width="@dimen/button_icon_size_small"
-                    android:background="@drawable/icon_plus"
+                    android:background="@drawable/icon_plus_small"
                     android:layout_gravity="center"
                     android:gravity="center"
                     android:layout_marginRight="@dimen/no_margin"

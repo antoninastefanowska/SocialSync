@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import com.antonina.socialsynchro.common.content.accounts.Account;
 import com.antonina.socialsynchro.common.content.accounts.LoginFlow;
 import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
+import com.antonina.socialsynchro.common.content.posts.PostOptions;
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 import com.antonina.socialsynchro.common.gui.GUIItem;
 import com.antonina.socialsynchro.common.gui.activities.LoginActivity;
@@ -44,4 +45,6 @@ public abstract class Service extends GUIItem {
     public abstract LoginFlow createLoginFlow(LoginActivity context);
 
     public abstract boolean isOptionsEnabled();
+
+    public abstract PostOptions createNewPostOptions(ChildPostContainer post);
 }

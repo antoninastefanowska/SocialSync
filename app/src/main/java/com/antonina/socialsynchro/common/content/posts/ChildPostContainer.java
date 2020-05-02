@@ -18,10 +18,15 @@ import com.antonina.socialsynchro.common.gui.listeners.OnAttachmentUploadedListe
 import com.antonina.socialsynchro.common.gui.listeners.OnPublishedListener;
 import com.antonina.socialsynchro.common.gui.listeners.OnUnlockedListener;
 import com.antonina.socialsynchro.common.gui.listeners.OnUnpublishedListener;
+import com.antonina.socialsynchro.common.gui.operations.Operation;
+import com.antonina.socialsynchro.common.gui.operations.OperationID;
+import com.antonina.socialsynchro.common.gui.operations.Operations;
 import com.antonina.socialsynchro.common.rest.IServiceEntity;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TreeMap;
 
 public abstract class ChildPostContainer extends PostContainer implements IServiceEntity {
     private String externalID;
@@ -32,17 +37,39 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
 
     protected ParentPostContainer parent;
 
+    private ChildPostContainer() {
+        displayOperations = new TreeMap<OperationID, Operation>() {{
+            put(OperationID.SYNCHRONIZE, Operations.createOperation(OperationID.SYNCHRONIZE));
+            put(OperationID.STATISTICS, Operations.createOperation(OperationID.STATISTICS));
+            put(OperationID.LINK, Operations.createOperation(OperationID.LINK));
+            put(OperationID.PUBLISH, Operations.createOperation(OperationID.PUBLISH));
+            put(OperationID.UNPUBLISH, Operations.createOperation(OperationID.UNPUBLISH));
+            put(OperationID.DELETE, Operations.createOperation(OperationID.DELETE));
+        }};
+        editOperations = new TreeMap<OperationID, Operation>() {{
+            put(OperationID.ADD_ATTACHMENT, Operations.createOperation(OperationID.ADD_ATTACHMENT));
+            put(OperationID.LOCK, Operations.createOperation(OperationID.LOCK));
+            put(OperationID.UNLOCK, Operations.createOperation(OperationID.UNLOCK));
+            put(OperationID.PUBLISH, Operations.createOperation(OperationID.PUBLISH));
+            put(OperationID.UNPUBLISH, Operations.createOperation(OperationID.UNPUBLISH));
+            put(OperationID.DELETE, Operations.createOperation(OperationID.DELETE));
+        }};
+
+        setLocked(true);
+        setExternalID(null);
+    }
+
+    protected ChildPostContainer(Account account) {
+        this();
+        setAccount(account);
+    }
+
     protected ChildPostContainer(IDatabaseRow data) {
+        this();
         createFromDatabaseRow(data);
     }
 
     private transient OnUnlockedListener unlockedListener;
-
-    protected ChildPostContainer(Account account) {
-        locked = true;
-        removePost();
-        setAccount(account);
-    }
 
     @Bindable
     @Override
@@ -228,8 +255,13 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     @Override
     public void setExternalID(String externalID) {
         this.externalID = externalID;
-        if (internalID != null)
-            saveInDatabase();
+
+        displayOperations.get(OperationID.SYNCHRONIZE).setEnabled(externalID != null);
+        displayOperations.get(OperationID.STATISTICS).setEnabled(externalID != null);
+        displayOperations.get(OperationID.LINK).setEnabled(externalID != null);
+        displayOperations.get(OperationID.PUBLISH).setEnabled(externalID == null);
+        displayOperations.get(OperationID.UNPUBLISH).setEnabled(externalID != null);
+
         notifyGUI();
     }
 
@@ -263,7 +295,8 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
     }
 
     protected void setOptions(PostOptions options) {
-        options.setParentPost(this);
+        if (options != null)
+            options.setParentPost(this);
         this.options = options;
     }
 
@@ -298,6 +331,8 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
                     instance.setAccount(account);
                     notifyGUI();
                     accountLiveData.removeObserver(this);
+                    if (options == null)
+                        setOptions(account.getService().createNewPostOptions(instance));
                 }
             }
         });
@@ -312,7 +347,8 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
                 post.saveInDatabase();
             ChildPostContainerRepository repository = ChildPostContainerRepository.getInstance();
             internalID = repository.insert(this);
-            options.saveInDatabase();
+            if (options != null)
+                options.saveInDatabase();
         }
     }
 
@@ -322,14 +358,16 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
             post.saveInDatabase();
         ChildPostContainerRepository repository = ChildPostContainerRepository.getInstance();
         repository.update(this);
-        options.updateInDatabase();
+        if (options != null)
+            options.updateInDatabase();
     }
 
     @Override
     public void deleteFromDatabase() {
         if (internalID == null)
             return;
-        options.deleteFromDatabase();
+        if (options != null)
+            options.deleteFromDatabase();
         ChildPostContainerRepository repository = ChildPostContainerRepository.getInstance();
         repository.delete(this);
         if (!locked)
@@ -339,6 +377,10 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
 
     private void setLocked(boolean locked) {
         this.locked = locked;
+
+        editOperations.get(OperationID.ADD_ATTACHMENT).setEnabled(!locked);
+        editOperations.get(OperationID.LOCK).setEnabled(!locked);
+        editOperations.get(OperationID.UNLOCK).setEnabled(locked);
     }
 
     @Override

@@ -7,6 +7,7 @@ import com.antonina.socialsynchro.SocialSynchro;
 import com.antonina.socialsynchro.common.content.accounts.Account;
 import com.antonina.socialsynchro.common.content.accounts.LoginFlow;
 import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
+import com.antonina.socialsynchro.common.content.posts.PostOptions;
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 import com.antonina.socialsynchro.common.gui.activities.LoginActivity;
 import com.antonina.socialsynchro.common.content.services.Service;
@@ -90,5 +91,10 @@ public class TwitterService extends Service {
     @Override
     public boolean isOptionsEnabled() {
         return true;
+    }
+
+    @Override
+    public PostOptions createNewPostOptions(ChildPostContainer post) {
+        return new TwitterPostOptions((TwitterPostContainer)post);
     }
 }

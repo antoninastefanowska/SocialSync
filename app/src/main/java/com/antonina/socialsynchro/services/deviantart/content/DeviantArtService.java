@@ -7,6 +7,7 @@ import com.antonina.socialsynchro.SocialSynchro;
 import com.antonina.socialsynchro.common.content.accounts.Account;
 import com.antonina.socialsynchro.common.content.accounts.LoginFlow;
 import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
+import com.antonina.socialsynchro.common.content.posts.PostOptions;
 import com.antonina.socialsynchro.common.content.services.Service;
 import com.antonina.socialsynchro.common.content.services.ServiceID;
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
@@ -91,5 +92,10 @@ public class DeviantArtService extends Service {
     @Override
     public boolean isOptionsEnabled() {
         return true;
+    }
+
+    @Override
+    public PostOptions createNewPostOptions(ChildPostContainer post) {
+        return new DeviantArtPostOptions((DeviantArtPostContainer)post);
     }
 }

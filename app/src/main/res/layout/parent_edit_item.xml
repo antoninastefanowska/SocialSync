@@ -21,42 +21,11 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <HorizontalScrollView
-            android:id="@+id/horizontal_scrollview"
-            android:visibility="@{parent.isVisible() ? View.VISIBLE : View.GONE}"
-            style="@style/ButtonsScrollViewStyle">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-
-                <com.antonina.socialsynchro.common.gui.other.StateButton
-                    android:id="@+id/button_save"
-                    android:tooltipText="@string/save"
-                    android:background="@drawable/icon_floppydisc"
-                    style="@style/IconButtonStyle" />
-
-                <com.antonina.socialsynchro.common.gui.other.StateButton
-                    android:id="@+id/button_add_attachment"
-                    android:tooltipText="@string/add_attachment"
-                    android:background="@drawable/icon_clip"
-                    style="@style/IconButtonStyle" />
-
-                <com.antonina.socialsynchro.common.gui.other.StateButton
-                    android:id="@+id/button_publish"
-                    android:tooltipText="@string/publish"
-                    android:background="@drawable/icon_publish"
-                    style="@style/IconButtonStyle" />
-
-                <com.antonina.socialsynchro.common.gui.other.StateButton
-                    android:id="@+id/button_unpublish"
-                    android:tooltipText="@string/unpublish"
-                    android:background="@drawable/icon_unpublish"
-                    style="@style/IconButtonStyle" />
-
-            </LinearLayout>
-
-        </HorizontalScrollView>
+        <com.gtomato.android.ui.widget.CarouselView
+            android:id="@+id/operation_menu"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/button_icon_size"
+            android:visibility="@{parent.isVisible() ? View.VISIBLE : View.GONE}"/>
 
         <FrameLayout
             style="@style/PanelFrameLayoutStyle">
@@ -147,8 +116,8 @@
                     android:id="@+id/button_add_tags"
                     style="@style/TagButtonIcon"
                     android:layout_gravity="center_vertical"
-                    android:background="@drawable/icon_plus"
-                    android:tooltipText="@string/remove" />
+                    android:background="@drawable/icon_plus_small"
+                    android:tooltipText="@string/add_tags" />
 
             </LinearLayout>
 

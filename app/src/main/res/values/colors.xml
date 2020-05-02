@@ -10,6 +10,7 @@
     <color name="colorLight">#E7FEFF</color>
     <color name="colorBackground">#2D5F89</color>
     <color name="colorBackgroundDark">#0F3F68</color>
+    <color name="colorBackgroundDarkTransparent">#550F3F68</color>
     <color name="colorAccent">#FEFFD5</color>
     <color name="colorBlack">#000000</color>
     <color name="colorTransparent">#00000000</color>

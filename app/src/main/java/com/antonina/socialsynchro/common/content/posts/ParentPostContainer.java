@@ -16,11 +16,15 @@ import com.antonina.socialsynchro.common.gui.listeners.OnAttachmentUploadedListe
 import com.antonina.socialsynchro.common.gui.listeners.OnPublishedListener;
 import com.antonina.socialsynchro.common.gui.listeners.OnSynchronizedListener;
 import com.antonina.socialsynchro.common.gui.listeners.OnUnpublishedListener;
+import com.antonina.socialsynchro.common.gui.operations.Operation;
+import com.antonina.socialsynchro.common.gui.operations.OperationID;
+import com.antonina.socialsynchro.common.gui.operations.Operations;
 import com.antonina.socialsynchro.common.rest.IServiceEntity;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TreeMap;
 
 public class ParentPostContainer extends PostContainer {
     private List<ChildPostContainer> children;
@@ -34,9 +38,26 @@ public class ParentPostContainer extends PostContainer {
         setPost(new Post());
         children = new ArrayList<>();
         deletedChildren = new ArrayList<>();
+
+        displayOperations = new TreeMap<OperationID, Operation>() {{
+            put(OperationID.EDIT, Operations.createOperation(OperationID.EDIT));
+            put(OperationID.SYNCHRONIZE, Operations.createOperation(OperationID.SYNCHRONIZE));
+            put(OperationID.STATISTICS, Operations.createOperation(OperationID.STATISTICS));
+            put(OperationID.PUBLISH, Operations.createOperation(OperationID.PUBLISH));
+            put(OperationID.UNPUBLISH, Operations.createOperation(OperationID.UNPUBLISH));
+            put(OperationID.DELETE, Operations.createOperation(OperationID.DELETE));
+        }};
+        editOperations = new TreeMap<OperationID, Operation>() {{
+            put(OperationID.ADD_CHILD, Operations.createOperation(OperationID.ADD_CHILD));
+            put(OperationID.SAVE, Operations.createOperation(OperationID.SAVE));
+            put(OperationID.ADD_ATTACHMENT, Operations.createOperation(OperationID.ADD_ATTACHMENT));
+            put(OperationID.PUBLISH, Operations.createOperation(OperationID.PUBLISH));
+            put(OperationID.UNPUBLISH, Operations.createOperation(OperationID.UNPUBLISH));
+        }};
     }
 
     public ParentPostContainer(IDatabaseRow data) {
+        this();
         createFromDatabaseRow(data);
     }
 
@@ -246,10 +267,6 @@ public class ParentPostContainer extends PostContainer {
     public void createFromDatabaseRow(IDatabaseRow data) {
         ParentPostContainerRow parentPostContainerData = (ParentPostContainerRow) data;
         this.internalID = parentPostContainerData.getID();
-
-        this.children = new ArrayList<>();
-        this.deletedChildren = new ArrayList<>();
-        setPost(new Post());
 
         final ParentPostContainer instance = this;
         final LiveData<Post> postLiveData = PostRepository.getInstance().getDataByID(parentPostContainerData.postID);

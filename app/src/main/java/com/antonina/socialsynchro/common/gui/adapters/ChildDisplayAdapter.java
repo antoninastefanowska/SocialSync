@@ -16,6 +16,9 @@ import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
 import com.antonina.socialsynchro.common.content.posts.ParentPostContainer;
 import com.antonina.socialsynchro.common.gui.activities.MainActivity;
+import com.antonina.socialsynchro.common.gui.operations.Operation;
+import com.antonina.socialsynchro.common.gui.operations.OperationID;
+import com.antonina.socialsynchro.common.gui.other.CustomViewTransformer;
 import com.antonina.socialsynchro.common.gui.other.GrayscaleTransformation;
 import com.antonina.socialsynchro.common.gui.other.MaskTransformation;
 import com.antonina.socialsynchro.databinding.ChildDisplayItemBinding;
@@ -24,6 +27,7 @@ import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.load.Transformation;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
+import com.gtomato.android.ui.widget.CarouselView;
 
 @SuppressWarnings("WeakerAccess")
 public class ChildDisplayAdapter extends BaseAdapter<ChildPostContainer, ChildDisplayAdapter.ChildViewHolder> {
@@ -33,27 +37,17 @@ public class ChildDisplayAdapter extends BaseAdapter<ChildPostContainer, ChildDi
 
     protected static class ChildViewHolder extends BaseAdapter.BaseViewHolder<ChildDisplayItemBinding> {
         public final AttachmentDisplayAdapter attachmentAdapter;
+        public final OperationAdapter operationAdapter;
         public final ImageView profilePictureImageView;
         public final ImageView serviceIconImageView;
-
-        public final Button synchronizeButton;
-        public final Button statisticsButton;
-        public final Button linkButton;
-        public final Button publishButton;
-        public final Button unpublishButton;
-        public final Button removeButton;
+        public final CarouselView operationMenu;
 
         public ChildViewHolder(@NonNull View view, AppCompatActivity context) {
             super(view);
 
             profilePictureImageView = view.findViewById(R.id.imageview_profile_picture);
             serviceIconImageView = view.findViewById(R.id.imageview_icon_picture);
-            synchronizeButton = view.findViewById(R.id.button_synchronize);
-            statisticsButton = view.findViewById(R.id.button_statistics);
-            linkButton = view.findViewById(R.id.button_link);
-            publishButton = view.findViewById(R.id.button_publish);
-            unpublishButton = view.findViewById(R.id.button_unpublish);
-            removeButton = view.findViewById(R.id.button_remove);
+            operationMenu = view.findViewById(R.id.operation_menu);
 
             RecyclerView attachmentRecyclerView = view.findViewById(R.id.recyclerview_child_attachments);
             attachmentRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
@@ -61,6 +55,11 @@ public class ChildDisplayAdapter extends BaseAdapter<ChildPostContainer, ChildDi
             attachmentAdapter = new AttachmentDisplayAdapter(context);
             binding.setAttachmentAdapter(attachmentAdapter);
             binding.executePendingBindings();
+
+            operationAdapter = new OperationAdapter(OperationAdapter.DISPLAY);
+            operationMenu.setTransformer(new CustomViewTransformer());
+            operationMenu.setInfinite(true);
+            operationMenu.setAdapter(operationAdapter);
         }
 
         @Override
@@ -89,9 +88,66 @@ public class ChildDisplayAdapter extends BaseAdapter<ChildPostContainer, ChildDi
     }
 
     @Override
-    protected void setItemBinding(ChildViewHolder viewHolder, ChildPostContainer item) {
+    protected void setItemBinding(final ChildViewHolder viewHolder, ChildPostContainer item) {
         viewHolder.binding.setChild(item);
         viewHolder.attachmentAdapter.setSource(item);
+        viewHolder.operationAdapter.setSource(item);
+
+        Operation operation = viewHolder.operationAdapter.getItem(OperationID.SYNCHRONIZE);
+        operation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = viewHolder.getAdapterPosition();
+                ChildPostContainer item = getItem(position);
+                activity.synchronizePost(item);
+            }
+        });
+        operation = viewHolder.operationAdapter.getItem(OperationID.STATISTICS);
+        operation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = viewHolder.getAdapterPosition();
+                ChildPostContainer item = getItem(position);
+                activity.showChildStatistics(item);
+            }
+        });
+        operation = viewHolder.operationAdapter.getItem(OperationID.LINK);
+        operation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = viewHolder.getAdapterPosition();
+                ChildPostContainer item = getItem(position);
+                activity.openChildLink(item);
+            }
+        });
+        operation = viewHolder.operationAdapter.getItem(OperationID.PUBLISH);
+        operation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = viewHolder.getAdapterPosition();
+                ChildPostContainer item = getItem(position);
+                activity.publishPost(item);
+            }
+        });
+        operation = viewHolder.operationAdapter.getItem(OperationID.UNPUBLISH);
+        operation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = viewHolder.getAdapterPosition();
+                ChildPostContainer item = getItem(position);
+                activity.unpublishPost(item);
+            }
+        });
+        operation = viewHolder.operationAdapter.getItem(OperationID.DELETE);
+        operation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int position = viewHolder.getAdapterPosition();
+                ChildPostContainer item = getItem(position);
+                activity.removePost(item);
+                removeItem(position);
+            }
+        });
 
         Transformation<Bitmap> transformation;
         if (!item.isOnline())
@@ -110,58 +166,9 @@ public class ChildDisplayAdapter extends BaseAdapter<ChildPostContainer, ChildDi
 
     @NonNull
     @Override
-    public ChildViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int position) {
-        final ChildViewHolder viewHolder = super.onCreateViewHolder(parent, position);
+    public ChildViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        final ChildViewHolder viewHolder = super.onCreateViewHolder(parent, viewType);
         setHideable(viewHolder);
-        viewHolder.synchronizeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = viewHolder.getAdapterPosition();
-                ChildPostContainer item = getItem(position);
-                activity.synchronizePost(item);
-            }
-        });
-        viewHolder.statisticsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = viewHolder.getAdapterPosition();
-                ChildPostContainer item = getItem(position);
-                activity.showChildStatistics(item);
-            }
-        });
-        viewHolder.linkButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = viewHolder.getAdapterPosition();
-                ChildPostContainer item = getItem(position);
-                activity.openChildLink(item);
-            }
-        });
-        viewHolder.publishButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = viewHolder.getAdapterPosition();
-                ChildPostContainer item = getItem(position);
-                activity.publishPost(item);
-            }
-        });
-        viewHolder.unpublishButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = viewHolder.getAdapterPosition();
-                ChildPostContainer item = getItem(position);
-                activity.unpublishPost(item);
-            }
-        });
-        viewHolder.removeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                int position = viewHolder.getAdapterPosition();
-                ChildPostContainer item = getItem(position);
-                activity.removePost(item);
-                removeItem(position);
-            }
-        });
         return viewHolder;
     }
 

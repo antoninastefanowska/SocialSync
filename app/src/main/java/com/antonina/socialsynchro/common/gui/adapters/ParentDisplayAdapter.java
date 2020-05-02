@@ -20,7 +20,11 @@ import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.common.content.posts.ParentPostContainer;
 import com.antonina.socialsynchro.common.database.viewmodels.ParentPostContainerViewModel;
 import com.antonina.socialsynchro.common.gui.activities.MainActivity;
+import com.antonina.socialsynchro.common.gui.operations.Operation;
+import com.antonina.socialsynchro.common.gui.operations.OperationID;
+import com.antonina.socialsynchro.common.gui.other.CustomViewTransformer;
 import com.antonina.socialsynchro.databinding.ParentDisplayItemBinding;
+import com.gtomato.android.ui.widget.CarouselView;
 
 import java.util.List;
 
@@ -41,14 +45,9 @@ public class ParentDisplayAdapter extends BaseAdapter<ParentPostContainer, Paren
     protected static class ParentViewHolder extends BaseParentViewHolder<ParentDisplayItemBinding> {
         public final AttachmentDisplayAdapter attachmentAdapter;
         public final ChildDisplayAdapter childAdapter;
+        public final OperationAdapter operationAdapter;
         public final ImageView imageView;
-
-        public final Button editButton;
-        public final Button synchronizeButton;
-        public final Button statisticsButton;
-        public final Button publishButton;
-        public final Button unpublishButton;
-        public final Button removeButton;
+        public final CarouselView operationMenu;
 
         public ParentViewHolder(@NonNull View view, AppCompatActivity context) {
             super(view);
@@ -61,18 +60,18 @@ public class ParentDisplayAdapter extends BaseAdapter<ParentPostContainer, Paren
             attachmentRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
             imageView = view.findViewById(R.id.imageview_profile_picture);
-            editButton = view.findViewById(R.id.button_edit);
-            synchronizeButton = view.findViewById(R.id.button_synchronize);
-            statisticsButton = view.findViewById(R.id.button_statistics);
-            publishButton = view.findViewById(R.id.button_publish);
-            unpublishButton = view.findViewById(R.id.button_unpublish);
-            removeButton = view.findViewById(R.id.button_remove);
+            operationMenu = view.findViewById(R.id.operation_menu);
 
             childAdapter = new ChildDisplayAdapter(context);
             binding.setChildAdapter(childAdapter);
 
             attachmentAdapter = new AttachmentDisplayAdapter(context);
             binding.setAttachmentAdapter(attachmentAdapter);
+
+            operationAdapter = new OperationAdapter(OperationAdapter.DISPLAY);
+            operationMenu.setTransformer(new CustomViewTransformer());
+            operationMenu.setInfinite(true);
+            operationMenu.setAdapter(operationAdapter);
 
             binding.executePendingBindings();
         }
@@ -114,10 +113,67 @@ public class ParentDisplayAdapter extends BaseAdapter<ParentPostContainer, Paren
     @Override
     protected void setItemBinding(BaseParentViewHolder viewHolder, ParentPostContainer item) {
         if (viewHolder.viewHolderType == PARENT) {
-            ParentViewHolder parentViewHolder = (ParentViewHolder)viewHolder;
+            final ParentViewHolder parentViewHolder = (ParentViewHolder)viewHolder;
             parentViewHolder.binding.setParent(item);
             parentViewHolder.childAdapter.setSource(item);
             parentViewHolder.attachmentAdapter.setSource(item);
+            parentViewHolder.operationAdapter.setSource(item);
+
+            Operation operation = parentViewHolder.operationAdapter.getItem(OperationID.EDIT);
+            operation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = parentViewHolder.getAdapterPosition();
+                    ParentPostContainer item = getItem(position);
+                    activity.editParent(item);
+                }
+            });
+            operation = parentViewHolder.operationAdapter.getItem(OperationID.SYNCHRONIZE);
+            operation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = parentViewHolder.getAdapterPosition();
+                    ParentPostContainer item = getItem(position);
+                    activity.synchronizePost(item);
+                }
+            });
+            operation = parentViewHolder.operationAdapter.getItem(OperationID.STATISTICS);
+            operation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = parentViewHolder.getAdapterPosition();
+                    ParentPostContainer item = getItem(position);
+                    activity.showParentStatistics(item);
+                }
+            });
+            operation = parentViewHolder.operationAdapter.getItem(OperationID.PUBLISH);
+            operation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = parentViewHolder.getAdapterPosition();
+                    ParentPostContainer item = getItem(position);
+                    activity.publishPost(item);
+                }
+            });
+            operation = parentViewHolder.operationAdapter.getItem(OperationID.UNPUBLISH);
+            operation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = parentViewHolder.getAdapterPosition();
+                    ParentPostContainer item = getItem(position);
+                    activity.unpublishPost(item);
+                }
+            });
+            operation = parentViewHolder.operationAdapter.getItem(OperationID.DELETE);
+            operation.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = parentViewHolder.getAdapterPosition();
+                    ParentPostContainer item = getItem(position);
+                    activity.removePost(item);
+                    removeItem(item);
+                }
+            });
         }
     }
 
@@ -145,57 +201,7 @@ public class ParentDisplayAdapter extends BaseAdapter<ParentPostContainer, Paren
         if (viewType == PARENT) {
             view = inflater.inflate(R.layout.parent_display_item, viewGroup, false);
             final ParentViewHolder parentViewHolder = new ParentViewHolder(view, this.context);
-
             setHideable(parentViewHolder);
-            parentViewHolder.editButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = parentViewHolder.getAdapterPosition();
-                    ParentPostContainer item = getItem(position);
-                    activity.editParent(item);
-                }
-            });
-            parentViewHolder.synchronizeButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = parentViewHolder.getAdapterPosition();
-                    ParentPostContainer item = getItem(position);
-                    activity.synchronizePost(item);
-                }
-            });
-            parentViewHolder.statisticsButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = parentViewHolder.getAdapterPosition();
-                    ParentPostContainer item = getItem(position);
-                    activity.showParentStatistics(item);
-                }
-            });
-            parentViewHolder.publishButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = parentViewHolder.getAdapterPosition();
-                    ParentPostContainer item = getItem(position);
-                    activity.publishPost(item);
-                }
-            });
-            parentViewHolder.unpublishButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = parentViewHolder.getAdapterPosition();
-                    ParentPostContainer item = getItem(position);
-                    activity.unpublishPost(item);
-                }
-            });
-            parentViewHolder.removeButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int position = parentViewHolder.getAdapterPosition();
-                    ParentPostContainer item = getItem(position);
-                    activity.removePost(item);
-                    removeItem(item);
-                }
-            });
             viewHolder = parentViewHolder;
         } else {
             view = inflater.inflate(R.layout.parent_new_item, viewGroup, false);
@@ -268,5 +274,9 @@ public class ParentDisplayAdapter extends BaseAdapter<ParentPostContainer, Paren
     @Override
     public int getItemCount() {
         return super.getItemCount() + 1;
+    }
+
+    public MainActivity getActivity() {
+        return activity;
     }
 }

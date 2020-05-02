@@ -13,13 +13,18 @@ import com.antonina.socialsynchro.common.database.repositories.RequestLimitRepos
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 import com.antonina.socialsynchro.common.database.rows.AccountRow;
 import com.antonina.socialsynchro.common.gui.GUIItem;
+import com.antonina.socialsynchro.common.gui.operations.Operation;
+import com.antonina.socialsynchro.common.gui.operations.OperationID;
+import com.antonina.socialsynchro.common.gui.operations.Operations;
 import com.antonina.socialsynchro.common.rest.IServiceEntity;
 import com.antonina.socialsynchro.common.rest.RequestLimit;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 @SuppressWarnings("WeakerAccess")
@@ -36,14 +41,21 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
 
     protected Map<String, RequestLimit> requestLimits;
 
-    public Account(IDatabaseRow table) {
-        createFromDatabaseRow(table);
-        setLoading(false);
-    }
+    private SortedMap<OperationID, Operation> operations;
 
     public Account() {
         requestLimits = new TreeMap<>();
         setLoading(false);
+
+        operations = new TreeMap<OperationID, Operation>() {{
+            put(OperationID.SYNCHRONIZE, Operations.createOperation(OperationID.SYNCHRONIZE));
+            put(OperationID.DELETE, Operations.createOperation(OperationID.DELETE));
+        }};
+    }
+
+    public Account(IDatabaseRow table) {
+        this();
+        createFromDatabaseRow(table);
     }
 
     @Override
@@ -54,7 +66,6 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
         setName(accountData.name);
         setExternalID(accountData.externalID);
         setProfilePictureURL(accountData.profilePictureURL);
-        requestLimits = new TreeMap<>();
 
         RequestLimitRepository requestLimitRepository = RequestLimitRepository.getInstance();
         final LiveData<List<RequestLimit>> requestLimitsLiveData = requestLimitRepository.getDataByAccount(this);
@@ -176,4 +187,8 @@ public abstract class Account extends GUIItem implements IDatabaseEntity, IServi
     public abstract AccountStatistic getStatistic();
 
     public abstract String getURL();
+
+    public SortedMap<OperationID, Operation> getOperations() {
+        return operations;
+    }
 }
