@@ -219,4 +219,22 @@ public class MigrationProcessor extends AbstractProcessor {
         queryBuilder.append("`)");
         return queryBuilder.toString();
     }
+
+    private static class IndexEntry {
+        private Entity entityAnnotation;
+        private ColumnInfo columnAnnotation;
+
+        public IndexEntry(Entity entityAnnotation, ColumnInfo columnAnnotation) {
+            this.entityAnnotation = entityAnnotation;
+            this.columnAnnotation = columnAnnotation;
+        }
+
+        public Entity getEntityAnnotation() {
+            return entityAnnotation;
+        }
+
+        public ColumnInfo getColumnAnnotation() {
+            return columnAnnotation;
+        }
+    }
 }

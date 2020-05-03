@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.antonina.socialsynchro.R;
-import com.antonina.socialsynchro.common.content.accounts.Account;
+import com.antonina.socialsynchro.common.model.accounts.Account;
 import com.antonina.socialsynchro.common.database.viewmodels.AccountViewModel;
 import com.antonina.socialsynchro.databinding.AccountDialogItemBinding;
 import com.bumptech.glide.Glide;

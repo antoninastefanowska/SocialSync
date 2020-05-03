@@ -6,10 +6,10 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 import android.os.AsyncTask;
 
-import com.antonina.socialsynchro.common.content.attachments.Attachment;
-import com.antonina.socialsynchro.common.content.attachments.AttachmentType;
-import com.antonina.socialsynchro.common.content.attachments.AttachmentTypes;
-import com.antonina.socialsynchro.common.content.posts.Post;
+import com.antonina.socialsynchro.common.model.attachments.Attachment;
+import com.antonina.socialsynchro.common.model.attachments.AttachmentType;
+import com.antonina.socialsynchro.common.model.attachments.AttachmentTypes;
+import com.antonina.socialsynchro.common.model.posts.Post;
 import com.antonina.socialsynchro.common.database.ApplicationDatabase;
 import com.antonina.socialsynchro.common.database.daos.AttachmentDao;
 import com.antonina.socialsynchro.common.database.rows.AttachmentRow;

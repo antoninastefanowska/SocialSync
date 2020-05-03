@@ -9,8 +9,8 @@ import android.os.AsyncTask;
 
 import com.antonina.socialsynchro.common.database.ApplicationDatabase;
 import com.antonina.socialsynchro.common.database.repositories.BaseRepository;
-import com.antonina.socialsynchro.services.deviantart.content.DeviantArtAccount;
-import com.antonina.socialsynchro.services.deviantart.content.DeviantArtGallery;
+import com.antonina.socialsynchro.services.deviantart.model.DeviantArtAccount;
+import com.antonina.socialsynchro.services.deviantart.model.DeviantArtGallery;
 import com.antonina.socialsynchro.services.deviantart.database.daos.DeviantArtGalleryDao;
 import com.antonina.socialsynchro.services.deviantart.database.rows.DeviantArtGalleryRow;
 

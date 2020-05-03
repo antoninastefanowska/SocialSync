@@ -2,9 +2,9 @@ package com.antonina.socialsynchro.common.gui.chart;
 
 import android.content.Context;
 
-import com.antonina.socialsynchro.common.content.statistics.AccountStatistic;
-import com.antonina.socialsynchro.common.content.statistics.Statistic;
-import com.antonina.socialsynchro.common.content.statistics.StatisticsContainer;
+import com.antonina.socialsynchro.common.model.statistics.AccountStatistic;
+import com.antonina.socialsynchro.common.model.statistics.Statistic;
+import com.antonina.socialsynchro.common.model.statistics.StatisticsContainer;
 import com.antonina.socialsynchro.common.gui.listeners.OnLoadedListener;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.data.BarEntry;

@@ -4,7 +4,7 @@ import android.app.Application;
 
 import com.antonina.socialsynchro.common.database.ApplicationDatabase;
 import com.antonina.socialsynchro.common.database.repositories.BaseRepository;
-import com.antonina.socialsynchro.services.facebook.content.FacebookAccount;
+import com.antonina.socialsynchro.services.facebook.model.FacebookAccount;
 import com.antonina.socialsynchro.services.facebook.database.rows.FacebookAccountInfoRow;
 
 public class FacebookAccountInfoRepository extends BaseRepository<FacebookAccountInfoRow, FacebookAccount> {

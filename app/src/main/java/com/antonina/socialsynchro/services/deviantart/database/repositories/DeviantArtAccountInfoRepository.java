@@ -4,7 +4,7 @@ import android.app.Application;
 
 import com.antonina.socialsynchro.common.database.ApplicationDatabase;
 import com.antonina.socialsynchro.common.database.repositories.BaseRepository;
-import com.antonina.socialsynchro.services.deviantart.content.DeviantArtAccount;
+import com.antonina.socialsynchro.services.deviantart.model.DeviantArtAccount;
 import com.antonina.socialsynchro.services.deviantart.database.rows.DeviantArtAccountInfoRow;
 
 public class DeviantArtAccountInfoRepository extends BaseRepository<DeviantArtAccountInfoRow, DeviantArtAccount> {

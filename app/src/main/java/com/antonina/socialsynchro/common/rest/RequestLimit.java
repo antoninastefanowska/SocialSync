@@ -1,8 +1,8 @@
 package com.antonina.socialsynchro.common.rest;
 
-import com.antonina.socialsynchro.common.content.accounts.Account;
-import com.antonina.socialsynchro.common.content.services.Service;
-import com.antonina.socialsynchro.common.content.services.Services;
+import com.antonina.socialsynchro.common.model.accounts.Account;
+import com.antonina.socialsynchro.common.model.services.Service;
+import com.antonina.socialsynchro.common.model.services.Services;
 import com.antonina.socialsynchro.common.database.IDatabaseEntity;
 import com.antonina.socialsynchro.common.database.repositories.RequestLimitRepository;
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;

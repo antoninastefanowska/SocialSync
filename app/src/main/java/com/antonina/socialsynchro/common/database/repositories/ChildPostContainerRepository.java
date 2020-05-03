@@ -6,10 +6,10 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 import android.os.AsyncTask;
 
-import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
-import com.antonina.socialsynchro.common.content.posts.ParentPostContainer;
-import com.antonina.socialsynchro.common.content.services.Service;
-import com.antonina.socialsynchro.common.content.services.Services;
+import com.antonina.socialsynchro.common.model.posts.ChildPostContainer;
+import com.antonina.socialsynchro.common.model.posts.ParentPostContainer;
+import com.antonina.socialsynchro.common.model.services.Service;
+import com.antonina.socialsynchro.common.model.services.Services;
 import com.antonina.socialsynchro.common.database.ApplicationDatabase;
 import com.antonina.socialsynchro.common.database.daos.ChildPostContainerDao;
 import com.antonina.socialsynchro.common.database.rows.ChildPostContainerRow;

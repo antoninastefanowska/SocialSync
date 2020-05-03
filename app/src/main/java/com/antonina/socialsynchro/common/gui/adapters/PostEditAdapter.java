@@ -14,10 +14,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.antonina.socialsynchro.R;
-import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
-import com.antonina.socialsynchro.common.content.posts.ParentPostContainer;
-import com.antonina.socialsynchro.common.content.posts.PostContainer;
-import com.antonina.socialsynchro.common.content.posts.Tag;
+import com.antonina.socialsynchro.common.model.posts.ChildPostContainer;
+import com.antonina.socialsynchro.common.model.posts.ParentPostContainer;
+import com.antonina.socialsynchro.common.model.posts.PostContainer;
+import com.antonina.socialsynchro.common.model.posts.Tag;
 import com.antonina.socialsynchro.common.gui.activities.EditActivity;
 import com.antonina.socialsynchro.common.gui.operations.Operation;
 import com.antonina.socialsynchro.common.gui.operations.OperationID;

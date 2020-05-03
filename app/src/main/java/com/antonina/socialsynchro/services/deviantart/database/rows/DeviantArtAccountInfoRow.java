@@ -9,7 +9,7 @@ import com.antonina.socialsynchro.common.database.IDatabaseEntity;
 import com.antonina.socialsynchro.common.database.rows.AccountRow;
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 import com.antonina.socialsynchro.common.utils.SecurityUtils;
-import com.antonina.socialsynchro.services.deviantart.content.DeviantArtAccount;
+import com.antonina.socialsynchro.services.deviantart.model.DeviantArtAccount;
 
 import java.util.Date;
 

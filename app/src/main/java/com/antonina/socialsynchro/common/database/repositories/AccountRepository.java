@@ -7,9 +7,9 @@ import android.arch.lifecycle.Transformations;
 import android.os.AsyncTask;
 import android.util.Pair;
 
-import com.antonina.socialsynchro.common.content.accounts.Account;
-import com.antonina.socialsynchro.common.content.services.Service;
-import com.antonina.socialsynchro.common.content.services.Services;
+import com.antonina.socialsynchro.common.model.accounts.Account;
+import com.antonina.socialsynchro.common.model.services.Service;
+import com.antonina.socialsynchro.common.model.services.Services;
 import com.antonina.socialsynchro.common.database.ApplicationDatabase;
 import com.antonina.socialsynchro.common.database.daos.AccountDao;
 import com.antonina.socialsynchro.common.database.rows.AccountRow;

@@ -4,7 +4,7 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-import com.antonina.socialsynchro.common.content.posts.Post;
+import com.antonina.socialsynchro.common.model.posts.Post;
 import com.antonina.socialsynchro.common.database.IDatabaseEntity;
 
 import java.util.Date;

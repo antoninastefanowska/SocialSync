@@ -6,7 +6,7 @@
             type="android.view.View" />
         <variable
             name="video"
-            type="com.antonina.socialsynchro.common.content.attachments.VideoAttachment" />
+            type="com.antonina.socialsynchro.common.model.attachments.VideoAttachment" />
     </data>
 
     <LinearLayout

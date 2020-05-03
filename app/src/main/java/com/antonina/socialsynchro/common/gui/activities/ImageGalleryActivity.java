@@ -9,8 +9,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.antonina.socialsynchro.R;
-import com.antonina.socialsynchro.common.content.attachments.Attachment;
-import com.antonina.socialsynchro.common.content.attachments.ImageAttachment;
+import com.antonina.socialsynchro.common.model.attachments.Attachment;
+import com.antonina.socialsynchro.common.model.attachments.ImageAttachment;
 import com.antonina.socialsynchro.databinding.ActivityImageGalleryBinding;
 import com.antonina.socialsynchro.common.gui.adapters.ImageGalleryAdapter;
 import com.antonina.socialsynchro.common.gui.other.SerializableList;

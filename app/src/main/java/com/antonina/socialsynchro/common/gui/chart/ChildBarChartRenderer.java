@@ -3,7 +3,7 @@ package com.antonina.socialsynchro.common.gui.chart;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 
-import com.antonina.socialsynchro.common.content.statistics.ChildStatistic;
+import com.antonina.socialsynchro.common.model.statistics.ChildStatistic;
 import com.github.mikephil.charting.animation.ChartAnimator;
 import com.github.mikephil.charting.interfaces.dataprovider.BarDataProvider;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;

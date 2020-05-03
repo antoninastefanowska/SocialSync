@@ -15,7 +15,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.antonina.socialsynchro.R;
-import com.antonina.socialsynchro.common.content.accounts.Account;
+import com.antonina.socialsynchro.common.model.accounts.Account;
 import com.antonina.socialsynchro.common.database.viewmodels.AccountViewModel;
 import com.antonina.socialsynchro.common.gui.activities.AccountsActivity;
 import com.antonina.socialsynchro.databinding.AccountDisplayItemBinding;

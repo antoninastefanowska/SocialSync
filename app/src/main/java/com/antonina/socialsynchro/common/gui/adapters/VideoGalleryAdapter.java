@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.antonina.socialsynchro.R;
-import com.antonina.socialsynchro.common.content.attachments.VideoAttachment;
+import com.antonina.socialsynchro.common.model.attachments.VideoAttachment;
 import com.antonina.socialsynchro.databinding.VideoGalleryItemBinding;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;

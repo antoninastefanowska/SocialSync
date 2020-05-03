@@ -4,8 +4,8 @@ import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.support.annotation.NonNull;
 
-import com.antonina.socialsynchro.common.content.accounts.Account;
-import com.antonina.socialsynchro.common.content.services.Service;
+import com.antonina.socialsynchro.common.model.accounts.Account;
+import com.antonina.socialsynchro.common.model.services.Service;
 import com.antonina.socialsynchro.common.database.repositories.AccountRepository;
 import com.antonina.socialsynchro.common.database.rows.AccountRow;
 

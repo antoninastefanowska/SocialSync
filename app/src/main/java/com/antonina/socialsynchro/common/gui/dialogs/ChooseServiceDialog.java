@@ -11,7 +11,7 @@ import android.view.Window;
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.common.gui.adapters.ServiceDialogAdapter;
 import com.antonina.socialsynchro.common.gui.listeners.OnServiceSelectedListener;
-import com.antonina.socialsynchro.common.content.services.Service;
+import com.antonina.socialsynchro.common.model.services.Service;
 
 public class ChooseServiceDialog extends Dialog {
     private final AppCompatActivity context;

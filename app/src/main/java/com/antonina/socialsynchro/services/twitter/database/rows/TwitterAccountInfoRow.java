@@ -9,7 +9,7 @@ import com.antonina.socialsynchro.common.database.IDatabaseEntity;
 import com.antonina.socialsynchro.common.database.rows.AccountRow;
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
 import com.antonina.socialsynchro.common.utils.SecurityUtils;
-import com.antonina.socialsynchro.services.twitter.content.TwitterAccount;
+import com.antonina.socialsynchro.services.twitter.model.TwitterAccount;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 

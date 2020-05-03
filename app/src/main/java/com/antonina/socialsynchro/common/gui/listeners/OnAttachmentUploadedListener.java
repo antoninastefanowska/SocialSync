@@ -1,6 +1,6 @@
 package com.antonina.socialsynchro.common.gui.listeners;
 
-import com.antonina.socialsynchro.common.content.attachments.Attachment;
+import com.antonina.socialsynchro.common.model.attachments.Attachment;
 
 public interface OnAttachmentUploadedListener {
     void onInitialized(Attachment attachment);

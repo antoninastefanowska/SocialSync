@@ -13,11 +13,11 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.antonina.socialsynchro.R;
-import com.antonina.socialsynchro.common.content.attachments.Attachment;
-import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
-import com.antonina.socialsynchro.common.content.posts.ParentPostContainer;
-import com.antonina.socialsynchro.common.content.posts.PostContainer;
-import com.antonina.socialsynchro.common.content.statistics.StatisticsContainer;
+import com.antonina.socialsynchro.common.model.attachments.Attachment;
+import com.antonina.socialsynchro.common.model.posts.ChildPostContainer;
+import com.antonina.socialsynchro.common.model.posts.ParentPostContainer;
+import com.antonina.socialsynchro.common.model.posts.PostContainer;
+import com.antonina.socialsynchro.common.model.statistics.StatisticsContainer;
 import com.antonina.socialsynchro.common.gui.chart.ChildBarChartHolder;
 import com.antonina.socialsynchro.common.gui.chart.ParentBarChartHolder;
 import com.antonina.socialsynchro.common.gui.listeners.OnAttachmentUploadedListener;

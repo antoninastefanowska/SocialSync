@@ -1,20 +1,17 @@
 package com.antonina.socialsynchro.common.gui.adapters;
 
 import android.graphics.Bitmap;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import com.antonina.socialsynchro.R;
-import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
-import com.antonina.socialsynchro.common.content.posts.ParentPostContainer;
+import com.antonina.socialsynchro.common.model.posts.ChildPostContainer;
+import com.antonina.socialsynchro.common.model.posts.ParentPostContainer;
 import com.antonina.socialsynchro.common.gui.activities.MainActivity;
 import com.antonina.socialsynchro.common.gui.operations.Operation;
 import com.antonina.socialsynchro.common.gui.operations.OperationID;
@@ -22,11 +19,8 @@ import com.antonina.socialsynchro.common.gui.other.CustomViewTransformer;
 import com.antonina.socialsynchro.common.gui.other.GrayscaleTransformation;
 import com.antonina.socialsynchro.common.gui.other.MaskTransformation;
 import com.antonina.socialsynchro.databinding.ChildDisplayItemBinding;
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.MultiTransformation;
 import com.bumptech.glide.load.Transformation;
-import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
-import com.bumptech.glide.request.RequestOptions;
 import com.gtomato.android.ui.widget.CarouselView;
 
 @SuppressWarnings("WeakerAccess")

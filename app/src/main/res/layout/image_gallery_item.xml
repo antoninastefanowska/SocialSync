@@ -6,7 +6,7 @@
             type="android.view.View" />
         <variable
             name="image"
-            type="com.antonina.socialsynchro.common.content.attachments.ImageAttachment" />
+            type="com.antonina.socialsynchro.common.model.attachments.ImageAttachment" />
     </data>
 
     <LinearLayout

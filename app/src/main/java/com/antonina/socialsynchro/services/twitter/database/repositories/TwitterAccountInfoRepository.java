@@ -4,7 +4,7 @@ import android.app.Application;
 
 import com.antonina.socialsynchro.common.database.ApplicationDatabase;
 import com.antonina.socialsynchro.common.database.repositories.BaseRepository;
-import com.antonina.socialsynchro.services.twitter.content.TwitterAccount;
+import com.antonina.socialsynchro.services.twitter.model.TwitterAccount;
 import com.antonina.socialsynchro.services.twitter.database.rows.TwitterAccountInfoRow;
 
 public class TwitterAccountInfoRepository extends BaseRepository<TwitterAccountInfoRow, TwitterAccount> {

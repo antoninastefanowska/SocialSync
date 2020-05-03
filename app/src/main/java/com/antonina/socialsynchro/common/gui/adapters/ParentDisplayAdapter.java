@@ -17,7 +17,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.antonina.socialsynchro.R;
-import com.antonina.socialsynchro.common.content.posts.ParentPostContainer;
+import com.antonina.socialsynchro.common.model.posts.ParentPostContainer;
 import com.antonina.socialsynchro.common.database.viewmodels.ParentPostContainerViewModel;
 import com.antonina.socialsynchro.common.gui.activities.MainActivity;
 import com.antonina.socialsynchro.common.gui.operations.Operation;

@@ -9,7 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Window;
 
 import com.antonina.socialsynchro.R;
-import com.antonina.socialsynchro.common.content.attachments.AttachmentType;
+import com.antonina.socialsynchro.common.model.attachments.AttachmentType;
 import com.antonina.socialsynchro.common.gui.adapters.AttachmentTypeDialogAdapter;
 import com.antonina.socialsynchro.common.gui.listeners.OnAttachmentTypeSelectedListener;
 

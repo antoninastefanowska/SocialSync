@@ -4,7 +4,7 @@ import android.app.Application;
 
 import com.antonina.socialsynchro.common.database.ApplicationDatabase;
 import com.antonina.socialsynchro.common.database.repositories.BaseRepository;
-import com.antonina.socialsynchro.services.deviantart.content.DeviantArtPostOptions;
+import com.antonina.socialsynchro.services.deviantart.model.DeviantArtPostOptions;
 import com.antonina.socialsynchro.services.deviantart.database.rows.DeviantArtPostOptionsRow;
 
 public class DeviantArtPostOptionsRepository extends BaseRepository<DeviantArtPostOptionsRow, DeviantArtPostOptions> {

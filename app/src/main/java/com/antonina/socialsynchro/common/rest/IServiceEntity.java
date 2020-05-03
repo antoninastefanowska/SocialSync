@@ -1,6 +1,6 @@
 package com.antonina.socialsynchro.common.rest;
 
-import com.antonina.socialsynchro.common.content.services.Service;
+import com.antonina.socialsynchro.common.model.services.Service;
 import com.antonina.socialsynchro.common.gui.listeners.OnSynchronizedListener;
 
 import java.util.Date;

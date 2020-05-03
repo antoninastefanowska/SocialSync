@@ -7,7 +7,7 @@ import android.arch.persistence.room.PrimaryKey;
 
 import com.antonina.socialsynchro.common.database.IDatabaseEntity;
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
-import com.antonina.socialsynchro.services.twitter.content.TwitterPostOptions;
+import com.antonina.socialsynchro.services.twitter.model.TwitterPostOptions;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 

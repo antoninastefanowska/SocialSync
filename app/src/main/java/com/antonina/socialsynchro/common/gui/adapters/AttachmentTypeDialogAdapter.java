@@ -6,8 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.antonina.socialsynchro.R;
-import com.antonina.socialsynchro.common.content.attachments.AttachmentType;
-import com.antonina.socialsynchro.common.content.attachments.AttachmentTypes;
+import com.antonina.socialsynchro.common.model.attachments.AttachmentType;
+import com.antonina.socialsynchro.common.model.attachments.AttachmentTypes;
 import com.antonina.socialsynchro.databinding.AttachmentTypeDialogItemBinding;
 import com.antonina.socialsynchro.common.gui.listeners.OnAttachmentTypeSelectedListener;
 

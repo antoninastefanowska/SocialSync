@@ -8,7 +8,7 @@ import android.arch.persistence.room.PrimaryKey;
 import com.antonina.socialsynchro.common.database.IDatabaseEntity;
 import com.antonina.socialsynchro.common.database.rows.ChildPostContainerRow;
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
-import com.antonina.socialsynchro.services.facebook.content.FacebookPostContainer;
+import com.antonina.socialsynchro.services.facebook.model.FacebookPostContainer;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 

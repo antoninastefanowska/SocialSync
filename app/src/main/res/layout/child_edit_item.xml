@@ -7,7 +7,7 @@
             type="android.view.View" />
         <variable
             name="child"
-            type="com.antonina.socialsynchro.common.content.posts.ChildPostContainer" />
+            type="com.antonina.socialsynchro.common.model.posts.ChildPostContainer" />
         <variable
             name="attachmentAdapter"
             type="com.antonina.socialsynchro.common.gui.adapters.AttachmentEditAdapter" />

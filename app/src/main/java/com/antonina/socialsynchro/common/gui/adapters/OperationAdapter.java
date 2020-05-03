@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.antonina.socialsynchro.R;
-import com.antonina.socialsynchro.common.content.posts.PostContainer;
+import com.antonina.socialsynchro.common.model.posts.PostContainer;
 import com.antonina.socialsynchro.common.gui.GUIItem;
 import com.antonina.socialsynchro.common.gui.listeners.OnUpdatedListener;
 import com.antonina.socialsynchro.common.gui.operations.Operation;

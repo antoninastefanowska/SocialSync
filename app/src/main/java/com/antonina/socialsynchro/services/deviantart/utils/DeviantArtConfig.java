@@ -4,7 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.support.annotation.Nullable;
 
-import com.antonina.socialsynchro.services.deviantart.content.DeviantArtCategory;
+import com.antonina.socialsynchro.services.deviantart.model.DeviantArtCategory;
 import com.antonina.socialsynchro.services.deviantart.database.repositories.DeviantArtCategoryRepository;
 
 public class DeviantArtConfig {

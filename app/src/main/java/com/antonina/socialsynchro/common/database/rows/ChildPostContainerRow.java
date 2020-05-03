@@ -5,7 +5,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
 
-import com.antonina.socialsynchro.common.content.posts.ChildPostContainer;
+import com.antonina.socialsynchro.common.model.posts.ChildPostContainer;
 import com.antonina.socialsynchro.common.database.IDatabaseEntity;
 
 import java.util.Date;

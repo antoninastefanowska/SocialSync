@@ -6,8 +6,8 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 import android.os.AsyncTask;
 
-import com.antonina.socialsynchro.common.content.accounts.Account;
-import com.antonina.socialsynchro.common.content.services.Service;
+import com.antonina.socialsynchro.common.model.accounts.Account;
+import com.antonina.socialsynchro.common.model.services.Service;
 import com.antonina.socialsynchro.common.database.ApplicationDatabase;
 import com.antonina.socialsynchro.common.database.daos.RequestLimitDao;
 import com.antonina.socialsynchro.common.database.rows.RequestLimitRow;

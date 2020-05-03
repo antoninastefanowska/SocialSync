@@ -7,7 +7,7 @@
     <data>
         <variable
             name="service"
-            type="com.antonina.socialsynchro.common.content.services.Service" />
+            type="com.antonina.socialsynchro.common.model.services.Service" />
     </data>
 
     <android.support.constraint.ConstraintLayout

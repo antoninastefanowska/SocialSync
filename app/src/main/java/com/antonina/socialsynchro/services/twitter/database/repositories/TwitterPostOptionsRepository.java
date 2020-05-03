@@ -4,7 +4,7 @@ import android.app.Application;
 
 import com.antonina.socialsynchro.common.database.ApplicationDatabase;
 import com.antonina.socialsynchro.common.database.repositories.BaseRepository;
-import com.antonina.socialsynchro.services.twitter.content.TwitterPostOptions;
+import com.antonina.socialsynchro.services.twitter.model.TwitterPostOptions;
 import com.antonina.socialsynchro.services.twitter.database.rows.TwitterPostOptionsRow;
 
 public class TwitterPostOptionsRepository extends BaseRepository<TwitterPostOptionsRow, TwitterPostOptions> {

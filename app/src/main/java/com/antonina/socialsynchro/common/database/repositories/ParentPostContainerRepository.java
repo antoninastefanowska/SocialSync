@@ -2,7 +2,7 @@ package com.antonina.socialsynchro.common.database.repositories;
 
 import android.app.Application;
 
-import com.antonina.socialsynchro.common.content.posts.ParentPostContainer;
+import com.antonina.socialsynchro.common.model.posts.ParentPostContainer;
 import com.antonina.socialsynchro.common.database.ApplicationDatabase;
 import com.antonina.socialsynchro.common.database.rows.ParentPostContainerRow;
 

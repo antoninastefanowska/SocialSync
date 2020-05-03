@@ -11,7 +11,7 @@ import android.view.Window;
 import android.widget.Button;
 
 import com.antonina.socialsynchro.R;
-import com.antonina.socialsynchro.common.content.accounts.Account;
+import com.antonina.socialsynchro.common.model.accounts.Account;
 import com.antonina.socialsynchro.common.gui.adapters.AccountDialogAdapter;
 import com.antonina.socialsynchro.common.gui.listeners.OnAccountsSelectedListener;
 

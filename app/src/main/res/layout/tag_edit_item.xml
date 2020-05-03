@@ -4,7 +4,7 @@
     <data>
         <variable
             name="tag"
-            type="com.antonina.socialsynchro.common.content.posts.Tag" />
+            type="com.antonina.socialsynchro.common.model.posts.Tag" />
         <variable
             name="locked"
             type="boolean" />

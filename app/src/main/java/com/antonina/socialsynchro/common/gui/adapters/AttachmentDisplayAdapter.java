@@ -5,8 +5,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
 import com.antonina.socialsynchro.R;
-import com.antonina.socialsynchro.common.content.attachments.Attachment;
-import com.antonina.socialsynchro.common.content.posts.IPost;
+import com.antonina.socialsynchro.common.model.attachments.Attachment;
+import com.antonina.socialsynchro.common.model.posts.IPost;
 import com.antonina.socialsynchro.databinding.AttachmentDisplayItemBinding;
 
 public class AttachmentDisplayAdapter extends BaseAdapter<Attachment, AttachmentDisplayAdapter.AttachmentViewHolder> {

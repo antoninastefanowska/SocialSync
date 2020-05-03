@@ -8,8 +8,8 @@ import android.view.ViewGroup;
 import com.antonina.socialsynchro.R;
 import com.antonina.socialsynchro.databinding.ServiceDialogItemBinding;
 import com.antonina.socialsynchro.common.gui.listeners.OnServiceSelectedListener;
-import com.antonina.socialsynchro.common.content.services.Service;
-import com.antonina.socialsynchro.common.content.services.Services;
+import com.antonina.socialsynchro.common.model.services.Service;
+import com.antonina.socialsynchro.common.model.services.Services;
 
 import java.util.ArrayList;
 import java.util.Arrays;

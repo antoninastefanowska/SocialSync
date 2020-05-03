@@ -7,9 +7,9 @@ import android.os.Bundle;
 import android.view.View;
 
 import com.antonina.socialsynchro.R;
-import com.antonina.socialsynchro.common.content.accounts.Account;
-import com.antonina.socialsynchro.common.content.accounts.LoginFlow;
-import com.antonina.socialsynchro.common.content.services.Service;
+import com.antonina.socialsynchro.common.model.accounts.Account;
+import com.antonina.socialsynchro.common.model.accounts.LoginFlow;
+import com.antonina.socialsynchro.common.model.services.Service;
 import com.antonina.socialsynchro.common.gui.other.SerializableList;
 import com.antonina.socialsynchro.databinding.ActivityLoginBinding;
 

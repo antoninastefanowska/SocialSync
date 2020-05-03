@@ -5,7 +5,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
 
-import com.antonina.socialsynchro.common.content.posts.ParentPostContainer;
+import com.antonina.socialsynchro.common.model.posts.ParentPostContainer;
 import com.antonina.socialsynchro.common.database.IDatabaseEntity;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;

@@ -6,8 +6,8 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Transformations;
 import android.os.AsyncTask;
 
-import com.antonina.socialsynchro.common.content.posts.Post;
-import com.antonina.socialsynchro.common.content.posts.Tag;
+import com.antonina.socialsynchro.common.model.posts.Post;
+import com.antonina.socialsynchro.common.model.posts.Tag;
 import com.antonina.socialsynchro.common.database.ApplicationDatabase;
 import com.antonina.socialsynchro.common.database.daos.TagDao;
 import com.antonina.socialsynchro.common.database.rows.TagRow;

@@ -7,7 +7,7 @@ import android.arch.persistence.room.PrimaryKey;
 
 import com.antonina.socialsynchro.common.database.IDatabaseEntity;
 import com.antonina.socialsynchro.common.database.rows.IDatabaseRow;
-import com.antonina.socialsynchro.services.deviantart.content.DeviantArtGallery;
+import com.antonina.socialsynchro.services.deviantart.model.DeviantArtGallery;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 

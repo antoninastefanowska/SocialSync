@@ -5,7 +5,7 @@
             type="android.view.View" />
         <variable
             name="account"
-            type="com.antonina.socialsynchro.common.content.accounts.Account" />
+            type="com.antonina.socialsynchro.common.model.accounts.Account" />
     </data>
 
     <LinearLayout

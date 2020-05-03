@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.antonina.socialsynchro.R;
-import com.antonina.socialsynchro.common.content.posts.IPost;
-import com.antonina.socialsynchro.common.content.posts.Tag;
+import com.antonina.socialsynchro.common.model.posts.IPost;
+import com.antonina.socialsynchro.common.model.posts.Tag;
 import com.antonina.socialsynchro.databinding.TagEditItemBinding;
 
 import java.util.ArrayList;

@@ -1,36 +1,27 @@
 package com.antonina.socialsynchro.common.gui.activities;
 
-import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.antonina.socialsynchro.R;
-import com.antonina.socialsynchro.common.content.statistics.StatisticsContainer;
+import com.antonina.socialsynchro.common.model.statistics.StatisticsContainer;
 import com.antonina.socialsynchro.common.gui.chart.AccountsBarChartHolder;
 import com.antonina.socialsynchro.common.gui.other.SerializableList;
 import com.antonina.socialsynchro.databinding.ActivityAccountsBinding;
 import com.antonina.socialsynchro.common.gui.adapters.AccountDisplayAdapter;
-import com.antonina.socialsynchro.common.content.accounts.Account;
+import com.antonina.socialsynchro.common.model.accounts.Account;
 import com.antonina.socialsynchro.common.gui.dialogs.ChooseServiceDialog;
 import com.antonina.socialsynchro.common.gui.listeners.OnServiceSelectedListener;
 import com.antonina.socialsynchro.common.gui.listeners.OnSynchronizedListener;
 import com.antonina.socialsynchro.common.rest.IServiceEntity;
-import com.antonina.socialsynchro.common.content.services.Service;
-import com.antonina.socialsynchro.services.twitter.content.TwitterAccount;
-import com.antonina.socialsynchro.services.twitter.rest.TwitterClient;
-import com.antonina.socialsynchro.services.twitter.rest.requests.TwitterGetRateLimitsRequest;
-import com.antonina.socialsynchro.services.twitter.rest.authorization.TwitterUserAuthorizationStrategy;
-import com.antonina.socialsynchro.services.twitter.rest.responses.TwitterGetRateLimitsResponse;
+import com.antonina.socialsynchro.common.model.services.Service;
 
 import java.util.List;
 

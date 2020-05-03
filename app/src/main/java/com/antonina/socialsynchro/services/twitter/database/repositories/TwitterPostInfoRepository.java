@@ -4,7 +4,7 @@ import android.app.Application;
 
 import com.antonina.socialsynchro.common.database.ApplicationDatabase;
 import com.antonina.socialsynchro.common.database.repositories.BaseRepository;
-import com.antonina.socialsynchro.services.twitter.content.TwitterPostContainer;
+import com.antonina.socialsynchro.services.twitter.model.TwitterPostContainer;
 import com.antonina.socialsynchro.services.twitter.database.rows.TwitterPostInfoRow;
 
 public class TwitterPostInfoRepository extends BaseRepository<TwitterPostInfoRow, TwitterPostContainer> {

@@ -5,7 +5,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
 
-import com.antonina.socialsynchro.common.content.attachments.Attachment;
+import com.antonina.socialsynchro.common.model.attachments.Attachment;
 import com.antonina.socialsynchro.common.database.IDatabaseEntity;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
