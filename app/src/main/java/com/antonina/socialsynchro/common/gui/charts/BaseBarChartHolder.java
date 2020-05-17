@@ -1,4 +1,4 @@
-package com.antonina.socialsynchro.common.gui.chart;
+package com.antonina.socialsynchro.common.gui.charts;
 
 import android.content.Context;
 
@@ -28,12 +28,15 @@ public abstract class BaseBarChartHolder implements Serializable {
     public abstract void createChart(BarChart chart, Context context);
 
     protected void configureChart(List<BarEntry> chartEntries) {
+        int color = context.getResources().getColor(R.color.colorLight);
+        int fontSize = context.getResources().getDimensionPixelSize(R.dimen.text_size_chart);
+
         BarDataSet chartDataSet = new BarDataSet(chartEntries, "Data");
         chartData = new BarData(chartDataSet);
         chartData.setHighlightEnabled(false);
         chartData.setBarWidth(0.5f);
-        chartData.setValueTextSize(context.getResources().getDimensionPixelSize(R.dimen.text_size_chart));
-        chartData.setValueTextColor(context.getResources().getColor(R.color.colorLight));
+        chartData.setValueTextSize(fontSize);
+        chartData.setValueTextColor(color);
 
         XAxis xAxis = chart.getXAxis();
         xAxis.setEnabled(false);
@@ -41,19 +44,19 @@ public abstract class BaseBarChartHolder implements Serializable {
         YAxis yAxisLeft = chart.getAxisLeft();
         YAxis yAxisRight = chart.getAxisRight();
 
-        yAxisLeft.setTextSize(context.getResources().getDimensionPixelSize(R.dimen.text_size_chart));
-        yAxisLeft.setTextColor(context.getResources().getColor(R.color.colorLight));
-        yAxisLeft.setGridColor(context.getResources().getColor(R.color.colorLight));
-        yAxisLeft.setAxisLineColor(context.getResources().getColor(R.color.colorLight));
+        yAxisLeft.setTextSize(fontSize);
+        yAxisLeft.setTextColor(color);
+        yAxisLeft.setGridColor(color);
+        yAxisLeft.setAxisLineColor(color);
 
-        yAxisRight.setTextSize(context.getResources().getDimensionPixelSize(R.dimen.text_size_chart));
-        yAxisRight.setTextColor(context.getResources().getColor(R.color.colorLight));
-        yAxisRight.setGridColor(context.getResources().getColor(R.color.colorLight));
-        yAxisRight.setAxisLineColor(context.getResources().getColor(R.color.colorLight));
+        yAxisRight.setTextSize(fontSize);
+        yAxisRight.setTextColor(color);
+        yAxisRight.setGridColor(color);
+        yAxisRight.setAxisLineColor(color);
 
         chart.getLegend().setEnabled(false);
         chart.getDescription().setEnabled(false);
-        chart.setNoDataTextColor(context.getResources().getColor(R.color.colorLight));
+        chart.setNoDataTextColor(color);
     }
 
     protected void showChart() {

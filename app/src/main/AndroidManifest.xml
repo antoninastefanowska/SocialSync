@@ -21,7 +21,14 @@
         <activity
             android:name=".common.gui.activities.EditActivity"
             android:label="@string/title_activity_edit"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="adjustPan">
+
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".common.gui.activities.MainActivity" />
+
+        </activity>
         <activity
             android:name=".common.gui.activities.AccountsActivity"
             android:label="@string/title_activity_accounts"

@@ -4,24 +4,24 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.databinding.DataBindingUtil;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Toast;
 
 import com.antonina.socialsynchro.R;
+import com.antonina.socialsynchro.common.gui.adapters.AttachmentEditAdapter;
+import com.antonina.socialsynchro.common.gui.adapters.PostTabAdapter;
 import com.antonina.socialsynchro.common.model.accounts.Account;
 import com.antonina.socialsynchro.common.model.posts.ChildPostContainer;
 import com.antonina.socialsynchro.common.model.attachments.Attachment;
 import com.antonina.socialsynchro.common.model.posts.PostContainer;
 import com.antonina.socialsynchro.common.model.services.Service;
-import com.antonina.socialsynchro.common.gui.adapters.PostEditAdapter;
 import com.antonina.socialsynchro.common.gui.dialogs.WarningDialog;
 import com.antonina.socialsynchro.common.gui.listeners.OnAttachmentUploadedListener;
 import com.antonina.socialsynchro.common.gui.listeners.OnPublishedListener;
@@ -29,7 +29,6 @@ import com.antonina.socialsynchro.common.model.posts.ParentPostContainer;
 import com.antonina.socialsynchro.common.model.attachments.AttachmentType;
 import com.antonina.socialsynchro.common.gui.listeners.OnUnlockedListener;
 import com.antonina.socialsynchro.common.gui.listeners.OnUnpublishedListener;
-import com.antonina.socialsynchro.databinding.ActivityEditBinding;
 import com.antonina.socialsynchro.common.gui.dialogs.ChooseAccountDialog;
 import com.antonina.socialsynchro.common.gui.listeners.OnAccountsSelectedListener;
 import com.antonina.socialsynchro.common.gui.dialogs.ChooseAttachmentTypeDialog;
@@ -46,8 +45,9 @@ public class EditActivity extends AppCompatActivity {
 
     private List<Account> selectedAccounts;
 
-    private PostEditAdapter postAdapter;
-    private PostEditAdapter.PostViewHolder activeViewHolder;
+    private PostTabAdapter postAdapter;
+    private AttachmentEditAdapter activeAttachmentAdapter;
+    private ParentPostContainer parent;
 
     private OnUnlockedListener unlockedListener;
 
@@ -56,7 +56,6 @@ public class EditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
 
-        ParentPostContainer parent;
         if (getIntent().hasExtra("parent")) {
             parent = (ParentPostContainer) getIntent().getSerializableExtra("parent");
             parent.show();
@@ -64,14 +63,13 @@ public class EditActivity extends AppCompatActivity {
         else
             parent = new ParentPostContainer();
 
-        ActivityEditBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_edit);
+        TabLayout tabs = findViewById(R.id.tab_post);
+        ViewPager viewPager = findViewById(R.id.view_pager);
 
-        RecyclerView postRecyclerView = findViewById(R.id.recyclerview_post);
-        postRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        postAdapter = new PostEditAdapter(this, parent, postRecyclerView);
-
-        binding.setPostAdapter(postAdapter);
-        binding.executePendingBindings();
+        postAdapter = new PostTabAdapter(getSupportFragmentManager(), parent, tabs);
+        viewPager.setAdapter(postAdapter);
+        tabs.setupWithViewPager(viewPager);
+        postAdapter.loadIcons();
 
         final AppCompatActivity context = this;
         unlockedListener = new OnUnlockedListener() {
@@ -99,11 +97,15 @@ public class EditActivity extends AppCompatActivity {
         });
 
         List<Account> usedAccounts = new ArrayList<>();
-        for (ChildPostContainer child : postAdapter.getChildren())
+        for (ChildPostContainer child : parent.getChildren())
             usedAccounts.add(child.getAccount());
 
         dialog.setIgnoredData(usedAccounts);
         dialog.show();
+    }
+
+    public void removeChild(ChildPostContainer child) {
+        postAdapter.removeItem(child);
     }
 
     public void publishPost(final PostContainer postContainer) {
@@ -151,7 +153,6 @@ public class EditActivity extends AppCompatActivity {
     }
 
     public void unpublishPost(final PostContainer postContainer) {
-        final Context context = this;
         final View layout = findViewById(R.id.layout_main);
         postContainer.unpublish(new OnUnpublishedListener() {
             @Override
@@ -175,8 +176,8 @@ public class EditActivity extends AppCompatActivity {
         finish();
     }
 
-    public void addAttachment(PostEditAdapter.PostViewHolder viewHolder) {
-        activeViewHolder = viewHolder;
+    public void addAttachment(AttachmentEditAdapter activeAttachmentAdapter) {
+        this.activeAttachmentAdapter = activeAttachmentAdapter;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
                 String[] permissions = {Manifest.permission.READ_EXTERNAL_STORAGE};
@@ -210,9 +211,8 @@ public class EditActivity extends AppCompatActivity {
                     List<Attachment> attachments = serializableAttachments.getList();
 
                     for (Attachment attachment : attachments)
-                        activeViewHolder.attachmentAdapter.addItem(attachment);
+                        activeAttachmentAdapter.addItem(attachment);
 
-                    postAdapter.notifyItemChanged(activeViewHolder.getAdapterPosition());
                     break;
             }
         }

@@ -32,6 +32,10 @@ public class Tag extends GUIItem implements IDatabaseEntity {
         return '#' + value;
     }
 
+    public Tag createCopy() {
+        return new Tag(value);
+    }
+
     @Bindable
     public String getValue() {
         return value;

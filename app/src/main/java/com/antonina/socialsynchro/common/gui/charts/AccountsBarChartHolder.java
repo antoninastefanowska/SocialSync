@@ -1,4 +1,4 @@
-package com.antonina.socialsynchro.common.gui.chart;
+package com.antonina.socialsynchro.common.gui.charts;
 
 import android.content.Context;
 

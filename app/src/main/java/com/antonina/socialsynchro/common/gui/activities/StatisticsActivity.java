@@ -4,7 +4,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.antonina.socialsynchro.R;
-import com.antonina.socialsynchro.common.gui.chart.BaseBarChartHolder;
+import com.antonina.socialsynchro.common.gui.charts.BaseBarChartHolder;
 import com.github.mikephil.charting.charts.BarChart;
 
 public class StatisticsActivity extends AppCompatActivity {

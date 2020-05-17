@@ -14,4 +14,8 @@ public class Counter {
     public int getValue() {
         return value;
     }
+
+    public int getNext() {
+        return value++;
+    }
 }

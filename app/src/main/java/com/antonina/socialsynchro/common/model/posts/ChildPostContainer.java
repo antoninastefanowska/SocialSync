@@ -213,6 +213,7 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
         if (!locked && validateParent()) {
             locked = true;
             removePost();
+            updateOperations();
             notifyGUI();
         }
     }
@@ -228,8 +229,13 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
                 Attachment copy = attachment.createCopy();
                 addAttachment(copy);
             }
+            for (Tag tag : parentPost.getTags()) {
+                Tag copy = tag.createCopy();
+                addTag(copy);
+            }
             if (unlockedListener != null && !isManual)
                 unlockedListener.onUnlocked(this);
+            updateOperations();
             notifyGUI();
         }
     }
@@ -376,7 +382,11 @@ public abstract class ChildPostContainer extends PostContainer implements IServi
 
     private void setLocked(boolean locked) {
         this.locked = locked;
+        updateOperations();
+        notifyGUI();
+    }
 
+    private void updateOperations() {
         editOperations.get(OperationID.ADD_ATTACHMENT).setEnabled(!locked);
         editOperations.get(OperationID.LOCK).setEnabled(!locked);
         editOperations.get(OperationID.UNLOCK).setEnabled(locked);
